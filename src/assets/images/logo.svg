@@ -1,0 +1,5 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 140 36" fill="none">
+  <rect width="32" height="32" rx="8" fill="#1560c4"/>
+  <path d="M8 24V12h3.6c2 0 3.4 1.2 3.4 3 0 1.2-.7 2.2-1.8 2.6L15.5 24h-2.8l-2.2-4H10.4v4H8zm2.8-6h.7c.9 0 1.4-.4 1.4-1.1s-.5-1.1-1.4-1.1h-.7v2.2z" fill="white"/>
+  <text x="40" y="24" font-family="Inter, system-ui, sans-serif" font-size="20" font-weight="700" fill="#0f172a">vousFin</text>
+</svg>

@@ -1,0 +1,173 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --bg: #0B1020;
+    --bg2: #111827;
+    --bg3: #1E293B;
+    --text: #F8FAFC;
+    --text2: #CBD5E1;
+    --text3: #64748B;
+    --border: rgba(6, 182, 212, 0.15);
+    --border2: rgba(37, 99, 235, 0.20);
+    --cyan: #06B6D4;
+    --emerald: #06B6D4;
+    --cyan2: #2563EB;
+    --emerald2: #2563EB;
+    --emerald3: #38BDF8;
+  }
+
+  html {
+    scroll-behavior: smooth;
+  }
+  
+  body {
+    @apply font-sans antialiased;
+    background-color: var(--bg);
+    color: var(--text);
+    overflow-x: hidden;
+    line-height: 1.6;
+  }
+
+  ::selection {
+    background: rgba(0, 212, 255, 0.25);
+    color: #fff;
+  }
+}
+
+@layer utilities {
+  /* ═══ SCROLLBAR ═══ */
+  .scrollbar-thin {
+    scrollbar-width: thin;
+    scrollbar-color: var(--text3) transparent;
+  }
+  .scrollbar-thin::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+  }
+  .scrollbar-thin::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  .scrollbar-thin::-webkit-scrollbar-thumb {
+    background: var(--text3);
+    border-radius: 4px;
+  }
+
+  /* Micro-animations & interactive elements */
+  .transition-premium {
+    @apply transition-all duration-300;
+    transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  .hover-scale {
+    @apply transition-transform duration-200 hover:scale-[1.01] active:scale-[0.99];
+  }
+
+  /* ═══ CORE UTILITIES ═══ */
+  .bg-glass {
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid var(--border);
+    backdrop-filter: blur(10px);
+  }
+
+  .premium-card {
+    background: linear-gradient(145deg, var(--bg2), var(--bg3));
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    @apply transition-all duration-300 relative overflow-hidden;
+  }
+  
+  .premium-card:hover {
+    border-color: rgba(6, 182, 212, 0.35);
+    box-shadow: 0 0 40px rgba(6, 182, 212, 0.12), 0 12px 40px rgba(0, 0, 0, 0.3);
+    transform: translateY(-2px);
+  }
+
+  .btn-gradient {
+    background: linear-gradient(135deg, var(--emerald), var(--cyan2));
+    color: #fff;
+    box-shadow: 0 0 28px rgba(6, 182, 212, 0.30);
+  }
+
+  .btn-gradient:hover {
+    background: linear-gradient(135deg, var(--emerald2), var(--cyan));
+    box-shadow: 0 0 44px rgba(6, 182, 212, 0.45);
+    transform: translateY(-1px);
+  }
+
+  .btn-outline {
+    background: transparent;
+    border: 1.5px solid rgba(6, 182, 212, 0.30);
+    color: var(--cyan);
+  }
+
+  .btn-outline:hover {
+    background: rgba(6, 182, 212, 0.06);
+    border-color: var(--cyan);
+    box-shadow: 0 0 24px rgba(6, 182, 212, 0.22);
+  }
+
+  .text-gradient {
+    background: linear-gradient(135deg, var(--emerald3), var(--cyan));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  /* Responsive Table Container (scrolls inside cards only, no outer scroll) */
+  .table-scroll-container {
+    @apply overflow-x-auto scrollbar-thin max-w-full rounded-lg border border-glass;
+  }
+
+  /* Bottom sheet style for mobile modals */
+  .mobile-bottom-sheet {
+    @apply fixed inset-x-0 bottom-0 z-50 rounded-t-2xl bg-charcoal p-6 shadow-2xl transition-all duration-300 md:relative md:inset-auto md:rounded-xl md:p-6 md:shadow-md border border-glass;
+  }
+}
+
+.prose-sm p {
+  @apply mb-2 last:mb-0;
+}
+
+.prose-sm ul {
+  @apply mb-2 list-disc pl-5;
+}
+
+/* Skeleton animation loader */
+@keyframes skeleton-loading {
+  0% {
+    background-color: rgba(30, 41, 59, 0.6);
+  }
+  50% {
+    background-color: rgba(51, 65, 85, 0.4);
+  }
+  100% {
+    background-color: rgba(30, 41, 59, 0.6);
+  }
+}
+
+.skeleton-loader {
+  animation: skeleton-loading 1.5s infinite ease-in-out;
+}
+
+/* Slow spin for AI loading icons */
+@keyframes spin-slow {
+  from { transform: rotate(0deg); }
+  to   { transform: rotate(360deg); }
+}
+
+.animate-spin-slow {
+  animation: spin-slow 2.5s linear infinite;
+}
+
+/* Fade-in for page transitions */
+@keyframes fade-in {
+  from { opacity: 0; transform: translateY(8px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.animate-fade-in {
+  animation: fade-in 0.35s ease-out both;
+}
