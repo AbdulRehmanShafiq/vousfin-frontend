@@ -1,5 +1,6 @@
 import { useQuery } from '@tanstack/react-query'
 import api from '@/services/api'
+import { useAuthStore } from '@/stores/useAuthStore'
 
 // ── Cache times ────────────────────────────────────────────────────────────────
 // Backend caches reports for 5 minutes (invalidated on every transaction write).
@@ -19,20 +20,23 @@ const buildParams = (dateRange) => {
 }
 
 export function useIncomeStatement(dateRange) {
+  const businessId = useAuthStore(s => s.user?.businessId)
   return useQuery({
-    queryKey: ['reports', 'income-statement', dateRange],
+    queryKey: ['reports', 'income-statement', businessId, dateRange],
     queryFn: async () => {
       const { data } = await api.get(`/reports/income-statement?${buildParams(dateRange)}`)
       return data.data
     },
     staleTime: REPORT_STALE_TIME,
     gcTime:    REPORT_GC_TIME,
+    enabled:   !!businessId,
   })
 }
 
 export function useBalanceSheet(dateRange) {
+  const businessId = useAuthStore(s => s.user?.businessId)
   return useQuery({
-    queryKey: ['reports', 'balance-sheet', dateRange],
+    queryKey: ['reports', 'balance-sheet', businessId, dateRange],
     queryFn: async () => {
       const params = new URLSearchParams()
       const asOf = dateRange?.asOfDate || dateRange?.endDate
@@ -42,24 +46,28 @@ export function useBalanceSheet(dateRange) {
     },
     staleTime: REPORT_STALE_TIME,
     gcTime:    REPORT_GC_TIME,
+    enabled:   !!businessId,
   })
 }
 
 export function useCashFlow(dateRange) {
+  const businessId = useAuthStore(s => s.user?.businessId)
   return useQuery({
-    queryKey: ['reports', 'cash-flow', dateRange],
+    queryKey: ['reports', 'cash-flow', businessId, dateRange],
     queryFn: async () => {
       const { data } = await api.get(`/reports/cash-flow?${buildParams(dateRange)}`)
       return data.data
     },
     staleTime: REPORT_STALE_TIME,
     gcTime:    REPORT_GC_TIME,
+    enabled:   !!businessId,
   })
 }
 
 export function useTrialBalance(dateRange) {
+  const businessId = useAuthStore(s => s.user?.businessId)
   return useQuery({
-    queryKey: ['reports', 'trial-balance', dateRange],
+    queryKey: ['reports', 'trial-balance', businessId, dateRange],
     queryFn: async () => {
       const params = new URLSearchParams()
       const asOf = dateRange?.asOfDate || dateRange?.endDate
@@ -69,12 +77,14 @@ export function useTrialBalance(dateRange) {
     },
     staleTime: REPORT_STALE_TIME,
     gcTime:    REPORT_GC_TIME,
+    enabled:   !!businessId,
   })
 }
 
 export function useDashboardAll(dateRange) {
+  const businessId = useAuthStore(s => s.user?.businessId)
   return useQuery({
-    queryKey: ['dashboard', 'all', dateRange],
+    queryKey: ['dashboard', 'all', businessId, dateRange],
     queryFn: async () => {
       const params = new URLSearchParams()
       if (dateRange?.startDate) params.append('startDate', dateRange.startDate)
@@ -84,5 +94,6 @@ export function useDashboardAll(dateRange) {
     },
     staleTime: REPORT_STALE_TIME,
     gcTime:    REPORT_GC_TIME,
+    enabled:   !!businessId,
   })
 }
