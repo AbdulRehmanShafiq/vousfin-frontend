@@ -2,7 +2,10 @@ import { useEffect, useMemo, useRef, useState, useCallback } from 'react'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
-import { MessageSquare, LayoutList, Upload, CheckCircle, AlertTriangle, Loader2, X, ChevronUp, ChevronDown } from 'lucide-react'
+import {
+  MessageSquare, LayoutList, Upload, CheckCircle, AlertTriangle,
+  Loader2, X, ChevronUp, ChevronDown, Sparkles,
+} from 'lucide-react'
 import Modal from '@/components/modals/Modal'
 import Input from '@/components/ui/Input'
 import Select from '@/components/ui/Select'
@@ -13,51 +16,306 @@ import {
   useCreateTransaction,
   useCreateInstallmentTransaction,
   useNLPreview,
-  useNLConfirm,
   useExcelPreview,
   useExcelConfirm,
 } from '@/hooks/useTransactions'
 import { useBusinessStore } from '@/stores/useBusinessStore'
 import { formatCurrency } from '@/utils/formatters'
+import { buildGroupedAccountOptions } from '@/utils/accountOptions'
+import { TRANSACTION_PRESETS, matchesFilter, getPresetById } from '@/utils/transactionPresets'
+import { getTxTypeFilter } from '@/utils/accountFilterRules'
+import { cn } from '@/utils/cn'
+
+/* ──────────────────────────────────────────────────────────────────────────────
+ * PHASE 3 STEP 5 — NLP AUTOFILLS STRUCTURED FORM (no separate preview UI)
+ * The NL tab is now input-only. Parsing immediately hands the result to the
+ * structured form via `onParsed`. The structured form is the SINGLE editing
+ * surface — same validation, same dropdowns, same save path as a manual entry.
+ * Confidence + review reasons + multi-line journal lines are surfaced INSIDE
+ * the structured form as banners / inline warnings.
+ * ────────────────────────────────────────────────────────────────────────────── */
 
 // ─── Zod Schema ────────────────────────────────────────────────────────────────
 const formSchema = z.object({
-  transactionDate: z.string().min(1, 'Date is required'),
-  description: z.string().min(2, 'Description is required'),
-  amount: z.number().positive('Amount must be greater than 0'),
-  debitAccountId: z.string().min(1, 'Debit account is required'),
-  creditAccountId: z.string().min(1, 'Credit account is required'),
-  transactionType: z.string().optional(),
-  customerName: z.string().optional(),
-  vendorName: z.string().optional(),
-  isInstallment: z.boolean().optional(),
-  downPayment: z.number().min(0).optional(),
-  installmentCount: z.number().min(1).optional(),
-  installmentFrequency: z.string().optional(),
+  transactionDate:     z.string().min(1, 'Date is required'),
+  description:         z.string().min(2, 'Description is required'),
+  amount:              z.number().positive('Amount must be greater than 0'),
+  debitAccountId:      z.string().min(1, 'Debit account is required'),
+  creditAccountId:     z.string().min(1, 'Credit account is required'),
+  transactionType:     z.string().optional(),
+  referenceNumber:     z.string().optional(),
+  invoiceNumber:       z.string().optional(),
+  notes:               z.string().optional(),
+  dueDate:             z.string().optional(),
+  paymentMethod:       z.string().optional(),
+  txnCurrency:         z.string().optional(),
+  exchangeRate:        z.preprocess(
+    (v) => (typeof v === 'number' && isNaN(v)) ? undefined : v,
+    z.number().min(0).optional()
+  ),
+  taxAmount:           z.preprocess(
+    (v) => (typeof v === 'number' && isNaN(v)) ? undefined : v,
+    z.number().min(0).optional()
+  ),
+  taxRate:             z.preprocess(
+    (v) => (typeof v === 'number' && isNaN(v)) ? undefined : v,
+    z.number().min(0).max(100).optional()
+  ),
+  customerName:        z.string().optional(),
+  vendorName:          z.string().optional(),
+  isInstallment:       z.boolean().optional(),
+  downPayment:         z.number().min(0).optional(),
+  installmentCount:    z.number().min(1).optional(),
+  installmentFrequency:z.string().optional(),
+  interestRate:        z.preprocess(
+    (v) => (typeof v === 'number' && isNaN(v)) ? undefined : v,
+    z.number().min(0).max(100).optional()
+  ),
+  firstPaymentDate:    z.string().optional(),
+  interestMethod:      z.enum(['reducing_balance', 'flat']).optional(),
 }).refine((d) => d.debitAccountId !== d.creditAccountId, {
   message: 'Debit and Credit accounts must be different',
   path: ['creditAccountId'],
 })
 
-// ─── Creatable Party Combobox ───────────────────────────────────────────────────
+// ─── Confidence pill (used in AI banner) ──────────────────────────────────────
+function NLConfBadge({ score }) {
+  if (score == null) return null
+  const pct = Math.round(score * 100)
+  const cls =
+    pct >= 75 ? 'bg-emerald-500/15 text-emerald-400 border-emerald-500/25' :
+    pct >= 50 ? 'bg-amber-500/15  text-amber-400  border-amber-500/25' :
+                'bg-red-500/15    text-red-400    border-red-500/25'
+  const label = pct >= 75 ? 'High' : pct >= 50 ? 'Medium' : 'Low'
+  return (
+    <span className={`inline-flex items-center gap-1 rounded-full border px-2 py-0.5 text-[10px] font-semibold ${cls}`}>
+      {label} · {pct}% confidence
+    </span>
+  )
+}
+
+// ─── Excel ConfBadge (legacy small badge) ─────────────────────────────────────
+function ConfBadge({ label, score }) {
+  const cls =
+    label === 'High'   ? 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20' :
+    label === 'Medium' ? 'bg-amber-500/10 text-amber-400 border-amber-500/20' :
+                         'bg-red-500/10 text-red-400 border-red-500/20'
+  return (
+    <span className={`inline-flex items-center gap-1 rounded-full border px-1.5 py-0.5 text-[10px] font-semibold leading-none ${cls}`}>
+      {score}%
+    </span>
+  )
+}
+
+// ─── Installment GAAP Journal Preview (shared) ────────────────────────────────
+function buildClientAmortization({ principal, count, frequency, annualRatePct, method = 'reducing_balance' }) {
+  if (!principal || principal <= 0 || !count || count < 1) {
+    return { schedule: [], emi: 0, totalInterest: 0 }
+  }
+  const round2 = (n) => Math.round((isFinite(n) ? n : 0) * 100) / 100
+  const periodsPerYear =
+    frequency === 'weekly'    ? 52 :
+    frequency === 'biweekly'  ? 26 :
+    frequency === 'quarterly' ?  4 : 12
+  const rate = (annualRatePct || 0) / 100 / periodsPerYear
+
+  let emi, totalInterest
+  if ((annualRatePct || 0) > 0 && method === 'reducing_balance' && rate > 0) {
+    const pow = Math.pow(1 + rate, count)
+    emi = principal * rate * pow / (pow - 1)
+    totalInterest = (emi * count) - principal
+  } else if ((annualRatePct || 0) > 0 && method === 'flat') {
+    const years = count / periodsPerYear
+    totalInterest = principal * (annualRatePct / 100) * years
+    emi = (principal + totalInterest) / count
+  } else {
+    emi = principal / count
+    totalInterest = 0
+  }
+  emi = round2(emi)
+  totalInterest = round2(totalInterest)
+
+  const schedule = []
+  let opening = principal
+  let pSum = 0, iSum = 0
+  for (let i = 1; i <= count; i++) {
+    let principalDue, interestDue
+    if (method === 'reducing_balance' && (annualRatePct || 0) > 0) {
+      interestDue  = round2(opening * rate)
+      principalDue = round2(emi - interestDue)
+    } else if (method === 'flat' && (annualRatePct || 0) > 0) {
+      principalDue = round2(principal / count)
+      interestDue  = round2(totalInterest / count)
+    } else {
+      principalDue = round2(principal / count)
+      interestDue  = 0
+    }
+    if (i === count) {
+      principalDue = round2(principal - pSum)
+      interestDue  = round2(totalInterest - iSum)
+    }
+    const closing = round2(Math.max(0, opening - principalDue))
+    schedule.push({ i, principalDue, interestDue, opening: round2(opening), closing })
+    pSum += principalDue
+    iSum += interestDue
+    opening = closing
+  }
+  return { schedule, emi, totalInterest }
+}
+
+function InstallmentJournalPreview({
+  total, downPayment, installmentCount, installmentFrequency,
+  interestRate, interestMethod, firstPaymentDate, assetName, currency,
+}) {
+  const amt       = total       || 0
+  const down      = downPayment || 0
+  const financed  = Math.max(0, amt - down)
+  const n         = Math.max(1, installmentCount || 1)
+  const annualRate = interestRate || 0
+  const method    = interestMethod || 'reducing_balance'
+  const freqLabel =
+    installmentFrequency === 'weekly'    ? 'weekly'    :
+    installmentFrequency === 'biweekly'  ? 'bi-weekly' :
+    installmentFrequency === 'quarterly' ? 'quarterly' : 'monthly'
+
+  const { schedule, emi, totalInterest } = buildClientAmortization({
+    principal: financed, count: n, frequency: installmentFrequency, annualRatePct: annualRate, method,
+  })
+  const totalPayable = financed + totalInterest
+  const balanced = Math.abs(amt - down - financed) < 0.01
+
+  const showRows = schedule.length <= 4
+    ? schedule
+    : [...schedule.slice(0, 3), schedule[schedule.length - 1]]
+
+  return (
+    <div className="rounded-lg border border-cyan/20 bg-navy/40 overflow-hidden">
+      <div className="flex items-center gap-2 px-3 py-2 border-b border-cyan/15 bg-cyan/5">
+        <span className="text-[10px] font-bold text-cyan uppercase tracking-wider">GAAP / IFRS — Compound Journal Entry</span>
+        <span className="ml-auto text-[10px] text-text-muted">at purchase date</span>
+      </div>
+
+      <div className="px-3 py-2 space-y-1">
+        <div className="flex items-center gap-2 text-xs">
+          <span className="font-mono font-bold text-cyan w-5 flex-shrink-0">DR</span>
+          <span className="flex-1 text-text-primary font-medium truncate">{assetName || 'Asset Account'}</span>
+          <span className="font-mono text-cyan font-semibold flex-shrink-0">{formatCurrency(amt, currency)}</span>
+        </div>
+        {down > 0 && (
+          <div className="flex items-center gap-2 text-xs pl-4">
+            <span className="font-mono font-bold text-text-muted w-5 flex-shrink-0">CR</span>
+            <span className="flex-1 text-text-secondary truncate">Cash / Bank</span>
+            <span className="font-mono text-text-secondary flex-shrink-0">{formatCurrency(down, currency)}</span>
+          </div>
+        )}
+        <div className="flex items-center gap-2 text-xs pl-4">
+          <span className="font-mono font-bold text-amber-400 w-5 flex-shrink-0">CR</span>
+          <span className="flex-1 text-amber-400 truncate font-medium">Loan Payable <span className="text-[9px] text-amber-400/70">(liability created)</span></span>
+          <span className="font-mono text-amber-400 font-semibold flex-shrink-0">{formatCurrency(financed, currency)}</span>
+        </div>
+        <div className="border-t border-glass mt-1 pt-1 flex justify-between text-[10px] text-text-muted">
+          <span>Balance check</span>
+          <span className={`font-medium ${balanced ? 'text-emerald-400' : 'text-red-400'}`}>
+            {balanced ? '✓ Balanced' : '✗ Unbalanced'}
+          </span>
+        </div>
+      </div>
+
+      {financed > 0 && (
+        <div className="border-t border-cyan/15 bg-amber-500/5 px-3 py-2 flex flex-wrap items-center gap-x-4 gap-y-1 text-[11px]">
+          <div>
+            <span className="text-amber-400/80 block">Liability Created</span>
+            <span className="font-semibold text-amber-400">{formatCurrency(financed, currency)}</span>
+          </div>
+          <div>
+            <span className="text-text-muted block">EMI</span>
+            <span className="font-semibold text-text-primary">{formatCurrency(emi, currency)}</span>
+            <span className="text-text-muted ml-0.5">/{freqLabel}</span>
+          </div>
+          {annualRate > 0 && (
+            <>
+              <div>
+                <span className="text-text-muted block">Total Interest</span>
+                <span className="font-semibold text-amber-400">{formatCurrency(totalInterest, currency)}</span>
+              </div>
+              <div>
+                <span className="text-text-muted block">Total Payable</span>
+                <span className="font-semibold text-text-primary">{formatCurrency(totalPayable, currency)}</span>
+              </div>
+            </>
+          )}
+          {annualRate === 0 && (
+            <div>
+              <span className="text-text-muted block">Interest</span>
+              <span className="text-emerald-400 font-medium">Interest-free</span>
+            </div>
+          )}
+          {firstPaymentDate && (
+            <div>
+              <span className="text-text-muted block">First Payment</span>
+              <span className="font-semibold text-text-primary">{firstPaymentDate}</span>
+            </div>
+          )}
+        </div>
+      )}
+
+      {schedule.length > 0 && financed > 0 && (
+        <div className="border-t border-cyan/15">
+          <div className="px-3 py-1.5 bg-glass-panel/60 text-[10px] font-bold text-text-secondary uppercase tracking-wider">
+            Amortization {schedule.length > 4 ? `(first 3 + last of ${schedule.length})` : `(${schedule.length} payments)`}
+          </div>
+          <div className="overflow-x-auto">
+            <table className="w-full text-[11px]">
+              <thead className="bg-glass-panel/40 text-text-muted">
+                <tr>
+                  <th className="px-2 py-1 text-left font-medium">#</th>
+                  <th className="px-2 py-1 text-right font-medium">Principal</th>
+                  <th className="px-2 py-1 text-right font-medium">Interest</th>
+                  <th className="px-2 py-1 text-right font-medium">Balance</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-glass">
+                {showRows.map((row, idx) => {
+                  const showEllipsis = schedule.length > 4 && idx === 3
+                  return (
+                    <>
+                      {showEllipsis && (
+                        <tr key={`ellipsis-${idx}`} className="text-text-muted">
+                          <td colSpan="4" className="px-2 py-0.5 text-center text-[10px]">⋯</td>
+                        </tr>
+                      )}
+                      <tr key={row.i} className="text-text-secondary">
+                        <td className="px-2 py-1 font-mono text-text-muted">{row.i}</td>
+                        <td className="px-2 py-1 font-mono text-right text-cyan">{formatCurrency(row.principalDue, currency)}</td>
+                        <td className="px-2 py-1 font-mono text-right text-amber-400">{formatCurrency(row.interestDue, currency)}</td>
+                        <td className="px-2 py-1 font-mono text-right">{formatCurrency(row.closing, currency)}</td>
+                      </tr>
+                    </>
+                  )
+                })}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      )}
+    </div>
+  )
+}
+
+// ─── Creatable Party Combobox ─────────────────────────────────────────────────
 function PartyInput({ label, suggestions, value, onChange, placeholder }) {
   const [open, setOpen] = useState(false)
   const ref = useRef(null)
-
   const filtered = useMemo(() =>
     suggestions.filter(s => s.toLowerCase().includes((value || '').toLowerCase())).slice(0, 8)
   , [suggestions, value])
-
   const close = useCallback(() => setOpen(false), [])
-
   useEffect(() => {
     const handler = (e) => { if (!ref.current?.contains(e.target)) close() }
     document.addEventListener('mousedown', handler)
     return () => document.removeEventListener('mousedown', handler)
   }, [close])
-
   const handleSelect = (name) => { onChange(name); setOpen(false) }
-
   const showNew = value?.trim() && !suggestions.some(s => s.toLowerCase() === value.trim().toLowerCase())
 
   return (
@@ -75,19 +333,12 @@ function PartyInput({ label, suggestions, value, onChange, placeholder }) {
       {open && (filtered.length > 0 || showNew) && (
         <div className="absolute z-50 w-full mt-1 rounded-lg border border-glass bg-navy shadow-xl overflow-hidden">
           {filtered.map(name => (
-            <div
-              key={name}
-              onMouseDown={() => handleSelect(name)}
-              className="px-3 py-2 text-sm text-text-primary hover:bg-glass-hover cursor-pointer"
-            >
+            <div key={name} onMouseDown={() => handleSelect(name)} className="px-3 py-2 text-sm text-text-primary hover:bg-glass-hover cursor-pointer">
               {name}
             </div>
           ))}
           {showNew && (
-            <div
-              onMouseDown={() => handleSelect(value.trim())}
-              className="px-3 py-2 text-sm text-cyan hover:bg-cyan/10 cursor-pointer border-t border-glass"
-            >
+            <div onMouseDown={() => handleSelect(value.trim())} className="px-3 py-2 text-sm text-cyan hover:bg-cyan/10 cursor-pointer border-t border-glass">
               + Add "{value.trim()}" as new
             </div>
           )}
@@ -97,30 +348,74 @@ function PartyInput({ label, suggestions, value, onChange, placeholder }) {
   )
 }
 
-// ─── Tab config ────────────────────────────────────────────────────────────────
+// ─── Tab config ───────────────────────────────────────────────────────────────
 const TABS = [
   { id: 'nl',    label: 'Natural Language', icon: MessageSquare },
   { id: 'form',  label: 'Structured Form',  icon: LayoutList },
   { id: 'excel', label: 'Excel / CSV',      icon: Upload },
 ]
 
-// ─── Main Component ────────────────────────────────────────────────────────────
+// ─── Main Component ───────────────────────────────────────────────────────────
 export default function TransactionFormModal({ isOpen, onClose }) {
-  const [activeTab, setActiveTab] = useState('form')
+  const [activeTab,  setActiveTab]  = useState('form')
+  const [wasOpen,    setWasOpen]    = useState(isOpen)
+  const [nlPrefill,  setNlPrefill]  = useState(null)
   const currency = useBusinessStore((s) => s.currency)
 
-  // Reset to default tab when modal opens
-  useEffect(() => {
-    if (isOpen) setActiveTab('form')
-  }, [isOpen])
-
-  const handleClose = () => {
-    onClose()
+  if (isOpen !== wasOpen) {
+    setWasOpen(isOpen)
+    if (isOpen) {
+      setActiveTab('form')
+      setNlPrefill(null)
+    }
   }
+
+  const handleClose = () => { onClose() }
+
+  /**
+   * STEP 5 — Called by NLTab right after Gemini parses the text.
+   * Maps the NL preview shape to the structured form's initialValues shape
+   * and switches to the form tab. The NL parser AUTOFILLS the same form —
+   * there is no separate NL confirmation flow.
+   */
+  const handleNlParsed = useCallback((preview) => {
+    setNlPrefill({
+      transactionDate:      preview.transactionDate || new Date().toISOString().split('T')[0],
+      description:          preview.description     || '',
+      amount:               typeof preview.amount === 'number' ? preview.amount : 0,
+      transactionType:      preview.transactionType || '',
+      debitAccountId:       preview.debitAccountId  || '',
+      creditAccountId:      preview.creditAccountId || '',
+      isInstallment:        !!preview.isInstallment,
+      downPayment:          preview.downPayment              || 0,
+      installmentCount:     preview.installmentCount || preview.installmentPeriodMonths || null,
+      installmentFrequency: preview.installmentFrequency     || 'monthly',
+      interestRate:         preview.interestRate             || 0,
+      firstPaymentDate:     preview.firstPaymentDate         || '',
+      interestMethod:       preview.interestMethod           || 'reducing_balance',
+      notes:                preview.notes                    || '',
+      vendorName:           preview.vendorName               || '',
+      customerName:         preview.customerName             || '',
+      taxAmount:            preview.taxAmount                || 0,
+      taxRate:              preview.taxRate                  || 0,
+      txnCurrency:          preview.currency                 || currency,
+      paymentMethod:        preview.paymentMethod            || '',
+      invoiceNumber:        preview.invoiceNumber            || '',
+      // AI metadata
+      _aiParsed:            true,
+      _confidence:          preview.confidence,
+      _requiresReview:      preview.requiresReview,
+      _reviewReasons:       preview.reviewReasons || [],
+      _rawText:             preview._rawText || '',
+      _journalLines:        Array.isArray(preview.resolvedJournalLines) ? preview.resolvedJournalLines : [],
+      _aiDebitAccount:      preview.debitAccount  || null,
+      _aiCreditAccount:     preview.creditAccount || null,
+    })
+    setActiveTab('form')
+  }, [currency])
 
   return (
     <Modal isOpen={isOpen} onClose={handleClose} title="Record Transaction" className="sm:max-w-2xl">
-      {/* Tab Bar */}
       <div className="flex gap-1 p-1 rounded-xl bg-glass-panel border border-glass mb-6">
         {TABS.map(({ id, label, icon: Icon }) => (
           <button
@@ -139,189 +434,179 @@ export default function TransactionFormModal({ isOpen, onClose }) {
         ))}
       </div>
 
-      {/* Tab Panels */}
-      {activeTab === 'nl'    && <NLTab currency={currency} onSuccess={handleClose} />}
-      {activeTab === 'form'  && <StructuredFormTab currency={currency} onSuccess={handleClose} onCancel={handleClose} />}
+      {activeTab === 'nl'    && <NLTab    currency={currency} onParsed={handleNlParsed} />}
+      {activeTab === 'form'  && <StructuredFormTab currency={currency} onSuccess={handleClose} onCancel={handleClose} initialValues={nlPrefill} />}
       {activeTab === 'excel' && <ExcelTab onSuccess={handleClose} onCancel={handleClose} />}
     </Modal>
   )
 }
 
-// ─── Tab 1: Natural Language ───────────────────────────────────────────────────
-function NLTab({ currency, onSuccess }) {
-  const [step, setStep] = useState('input') // 'input' | 'preview'
+// ─── Tab 1: Natural Language (Step 5: input-only, autofills form) ─────────────
+function NLTab({ onParsed }) {
   const [text, setText] = useState('')
-  const [preview, setPreview] = useState(null)
-
   const nlPreview = useNLPreview()
-  const nlConfirm = useNLConfirm()
-  const { data: rawAccounts } = useAccounts()
-  const accounts = useMemo(() => {
-    const d = rawAccounts
-    return Array.isArray(d?.docs) ? d.docs : Array.isArray(d?.data) ? d.data : Array.isArray(d) ? d : []
-  }, [rawAccounts])
-
-  const accountOptions = useMemo(() =>
-    accounts.map(a => ({ value: a._id, label: `${a.accountName} (${a.accountType})` }))
-  , [accounts])
 
   const handleParse = async () => {
     if (text.trim().length < 5) return
     const result = await nlPreview.mutateAsync(text)
-    if (result) {
-      setPreview({
-        transactionDate: result.transactionDate || new Date().toISOString().split('T')[0],
-        description: result.description || text,
-        amount: result.amount || 0,
-        transactionType: result.transactionType || '',
-        debitAccountId: result.debitAccountId || '',
-        creditAccountId: result.creditAccountId || '',
-        debitAccount: result.debitAccount || '',
-        creditAccount: result.creditAccount || '',
-      })
-      setStep('preview')
-    }
-  }
-
-  const handleConfirm = async () => {
-    await nlConfirm.mutateAsync({
-      transactionDate: preview.transactionDate,
-      description: preview.description,
-      amount: preview.amount,
-      transactionType: preview.transactionType || undefined,
-      debitAccountId: preview.debitAccountId,
-      creditAccountId: preview.creditAccountId,
+    if (!result) return
+    onParsed({
+      transactionDate:         result.transactionDate || new Date().toISOString().split('T')[0],
+      description:             result.description || text,
+      amount:                  result.amount || 0,
+      transactionType:         result.transactionType || '',
+      debitAccountId:          result.debitAccountId  || '',
+      creditAccountId:         result.creditAccountId || '',
+      debitAccount:            result.debitAccount    || '',
+      creditAccount:           result.creditAccount   || '',
+      confidence:              result.confidence      ?? null,
+      requiresReview:          result.requiresReview  ?? false,
+      reviewReasons:           result.reviewReasons   ?? [],
+      isInstallment:           result.isInstallment   || false,
+      installmentPeriodMonths: result.installmentPeriodMonths || null,
+      totalInstallmentAmount:  result.totalInstallmentAmount  || null,
+      downPayment:             result.downPayment            || 0,
+      installmentFrequency:    result.installmentFrequency   || 'monthly',
+      installmentCount:        result.installmentCount       || result.installmentPeriodMonths || null,
+      interestRate:            result.interestRate           || 0,
+      firstPaymentDate:        result.firstPaymentDate       || '',
+      interestMethod:          result.interestMethod         || 'reducing_balance',
+      taxAmount:               result.taxAmount              || 0,
+      taxRate:                 result.taxRate                || 0,
+      currency:                result.currency               || null,
+      vendorName:              result.vendorName             || result.counterpartyName || '',
+      customerName:            result.customerName           || result.counterpartyName || '',
+      invoiceNumber:           result.invoiceNumber          || '',
+      paymentMethod:           result.paymentMethod          || '',
+      notes:                   result.notes                  || '',
+      resolvedJournalLines:    result.resolvedJournalLines   || [],
+      _rawText:                text,
     })
-    onSuccess()
-  }
-
-  const handleReset = () => {
-    setStep('input')
-    setPreview(null)
-  }
-
-  if (step === 'preview' && preview) {
-    return (
-      <div className="space-y-5 animate-fade-in">
-        <div className="flex items-center gap-2 p-3 rounded-lg bg-cyan/5 border border-cyan/20">
-          <CheckCircle className="h-5 w-5 text-cyan flex-shrink-0" />
-          <p className="text-sm text-text-secondary">Review the parsed transaction below and correct any field before confirming.</p>
-        </div>
-
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-          <div>
-            <label className="block text-xs font-medium text-text-secondary mb-1">Date</label>
-            <input
-              type="date"
-              className="w-full px-3 py-2 rounded-lg bg-glass-panel border border-glass text-text-primary text-sm focus:border-cyan focus:outline-none"
-              value={preview.transactionDate}
-              onChange={e => setPreview(p => ({ ...p, transactionDate: e.target.value }))}
-            />
-          </div>
-          <div>
-            <label className="block text-xs font-medium text-text-secondary mb-1">Amount ({currency})</label>
-            <input
-              type="number"
-              step="0.01"
-              min="0"
-              className="w-full px-3 py-2 rounded-lg bg-glass-panel border border-glass text-text-primary text-sm focus:border-cyan focus:outline-none"
-              value={preview.amount}
-              onChange={e => setPreview(p => ({ ...p, amount: parseFloat(e.target.value) || 0 }))}
-            />
-          </div>
-        </div>
-
-        <div>
-          <label className="block text-xs font-medium text-text-secondary mb-1">Description</label>
-          <input
-            type="text"
-            className="w-full px-3 py-2 rounded-lg bg-glass-panel border border-glass text-text-primary text-sm focus:border-cyan focus:outline-none"
-            value={preview.description}
-            onChange={e => setPreview(p => ({ ...p, description: e.target.value }))}
-          />
-        </div>
-
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-          <div>
-            <Select
-              label="Debit Account (DR)"
-              options={accountOptions}
-              value={preview.debitAccountId || ''}
-              onChange={(v) => setPreview(p => ({ ...p, debitAccountId: v }))}
-              placeholder={preview.debitAccount ? `AI suggested: ${preview.debitAccount}` : 'Select account'}
-            />
-            {!preview.debitAccountId && preview.debitAccount && (
-              <p className="mt-1 text-xs text-amber-400">AI suggested "{preview.debitAccount}" — please select the closest match above</p>
-            )}
-          </div>
-          <div>
-            <Select
-              label="Credit Account (CR)"
-              options={accountOptions}
-              value={preview.creditAccountId || ''}
-              onChange={(v) => setPreview(p => ({ ...p, creditAccountId: v }))}
-              placeholder={preview.creditAccount ? `AI suggested: ${preview.creditAccount}` : 'Select account'}
-            />
-            {!preview.creditAccountId && preview.creditAccount && (
-              <p className="mt-1 text-xs text-amber-400">AI suggested "{preview.creditAccount}" — please select the closest match above</p>
-            )}
-          </div>
-        </div>
-
-        <div className="flex justify-between gap-3 pt-4 border-t border-glass">
-          <Button variant="ghost" onClick={handleReset} disabled={nlConfirm.isPending}>
-            ← Try Again
-          </Button>
-          <Button
-            onClick={handleConfirm}
-            loading={nlConfirm.isPending}
-            disabled={!preview.debitAccountId || !preview.creditAccountId || preview.amount <= 0}
-          >
-            Confirm & Save
-          </Button>
-        </div>
-      </div>
-    )
   }
 
   return (
     <div className="space-y-5">
       <p className="text-sm text-text-secondary">
-        Describe your transaction in plain English. VousFin will parse it into a double-entry journal entry.
+        Describe your transaction in plain English. VousFin will parse it and
+        autofill the structured form for review and editing.
       </p>
-
       <div className="space-y-1">
         <label className="block text-xs font-medium text-text-secondary">Transaction Description</label>
         <textarea
           rows={4}
           className="w-full px-4 py-3 rounded-xl bg-glass-panel border border-glass text-text-primary text-sm placeholder:text-text-muted focus:border-cyan focus:outline-none resize-none transition-colors"
-          placeholder={'Examples:\n• "Paid PKR 5000 for office supplies from bank"\n• "Received PKR 25000 from customer Ali for consulting"\n• "Bought laptop worth PKR 120000 on credit"'}
+          placeholder={'Examples:\n• "Paid PKR 5000 for office supplies from bank"\n• "Received PKR 25000 from Ali for consulting"\n• "Bought office furniture on installments from ABC Furnitures"\n• "Sold goods for 11700 cash including 17% GST"'}
           value={text}
           onChange={e => setText(e.target.value)}
         />
+        <p className="text-[11px] text-text-muted">
+          AI detects amount, accounts, taxes, installments, and parties — then opens the structured form for confirmation.
+        </p>
       </div>
-
       <div className="flex justify-end gap-3 pt-2 border-t border-glass">
-        <Button
-          onClick={handleParse}
-          loading={nlPreview.isPending}
-          disabled={text.trim().length < 5}
-        >
-          Parse Transaction →
+        <Button onClick={handleParse} loading={nlPreview.isPending} disabled={text.trim().length < 5}>
+          <Sparkles className="h-4 w-4 mr-1" />
+          Parse &amp; Autofill Form →
         </Button>
       </div>
     </div>
   )
 }
 
+// ─── Preset Picker ────────────────────────────────────────────────────────────
+function PresetPicker({ activeId, onChange }) {
+  const groups = useMemo(() => {
+    const map = new Map()
+    TRANSACTION_PRESETS.forEach(p => {
+      const g = p.group || 'Other'
+      if (!map.has(g)) map.set(g, [])
+      map.get(g).push(p)
+    })
+    return map
+  }, [])
+
+  return (
+    <div className="space-y-2">
+      <div className="flex items-center justify-between">
+        <label className="text-sm font-medium text-text-secondary">
+          Common transactions <span className="text-text-muted text-xs">(optional shortcut)</span>
+        </label>
+        {activeId && (
+          <button type="button" onClick={() => onChange(null)} className="text-xs text-cyan hover:underline">
+            Clear
+          </button>
+        )}
+      </div>
+      <div className="space-y-3 max-h-52 overflow-y-auto pr-1 scrollbar-thin">
+        {Array.from(groups.entries()).map(([groupName, presets]) => (
+          <div key={groupName}>
+            <p className="text-[10px] font-semibold text-text-muted uppercase tracking-wider mb-1.5">{groupName}</p>
+            <div className="flex flex-wrap gap-1.5">
+              {presets.map((p) => (
+                <button
+                  key={p.id}
+                  type="button"
+                  title={p.description}
+                  onClick={() => onChange(activeId === p.id ? null : p.id)}
+                  className={cn(
+                    'rounded-full border px-2.5 py-1 text-[11px] font-semibold transition-colors',
+                    activeId === p.id
+                      ? 'border-cyan bg-cyan text-navy'
+                      : 'border-glass bg-glass-panel text-text-secondary hover:border-cyan/40 hover:text-text-primary'
+                  )}
+                >
+                  {p.label}
+                </button>
+              ))}
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  )
+}
+
+// ─── Transaction Type options ─────────────────────────────────────────────────
+const TX_TYPE_OPTIONS = [
+  { value: '', label: '— Auto-detect from accounts —' },
+  { value: 'Cash Sale',             label: 'Cash Sale',                    group: 'Sales & Revenue' },
+  { value: 'Credit Sale',           label: 'Credit Sale (A/R Invoice)',    group: 'Sales & Revenue' },
+  { value: 'Inventory Sale',        label: 'Inventory Sale',               group: 'Sales & Revenue' },
+  { value: 'Payment Received',      label: 'Payment Received',             group: 'Sales & Revenue' },
+  { value: 'GST Collection',        label: 'GST Collected on Sale',        group: 'Sales & Revenue' },
+  { value: 'Advance from Customer', label: 'Advance from Customer',        group: 'Sales & Revenue' },
+  { value: 'Refund',                label: 'Customer Refund',              group: 'Sales & Revenue' },
+  { value: 'Cash Purchase',         label: 'Cash Purchase / Expense',      group: 'Purchases & Expenses' },
+  { value: 'Credit Purchase',       label: 'Credit Purchase (A/P Bill)',   group: 'Purchases & Expenses' },
+  { value: 'Inventory Purchase',    label: 'Inventory Purchase',           group: 'Purchases & Expenses' },
+  { value: 'Payment Made',          label: 'Payment Made (to Vendor)',     group: 'Purchases & Expenses' },
+  { value: 'Prepaid Expense',       label: 'Prepaid Expense',              group: 'Purchases & Expenses' },
+  { value: 'Interest Payment',      label: 'Interest Payment',             group: 'Purchases & Expenses' },
+  { value: 'Salary',                label: 'Salary / Payroll',             group: 'Payroll & Taxes' },
+  { value: 'GST Payment',           label: 'GST Payment to Authority',     group: 'Payroll & Taxes' },
+  { value: 'WHT Payment',           label: 'WHT Payment',                  group: 'Payroll & Taxes' },
+  { value: 'Asset Purchase',        label: 'Asset Purchase',               group: 'Assets & Capital' },
+  { value: 'Depreciation',          label: 'Depreciation Entry',           group: 'Assets & Capital' },
+  { value: 'Owner Investment',      label: 'Owner Investment',             group: 'Assets & Capital' },
+  { value: 'Owner Withdrawal',      label: 'Owner Withdrawal / Drawing',   group: 'Assets & Capital' },
+  { value: 'Loan Disbursement',     label: 'Loan Received',                group: 'Financing' },
+  { value: 'Loan Repayment',        label: 'Loan Repayment',               group: 'Financing' },
+  { value: 'Installment Payment',   label: 'Installment Payment',          group: 'Financing' },
+  { value: 'Bank Transfer',         label: 'Bank / Cash Transfer',         group: 'Transfers & Adjustments' },
+  { value: 'Transfer',              label: 'Internal Transfer',            group: 'Transfers & Adjustments' },
+  { value: 'Journal Entry',         label: 'Manual Journal Entry',         group: 'Transfers & Adjustments' },
+  { value: 'Income',                label: 'Income (legacy)',              group: 'Legacy' },
+  { value: 'Expense',               label: 'Expense (legacy)',             group: 'Legacy' },
+]
+
 // ─── Tab 2: Structured Form ───────────────────────────────────────────────────
-function StructuredFormTab({ currency, onSuccess, onCancel }) {
-  const createTx = useCreateTransaction()
+function StructuredFormTab({ currency, onSuccess, onCancel, initialValues }) {
+  const createTx            = useCreateTransaction()
   const createInstallmentTx = useCreateInstallmentTransaction()
 
-  const { data: rawAccounts } = useAccounts()
+  const { data: rawAccounts }  = useAccounts()
   const { data: rawCustomers } = useCustomers()
-  const { data: rawVendors } = useVendors()
+  const { data: rawVendors }   = useVendors()
 
   const accounts = useMemo(() => {
     const d = rawAccounts
@@ -346,83 +631,197 @@ function StructuredFormTab({ currency, onSuccess, onCancel }) {
   } = useForm({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      transactionDate: new Date().toISOString().split('T')[0],
-      description: '',
-      amount: 0,
-      debitAccountId: '',
-      creditAccountId: '',
-      transactionType: '',
-      isInstallment: false,
-      downPayment: 0,
-      installmentCount: 3,
+      transactionDate:      new Date().toISOString().split('T')[0],
+      description:          '',
+      amount:               0,
+      debitAccountId:       '',
+      creditAccountId:      '',
+      transactionType:      '',
+      referenceNumber:      '',
+      invoiceNumber:        '',
+      notes:                '',
+      dueDate:              '',
+      paymentMethod:        '',
+      txnCurrency:          currency,
+      exchangeRate:         1,
+      taxAmount:            0,
+      taxRate:              0,
+      isInstallment:        false,
+      firstPaymentDate:     '',
+      interestMethod:       'reducing_balance',
+      downPayment:          0,
+      installmentCount:     3,
       installmentFrequency: 'monthly',
+      interestRate:         0,
     },
   })
 
-  useEffect(() => {
-    reset()
-    setValue('transactionDate', new Date().toISOString().split('T')[0])
-  }, [reset, setValue])
+  const [nlAiBanner, setNlAiBanner]     = useState(false)
+  const [presetId,   setPresetId]       = useState(null)
+  const [showOptional, setShowOptional] = useState(false)
 
-  const accountOptions = useMemo(() =>
-    accounts.map(a => ({ value: a._id, label: `${a.accountName} (${a.accountType})` }))
-  , [accounts])
+  useEffect(() => {
+    const today = new Date().toISOString().split('T')[0]
+    if (initialValues) {
+      reset({
+        transactionDate:      initialValues.transactionDate      || today,
+        description:          initialValues.description          || '',
+        amount:               typeof initialValues.amount === 'number' ? initialValues.amount : 0,
+        debitAccountId:       initialValues.debitAccountId       || '',
+        creditAccountId:      initialValues.creditAccountId      || '',
+        transactionType:      initialValues.transactionType      || '',
+        referenceNumber:      '',
+        invoiceNumber:        initialValues.invoiceNumber        || '',
+        notes:                initialValues.notes                || '',
+        dueDate:              '',
+        paymentMethod:        initialValues.paymentMethod        || '',
+        txnCurrency:          initialValues.txnCurrency          || currency,
+        exchangeRate:         initialValues.exchangeRate         || 1,
+        taxAmount:            initialValues.taxAmount            || 0,
+        taxRate:              initialValues.taxRate              || 0,
+        customerName:         initialValues.customerName         || '',
+        vendorName:           initialValues.vendorName           || '',
+        isInstallment:        !!initialValues.isInstallment,
+        downPayment:          initialValues.downPayment          || 0,
+        installmentCount:     initialValues.installmentCount     || 3,
+        installmentFrequency: initialValues.installmentFrequency || 'monthly',
+        interestRate:         initialValues.interestRate         || 0,
+        firstPaymentDate:     initialValues.firstPaymentDate     || '',
+        interestMethod:       initialValues.interestMethod       || 'reducing_balance',
+      })
+      setNlAiBanner(true)
+      // Auto-open optional details if NL detected tax/currency/payment-method info
+      if (initialValues.taxAmount || initialValues.taxRate ||
+          (initialValues.txnCurrency && initialValues.txnCurrency !== currency) ||
+          initialValues.paymentMethod) {
+        setShowOptional(true)
+      }
+      const matchingPreset = TRANSACTION_PRESETS.find(p => p.transactionType === initialValues.transactionType)
+      setPresetId(matchingPreset?.id || null)
+    } else {
+      reset({ transactionDate: today })
+      setNlAiBanner(false)
+      setPresetId(null)
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [initialValues])
+
+  const preset = useMemo(() => getPresetById(presetId), [presetId])
+  const allAccountOptions = useMemo(() => buildGroupedAccountOptions(accounts), [accounts])
+
+  function buildSuggestedOptions(allOptions, filter) {
+    if (!filter) return allOptions
+    const suggested = allOptions.filter(o => matchesFilter(o, filter))
+    const rest      = allOptions.filter(o => !matchesFilter(o, filter))
+    if (suggested.length === 0) return allOptions
+    const suggestedWithHeader = suggested.map(o => ({ ...o, group: '★ Suggested' }))
+    return [...suggestedWithHeader, ...rest]
+  }
+
+  const txTypeWatch = watch('transactionType')
+  const effectiveFilters = useMemo(() => {
+    if (preset) return { debit: preset.debitFilter, credit: preset.creditFilter }
+    const f = getTxTypeFilter(txTypeWatch)
+    return { debit: f.debitFilter, credit: f.creditFilter }
+  }, [preset, txTypeWatch])
+
+  const debitOptions  = useMemo(
+    () => buildSuggestedOptions(allAccountOptions, effectiveFilters.debit),
+    [allAccountOptions, effectiveFilters.debit]
+  )
+  const creditOptions = useMemo(
+    () => buildSuggestedOptions(allAccountOptions, effectiveFilters.credit),
+    [allAccountOptions, effectiveFilters.credit]
+  )
 
   const customerSuggestions = useMemo(() =>
     customers.map(c => c.fullName || c.name || c.businessName).filter(Boolean)
   , [customers])
-
   const vendorSuggestions = useMemo(() =>
     vendors.map(v => v.vendorName || v.name).filter(Boolean)
   , [vendors])
 
-  const txTypeOptions = [
-    { value: '', label: 'Auto-detect from accounts' },
-    { value: 'Income', label: 'Income' },
-    { value: 'Expense', label: 'Expense' },
-    { value: 'Transfer', label: 'Transfer' },
-    { value: 'Credit Sale', label: 'Credit Sale (A/R)' },
-    { value: 'Credit Purchase', label: 'Credit Purchase (A/P)' },
-    { value: 'Payment Received', label: 'Payment Received' },
-    { value: 'Payment Made', label: 'Payment Made' },
-    { value: 'Owner Investment', label: 'Owner Investment' },
-    { value: 'Owner Withdrawal', label: 'Owner Withdrawal' },
-    { value: 'Asset Purchase', label: 'Asset Purchase' },
-  ]
-
-  const debitAccountId = watch('debitAccountId')
+  const debitAccountId  = watch('debitAccountId')
   const creditAccountId = watch('creditAccountId')
-  const isInstallment = watch('isInstallment')
-  const amount = watch('amount')
+  const isInstallment   = watch('isInstallment')
+  const amount          = watch('amount')
+  const transactionType = watch('transactionType')
 
   const requiresCustomer = useMemo(() => {
     const d = accounts.find(a => a._id === debitAccountId)
     const c = accounts.find(a => a._id === creditAccountId)
-    return d?.accountName === 'Accounts Receivable' || c?.accountName === 'Accounts Receivable'
-  }, [debitAccountId, creditAccountId, accounts])
+    const customerTypes = [
+      'Credit Sale', 'Cash Sale', 'Inventory Sale', 'Payment Received',
+      'GST Collection', 'Advance from Customer', 'Refund', 'Income',
+    ]
+    const isARSubtype = (acct) =>
+      acct?.accountSubtype === 'Accounts Receivable' ||
+      acct?.accountSubtype === 'Current Assets' ||
+      acct?.accountName?.toLowerCase().includes('receivable') ||
+      acct?.accountName?.toLowerCase().includes('debtor')
+    return (
+      isARSubtype(d) || isARSubtype(c) ||
+      c?.accountType === 'Revenue' ||
+      customerTypes.includes(transactionType)
+    )
+  }, [debitAccountId, creditAccountId, accounts, transactionType])
 
   const requiresVendor = useMemo(() => {
     const d = accounts.find(a => a._id === debitAccountId)
     const c = accounts.find(a => a._id === creditAccountId)
-    return d?.accountName === 'Accounts Payable' || c?.accountName === 'Accounts Payable'
-  }, [debitAccountId, creditAccountId, accounts])
+    const vendorTypes = [
+      'Credit Purchase', 'Cash Purchase', 'Inventory Purchase', 'Payment Made',
+      'Salary', 'WHT Payment', 'GST Payment', 'Interest Payment',
+      'Prepaid Expense', 'Expense',
+    ]
+    const isAPSubtype = (acct) =>
+      acct?.accountSubtype === 'Accounts Payable' ||
+      acct?.accountSubtype === 'Current Liabilities' ||
+      acct?.accountName?.toLowerCase().includes('payable') ||
+      acct?.accountName?.toLowerCase().includes('creditor')
+    return (
+      isAPSubtype(d) || isAPSubtype(c) ||
+      d?.accountType === 'Expense' ||
+      vendorTypes.includes(transactionType)
+    )
+  }, [debitAccountId, creditAccountId, accounts, transactionType])
 
   const onSubmit = async (data) => {
     try {
-      const { isInstallment, downPayment, installmentCount, installmentFrequency, transactionType, customerName, vendorName, ...base } = data
+      const {
+        isInstallment, downPayment, installmentCount, installmentFrequency, interestRate,
+        firstPaymentDate, interestMethod,
+        transactionType, customerName, vendorName,
+        referenceNumber, invoiceNumber, notes, dueDate, paymentMethod,
+        txnCurrency, exchangeRate, taxAmount, taxRate,
+        ...base
+      } = data
+
+      const extras = {}
+      if (transactionType)         extras.transactionType      = transactionType
+      if (customerName?.trim())    extras.customerName         = customerName.trim()
+      if (vendorName?.trim())      extras.vendorName           = vendorName.trim()
+      if (referenceNumber?.trim()) extras.transactionReference = referenceNumber.trim()
+      if (invoiceNumber?.trim())   extras.invoiceNumber        = invoiceNumber.trim()
+      if (notes?.trim())           extras.notes                = notes.trim()
+      if (dueDate)                 extras.dueDate              = dueDate
+      if (paymentMethod)           extras.paymentMethod        = paymentMethod
+      if (txnCurrency && txnCurrency !== currency) {
+        extras.currency     = txnCurrency
+        extras.exchangeRate = exchangeRate || 1
+      }
+      if (typeof taxAmount === 'number' && taxAmount > 0) extras.taxAmount = taxAmount
+      if (typeof taxRate   === 'number' && taxRate   > 0) extras.taxRate   = taxRate
 
       if (isInstallment) {
-        const payload = { ...base, downPayment, installmentCount, installmentFrequency }
-        if (transactionType) payload.transactionType = transactionType
-        if (customerName?.trim()) payload.customerName = customerName.trim()
-        if (vendorName?.trim()) payload.vendorName = vendorName.trim()
-        await createInstallmentTx.mutateAsync(payload)
+        await createInstallmentTx.mutateAsync({
+          ...base, ...extras,
+          downPayment, installmentCount, installmentFrequency, interestRate,
+          interestMethod: interestMethod || 'reducing_balance',
+          ...(firstPaymentDate ? { firstPaymentDate } : {}),
+        })
       } else {
-        const payload = { ...base }
-        if (transactionType) payload.transactionType = transactionType
-        if (customerName?.trim()) payload.customerName = customerName.trim()
-        if (vendorName?.trim()) payload.vendorName = vendorName.trim()
-        await createTx.mutateAsync(payload)
+        await createTx.mutateAsync({ ...base, ...extras })
       }
       onSuccess()
     } catch {
@@ -432,85 +831,233 @@ function StructuredFormTab({ currency, onSuccess, onCancel }) {
 
   const isPending = isSubmitting || createTx.isPending || createInstallmentTx.isPending
 
+  const fDown  = watch('downPayment')          || 0
+  const fCount = watch('installmentCount')     || 1
+  const fRate  = watch('interestRate')         || 0
+  const fFreq  = watch('installmentFrequency') || 'monthly'
+  const debitAcct = accounts.find(a => a._id === debitAccountId)
+
+  // Multi-line journal preview (>2 lines = compound entry like GST sale, payroll w/ deductions)
+  const aiJournalLines = Array.isArray(initialValues?._journalLines) ? initialValues._journalLines : []
+  const hasCompoundJournal = aiJournalLines.length > 2
+  const aiReviewReasons = Array.isArray(initialValues?._reviewReasons) ? initialValues._reviewReasons : []
+
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="space-y-5 py-2">
-      {/* Row 1: Date + Amount */}
+
+      {/* AI Prefill Banner — shown when NL parser populated the form */}
+      {nlAiBanner && (
+        <div className="flex items-start gap-2 p-3 rounded-lg bg-cyan/5 border border-cyan/20 animate-fade-in">
+          <Sparkles className="h-4 w-4 text-cyan flex-shrink-0 mt-0.5" />
+          <div className="flex-1 min-w-0 space-y-1">
+            <div className="flex items-center gap-2 flex-wrap">
+              <p className="text-sm font-medium text-text-primary">AI pre-filled from natural language</p>
+              <NLConfBadge score={initialValues?._confidence} />
+            </div>
+            <p className="text-xs text-text-muted">Review all fields. Make changes before saving.</p>
+            {initialValues?._rawText && (
+              <p className="text-[11px] text-text-muted italic truncate" title={initialValues._rawText}>
+                Original: &quot;{initialValues._rawText}&quot;
+              </p>
+            )}
+          </div>
+          <button type="button" onClick={() => setNlAiBanner(false)} className="text-text-muted hover:text-text-primary flex-shrink-0">
+            <X className="h-3.5 w-3.5" />
+          </button>
+        </div>
+      )}
+
+      {/* Inline review-reasons warning */}
+      {nlAiBanner && aiReviewReasons.length > 0 && (
+        <div className="flex items-start gap-2 p-3 rounded-lg bg-amber-500/10 border border-amber-500/25 animate-fade-in">
+          <AlertTriangle className="h-4 w-4 text-amber-400 flex-shrink-0 mt-0.5" />
+          <div className="flex-1 min-w-0">
+            <p className="text-sm font-medium text-amber-300">AI flagged this for review</p>
+            <ul className="mt-1 text-xs text-amber-400/90 list-disc list-inside space-y-0.5">
+              {aiReviewReasons.slice(0, 4).map((r, i) => (
+                <li key={i} className="truncate" title={r}>{r}</li>
+              ))}
+            </ul>
+          </div>
+        </div>
+      )}
+
+      {/* Low-confidence warning */}
+      {nlAiBanner && initialValues?._confidence != null && initialValues._confidence < 0.7 && (
+        <div className="flex items-start gap-2 p-3 rounded-lg bg-amber-500/10 border border-amber-500/25 animate-fade-in">
+          <AlertTriangle className="h-4 w-4 text-amber-400 flex-shrink-0 mt-0.5" />
+          <div className="flex-1 min-w-0">
+            <p className="text-sm font-medium text-amber-300">Low confidence — verify accounts</p>
+            <p className="text-xs text-amber-400/80 mt-0.5">
+              Account names were fuzzy-matched (confidence {Math.round((initialValues._confidence ?? 0) * 100)}%).
+              Please verify the Debit and Credit accounts before saving.
+            </p>
+          </div>
+        </div>
+      )}
+
+      {/* AI suggested account hints when IDs couldn't be resolved */}
+      {nlAiBanner && initialValues?._aiDebitAccount && !debitAccountId && (
+        <p className="text-xs text-amber-400 px-1 -mt-2">
+          AI suggested debit account &quot;{initialValues._aiDebitAccount}&quot; — pick the closest match below.
+        </p>
+      )}
+      {nlAiBanner && initialValues?._aiCreditAccount && !creditAccountId && (
+        <p className="text-xs text-amber-400 px-1 -mt-2">
+          AI suggested credit account &quot;{initialValues._aiCreditAccount}&quot; — pick the closest match below.
+        </p>
+      )}
+
+      {/* Date + Amount */}
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-        <Input
-          label="Date"
-          type="date"
-          error={errors.transactionDate?.message}
-          {...register('transactionDate')}
-        />
-        <Input
-          label={`Amount (${currency})`}
-          type="number"
-          step="0.01"
-          min="0"
-          error={errors.amount?.message}
-          {...register('amount', { valueAsNumber: true })}
-        />
+        <Input label="Date" type="date" error={errors.transactionDate?.message} {...register('transactionDate')} />
+        <Input label={`Amount (${currency})`} type="number" step="0.01" min="0"
+          error={errors.amount?.message} {...register('amount', { valueAsNumber: true })} />
       </div>
 
-      {/* Description */}
-      <Input
-        label="Description"
-        placeholder="e.g., Office Supplies Purchase"
-        error={errors.description?.message}
-        {...register('description')}
+      <Input label="Description" placeholder="e.g., Office Supplies Purchase — paid by bank"
+        error={errors.description?.message} {...register('description')} />
+
+      {/* Preset chips */}
+      <PresetPicker
+        activeId={presetId}
+        onChange={(id) => {
+          const prev = getPresetById(presetId)
+          const next = getPresetById(id)
+          setPresetId(id)
+          if (next?.transactionType) setValue('transactionType', next.transactionType)
+          const currentDebit  = watch('debitAccountId')
+          const currentCredit = watch('creditAccountId')
+          if (id && prev && next && (currentDebit || currentCredit)) {
+            const debitOpt  = allAccountOptions.find(o => o.value === currentDebit)
+            const creditOpt = allAccountOptions.find(o => o.value === currentCredit)
+            const debitStillMatches  = !next.debitFilter  || (debitOpt  && matchesFilter(debitOpt,  next.debitFilter))
+            const creditStillMatches = !next.creditFilter || (creditOpt && matchesFilter(creditOpt, next.creditFilter))
+            if (!debitStillMatches)  setValue('debitAccountId',  '')
+            if (!creditStillMatches) setValue('creditAccountId', '')
+          }
+        }}
       />
 
-      {/* Transaction Type (optional, auto-detected) */}
-      <Select
-        label="Transaction Type (optional)"
-        options={txTypeOptions}
+      <Select label="Transaction Type (optional — auto-detected when blank)"
+        options={TX_TYPE_OPTIONS}
         value={watch('transactionType') || ''}
-        onChange={(v) => setValue('transactionType', v)}
-      />
+        onChange={(v) => setValue('transactionType', v)} />
 
-      {/* Double Entry Accounts */}
+      {/* Double-Entry Accounts */}
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 p-4 border border-glass rounded-xl bg-glass-panel">
-        <Select
-          label="Debit Account (DR)"
-          options={accountOptions}
-          value={debitAccountId}
-          onChange={(val) => setValue('debitAccountId', val)}
-          error={errors.debitAccountId?.message}
-          placeholder="Select Account"
-        />
-        <Select
-          label="Credit Account (CR)"
-          options={accountOptions}
-          value={creditAccountId}
-          onChange={(val) => setValue('creditAccountId', val)}
-          error={errors.creditAccountId?.message}
-          placeholder="Select Account"
-        />
+        <Select label="Debit Account (DR)" options={debitOptions}
+          value={debitAccountId} onChange={(val) => setValue('debitAccountId', val)}
+          error={errors.debitAccountId?.message} placeholder="Select Account" searchable />
+        <Select label="Credit Account (CR)" options={creditOptions}
+          value={creditAccountId} onChange={(val) => setValue('creditAccountId', val)}
+          error={errors.creditAccountId?.message} placeholder="Select Account" searchable />
       </div>
+      {preset && (
+        <p className="text-xs text-text-muted -mt-2 px-1">
+          <span className="font-semibold text-cyan">{preset.label}:</span> {preset.description}
+        </p>
+      )}
 
-      {/* Conditional Customer / Vendor — always optional, auto-creates on new name */}
+      {/* Compound (multi-line) journal preview — for GST sale, payroll w/ deductions, etc. */}
+      {hasCompoundJournal && (
+        <div className="rounded-lg border border-cyan/25 bg-cyan/5 p-3 space-y-1.5 animate-fade-in">
+          <div className="flex items-center justify-between mb-1">
+            <p className="text-xs font-semibold text-cyan uppercase tracking-wide">
+              Compound Journal — {aiJournalLines.length} lines
+            </p>
+            <span className="text-[10px] text-text-muted">AI-suggested · backend will validate</span>
+          </div>
+          <div className="divide-y divide-glass">
+            {aiJournalLines.map((line, i) => (
+              <div key={i} className="flex items-center justify-between py-1 text-xs">
+                <span className={`font-mono font-semibold w-10 ${line.type === 'debit' || line.entryType === 'debit' ? 'text-cyan' : 'text-text-muted'}`}>
+                  {(line.type || line.entryType) === 'debit' ? 'DR' : 'CR'}
+                </span>
+                <span className={`flex-1 truncate ${line.resolved !== false ? 'text-text-primary' : 'text-amber-400'}`}>
+                  {line.accountName || line.account}
+                  {line.resolved === false && <span className="ml-1 text-[10px]">(unresolved)</span>}
+                </span>
+                <span className="text-text-secondary font-mono ml-2">
+                  {formatCurrency(line.amount, currency)}
+                </span>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {/* Customer / Vendor */}
       {(requiresCustomer || requiresVendor) && (
         <div className="animate-fade-in p-4 rounded-xl bg-cyan/5 border border-cyan/20 space-y-4">
           {requiresCustomer && (
-            <PartyInput
-              label="Customer (optional)"
-              suggestions={customerSuggestions}
-              value={watch('customerName') || ''}
-              onChange={(val) => setValue('customerName', val)}
-              placeholder="Type or select a customer name…"
-            />
+            <PartyInput label="Customer (optional)" suggestions={customerSuggestions}
+              value={watch('customerName') || ''} onChange={(val) => setValue('customerName', val)}
+              placeholder="Type or select a customer name…" />
           )}
           {requiresVendor && (
-            <PartyInput
-              label="Vendor (optional)"
-              suggestions={vendorSuggestions}
-              value={watch('vendorName') || ''}
-              onChange={(val) => setValue('vendorName', val)}
-              placeholder="Type or select a vendor name…"
-            />
+            <PartyInput label="Vendor / Supplier (optional)" suggestions={vendorSuggestions}
+              value={watch('vendorName') || ''} onChange={(val) => setValue('vendorName', val)}
+              placeholder="Type or select a vendor name…" />
           )}
+          <Input label="Invoice / Bill Number (optional)" placeholder="e.g., INV-2024-042 or BILL-007"
+            {...register('invoiceNumber')} />
         </div>
       )}
+
+      {/* Additional Details (collapsible) */}
+      <div className="border border-glass rounded-xl overflow-hidden">
+        <button type="button" onClick={() => setShowOptional(v => !v)}
+          className="w-full flex items-center justify-between px-4 py-3 text-sm font-medium text-text-secondary hover:text-text-primary hover:bg-glass-hover transition-colors">
+          <span>Additional Details <span className="text-text-muted text-xs font-normal">(reference, due date, tax, notes)</span></span>
+          {showOptional ? <ChevronUp className="h-4 w-4 flex-shrink-0" /> : <ChevronDown className="h-4 w-4 flex-shrink-0" />}
+        </button>
+        {showOptional && (
+          <div className="px-4 pb-4 pt-1 space-y-4 border-t border-glass animate-fade-in">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <Input label="Reference Number" placeholder="e.g., REF-2024-001" {...register('referenceNumber')} />
+              <Input label="Payment Due Date" type="date" {...register('dueDate')} />
+            </div>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <Select label="Payment Method" options={[
+                { value: '',              label: '— Select —' },
+                { value: 'cash',          label: 'Cash' },
+                { value: 'bank',          label: 'Bank Transfer' },
+                { value: 'credit_card',   label: 'Credit Card' },
+                { value: 'debit_card',    label: 'Debit Card' },
+                { value: 'cheque',        label: 'Cheque' },
+                { value: 'mobile_wallet', label: 'Mobile Wallet (JazzCash/EasyPaisa)' },
+                { value: 'online',        label: 'Online (PayPal/Stripe)' },
+              ]} value={watch('paymentMethod') || ''} onChange={(v) => setValue('paymentMethod', v)} />
+              <Select label="Currency" options={[
+                { value: 'PKR', label: 'PKR — Pakistani Rupee' },
+                { value: 'USD', label: 'USD — US Dollar' },
+                { value: 'EUR', label: 'EUR — Euro' },
+                { value: 'GBP', label: 'GBP — British Pound' },
+                { value: 'AED', label: 'AED — UAE Dirham' },
+                { value: 'SAR', label: 'SAR — Saudi Riyal' },
+              ]} value={watch('txnCurrency') || currency} onChange={(v) => setValue('txnCurrency', v)} />
+            </div>
+            {watch('txnCurrency') && watch('txnCurrency') !== currency && (
+              <Input label={`Exchange Rate (1 ${watch('txnCurrency')} = ? ${currency})`}
+                type="number" step="0.0001" min="0" placeholder="e.g., 280.50"
+                {...register('exchangeRate', { valueAsNumber: true })} />
+            )}
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <Input label={`Tax Amount (${currency}) — optional`} type="number" step="0.01" min="0"
+                placeholder="GST / WHT amount" {...register('taxAmount', { valueAsNumber: true })} />
+              <Input label="Tax Rate (%) — optional" type="number" step="0.1" min="0" max="100"
+                placeholder="e.g., 17 for 17% GST" {...register('taxRate', { valueAsNumber: true })} />
+            </div>
+            <div>
+              <label className="block text-xs font-medium text-text-secondary mb-1">Notes (internal)</label>
+              <textarea rows={2} placeholder="Optional internal notes about this transaction…"
+                className="w-full px-3 py-2 rounded-lg bg-glass-panel border border-glass text-text-primary text-sm placeholder:text-text-muted focus:border-cyan focus:outline-none resize-none transition-colors"
+                {...register('notes')} />
+            </div>
+          </div>
+        )}
+      </div>
 
       {/* Installment Toggle */}
       <div className="pt-3 border-t border-glass">
@@ -520,75 +1067,72 @@ function StructuredFormTab({ currency, onSuccess, onCancel }) {
             <div className="h-6 w-11 rounded-full bg-charcoal border border-glass peer-checked:bg-cyan peer-checked:border-cyan transition-colors after:absolute after:left-[2px] after:top-[2px] after:h-5 after:w-5 after:rounded-full after:bg-white after:transition-all peer-checked:after:translate-x-full" />
           </div>
           <span className="text-sm font-medium text-text-primary group-hover:text-cyan transition-colors">
-            Set up as Installment Plan
+            Set up as Installment / EMI Plan
           </span>
         </label>
 
         {isInstallment && (
-          <div className="mt-4 grid grid-cols-1 sm:grid-cols-3 gap-4 animate-fade-in p-4 border border-glass rounded-xl bg-glass-hover">
-            <Input
-              label="Down Payment"
-              type="number"
-              step="0.01"
-              min="0"
-              error={errors.downPayment?.message}
-              {...register('downPayment', { valueAsNumber: true })}
-            />
-            <Input
-              label="Installments"
-              type="number"
-              min="1"
-              error={errors.installmentCount?.message}
-              {...register('installmentCount', { valueAsNumber: true })}
-            />
-            <Select
-              label="Frequency"
-              options={[
-                { value: 'daily',    label: 'Daily' },
-                { value: 'weekly',   label: 'Weekly' },
-                { value: 'monthly',  label: 'Monthly' },
-              ]}
-              value={watch('installmentFrequency')}
-              onChange={(val) => setValue('installmentFrequency', val)}
-            />
-            <div className="sm:col-span-3 text-xs text-text-muted text-right">
-              Remaining: {formatCurrency(Math.max(0, (amount || 0) - (watch('downPayment') || 0)), currency)}
+          <div className="mt-4 space-y-4 animate-fade-in p-4 border border-glass rounded-xl bg-glass-hover">
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+              <Input label={`Down Payment (${currency})`} type="number" step="0.01" min="0"
+                error={errors.downPayment?.message} {...register('downPayment', { valueAsNumber: true })} />
+              <Input label="No. of Instalments" type="number" min="1"
+                error={errors.installmentCount?.message} {...register('installmentCount', { valueAsNumber: true })} />
+              <div>
+                <label className="block text-xs font-medium text-text-secondary mb-1">Frequency</label>
+                <Select options={[
+                  { value: 'weekly',    label: 'Weekly' },
+                  { value: 'biweekly',  label: 'Bi-weekly' },
+                  { value: 'monthly',   label: 'Monthly' },
+                  { value: 'quarterly', label: 'Quarterly' },
+                ]} value={fFreq} onChange={(val) => setValue('installmentFrequency', val)} />
+              </div>
+              <Input label="Interest Rate (% p.a.)" type="number" step="0.1" min="0" max="100"
+                placeholder="0 = interest-free" error={errors.interestRate?.message}
+                {...register('interestRate', { valueAsNumber: true })} />
             </div>
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              <Input label="First Payment Date (optional)" type="date"
+                placeholder="defaults to one period after purchase" {...register('firstPaymentDate')} />
+              {(watch('interestRate') || 0) > 0 && (
+                <div>
+                  <label className="block text-xs font-medium text-text-secondary mb-1">Interest Method</label>
+                  <Select options={[
+                    { value: 'reducing_balance', label: 'Reducing Balance (standard EMI)' },
+                    { value: 'flat',             label: 'Flat Interest (simple)' },
+                  ]} value={watch('interestMethod') || 'reducing_balance'}
+                    onChange={(val) => setValue('interestMethod', val)} />
+                </div>
+              )}
+            </div>
+
+            <InstallmentJournalPreview
+              total={amount} downPayment={fDown}
+              installmentCount={fCount} installmentFrequency={fFreq}
+              interestRate={fRate} interestMethod={watch('interestMethod') || 'reducing_balance'}
+              firstPaymentDate={watch('firstPaymentDate') || ''}
+              assetName={debitAcct?.accountName} currency={currency} />
           </div>
         )}
       </div>
 
       <div className="flex justify-end gap-3 pt-4 border-t border-glass">
-        <Button variant="ghost" type="button" onClick={onCancel} disabled={isPending}>
-          Cancel
-        </Button>
+        <Button variant="ghost" type="button" onClick={onCancel} disabled={isPending}>Cancel</Button>
         <Button type="submit" loading={isPending}>
-          Record Transaction
+          {isInstallment ? 'Create Instalment Plan' : 'Record Transaction'}
         </Button>
       </div>
     </form>
   )
 }
 
-// ─── Confidence badge ─────────────────────────────────────────────────────────
-function ConfBadge({ label, score }) {
-  const cls =
-    label === 'High'   ? 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20' :
-    label === 'Medium' ? 'bg-amber-500/10 text-amber-400 border-amber-500/20' :
-                         'bg-red-500/10 text-red-400 border-red-500/20'
-  return (
-    <span className={`inline-flex items-center gap-1 rounded-full border px-1.5 py-0.5 text-[10px] font-semibold leading-none ${cls}`}>
-      {score}%
-    </span>
-  )
-}
-
-// ─── Tab 3: Excel / CSV Import ─────────────────────────────────────────────────
+// ─── Tab 3: Excel / CSV Import ────────────────────────────────────────────────
 function ExcelTab({ onSuccess, onCancel }) {
-  const [step, setStep]         = useState('upload') // 'upload' | 'preview'
+  const [step, setStep]         = useState('upload')
   const [preview, setPreview]   = useState(null)
-  const [rows, setRows]         = useState([])       // editable copy of validRows
-  const [editingIdx, setEditingIdx] = useState(null) // index of row being inline-edited
+  const [rows, setRows]         = useState([])
+  const [editingIdx, setEditingIdx] = useState(null)
   const [showErrors, setShowErrors] = useState(false)
   const fileInputRef            = useRef(null)
   const [dragOver, setDragOver] = useState(false)
@@ -621,7 +1165,6 @@ function ExcelTab({ onSuccess, onCancel }) {
     onSuccess()
   }
 
-  // Inline-edit helpers
   const updateRow = (idx, field, value) =>
     setRows(prev => prev.map((r, i) => i === idx ? { ...r, [field]: value } : r))
 
@@ -632,7 +1175,6 @@ function ExcelTab({ onSuccess, onCancel }) {
   }
   const fmtAmt = (n) => Number(n || 0).toLocaleString('en-PK')
 
-  // ── Preview step ─────────────────────────────────────────────────────────────
   if (step === 'preview' && preview) {
     const stats = preview.confidenceStats || {}
     const fi    = preview.fileInfo        || {}
@@ -640,8 +1182,6 @@ function ExcelTab({ onSuccess, onCancel }) {
 
     return (
       <div className="space-y-4 animate-fade-in">
-
-        {/* ── Summary bar ── */}
         <div className="flex flex-wrap items-center justify-between gap-2 rounded-lg border border-glass bg-glass-panel px-4 py-3">
           <div className="space-y-0.5">
             <p className="text-sm font-semibold text-text-primary">
@@ -651,22 +1191,19 @@ function ExcelTab({ onSuccess, onCancel }) {
               )}
             </p>
             <div className="flex flex-wrap gap-2 text-xs">
-              {fi.format && (
-                <span className="text-text-muted font-mono uppercase">{fi.format}</span>
-              )}
+              {fi.format && <span className="text-text-muted font-mono uppercase">{fi.format}</span>}
               {stats.high   > 0 && <span className="text-emerald-400">● {stats.high} High</span>}
               {stats.medium > 0 && <span className="text-amber-400">● {stats.medium} Medium</span>}
               {stats.low    > 0 && <span className="text-red-400">● {stats.low} Low confidence</span>}
               {dupes        > 0 && <span className="text-amber-400">⚠ {dupes} duplicate{dupes > 1 ? 's' : ''}</span>}
             </div>
           </div>
-          <Button variant="ghost" size="sm" onClick={() => { setStep('upload'); setPreview(null); setRows([]); }}
+          <Button variant="ghost" size="sm" onClick={() => { setStep('upload'); setPreview(null); setRows([]) }}
             disabled={excelConfirm.isPending}>
             <X className="h-3.5 w-3.5 mr-1" /> Change file
           </Button>
         </div>
 
-        {/* ── Error list (collapsible) ── */}
         {preview.errors?.length > 0 && (
           <div className="rounded-lg border border-red-500/20 bg-red-500/5">
             <button type="button" onClick={() => setShowErrors(v => !v)}
@@ -688,7 +1225,6 @@ function ExcelTab({ onSuccess, onCancel }) {
           </div>
         )}
 
-        {/* ── Preview table with confidence + inline edit ── */}
         <div className="overflow-x-auto scrollbar-thin rounded-lg border border-glass max-h-72">
           <table className="w-full text-xs">
             <thead className="sticky top-0 bg-bg3 border-b border-glass">
@@ -700,69 +1236,50 @@ function ExcelTab({ onSuccess, onCancel }) {
             </thead>
             <tbody className="divide-y divide-glass">
               {rows.map((row, idx) => {
-                const isEditing  = editingIdx === idx
-                const hasDupe    = row.isDuplicate
+                const isEditing   = editingIdx === idx
+                const hasDupe     = row.isDuplicate
                 const hasInferred = row.inferredFields?.length > 0
-                const hasWarning = row.warnings?.length > 0
+                const hasWarning  = row.warnings?.length > 0
+                const isLowConf   = (row.confidenceScore ?? 100) < 70
 
                 return (
                   <tr key={idx}
-                    className={`transition-colors ${hasDupe ? 'bg-amber-500/5' : ''} ${isEditing ? 'bg-cyan/5' : 'hover:bg-glass-hover'}`}>
-
-                    {/* Row # */}
-                    <td className="px-2 py-1.5 text-text-muted w-8 text-center">
-                      {row.originalRow ?? idx + 2}
-                    </td>
-
-                    {/* Date */}
+                    className={`transition-colors ${hasDupe ? 'bg-amber-500/5' : ''} ${isLowConf && !hasDupe ? 'bg-red-500/5' : ''} ${isEditing ? 'bg-cyan/5' : 'hover:bg-glass-hover'}`}>
+                    <td className="px-2 py-1.5 text-text-muted w-8 text-center">{row.originalRow ?? idx + 2}</td>
                     <td className="px-2 py-1.5 whitespace-nowrap text-text-secondary">
                       {isEditing ? (
-                        <input
-                          type="date"
+                        <input type="date"
                           className="w-28 rounded bg-glass-panel border border-cyan/40 px-1.5 py-0.5 text-text-primary focus:outline-none"
                           value={fmtDate(row.transactionDate)}
-                          onChange={e => updateRow(idx, 'transactionDate', e.target.value)}
-                        />
+                          onChange={e => updateRow(idx, 'transactionDate', e.target.value)} />
                       ) : fmtDate(row.transactionDate)}
                     </td>
-
-                    {/* Description — click to inline-edit */}
                     <td className="px-2 py-1.5 max-w-[180px]">
                       {isEditing ? (
-                        <input
-                          autoFocus
+                        <input autoFocus
                           className="w-full rounded bg-glass-panel border border-cyan/40 px-1.5 py-0.5 text-text-primary focus:outline-none"
                           value={row.description || ''}
                           onChange={e => updateRow(idx, 'description', e.target.value)}
                           onBlur={() => setEditingIdx(null)}
-                          onKeyDown={e => e.key === 'Enter' && setEditingIdx(null)}
-                        />
+                          onKeyDown={e => e.key === 'Enter' && setEditingIdx(null)} />
                       ) : (
-                        <span
-                          className="block truncate text-text-primary cursor-text hover:text-cyan"
+                        <span className="block truncate text-text-primary cursor-text hover:text-cyan"
                           title={`${row.description}${hasWarning ? '\n⚠ ' + row.warnings.join('\n⚠ ') : ''}`}
-                          onClick={() => setEditingIdx(idx)}
-                        >
+                          onClick={() => setEditingIdx(idx)}>
                           {row.description}
                           {hasInferred && <span title={`AI inferred: ${row.inferredFields.join(', ')}`} className="ml-1 text-cyan">✦</span>}
                           {hasDupe     && <span title="Possible duplicate" className="ml-1 text-amber-400">⚠</span>}
                         </span>
                       )}
                     </td>
-
-                    {/* Amount */}
                     <td className="px-2 py-1.5 font-medium text-text-primary whitespace-nowrap text-right">
                       {isEditing ? (
-                        <input
-                          type="number"
+                        <input type="number"
                           className="w-24 rounded bg-glass-panel border border-cyan/40 px-1.5 py-0.5 text-text-primary text-right focus:outline-none"
                           value={row.amount}
-                          onChange={e => updateRow(idx, 'amount', parseFloat(e.target.value) || 0)}
-                        />
+                          onChange={e => updateRow(idx, 'amount', parseFloat(e.target.value) || 0)} />
                       ) : fmtAmt(row.amount)}
                     </td>
-
-                    {/* Debit → Credit */}
                     <td className="px-2 py-1.5 text-text-secondary max-w-[160px]">
                       <span className="truncate block" title={`${row.debitAccountName} → ${row.creditAccountName}`}>
                         {(row.debitAccountName || '—').split(' ').slice(0,2).join(' ')}
@@ -770,8 +1287,6 @@ function ExcelTab({ onSuccess, onCancel }) {
                         {(row.creditAccountName || '—').split(' ').slice(0,2).join(' ')}
                       </span>
                     </td>
-
-                    {/* Confidence badge */}
                     <td className="px-2 py-1.5 whitespace-nowrap">
                       <ConfBadge label={row.confidenceLabel || 'High'} score={row.confidenceScore ?? 100} />
                     </td>
@@ -783,17 +1298,13 @@ function ExcelTab({ onSuccess, onCancel }) {
         </div>
         {rows.length > 0 && (
           <p className="text-center text-[10px] text-text-muted">
-            Click any description to edit inline · ✦ = AI-inferred field · ⚠ = possible duplicate
+            Click any description to edit inline · ✦ = AI-inferred · ⚠ = possible duplicate · <span className="text-red-400">red row = fuzzy account match</span>
           </p>
         )}
 
         <div className="flex justify-between gap-3 pt-3 border-t border-glass">
           <Button variant="ghost" onClick={onCancel} disabled={excelConfirm.isPending}>Cancel</Button>
-          <Button
-            onClick={handleConfirm}
-            loading={excelConfirm.isPending}
-            disabled={!rows.length}
-          >
+          <Button onClick={handleConfirm} loading={excelConfirm.isPending} disabled={!rows.length}>
             Import {rows.length} Transaction{rows.length !== 1 ? 's' : ''}
           </Button>
         </div>
@@ -801,14 +1312,11 @@ function ExcelTab({ onSuccess, onCancel }) {
     )
   }
 
-  // ── Upload step ──────────────────────────────────────────────────────────────
   return (
     <div className="space-y-5">
       <p className="text-sm text-text-secondary">
         Upload a spreadsheet and VousFin will parse, validate, and let you review before saving.
       </p>
-
-      {/* Drop Zone */}
       <div
         className={`relative flex flex-col items-center justify-center gap-3 rounded-2xl border-2 border-dashed p-10 transition-colors cursor-pointer ${
           dragOver ? 'border-cyan bg-cyan/5' : 'border-glass hover:border-cyan/40 hover:bg-glass-hover'
@@ -818,34 +1326,29 @@ function ExcelTab({ onSuccess, onCancel }) {
         onDrop={handleDrop}
         onClick={() => fileInputRef.current?.click()}
       >
-        {excelPreview.isPending ? (
-          <Loader2 className="h-10 w-10 text-cyan animate-spin" />
-        ) : (
-          <Upload className="h-10 w-10 text-text-muted" />
-        )}
+        {excelPreview.isPending
+          ? <Loader2 className="h-10 w-10 text-cyan animate-spin" />
+          : <Upload  className="h-10 w-10 text-text-muted" />
+        }
         <div className="text-center">
           <p className="font-medium text-text-primary">Drop file here or click to browse</p>
           <p className="text-xs text-text-muted mt-1">.xlsx · .xls · .csv — max 10 MB</p>
         </div>
-        <input
-          ref={fileInputRef}
-          type="file"
-          accept=".xlsx,.xls,.csv"
-          className="sr-only"
-          onChange={(e) => handleFile(e.target.files?.[0])}
-        />
+        <input ref={fileInputRef} type="file" accept=".xlsx,.xls,.csv" className="sr-only"
+          onChange={(e) => handleFile(e.target.files?.[0])} />
       </div>
-
-      {/* Column guide */}
       <div className="rounded-lg border border-glass bg-glass-panel p-3 text-xs">
         <p className="font-medium text-text-secondary mb-1">Required columns (in any order, fuzzy-matched):</p>
         <p className="font-mono text-text-muted">date · description · amount · debit account · credit account</p>
-        <p className="font-mono text-text-muted mt-0.5 text-[10px]">Optional: type · mode · customer · vendor · reference · notes</p>
+        <p className="font-mono text-text-muted mt-0.5 text-[10px]">Optional: type · mode · customer · vendor · reference · notes · tax · currency</p>
       </div>
-
       <div className="flex justify-end pt-2 border-t border-glass">
         <Button variant="ghost" onClick={onCancel}>Cancel</Button>
       </div>
     </div>
   )
 }
+
+// Suppress unused-import lint (CheckCircle is kept available for future banner states)
+// eslint-disable-next-line no-unused-vars
+const _keepImports = { CheckCircle }
