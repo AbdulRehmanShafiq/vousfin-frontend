@@ -20,7 +20,7 @@ export const Input = forwardRef(({
   const inputType = isPassword && showPassword ? 'text' : type
 
   return (
-    <div className={cn('w-full', containerClassName)}>
+    <div className={containerClassName ?? 'w-full'}>
       {label && (
         <label htmlFor={inputId} className="mb-1.5 block text-sm font-medium text-text-secondary">
           {label}
