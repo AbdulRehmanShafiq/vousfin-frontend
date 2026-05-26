@@ -16,6 +16,7 @@ export function useCustomers(params = { limit: 100 }) {
       const { data } = await customerService.listCustomers(params)
       return data.data
     },
+    staleTime: 2 * 60 * 1000,
   })
 }
 
@@ -27,6 +28,7 @@ export function useCustomer(id) {
       const { data } = await customerService.getCustomerById(id)
       return data.data
     },
+    staleTime: 2 * 60 * 1000,
   })
 }
 
@@ -38,6 +40,7 @@ export function useCustomerBalance(id) {
       const { data } = await customerService.getCustomerBalance(id)
       return data.data
     },
+    staleTime: 30 * 1000,
   })
 }
 
@@ -49,6 +52,7 @@ export function useCustomerTransactions(id, params = { limit: 50 }) {
       const { data } = await customerService.getCustomerTransactions(id, params)
       return data.data
     },
+    staleTime: 60 * 1000,
   })
 }
 
@@ -60,6 +64,7 @@ export function useCustomerStats(id) {
       const { data } = await customerService.getCustomerStats(id)
       return data.data
     },
+    staleTime: 60 * 1000,
   })
 }
 
@@ -122,6 +127,7 @@ export function useVendors(params = { limit: 100 }) {
       const { data } = await vendorService.listVendors(params)
       return data.data
     },
+    staleTime: 2 * 60 * 1000,
   })
 }
 
@@ -133,6 +139,7 @@ export function useVendor(id) {
       const { data } = await vendorService.getVendorById(id)
       return data.data
     },
+    staleTime: 2 * 60 * 1000,
   })
 }
 
@@ -144,6 +151,7 @@ export function useVendorBalance(id) {
       const { data } = await vendorService.getVendorBalance(id)
       return data.data
     },
+    staleTime: 30 * 1000,
   })
 }
 
@@ -155,6 +163,7 @@ export function useVendorTransactions(id, params = { limit: 50 }) {
       const { data } = await vendorService.getVendorTransactions(id, params)
       return data.data
     },
+    staleTime: 60 * 1000,
   })
 }
 
@@ -166,6 +175,7 @@ export function useVendorStats(id) {
       const { data } = await vendorService.getVendorStats(id)
       return data.data
     },
+    staleTime: 60 * 1000,
   })
 }
 
@@ -235,6 +245,7 @@ export function useOutstandingBalances(type, opts = {}) {
       return data.data
     },
     enabled: type === 'receivable' || type === 'payable',
+    staleTime: 30 * 1000,
   })
 }
 

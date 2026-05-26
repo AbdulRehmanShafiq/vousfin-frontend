@@ -10,6 +10,7 @@ export function useInventoryItems(params = { limit: 100 }) {
       const { data } = await inventoryService.listItems(params)
       return data.data
     },
+    staleTime: 2 * 60 * 1000,
   })
 }
 
@@ -21,6 +22,7 @@ export function useInventoryItem(id) {
       const { data } = await inventoryService.getItemById(id)
       return data.data
     },
+    staleTime: 2 * 60 * 1000,
   })
 }
 
@@ -31,6 +33,7 @@ export function useLowStockAlerts() {
       const { data } = await inventoryService.getLowStockAlerts()
       return data.data
     },
+    staleTime: 60 * 1000,
   })
 }
 
@@ -41,6 +44,7 @@ export function useInventoryValuation() {
       const { data } = await inventoryService.getInventoryValuation()
       return data.data
     },
+    staleTime: 60 * 1000,
   })
 }
 
