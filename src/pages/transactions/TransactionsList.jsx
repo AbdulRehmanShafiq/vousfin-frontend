@@ -8,7 +8,7 @@
  * Phase 5: Compact spacing, truncated text, hidden low-priority cols on sm
  * Phase 6: memo() on all sub-components, single query key per limit
  */
-import { useState, useMemo, memo, Fragment, useCallback } from 'react'
+import { useState, useMemo, memo, Fragment, useCallback, useRef, useEffect } from 'react'
 import {
   Plus, ArrowUpRight, ArrowDownRight, Receipt,
   RotateCcw, History, ChevronUp, Calendar, Loader2,
@@ -262,6 +262,24 @@ export default function TransactionsList() {
     []
   )
 
+  // ── Infinite scroll ───────────────────────────────────────────────────────
+  const sentinelRef = useRef(null)
+
+  useEffect(() => {
+    const el = sentinelRef.current
+    if (!el) return
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting && hasMore && !isFetching) {
+          setLimit(l => l + PAGE_SIZE)
+        }
+      },
+      { rootMargin: '200px' }   // start loading before the user hits the very bottom
+    )
+    observer.observe(el)
+    return () => observer.disconnect()
+  }, [hasMore, isFetching])
+
   return (
     <div className="space-y-3 animate-fade-in">
       {/* ── Header ────────────────────────────────────────────────── */}
@@ -433,20 +451,20 @@ export default function TransactionsList() {
           </>
         )}
 
-        {/* ── Load More ─────────────────────────────────────────── */}
-        {hasMore && !isLoading && (
-          <div className="border-t border-glass p-3 text-center">
-            <button
-              onClick={() => setLimit(l => l + PAGE_SIZE)}
-              disabled={isFetching}
-              className="inline-flex items-center gap-1.5 text-sm text-cyan hover:text-cyan/80 font-medium disabled:opacity-50 transition-opacity"
-            >
-              {isFetching && <Loader2 className="h-3.5 w-3.5 animate-spin" />}
-              Load {Math.min(PAGE_SIZE, total - docs.length)} more
-              <span className="text-text-muted text-xs">({total - docs.length} remaining)</span>
-            </button>
-          </div>
-        )}
+        {/* ── Infinite scroll sentinel ──────────────────────────── */}
+        <div ref={sentinelRef} className="border-t border-glass">
+          {isFetching && (
+            <div className="flex items-center justify-center gap-2 py-4 text-xs text-text-muted">
+              <Loader2 className="h-3.5 w-3.5 animate-spin text-cyan" />
+              Loading more transactions…
+            </div>
+          )}
+          {!hasMore && !isLoading && docs.length > 0 && (
+            <p className="py-3 text-center text-[11px] text-text-muted">
+              All {total} transactions loaded
+            </p>
+          )}
+        </div>
       </div>
 
       {/* ── Modals ────────────────────────────────────────────────── */}
