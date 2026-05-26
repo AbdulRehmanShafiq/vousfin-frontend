@@ -46,9 +46,14 @@ export const Select = forwardRef(({
   /* ── Filtered options ──────────────────────────────────────────────── */
   const filtered = useMemo(() => {
     if (!searchable || !query) return options
-    return options.filter(o =>
-      String(o.label || o.name || o).toLowerCase().includes(query.toLowerCase())
-    )
+    const q = query.toLowerCase()
+    return options.filter(o => {
+      const label    = String(o.label    || o.name || o).toLowerCase()
+      const subtitle = String(o.subtitle || '').toLowerCase()
+      const code     = String(o.accountCode || '').toLowerCase()
+      // Match against name, subtitle (subtype group), or account code
+      return label.includes(q) || subtitle.includes(q) || code.includes(q)
+    })
   }, [options, query, searchable])
 
   const selected = options.find(o => (o.value ?? o._id ?? o.id) === value)
@@ -58,9 +63,11 @@ export const Select = forwardRef(({
     if (!triggerRef.current) return null
     const rect      = triggerRef.current.getBoundingClientRect()
     const viewportH = window.innerHeight
-    const ITEM_H    = 40
+    // Account options with subtitles are ~50px tall; plain options are ~40px
+    const hasSubtitles = options.some(o => o.subtitle)
+    const ITEM_H    = hasSubtitles ? 50 : 40
     const SEARCH_H  = searchable ? 48 : 0
-    const neededH   = Math.min(280, options.length * ITEM_H + SEARCH_H + 8)
+    const neededH   = Math.min(320, options.length * ITEM_H + SEARCH_H + 8)
     const spaceDown = viewportH - rect.bottom - 8
     const spaceUp   = rect.top - 8
 
@@ -175,27 +182,65 @@ export const Select = forwardRef(({
         {filtered.length === 0 ? (
           <p className="px-4 py-3 text-center text-sm text-text-muted">No options found</p>
         ) : (
-          filtered.map(opt => {
-            const optVal     = opt.value ?? opt._id ?? opt.id
-            const isSelected = value === optVal
-            return (
-              <button
-                key={optVal}
-                type="button"
-                role="option"
-                aria-selected={isSelected}
-                className={cn(
-                  'w-full px-4 py-2.5 text-left text-sm transition-colors',
-                  isSelected
-                    ? 'bg-glass-panel font-semibold text-cyan'
-                    : 'text-text-secondary hover:bg-glass-hover hover:text-text-primary'
-                )}
-                onClick={() => handleSelect(optVal)}
-              >
-                {opt.label ?? opt.name}
-              </button>
-            )
-          })
+          (() => {
+            /* Render with group separators. Each option may carry an optional
+               `group` field; whenever that value changes between adjacent
+               items, a small sticky header is inserted. */
+            const nodes = []
+            let lastGroup = undefined
+            for (const opt of filtered) {
+              const groupLabel = opt.group ?? null
+              if (groupLabel !== undefined && groupLabel !== lastGroup) {
+                lastGroup = groupLabel
+                if (groupLabel) {
+                  nodes.push(
+                    <div
+                      key={`__grp_${groupLabel}`}
+                      className="sticky top-0 z-[1] px-4 py-1.5 text-[10px] font-bold uppercase tracking-wider text-text-muted bg-charcoal/95 border-b border-glass/40"
+                    >
+                      {groupLabel}
+                    </div>
+                  )
+                }
+              }
+              const optVal     = opt.value ?? opt._id ?? opt.id
+              const isSelected = value === optVal
+              // Build native tooltip: show account code if available, else nothing
+              const tooltipTitle = opt.accountCode
+                ? `${opt.label ?? opt.name} · ${opt.accountCode}`
+                : undefined
+              nodes.push(
+                <button
+                  key={optVal}
+                  type="button"
+                  role="option"
+                  aria-selected={isSelected}
+                  title={tooltipTitle}
+                  className={cn(
+                    'w-full px-4 text-left text-sm transition-colors',
+                    opt.subtitle ? 'py-2' : 'py-2.5',
+                    isSelected
+                      ? 'bg-glass-panel font-semibold text-cyan'
+                      : 'text-text-secondary hover:bg-glass-hover hover:text-text-primary'
+                  )}
+                  onClick={() => handleSelect(optVal)}
+                >
+                  {/* Primary label */}
+                  <span className="block leading-tight">{opt.label ?? opt.name}</span>
+                  {/* Subtitle — account subtype shown as dim secondary line */}
+                  {opt.subtitle && (
+                    <span className={cn(
+                      'block text-[10px] leading-tight mt-0.5',
+                      isSelected ? 'text-cyan/60' : 'text-text-muted'
+                    )}>
+                      {opt.subtitle}
+                    </span>
+                  )}
+                </button>
+              )
+            }
+            return nodes
+          })()
         )}
       </div>
     </div>

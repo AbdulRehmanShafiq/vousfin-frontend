@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react'
 import { Outlet } from 'react-router-dom'
 import Sidebar from '@/components/layout/Sidebar'
 import Header from '@/components/layout/Header'
+import MobileNav from '@/components/layout/MobileNav'
 import Drawer from '@/components/ui/Drawer'
 import GlobalAIWidget from '@/components/ai/GlobalAIWidget'
 import { useAuthStore } from '@/stores/useAuthStore'
@@ -43,11 +44,15 @@ export default function DashboardLayout() {
         <Header toggleMobileDrawer={() => setIsMobileDrawerOpen(true)} />
         
         <main className="flex-1 overflow-y-auto overflow-x-hidden bg-navy scrollbar-thin">
-          <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8 animate-fade-in">
+          {/* pb-20 on small screens leaves room for the fixed MobileNav bottom bar */}
+          <div className="mx-auto max-w-7xl px-4 py-8 pb-24 sm:px-6 lg:px-8 lg:pb-8 animate-fade-in">
             <Outlet />
           </div>
         </main>
       </div>
+
+      {/* Mobile bottom nav — visible on screens < lg */}
+      <MobileNav />
 
       {/* Global AI Assistant widget — persists across all route changes */}
       <GlobalAIWidget />

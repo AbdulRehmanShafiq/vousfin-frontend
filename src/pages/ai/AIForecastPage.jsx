@@ -197,6 +197,53 @@ function InsightItem({ insight }) {
   )
 }
 
+/**
+ * Data sufficiency banner — shown when the service returns dataSufficiency metadata.
+ * Tiers: insufficient → sparse → adequate → rich.
+ * When insufficient, it replaces the chart with an actionable no-data message.
+ */
+function DataSufficiencyBanner({ ds }) {
+  if (!ds) return null
+
+  const cfg = {
+    insufficient: {
+      icon: AlertTriangle,
+      color: 'border-yellow-400/40 bg-yellow-400/5 text-yellow-400',
+      title: 'No Transaction Data',
+    },
+    sparse: {
+      icon: Info,
+      color: 'border-cyan/30 bg-cyan/5 text-cyan',
+      title: 'Limited History',
+    },
+    adequate: {
+      icon: ShieldCheck,
+      color: 'border-emerald-400/30 bg-emerald-400/5 text-emerald-400',
+      title: 'Moderate History',
+    },
+    rich: {
+      icon: ShieldCheck,
+      color: 'border-emerald-400/30 bg-emerald-400/5 text-emerald-400',
+      title: 'Rich History',
+    },
+  }[ds.tier] || { icon: Info, color: 'border-glass bg-glass text-text-muted', title: 'Data Quality' }
+
+  const Icon = cfg.icon
+
+  return (
+    <div className={`flex items-start gap-3 p-3 rounded-xl border text-xs ${cfg.color}`}>
+      <Icon className="h-4 w-4 shrink-0 mt-0.5" />
+      <div>
+        <p className="font-bold mb-0.5">{cfg.title}</p>
+        <p className="opacity-80 leading-relaxed">{ds.message}</p>
+        {ds.tier !== 'insufficient' && ds.nonZeroMonths != null && (
+          <p className="mt-1 opacity-60">{ds.nonZeroMonths} active month{ds.nonZeroMonths !== 1 ? 's' : ''} of data</p>
+        )}
+      </div>
+    </div>
+  )
+}
+
 /** Risk indicator card */
 const RISK_LEVEL_STYLE = {
   critical: 'border-red-400/40 bg-red-400/5 text-red-400',
@@ -307,11 +354,12 @@ function LoadingOverlay({ label = 'Running forecast engine…' }) {
 /** Category bar chart tooltip */
 function CatTooltip({ active, payload, label }) {
   if (!active || !payload?.length) return null
-  const v = payload[0]?.value
+  const v        = payload[0]?.value
+  const currency = useBusinessStore(s => s.currency)
   return (
     <div className="bg-charcoal border border-glass p-2.5 rounded-lg shadow-lg text-xs">
       <p className="text-text-muted font-medium mb-1">{label}</p>
-      <p className="text-cyan font-bold">PKR {formatPKR(v)}</p>
+      <p className="text-cyan font-bold">{formatCurrency(v, currency)}</p>
       <p className="text-text-muted">{payload[0]?.payload?.count} transactions</p>
     </div>
   )
@@ -390,7 +438,7 @@ function CategoryBreakdown({ businessCategories }) {
             margin={{ top: 0, right: 50, left: 4, bottom: 0 }}
           >
             <CartesianGrid strokeDasharray="2 2" stroke="#1E293B" horizontal={false} />
-            <XAxis type="number" stroke="#475569" fontSize={10} tickFormatter={formatPKR} tickLine={false} axisLine={false} />
+            <XAxis type="number" stroke="#475569" fontSize={10} tickFormatter={formatCompact} tickLine={false} axisLine={false} />
             <YAxis type="category" dataKey="name" stroke="#475569" fontSize={10} tickLine={false} axisLine={false} width={80} />
             <Tooltip content={<CatTooltip />} />
             <Bar dataKey="total" radius={[0, 4, 4, 0]}>
@@ -405,7 +453,8 @@ function CategoryBreakdown({ businessCategories }) {
   )
 }
 
-function formatPKR(v) {
+/** Compact number formatter for axis ticks (no currency prefix — axes are labelled separately) */
+function formatCompact(v) {
   const abs = Math.abs(v || 0)
   if (abs >= 1_000_000) return `${(v / 1_000_000).toFixed(1)}M`
   if (abs >= 1_000)     return `${(v / 1_000).toFixed(0)}K`
@@ -447,8 +496,13 @@ function UnifiedTab() {
             </div>
           </div>
 
+          {/* Data sufficiency banner */}
+          {result?.dataSufficiency && (
+            <DataSufficiencyBanner ds={result.dataSufficiency} />
+          )}
+
           {/* Model info */}
-          {result?.modelMeta && (
+          {result?.modelMeta && !result?.dataSufficiency?.isInsufficient && (
             <div className="premium-card p-4 space-y-1.5 text-xs text-text-secondary">
               <h3 className="text-xs font-semibold text-text-primary border-b border-glass pb-1.5 mb-2 flex items-center gap-1.5">
                 <CircleDot className="h-3 w-3 text-cyan" /> Model Info
@@ -458,7 +512,7 @@ function UnifiedTab() {
               <p><span className="text-text-muted">Source:</span> {
                 result.modelMeta.dataSource === 'lstm_live' ? '🤖 Bi-LSTM live data'
                 : result.modelMeta.dataSource === 'live'    ? '✅ Live transactions'
-                : '📊 Reference dataset'
+                : '📊 Your data'
               }</p>
               <div className="flex flex-wrap gap-2 pt-1.5">
                 <ModelBadge dataSource={result.modelMeta.dataSource} />
@@ -504,7 +558,17 @@ function UnifiedTab() {
 
             <div className="relative" style={{ minHeight: 380 }}>
               {mutation.isPending && <LoadingOverlay />}
-              {result ? (
+              {result?.dataSufficiency?.isInsufficient ? (
+                <div className="h-[380px] flex flex-col items-center justify-center gap-4 text-center px-8">
+                  <AlertTriangle className="h-10 w-10 text-yellow-400/60" />
+                  <div>
+                    <p className="text-text-primary font-semibold text-sm">No Forecast Available</p>
+                    <p className="text-text-muted text-xs mt-1.5 leading-relaxed max-w-sm">
+                      {result.dataSufficiency.message}
+                    </p>
+                  </div>
+                </div>
+              ) : result ? (
                 <ForecastChart
                   historical={result.historical}
                   predicted={result.predicted}
@@ -570,12 +634,21 @@ function MetricForecastTab({ useHook, label, metricKey }) {
             </div>
           </div>
 
-          {result?.modelMeta && (
+          {/* Data sufficiency banner */}
+          {result?.dataSufficiency && (
+            <DataSufficiencyBanner ds={result.dataSufficiency} />
+          )}
+
+          {result?.modelMeta && !result?.dataSufficiency?.isInsufficient && (
             <div className="premium-card p-4 space-y-1.5 text-xs text-text-secondary">
               <h3 className="text-xs font-semibold text-text-primary border-b border-glass pb-1.5 mb-2">Model Info</h3>
               <p><span className="text-text-muted">Engine:</span> {result.modelMeta.modelType}</p>
               <p><span className="text-text-muted">Sequences:</span> {result.modelMeta.sequencesUsed} windows</p>
-              <p><span className="text-text-muted">Source:</span> {result.modelMeta.dataSource === 'live' ? '✅ Live data' : '📊 Reference'}</p>
+              <p><span className="text-text-muted">Source:</span> {
+                result.modelMeta.dataSource === 'lstm_live' ? '🤖 Bi-LSTM live data'
+                : result.modelMeta.dataSource === 'live'    ? '✅ Live transactions'
+                : '📊 Your data'
+              }</p>
               <div className="flex flex-wrap gap-2 pt-1.5">
                 {result.anomalyRisk && (
                   <AnomalyRiskChip score={result.anomalyRisk.riskScore} count={result.anomalyRisk.total} />
@@ -602,7 +675,7 @@ function MetricForecastTab({ useHook, label, metricKey }) {
             <div className="flex items-center justify-between border-b border-glass pb-3 mb-5">
               <div className="flex items-center gap-3 flex-wrap">
                 <h2 className="text-base font-bold text-text-primary">
-                  {label} — {horizon}-Month LSTM Projection
+                  {label} — {horizon}-Month Seasonal Forecast
                 </h2>
                 {result?.momentum && <MomentumBadge momentum={result.momentum} />}
               </div>
@@ -615,7 +688,17 @@ function MetricForecastTab({ useHook, label, metricKey }) {
 
             <div className="relative" style={{ minHeight: 380 }}>
               {mutation.isPending && <LoadingOverlay />}
-              {result ? (
+              {result?.dataSufficiency?.isInsufficient ? (
+                <div className="h-[380px] flex flex-col items-center justify-center gap-4 text-center px-8">
+                  <AlertTriangle className="h-10 w-10 text-yellow-400/60" />
+                  <div>
+                    <p className="text-text-primary font-semibold text-sm">No Forecast Available</p>
+                    <p className="text-text-muted text-xs mt-1.5 leading-relaxed max-w-sm">
+                      {result.dataSufficiency.message}
+                    </p>
+                  </div>
+                </div>
+              ) : result ? (
                 <ForecastChart
                   historical={result.historical}
                   predicted={result.predicted}
@@ -906,7 +989,7 @@ export default function AIForecastPage() {
             AI Financial Forecasting
           </h1>
           <p className="text-text-secondary mt-1 text-sm">
-            Holt-Winters seasonal analysis — forecasting revenue, cash flow, and business growth in real PKR.
+            Holt-Winters seasonal analysis — forecasting revenue, cash flow, and business growth in your business currency.
           </p>
         </div>
 

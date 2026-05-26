@@ -18,6 +18,14 @@ import {
   PackageOpen,
   Wallet,
   CreditCard,
+  Scale,
+  LineChart,
+  PieChart,
+  TrendingUp,
+  ShieldAlert,
+  Lightbulb,
+  Sparkles,
+  Download,
 } from 'lucide-react'
 import { useAuthStore } from '@/stores/useAuthStore'
 
@@ -25,6 +33,10 @@ import { useAuthStore } from '@/stores/useAuthStore'
  * Two kinds of entries:
  *   - { kind: 'link',  name, href, icon }
  *   - { kind: 'group', name, icon, key, children: [...links] }
+ *
+ * ERP-style hierarchy: Reports and AI Analyst are expandable groups so users
+ * can deep-link to a specific tab. Each child links to a tab route — the page
+ * itself manages the active-tab UI on landing.
  */
 const NAV = [
   { kind: 'link',  name: 'Dashboard',    href: '/dashboard',    icon: LayoutDashboard },
@@ -40,13 +52,30 @@ const NAV = [
   {
     kind: 'group', name: 'Purchases', icon: PackageOpen, key: 'purchases',
     children: [
-      { name: 'Vendors',  href: '/vendors',           icon: Briefcase  },
+      { name: 'Vendors',  href: '/vendors',            icon: Briefcase  },
       { name: 'Payables', href: '/purchases/payables', icon: CreditCard },
     ],
   },
-  { kind: 'link',  name: 'Financial Reports', href: '/financial-reports', icon: FileBarChart2 },
-  { kind: 'link',  name: 'AI Analyst',        href: '/ai-analyst',        icon: BrainCircuit  },
-  { kind: 'link',  name: 'Settings',          href: '/business/settings', icon: Settings      },
+  {
+    kind: 'group', name: 'Financial Reports', icon: FileBarChart2, key: 'reports',
+    children: [
+      { name: 'Income Statement', href: '/financial-reports/income-statement', icon: LineChart },
+      { name: 'Balance Sheet',    href: '/financial-reports/balance-sheet',    icon: Scale     },
+      { name: 'Cash Flow',        href: '/financial-reports/cash-flow',        icon: PieChart  },
+      { name: 'Trial Balance',    href: '/financial-reports/trial-balance',    icon: BookOpen  },
+      { name: 'Export',           href: '/financial-reports/export',           icon: Download  },
+    ],
+  },
+  {
+    kind: 'group', name: 'AI Analyst', icon: BrainCircuit, key: 'ai-analyst',
+    children: [
+      { name: 'Forecast',          href: '/ai-analyst/forecast',  icon: TrendingUp   },
+      { name: 'Anomaly Detection', href: '/ai-analyst/anomalies', icon: ShieldAlert  },
+      { name: 'AI Insights',       href: '/ai-analyst/insights',  icon: Lightbulb    },
+    ],
+  },
+  { kind: 'link',  name: 'AI Assistant', href: '/ai/assistant',      icon: Sparkles  },
+  { kind: 'link',  name: 'Settings',     href: '/business/settings', icon: Settings  },
 ]
 
 /* Decide which group should be expanded based on current URL */

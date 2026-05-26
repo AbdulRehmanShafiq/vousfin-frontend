@@ -8,10 +8,20 @@ export function useAccounts(filters = {}) {
     queryFn: async () => {
       const params = new URLSearchParams()
       if (filters.accountType) params.append('accountType', filters.accountType)
-      
+
       const { data } = await api.get(`/business/accounts?${params.toString()}`)
-      return data.data?.data || data.data?.docs || data.data
+      // Backend now returns a plain array (no pagination wrapper).
+      // ApiResponse.success wraps it as { success, data: [...], message }.
+      // Fallback handles legacy paginated shape { data: { data: [...] } } if needed.
+      const payload = data.data
+      if (Array.isArray(payload))       return payload          // new: plain array
+      if (Array.isArray(payload?.data)) return payload.data     // legacy: paginated
+      if (Array.isArray(payload?.docs)) return payload.docs     // legacy: docs
+      return []
     },
+    // Accounts rarely change — cache for 5 minutes to avoid redundant refetches
+    // while still refreshing after account creation (invalidateQueries covers that)
+    staleTime: 5 * 60 * 1000,
   })
 }
 

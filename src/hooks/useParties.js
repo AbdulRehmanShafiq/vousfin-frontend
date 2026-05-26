@@ -262,3 +262,35 @@ export function useRecordPayment() {
     onError: (error) => toast.error(getErrorMessage(error)),
   })
 }
+
+/**
+ * Trigger the AR/AP data-integrity repair on the backend.
+ * Finds transactions where the account pair indicates AR/AP but the lifecycle
+ * fields (paymentStatus, remainingBalance) were never set due to wrong type label.
+ * Idempotent — safe to run multiple times.
+ */
+export function useRepairARAPTransactions() {
+  const queryClient = useQueryClient()
+  return useMutation({
+    mutationFn: async () => {
+      const { data } = await transactionService.repairARAPTransactions()
+      return data.data
+    },
+    onSuccess: (result) => {
+      // Invalidate all AR/AP-dependent queries so the UI refreshes immediately
+      queryClient.invalidateQueries({ queryKey: ['outstanding'] })
+      queryClient.invalidateQueries({ queryKey: ['customer-balance'] })
+      queryClient.invalidateQueries({ queryKey: ['customer-stats'] })
+      queryClient.invalidateQueries({ queryKey: ['customer-transactions'] })
+      queryClient.invalidateQueries({ queryKey: ['customers'] })
+      queryClient.invalidateQueries({ queryKey: ['transactions'] })
+      const fixed = (result?.arFixed || 0) + (result?.apFixed || 0)
+      if (fixed === 0) {
+        toast.success('Books are consistent — no repairs needed.')
+      } else {
+        toast.success(`Fixed ${result.arFixed} receivable${result.arFixed !== 1 ? 's' : ''} and ${result.apFixed} payable${result.apFixed !== 1 ? 's' : ''}.`)
+      }
+    },
+    onError: (error) => toast.error(getErrorMessage(error)),
+  })
+}

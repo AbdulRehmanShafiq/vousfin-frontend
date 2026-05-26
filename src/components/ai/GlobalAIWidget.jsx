@@ -11,7 +11,8 @@
  * Chat messages persist via Zustand (useAIStore) — the store is a singleton
  * so history is never reset by React Router navigations.
  */
-import { useState, useRef, useEffect } from 'react'
+import { useState, useRef, useEffect, useMemo } from 'react'
+import { useLocation } from 'react-router-dom'
 import ReactMarkdown from 'react-markdown'
 import {
   BrainCircuit, Send, X, Maximize2, Minimize2,
@@ -22,11 +23,40 @@ import { useAIStore } from '@/stores/useAIStore'
 import { cn } from '@/utils/cn'
 import { getErrorMessage } from '@/utils/errorHandler'
 
-const SUGGESTED_PROMPTS = [
+/**
+ * Suggested prompts adapt to the page the user is on, so the empty state
+ * is contextual rather than generic. Keys are prefix-matched against the
+ * current pathname; the most specific (longest prefix) wins.
+ */
+const ROUTE_PROMPTS = {
+  '/dashboard':           ['What is my net profit this month?', 'How is my cash flow?', 'What are my top expenses?'],
+  '/transactions':        ['Show me unusual transactions last week', 'Which transactions need review?', 'Summarise this month\'s spending'],
+  '/accounts':            ['Which accounts have the highest balances?', 'Are any accounts overdrawn?'],
+  '/customers':           ['Who are my top customers by revenue?', 'Which customers owe me the most?'],
+  '/sales/receivables':   ['What is my total outstanding receivables?', 'Which invoices are overdue?'],
+  '/vendors':             ['Who are my biggest vendors?', 'Which vendors do I owe the most?'],
+  '/purchases/payables':  ['What is my total outstanding payables?', 'Which bills are coming due?'],
+  '/financial-reports':   ['Explain my income statement', 'Is my balance sheet healthy?', 'How does this period compare to last?'],
+  '/ai-analyst/forecast': ['What does next quarter look like?', 'Explain the forecast confidence', 'What drives the forecast?'],
+  '/ai-analyst/anomalies':['Why was this flagged as anomalous?', 'What is my fraud risk score?'],
+}
+
+const DEFAULT_PROMPTS = [
   'What is my net profit this month?',
   'How is my cash flow?',
   'What are my top expenses?',
 ]
+
+function getContextualPrompts(pathname) {
+  // Longest-prefix match — '/ai-analyst/forecast' beats '/ai-analyst'
+  let bestKey = null
+  for (const key of Object.keys(ROUTE_PROMPTS)) {
+    if (pathname.startsWith(key) && (!bestKey || key.length > bestKey.length)) {
+      bestKey = key
+    }
+  }
+  return bestKey ? ROUTE_PROMPTS[bestKey] : DEFAULT_PROMPTS
+}
 
 /* ── Typing dots indicator ── */
 function TypingDots() {
@@ -90,6 +120,8 @@ export default function GlobalAIWidget() {
   const inputRef                        = useRef(null)
 
   const { messages, loading, sendMessage, clearChat } = useAIStore()
+  const { pathname } = useLocation()
+  const suggestedPrompts = useMemo(() => getContextualPrompts(pathname), [pathname])
 
   /* Auto-scroll on new messages */
   useEffect(() => {
@@ -138,7 +170,7 @@ export default function GlobalAIWidget() {
     return (
       <button
         onClick={() => setIsOpen(true)}
-        className="fixed bottom-6 right-6 z-[60] flex items-center gap-2 rounded-full bg-cyan text-navy px-4 py-3 shadow-lg shadow-cyan/25 hover:bg-cyan/90 active:scale-95 transition-all duration-150 font-semibold text-sm select-none"
+        className="fixed bottom-20 right-6 lg:bottom-6 z-[60] flex items-center gap-2 rounded-full bg-cyan text-navy px-4 py-3 shadow-lg shadow-cyan/25 hover:bg-cyan/90 active:scale-95 transition-all duration-150 font-semibold text-sm select-none"
         aria-label="Open AI Assistant"
       >
         <BrainCircuit className="h-5 w-5 flex-shrink-0" />
@@ -218,7 +250,7 @@ export default function GlobalAIWidget() {
               Ask me anything about your finances:
             </p>
             <div className="flex flex-wrap gap-1.5 justify-center">
-              {SUGGESTED_PROMPTS.map((p) => (
+              {suggestedPrompts.map((p) => (
                 <button
                   key={p}
                   type="button"

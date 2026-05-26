@@ -1,4 +1,5 @@
 import { useMemo } from 'react'
+import { Link } from 'react-router-dom'
 import {
   LayoutDashboard,
   TrendingUp,
@@ -158,7 +159,7 @@ export default function Dashboard() {
           <div className="premium-card p-6">
             <div className="flex items-center justify-between border-b border-glass pb-3 mb-4">
               <h2 className="text-lg font-bold text-text-primary">Recent Transactions</h2>
-              <a href="/transactions" className="text-xs text-cyan hover:underline font-medium">View All</a>
+              <Link to="/transactions" className="text-xs text-cyan hover:underline font-medium">View All</Link>
             </div>
 
             {isLoadingTx ? (
@@ -166,13 +167,13 @@ export default function Dashboard() {
             ) : recentTransactions.length === 0 ? (
               <div className="py-8 text-center">
                 <p className="text-text-muted mb-3">No transactions yet.</p>
-                <a
-                  href="/transactions"
+                <Link
+                  to="/transactions"
                   className="inline-flex items-center gap-2 text-sm text-cyan font-medium hover:underline"
                 >
                   <Plus className="h-4 w-4" />
                   Record your first transaction
-                </a>
+                </Link>
               </div>
             ) : (
               <div className="space-y-2">

@@ -10,7 +10,7 @@ export function useTransactions(filters = {}) {
       Object.entries(filters).forEach(([key, val]) => {
         if (val) params.append(key, val)
       })
-      
+
       const { data } = await api.get(`/transactions?${params.toString()}`)
       // Backend returns { data: { data: [...], total, page, limit } }
       // Normalize to { docs: [...], total, page, limit }
@@ -22,6 +22,10 @@ export function useTransactions(filters = {}) {
         limit: inner.limit ?? 25,
       }
     },
+    // 60-second stale window: prevents redundant refetch on tab focus / component remount.
+    // Mutations call queryClient.invalidateQueries(['transactions']) so fresh data is always
+    // loaded immediately after a write — this only suppresses background re-fetches.
+    staleTime: 60 * 1000,
   })
 }
 
@@ -140,5 +144,71 @@ export function useExcelConfirm() {
     onError: (error) => {
       toast.error(error.response?.data?.message || 'Import failed')
     },
+  })
+}
+
+/**
+ * Update only the transactionDate of an existing transaction.
+ * Uses the existing PUT /transactions/:id endpoint — date-only patch
+ * preserves amounts, accounts, and audit trail; invalidates report cache.
+ */
+export function useUpdateTransactionDate() {
+  const queryClient = useQueryClient()
+  return useMutation({
+    mutationFn: async ({ id, transactionDate }) => {
+      const { data } = await api.put(`/transactions/${id}`, { transactionDate })
+      return data.data
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['transactions'] })
+      queryClient.invalidateQueries({ queryKey: ['reports'] })
+      queryClient.invalidateQueries({ queryKey: ['outstanding'] })
+      toast.success('Transaction date updated')
+    },
+    onError: (error) => {
+      toast.error(error.response?.data?.message || 'Failed to update date')
+    },
+  })
+}
+
+/**
+ * Reverse a posted transaction.
+ * POST /transactions/:id/reverse
+ */
+export function useReverseTransaction() {
+  const queryClient = useQueryClient()
+  return useMutation({
+    mutationFn: async ({ id, reversalDate, reason }) => {
+      const { data } = await api.post(`/transactions/${id}/reverse`, { reversalDate, reason })
+      return data.data
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['transactions'] })
+      queryClient.invalidateQueries({ queryKey: ['accounts'] })
+      queryClient.invalidateQueries({ queryKey: ['reports'] })
+      queryClient.invalidateQueries({ queryKey: ['customers'] })
+      queryClient.invalidateQueries({ queryKey: ['vendors'] })
+      queryClient.invalidateQueries({ queryKey: ['dashboard'] })
+      toast.success('Transaction reversed successfully')
+    },
+    onError: (error) => {
+      toast.error(error.response?.data?.message || 'Failed to reverse transaction')
+    },
+  })
+}
+
+/**
+ * Fetch audit history + reversal entry for a specific transaction.
+ * GET /transactions/:id/history
+ */
+export function useTransactionHistory(transactionId, options = {}) {
+  return useQuery({
+    queryKey: ['transaction-history', transactionId],
+    queryFn: async () => {
+      const { data } = await api.get(`/transactions/${transactionId}/history`)
+      return data.data
+    },
+    enabled: Boolean(transactionId),
+    ...options,
   })
 }

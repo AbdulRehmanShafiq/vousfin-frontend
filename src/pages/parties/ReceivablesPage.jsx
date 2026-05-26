@@ -8,13 +8,14 @@
  */
 import { useMemo, useState } from 'react'
 import { Link } from 'react-router-dom'
-import { Wallet, Search, AlertTriangle } from 'lucide-react'
+import { Wallet, Search, AlertTriangle, Wrench } from 'lucide-react'
 
-import { useOutstandingBalances } from '@/hooks/useParties'
+import { useOutstandingBalances, useRepairARAPTransactions } from '@/hooks/useParties'
 import { useBusinessStore } from '@/stores/useBusinessStore'
 import { formatCurrency, formatDate } from '@/utils/formatters'
 
 import Badge from '@/components/ui/Badge'
+import Button from '@/components/ui/Button'
 import DataTable from '@/components/tables/DataTable'
 import Input from '@/components/ui/Input'
 import { cn } from '@/utils/cn'
@@ -33,6 +34,12 @@ function daysSince(dateStr) {
   if (!dateStr) return 0
   const ms = Date.now() - new Date(dateStr).getTime()
   return Math.max(0, Math.floor(ms / (1000 * 60 * 60 * 24)))
+}
+
+/** Returns true if the date is implausibly old (>5 years) — likely a data-entry error */
+function isStaleDate(dateStr) {
+  if (!dateStr) return false
+  return daysSince(dateStr) > 5 * 365
 }
 
 /* ── KPI tile ───────────────────────────────────────────────────────── */
@@ -54,6 +61,7 @@ function KpiTile({ label, value, sub, accent }) {
 export default function ReceivablesPage() {
   const currency = useBusinessStore(s => s.currency)
   const { data, isLoading } = useOutstandingBalances('receivable', { withAging: true })
+  const repair = useRepairARAPTransactions()
   const [query, setQuery] = useState('')
 
   /* With withAging=true the backend returns { rows: [...], aging: {...} } */
@@ -110,7 +118,21 @@ export default function ReceivablesPage() {
       key: 'date',
       header: 'Date',
       render: (r) => (
-        <span className="text-text-secondary">{formatDate(r._date)}</span>
+        <span
+          className={cn(
+            isStaleDate(r._date)
+              ? 'text-red-400 font-semibold'
+              : 'text-text-secondary'
+          )}
+          title={isStaleDate(r._date)
+            ? 'Date appears incorrect — please edit this transaction to set the right date'
+            : undefined}
+        >
+          {formatDate(r._date)}
+          {isStaleDate(r._date) && (
+            <AlertTriangle className="inline ml-1 h-3 w-3 text-red-400" aria-label="Suspicious date" />
+          )}
+        </span>
       ),
     },
     {
@@ -171,6 +193,19 @@ export default function ReceivablesPage() {
             Invoices and credit sales still awaiting customer payment.
           </p>
         </div>
+
+        {/* Reconcile button — fixes transactions where correct accounts were used
+            but the wrong type label prevented AR lifecycle from being set */}
+        <Button
+          size="sm"
+          variant="secondary"
+          icon={Wrench}
+          onClick={() => repair.mutate()}
+          loading={repair.isPending}
+          title="Fix transactions where the correct accounts were used but the type label bypassed the AR workflow (GAAP-compliant, idempotent)"
+        >
+          Reconcile AR/AP
+        </Button>
       </div>
 
       {/* ── KPIs ──────────────────────────────────────────────────── */}

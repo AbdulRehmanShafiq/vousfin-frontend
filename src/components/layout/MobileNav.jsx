@@ -1,13 +1,17 @@
 import { NavLink } from 'react-router-dom'
-import { LayoutDashboard, Receipt, MessageSquare, FileText, Settings } from 'lucide-react'
+import { LayoutDashboard, Receipt, BrainCircuit, FileText, Settings } from 'lucide-react'
 import { cn } from '@/utils/cn'
 
+/**
+ * Mobile bottom-nav — 5 most-used destinations.
+ * Routes point to canonical hub URLs (no legacy /reports/* paths).
+ */
 const links = [
-  { to: '/dashboard', icon: LayoutDashboard, label: 'Home' },
-  { to: '/transactions', icon: Receipt, label: 'Txns' },
-  { to: '/ai/assistant', icon: MessageSquare, label: 'AI' },
-  { to: '/reports/income-statement', icon: FileText, label: 'Reports' },
-  { to: '/business/settings', icon: Settings, label: 'Settings' },
+  { to: '/dashboard',                          icon: LayoutDashboard, label: 'Home'     },
+  { to: '/transactions',                       icon: Receipt,         label: 'Txns'     },
+  { to: '/ai-analyst/forecast',                icon: BrainCircuit,    label: 'AI'       },
+  { to: '/financial-reports/income-statement', icon: FileText,        label: 'Reports'  },
+  { to: '/business/settings',                  icon: Settings,        label: 'Settings' },
 ]
 
 export default function MobileNav() {

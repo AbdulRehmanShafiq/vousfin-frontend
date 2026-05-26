@@ -15,6 +15,9 @@ const transactionService = {
   recordPayment: (data) => api.post('/transactions/payment', data),
   getSettlementHistory: (id) => api.get(`/transactions/${id}/settlements`),
 
+  // AR/AP Data Integrity Repair — idempotent, GAAP-compliant fix for mis-typed entries
+  repairARAPTransactions: () => api.post('/transactions/repair-ar-ap'),
+
   // Installments
   createInstallment: (data) => api.post('/transactions/installment', data),
   recordInstallmentPayment: (planId, data) => api.post(`/transactions/installment/${planId}/pay`, data),
