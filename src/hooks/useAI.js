@@ -87,3 +87,18 @@ export function useForecastHealth() {
     retry: false,
   })
 }
+
+// ── AI Financial Insights (unusual spending, tax risk, cash flow warnings) ──
+export function useFinancialInsights() {
+  const businessId = useAuthStore(s => s.user?.businessId)
+  return useQuery({
+    queryKey: ['financialInsights', businessId],
+    queryFn: async () => {
+      const { data } = await api.get('/ai/financial-insights')
+      return data.data
+    },
+    staleTime: 5 * 60 * 1000,
+    enabled: !!businessId,
+    retry: false,
+  })
+}
