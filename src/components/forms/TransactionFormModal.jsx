@@ -24,6 +24,7 @@ import { formatCurrency } from '@/utils/formatters'
 import { buildGroupedAccountOptions } from '@/utils/accountOptions'
 import { TRANSACTION_PRESETS, matchesFilter, getPresetById } from '@/utils/transactionPresets'
 import { getTxTypeFilter } from '@/utils/accountFilterRules'
+import { resolveDebitCreditPair } from '@/utils/accountResolver'
 import { cn } from '@/utils/cn'
 
 /* ──────────────────────────────────────────────────────────────────────────────
@@ -660,15 +661,41 @@ function StructuredFormTab({ currency, onSuccess, onCancel, initialValues }) {
   const [presetId,   setPresetId]       = useState(null)
   const [showOptional, setShowOptional] = useState(false)
 
+  // Track auto-resolution outcome so UI can show "AI auto-selected" badges
+  const [autoResolved, setAutoResolved] = useState({ debit: null, credit: null })
+
   useEffect(() => {
     const today = new Date().toISOString().split('T')[0]
     if (initialValues) {
+      // ── Phase 3.5 Step 1 — Auto-resolve AI account-name suggestions ──
+      // If backend's fuzzy-matcher couldn't pin debit/credit account IDs but
+      // returned name suggestions, run the frontend resolver against the
+      // live accounts list. The resolver respects accountType filters from
+      // transaction-type rules so we never silently flip DR-side / CR-side.
+      let resolvedDebitId  = initialValues.debitAccountId  || ''
+      let resolvedCreditId = initialValues.creditAccountId || ''
+      const resolution = { debit: null, credit: null }
+      if (accounts.length > 0 && (initialValues._aiDebitAccount || initialValues._aiCreditAccount)) {
+        const txFilter = getTxTypeFilter(initialValues.transactionType)
+        const debitType  = txFilter.debitFilter?.types?.[0]
+        const creditType = txFilter.creditFilter?.types?.[0]
+        const pair = resolveDebitCreditPair(
+          initialValues._aiDebitAccount,
+          initialValues._aiCreditAccount,
+          accounts,
+          { debitType, creditType }
+        )
+        if (!resolvedDebitId  && pair.debit.account)  { resolvedDebitId  = pair.debit.account._id;  resolution.debit  = { name: pair.debit.account.accountName, score: pair.debit.score } }
+        if (!resolvedCreditId && pair.credit.account) { resolvedCreditId = pair.credit.account._id; resolution.credit = { name: pair.credit.account.accountName, score: pair.credit.score } }
+      }
+      setAutoResolved(resolution)
+
       reset({
         transactionDate:      initialValues.transactionDate      || today,
         description:          initialValues.description          || '',
         amount:               typeof initialValues.amount === 'number' ? initialValues.amount : 0,
-        debitAccountId:       initialValues.debitAccountId       || '',
-        creditAccountId:      initialValues.creditAccountId      || '',
+        debitAccountId:       resolvedDebitId,
+        creditAccountId:      resolvedCreditId,
         transactionType:      initialValues.transactionType      || '',
         referenceNumber:      '',
         invoiceNumber:        initialValues.invoiceNumber        || '',
@@ -702,9 +729,10 @@ function StructuredFormTab({ currency, onSuccess, onCancel, initialValues }) {
       reset({ transactionDate: today })
       setNlAiBanner(false)
       setPresetId(null)
+      setAutoResolved({ debit: null, credit: null })
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [initialValues])
+  }, [initialValues, accounts.length])
 
   const preset = useMemo(() => getPresetById(presetId), [presetId])
   const allAccountOptions = useMemo(() => buildGroupedAccountOptions(accounts), [accounts])
@@ -896,15 +924,26 @@ function StructuredFormTab({ currency, onSuccess, onCancel, initialValues }) {
         </div>
       )}
 
-      {/* AI suggested account hints when IDs couldn't be resolved */}
-      {nlAiBanner && initialValues?._aiDebitAccount && !debitAccountId && (
-        <p className="text-xs text-amber-400 px-1 -mt-2">
-          AI suggested debit account &quot;{initialValues._aiDebitAccount}&quot; — pick the closest match below.
+      {/* AI auto-resolution status — Phase 3.5 Step 1 ───────────────── */}
+      {nlAiBanner && autoResolved.debit && debitAccountId && (
+        <p className="text-xs text-emerald-400 px-1 -mt-2">
+          ✓ AI auto-selected debit account &quot;{autoResolved.debit.name}&quot; (confidence {Math.round(autoResolved.debit.score * 100)}%) — change below if wrong.
         </p>
       )}
-      {nlAiBanner && initialValues?._aiCreditAccount && !creditAccountId && (
+      {nlAiBanner && autoResolved.credit && creditAccountId && (
+        <p className="text-xs text-emerald-400 px-1 -mt-2">
+          ✓ AI auto-selected credit account &quot;{autoResolved.credit.name}&quot; (confidence {Math.round(autoResolved.credit.score * 100)}%) — change below if wrong.
+        </p>
+      )}
+      {/* Manual-pick prompts — only shown when resolver could NOT pick automatically */}
+      {nlAiBanner && initialValues?._aiDebitAccount && !debitAccountId && !autoResolved.debit && (
         <p className="text-xs text-amber-400 px-1 -mt-2">
-          AI suggested credit account &quot;{initialValues._aiCreditAccount}&quot; — pick the closest match below.
+          AI suggested debit account &quot;{initialValues._aiDebitAccount}&quot; but match was ambiguous — pick the closest below.
+        </p>
+      )}
+      {nlAiBanner && initialValues?._aiCreditAccount && !creditAccountId && !autoResolved.credit && (
+        <p className="text-xs text-amber-400 px-1 -mt-2">
+          AI suggested credit account &quot;{initialValues._aiCreditAccount}&quot; but match was ambiguous — pick the closest below.
         </p>
       )}
 
