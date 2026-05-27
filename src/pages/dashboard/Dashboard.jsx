@@ -125,7 +125,7 @@ const ACTION_DEFS = [
   },
   {
     label: 'Reports',
-    to: '/reports',
+    to: '/financial-reports',
     Icon: BarChart2,
     iconClass:    'bg-violet-500/15 text-violet-400',
     wrapperHover: 'hover:bg-violet-500/10 hover:border-violet-500/40',
@@ -141,7 +141,7 @@ const ACTION_DEFS = [
   },
   {
     label: 'Journal',
-    to: '/journal',
+    to: '/financial-reports/general-ledger',
     Icon: BookOpen,
     iconClass:    'bg-orange-400/15 text-orange-400',
     wrapperHover: 'hover:bg-orange-400/10 hover:border-orange-400/40',
