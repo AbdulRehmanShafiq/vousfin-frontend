@@ -8,7 +8,7 @@
 import { useState, useMemo, useEffect, useRef } from 'react'
 import {
   DollarSign, RefreshCw, Plus, Trash2, Edit2, X, Check,
-  TrendingUp, Wifi, WifiOff, Clock, Zap, Info,
+  TrendingUp, Wifi, WifiOff, Clock, Zap, Info, Loader2,
 } from 'lucide-react'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
@@ -190,7 +190,7 @@ export default function CurrencyRatesPage() {
           </Button>
           <Button
             size="sm"
-            icon={isSyncing ? Loader : RefreshCw}
+            icon={isSyncing ? Loader2 : RefreshCw}
             loading={isSyncing}
             onClick={handleManualSync}
             className="bg-cyan text-navy hover:bg-cyan/90"
