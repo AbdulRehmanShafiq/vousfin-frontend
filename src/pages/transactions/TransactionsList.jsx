@@ -11,19 +11,17 @@
 import { useState, useMemo, memo, Fragment, useCallback, useRef, useEffect } from 'react'
 import {
   Plus, ArrowUpRight, ArrowDownRight, Receipt,
-  RotateCcw, History, ChevronUp, Calendar, Loader2, Lock,
+  RotateCcw, History, ChevronUp, Loader2, Lock, Pencil,
 } from 'lucide-react'
 import toast from 'react-hot-toast'
 
-import { useInfiniteTransactions, useUpdateTransactionDate } from '@/hooks/useTransactions'
+import { useInfiniteTransactions } from '@/hooks/useTransactions'
 import { useBusinessStore } from '@/stores/useBusinessStore'
 import { formatCurrency, formatDate } from '@/utils/formatters'
 
 import Button from '@/components/ui/Button'
 import KPICard from '@/components/ui/KPICard'
 import Badge from '@/components/ui/Badge'
-import Modal from '@/components/modals/Modal'
-import Input from '@/components/ui/Input'
 import CurrencyBadge from '@/components/ui/CurrencyBadge'
 import TransactionFormModal from '@/components/forms/TransactionFormModal'
 import TransactionReversalModal from '@/components/forms/TransactionReversalModal'
@@ -63,40 +61,7 @@ const StatusBadge = memo(function StatusBadge({ row }) {
   return <Badge variant="default" className="text-[10px] py-0.5 px-1.5">Posted</Badge>
 })
 
-// ─── edit-date modal ──────────────────────────────────────────────────────────
-
-function EditDateModal({ target, onClose }) {
-  const today = new Date().toISOString().slice(0, 10)
-  const [date, setDate] = useState(
-    target?.transactionDate ? new Date(target.transactionDate).toISOString().slice(0, 10) : today
-  )
-  const { mutate, isPending } = useUpdateTransactionDate()
-
-  const handleSave = () => {
-    if (!date) return toast.error('Please select a date')
-    if (!/^\d{4}-\d{2}-\d{2}$/.test(date)) return toast.error('Invalid date')
-    mutate({ id: target._id, transactionDate: date }, { onSuccess: onClose })
-  }
-
-  return (
-    <Modal isOpen title="Edit Transaction Date" onClose={onClose} maxWidth="sm">
-      <div className="space-y-4 p-1">
-        <p className="text-xs text-text-muted truncate">{target?.description}</p>
-        <Input
-          label="Transaction Date"
-          type="date"
-          value={date}
-          max={today}
-          onChange={e => setDate(e.target.value)}
-        />
-        <div className="flex justify-end gap-2">
-          <Button variant="secondary" size="sm" onClick={onClose}>Cancel</Button>
-          <Button size="sm" onClick={handleSave} loading={isPending}>Save</Button>
-        </div>
-      </div>
-    </Modal>
-  )
-}
+// EditDateModal removed — date editing is now part of the full Edit Transaction modal
 
 // ─── history panel ────────────────────────────────────────────────────────────
 
@@ -137,7 +102,7 @@ const HistoryPanel = memo(function HistoryPanel({ history }) {
 // ─── mobile card (no table, no overflow) ─────────────────────────────────────
 
 const MobileCard = memo(function MobileCard({
-  row, currency, onEditDate, onReverse, canReverse, isEditLocked, onToggleHistory, isExpanded, historyState,
+  row, currency, onEdit, onReverse, canReverse, isEditLocked, onToggleHistory, isExpanded, historyState,
 }) {
   const type = (row.transactionType || '').toLowerCase()
   const isInflow  = INFLOW_TYPES.has(type)
@@ -181,16 +146,17 @@ const MobileCard = memo(function MobileCard({
           <StatusBadge row={row} />
         </div>
         <div className="flex items-center gap-0.5 shrink-0">
-          {locked ? (
+          {/* Edit button — locked after 30 days */}
+          {locked || isReversed ? (
             <span
-              title="Transactions older than 30 days cannot be edited — use Reverse to correct"
-              className="rounded p-1 text-text-muted/40 cursor-not-allowed">
+              title={isReversed ? 'Reversed transactions cannot be edited' : 'Transactions older than 30 days cannot be edited — use Reverse to correct'}
+              className="rounded p-1 text-text-muted/35 cursor-not-allowed">
               <Lock className="h-3.5 w-3.5" />
             </span>
           ) : (
-            <button onClick={() => onEditDate(row)} title="Edit date"
+            <button onClick={() => onEdit(row)} title="Edit transaction"
               className="rounded p-1 text-text-muted hover:text-cyan hover:bg-glass-hover transition-colors">
-              <Calendar className="h-3.5 w-3.5" />
+              <Pencil className="h-3.5 w-3.5" />
             </button>
           )}
           <button onClick={() => onToggleHistory(row)} title="History"
@@ -198,8 +164,8 @@ const MobileCard = memo(function MobileCard({
             {isExpanded ? <ChevronUp className="h-3.5 w-3.5" /> : <History className="h-3.5 w-3.5" />}
           </button>
           {canReverse(row) && (
-            <button onClick={() => onReverse(row)} title="Reverse"
-              className="rounded p-1 text-text-muted hover:text-red-400 hover:bg-red-500/10 transition-colors">
+            <button onClick={() => onReverse(row)} title="Reverse this transaction"
+              className="rounded p-1 text-text-muted hover:text-amber-400 hover:bg-amber-500/10 transition-colors">
               <RotateCcw className="h-3.5 w-3.5" />
             </button>
           )}
@@ -225,7 +191,7 @@ export default function TransactionsList() {
   const [activeFilter,   setActiveFilter]   = useState('All')
   const [isFormOpen,     setIsFormOpen]     = useState(false)
   const [reversalTarget, setReversalTarget] = useState(null)
-  const [editDateTarget, setEditDateTarget] = useState(null)
+  const [editTarget,     setEditTarget]     = useState(null)   // full-edit modal
   const [expandedRows,   setExpandedRows]   = useState({})
 
   const currency = useBusinessStore(s => s.currency)
@@ -441,16 +407,17 @@ export default function TransactionsList() {
                           {/* Actions */}
                           <td className="px-4 py-2.5">
                             <div className="flex items-center justify-end gap-0.5">
-                              {isEditLocked(row) ? (
+                              {/* Edit — locked after 30 days or if reversed */}
+                              {isEditLocked(row) || isReversed ? (
                                 <span
-                                  title="Transactions older than 30 days cannot be edited — use Reverse to correct"
-                                  className="rounded p-1.5 text-text-muted/40 cursor-not-allowed">
+                                  title={isReversed ? 'Reversed transactions cannot be edited' : 'Transactions older than 30 days cannot be edited — use Reverse to correct'}
+                                  className="rounded p-1.5 text-text-muted/35 cursor-not-allowed">
                                   <Lock className="h-3.5 w-3.5" />
                                 </span>
                               ) : (
-                                <button onClick={() => setEditDateTarget(row)} title="Edit date"
+                                <button onClick={() => setEditTarget(row)} title="Edit transaction"
                                   className="rounded p-1.5 text-text-muted hover:text-cyan hover:bg-glass-hover transition-colors">
-                                  <Calendar className="h-3.5 w-3.5" />
+                                  <Pencil className="h-3.5 w-3.5" />
                                 </button>
                               )}
                               <button onClick={() => toggleHistory(row)} title="History"
@@ -458,8 +425,8 @@ export default function TransactionsList() {
                                 {expandedRows[row._id] ? <ChevronUp className="h-3.5 w-3.5" /> : <History className="h-3.5 w-3.5" />}
                               </button>
                               {canReverse(row) && (
-                                <button onClick={() => setReversalTarget(row)} title="Reverse"
-                                  className="rounded p-1.5 text-text-muted hover:text-red-400 hover:bg-red-500/10 transition-colors">
+                                <button onClick={() => setReversalTarget(row)} title="Reverse this transaction"
+                                  className="rounded p-1.5 text-text-muted hover:text-amber-400 hover:bg-amber-500/10 transition-colors">
                                   <RotateCcw className="h-3.5 w-3.5" />
                                 </button>
                               )}
@@ -492,7 +459,7 @@ export default function TransactionsList() {
                   key={row._id || ri}
                   row={row}
                   currency={currency}
-                  onEditDate={setEditDateTarget}
+                  onEdit={setEditTarget}
                   onReverse={setReversalTarget}
                   canReverse={canReverse}
                   isEditLocked={isEditLocked}
@@ -522,16 +489,18 @@ export default function TransactionsList() {
       </div>
 
       {/* ── Modals ────────────────────────────────────────────────── */}
-      {editDateTarget && (
-        <EditDateModal
-          target={editDateTarget}
-          onClose={() => setEditDateTarget(null)}
-        />
-      )}
 
+      {/* Create new transaction */}
       <TransactionFormModal
         isOpen={isFormOpen}
         onClose={() => setIsFormOpen(false)}
+      />
+
+      {/* Edit existing transaction (within 30-day GAAP window) */}
+      <TransactionFormModal
+        isOpen={Boolean(editTarget)}
+        onClose={() => setEditTarget(null)}
+        transaction={editTarget}
       />
 
       <TransactionReversalModal

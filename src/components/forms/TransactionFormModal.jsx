@@ -16,6 +16,7 @@ import { useInventoryItems } from '@/hooks/useInventory'
 import {
   useCreateTransaction,
   useCreateInstallmentTransaction,
+  useUpdateTransaction,
   useNLPreview,
   useExcelPreview,
   useExcelConfirm,
@@ -458,7 +459,37 @@ const TABS = [
 ]
 
 // ─── Main Component ───────────────────────────────────────────────────────────
-export default function TransactionFormModal({ isOpen, onClose }) {
+/**
+ * Maps a stored transaction document to the shape StructuredFormTab expects
+ * as initialValues.  Only the fields the update endpoint accepts are included.
+ */
+function txToInitialValues(tx, currency) {
+  return {
+    transactionDate:     tx.transactionDate ? new Date(tx.transactionDate).toISOString().slice(0, 10) : '',
+    description:         tx.description          || '',
+    amount:              typeof tx.amount === 'number' ? tx.amount : 0,
+    debitAccountId:      tx.debitAccountId?._id  || tx.debitAccountId  || '',
+    creditAccountId:     tx.creditAccountId?._id || tx.creditAccountId || '',
+    transactionType:     tx.transactionType       || '',
+    invoiceNumber:       tx.invoiceNumber         || '',
+    notes:               tx.notes                 || '',
+    dueDate:             tx.dueDate ? new Date(tx.dueDate).toISOString().slice(0, 10) : '',
+    paymentMethod:       tx.paymentMethod         || '',
+    txnCurrency:         tx.currencyCode          || currency,
+    exchangeRate:        tx.exchangeRate           || 1,
+    taxAmount:           tx.taxAmount             || 0,
+    taxRate:             tx.taxRate               || 0,
+    customerName:        tx.customerName || tx.customerId?.name || '',
+    vendorName:          tx.vendorName   || tx.vendorId?.name   || '',
+    referenceNumber:     tx.transactionReference  || '',
+    // never pre-fill installment fields in edit mode
+    isInstallment:       false,
+  }
+}
+
+export default function TransactionFormModal({ isOpen, onClose, transaction = null }) {
+  const isEditMode = Boolean(transaction)
+
   const [activeTab,  setActiveTab]  = useState('form')
   const [wasOpen,    setWasOpen]    = useState(isOpen)
   const [nlPrefill,  setNlPrefill]  = useState(null)
@@ -516,29 +547,52 @@ export default function TransactionFormModal({ isOpen, onClose }) {
     setActiveTab('form')
   }, [currency])
 
-  return (
-    <Modal isOpen={isOpen} onClose={handleClose} title="Record Transaction" className="sm:max-w-2xl">
-      <div className="flex gap-1 p-1 rounded-xl bg-glass-panel border border-glass mb-6">
-        {TABS.map(({ id, label, icon: Icon }) => (
-          <button
-            key={id}
-            type="button"
-            onClick={() => setActiveTab(id)}
-            className={`flex-1 flex items-center justify-center gap-2 py-2 px-3 rounded-lg text-sm font-medium transition-all duration-200 ${
-              activeTab === id
-                ? 'bg-cyan text-navy shadow-glow-cyan'
-                : 'text-text-secondary hover:text-text-primary hover:bg-glass-hover'
-            }`}
-          >
-            <Icon className="h-4 w-4 flex-shrink-0" />
-            <span className="hidden sm:inline">{label}</span>
-          </button>
-        ))}
-      </div>
+  // In edit mode derive pre-fill values directly from the transaction prop
+  const editInitialValues = isEditMode ? txToInitialValues(transaction, currency) : null
 
-      {activeTab === 'nl'    && <NLTab    currency={currency} onParsed={handleNlParsed} />}
-      {activeTab === 'form'  && <StructuredFormTab currency={currency} onSuccess={handleClose} onCancel={handleClose} initialValues={nlPrefill} />}
-      {activeTab === 'excel' && <ExcelTab onSuccess={handleClose} onCancel={handleClose} />}
+  return (
+    <Modal
+      isOpen={isOpen}
+      onClose={handleClose}
+      title={isEditMode ? `Edit Transaction` : 'Record Transaction'}
+      className="sm:max-w-2xl"
+    >
+      {/* Tabs — hidden in edit mode (always structured form) */}
+      {!isEditMode && (
+        <div className="flex gap-1 p-1 rounded-xl bg-glass-panel border border-glass mb-6">
+          {TABS.map(({ id, label, icon: Icon }) => (
+            <button
+              key={id}
+              type="button"
+              onClick={() => setActiveTab(id)}
+              className={`flex-1 flex items-center justify-center gap-2 py-2 px-3 rounded-lg text-sm font-medium transition-all duration-200 ${
+                activeTab === id
+                  ? 'bg-cyan text-navy shadow-glow-cyan'
+                  : 'text-text-secondary hover:text-text-primary hover:bg-glass-hover'
+              }`}
+            >
+              <Icon className="h-4 w-4 flex-shrink-0" />
+              <span className="hidden sm:inline">{label}</span>
+            </button>
+          ))}
+        </div>
+      )}
+
+      {/* Edit mode: always structured form, no NL/Excel tabs */}
+      {isEditMode && (
+        <StructuredFormTab
+          currency={currency}
+          onSuccess={handleClose}
+          onCancel={handleClose}
+          initialValues={editInitialValues}
+          editTransactionId={transaction._id}
+        />
+      )}
+
+      {/* Create mode: full tab routing */}
+      {!isEditMode && activeTab === 'nl'    && <NLTab    currency={currency} onParsed={handleNlParsed} />}
+      {!isEditMode && activeTab === 'form'  && <StructuredFormTab currency={currency} onSuccess={handleClose} onCancel={handleClose} initialValues={nlPrefill} />}
+      {!isEditMode && activeTab === 'excel' && <ExcelTab onSuccess={handleClose} onCancel={handleClose} />}
     </Modal>
   )
 }
@@ -689,9 +743,11 @@ const TX_TYPE_OPTIONS = [
 ]
 
 // ─── Tab 2: Structured Form ───────────────────────────────────────────────────
-function StructuredFormTab({ currency, onSuccess, onCancel, initialValues }) {
+function StructuredFormTab({ currency, onSuccess, onCancel, initialValues, editTransactionId }) {
+  const isEditMode          = Boolean(editTransactionId)
   const createTx            = useCreateTransaction()
   const createInstallmentTx = useCreateInstallmentTransaction()
+  const updateTx            = useUpdateTransaction()
   const preSaveCheck        = usePreSaveCheck()
   const { data: currentPeriod } = useCurrentPeriod()
 
@@ -1035,6 +1091,28 @@ function StructuredFormTab({ currency, onSuccess, onCancel, initialValues }) {
         ...base
       } = data
 
+      // ── EDIT MODE ────────────────────────────────────────────────────────────
+      if (isEditMode) {
+        const payload = { ...base }
+        if (transactionType)         payload.transactionType      = transactionType
+        if (customerName?.trim())    payload.customerName         = customerName.trim()
+        if (vendorName?.trim())      payload.vendorName           = vendorName.trim()
+        if (selectedCustomerId)      payload.customerId           = selectedCustomerId
+        if (selectedVendorId)        payload.vendorId             = selectedVendorId
+        if (referenceNumber?.trim()) payload.transactionReference = referenceNumber.trim()
+        if (invoiceNumber?.trim())   payload.invoiceNumber        = invoiceNumber.trim()
+        payload.notes = notes?.trim() || ''
+        if (dueDate)                 payload.dueDate              = dueDate
+        if (paymentMethod)           payload.paymentMethod        = paymentMethod
+        if (typeof taxAmount === 'number' && taxAmount > 0) payload.taxAmount = taxAmount
+        if (typeof taxRate   === 'number' && taxRate   > 0) payload.taxRate   = taxRate
+        await updateTx.mutateAsync({ id: editTransactionId, ...payload })
+        onSuccess()
+        return
+      }
+
+      // ── CREATE MODE ──────────────────────────────────────────────────────────
+
       // Phase 3.5 Step 5 — pre-save check (advisory only, non-blocking)
       if (!preSaveAcknowledged) {
         try {
@@ -1097,7 +1175,7 @@ function StructuredFormTab({ currency, onSuccess, onCancel, initialValues }) {
     }
   }
 
-  const isPending = isSubmitting || createTx.isPending || createInstallmentTx.isPending
+  const isPending = isSubmitting || createTx.isPending || createInstallmentTx.isPending || updateTx.isPending
 
   const fDown  = watch('downPayment')          || 0
   const fCount = watch('installmentCount')     || 1
@@ -1507,9 +1585,9 @@ function StructuredFormTab({ currency, onSuccess, onCancel, initialValues }) {
         )}
       </div>
 
-      {/* ── Section: Installment / EMI (optional) ──────────────────────── */}
+      {/* ── Section: Installment / EMI (optional) — hidden in edit mode ── */}
       {/* Installment Toggle */}
-      <div className="pt-3 border-t border-glass">
+      {!isEditMode && <div className="pt-3 border-t border-glass">
         <label className="flex items-center gap-3 cursor-pointer group">
           <div className="relative flex items-center">
             <input type="checkbox" className="peer sr-only" {...register('isInstallment')} />
@@ -1564,10 +1642,10 @@ function StructuredFormTab({ currency, onSuccess, onCancel, initialValues }) {
               assetName={debitAcct?.accountName} currency={currency} />
           </div>
         )}
-      </div>
+      </div>}
 
-      {/* Pre-save warnings — advisory only, shown after first submit attempt */}
-      {preSaveWarnings.length > 0 && (
+      {/* Pre-save warnings — advisory only, shown in create mode after first submit attempt */}
+      {!isEditMode && preSaveWarnings.length > 0 && (
         <div className="rounded-lg border border-amber-500/30 bg-amber-500/10 p-3 space-y-2 animate-fade-in">
           <div className="flex items-center justify-between gap-2">
             <div className="flex items-center gap-2">
@@ -1597,7 +1675,9 @@ function StructuredFormTab({ currency, onSuccess, onCancel, initialValues }) {
       <div className="flex justify-end gap-3 pt-4 border-t border-glass">
         <Button variant="ghost" type="button" onClick={onCancel} disabled={isPending}>Cancel</Button>
         <Button type="submit" loading={isPending || preSaveCheck.isPending} disabled={isPeriodLocked}>
-          {isInstallment ? 'Create Instalment Plan' : 'Record Transaction'}
+          {isEditMode
+            ? 'Save Changes'
+            : isInstallment ? 'Create Instalment Plan' : 'Record Transaction'}
         </Button>
       </div>
     </form>

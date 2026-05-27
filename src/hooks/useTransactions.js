@@ -204,6 +204,35 @@ export function useUpdateTransactionDate() {
 }
 
 /**
+ * Full transaction edit — PUT /transactions/:id
+ * Allowed within 30 days of recording (GAAP edit window).
+ * Invalidates the same caches as create so lists and reports refresh.
+ */
+export function useUpdateTransaction() {
+  const queryClient = useQueryClient()
+  return useMutation({
+    mutationFn: async ({ id, ...updateData }) => {
+      const { data } = await api.put(`/transactions/${id}`, updateData)
+      return data.data
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['transactions'] })
+      queryClient.invalidateQueries({ queryKey: ['accounts'] })
+      queryClient.invalidateQueries({ queryKey: ['reports'] })
+      queryClient.invalidateQueries({ queryKey: ['customers'] })
+      queryClient.invalidateQueries({ queryKey: ['vendors'] })
+      queryClient.invalidateQueries({ queryKey: ['dashboard'] })
+      toast.success('Transaction updated successfully')
+    },
+    onError: (error) => {
+      const resp = error.response?.data
+      const msg  = resp?.errors || resp?.message || 'Failed to update transaction'
+      toast.error(msg)
+    },
+  })
+}
+
+/**
  * Phase 3.5 Step 5 — Pre-save accountant check.
  * Runs duplicate, tax, party, and unusual-amount warnings before saving.
  * Returns { warnings, suggestions, duplicateRisk } — never blocks the save.
