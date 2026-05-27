@@ -22,6 +22,7 @@ import {
   usePreSaveCheck,
 } from '@/hooks/useTransactions'
 import { useCurrentPeriod } from '@/hooks/useFiscalYear'
+import { useLatestRates, useConversionPreview } from '@/hooks/useFxRates'
 import { useBusinessStore } from '@/stores/useBusinessStore'
 import { formatCurrency } from '@/utils/formatters'
 import { buildGroupedAccountOptions } from '@/utils/accountOptions'
@@ -730,6 +731,52 @@ function StructuredFormTab({ currency, onSuccess, onCancel, initialValues }) {
   const [selectedInventoryItemId, setSelectedInventoryItemId] = useState(null)
   const [inventoryQty, setInventoryQty] = useState(1)
 
+  // Phase 5.3 — FX: load latest rates to populate currency options + auto-fill rate
+  const { data: latestFxRates } = useLatestRates()
+
+  // Build dynamic currency options from stored rates + hardcoded fallbacks
+  const currencyOptions = useMemo(() => {
+    const base = [
+      { value: currency,  label: `${currency} — Base currency` },
+      { value: 'USD', label: 'USD — US Dollar' },
+      { value: 'EUR', label: 'EUR — Euro' },
+      { value: 'GBP', label: 'GBP — British Pound' },
+      { value: 'AED', label: 'AED — UAE Dirham' },
+      { value: 'SAR', label: 'SAR — Saudi Riyal' },
+    ]
+    if (!latestFxRates?.length) return base
+    // Merge in currencies from stored rates that aren't already listed
+    const seen = new Set(base.map(o => o.value))
+    latestFxRates.forEach(r => {
+      if (!seen.has(r.fromCurrency)) {
+        base.push({ value: r.fromCurrency, label: r.fromCurrency })
+        seen.add(r.fromCurrency)
+      }
+    })
+    return base
+  }, [latestFxRates, currency])
+
+  // Auto-fill exchange rate when currency changes
+  const watchedTxnCurrency = watch('txnCurrency')
+  const watchedAmount      = watch('amount')
+  const watchedDate        = watch('transactionDate')
+
+  useEffect(() => {
+    if (!watchedTxnCurrency || watchedTxnCurrency === currency) return
+    const match = latestFxRates?.find(
+      r => r.fromCurrency === watchedTxnCurrency && r.toCurrency === currency
+    ) ?? latestFxRates?.find(r => r.fromCurrency === watchedTxnCurrency)
+    if (match?.rate) setValue('exchangeRate', match.rate)
+  }, [watchedTxnCurrency, latestFxRates, currency, setValue])
+
+  // Live conversion preview
+  const { data: convPreview } = useConversionPreview({
+    from:   watchedTxnCurrency !== currency ? watchedTxnCurrency : null,
+    to:     currency,
+    amount: watchedAmount,
+    date:   watchedDate,
+  })
+
   // Party objects with balance data for the combobox
   const customerParties = useMemo(() =>
     customers.map(c => ({
@@ -970,8 +1017,8 @@ function StructuredFormTab({ currency, onSuccess, onCancel, initialValues }) {
       if (dueDate)                 extras.dueDate              = dueDate
       if (paymentMethod)           extras.paymentMethod        = paymentMethod
       if (txnCurrency && txnCurrency !== currency) {
-        extras.currency     = txnCurrency
-        extras.exchangeRate = exchangeRate || 1
+        extras.currencyCode = txnCurrency        // IAS 21: foreign currency code
+        extras.exchangeRate = exchangeRate || 1  // units of base per 1 foreign
       }
       if (typeof taxAmount === 'number' && taxAmount > 0) extras.taxAmount = taxAmount
       if (typeof taxRate   === 'number' && taxRate   > 0) extras.taxRate   = taxRate
@@ -1307,19 +1354,35 @@ function StructuredFormTab({ currency, onSuccess, onCancel, initialValues }) {
                 { value: 'mobile_wallet', label: 'Mobile Wallet (JazzCash/EasyPaisa)' },
                 { value: 'online',        label: 'Online (PayPal/Stripe)' },
               ]} value={watch('paymentMethod') || ''} onChange={(v) => setValue('paymentMethod', v)} />
-              <Select label="Currency" options={[
-                { value: 'PKR', label: 'PKR — Pakistani Rupee' },
-                { value: 'USD', label: 'USD — US Dollar' },
-                { value: 'EUR', label: 'EUR — Euro' },
-                { value: 'GBP', label: 'GBP — British Pound' },
-                { value: 'AED', label: 'AED — UAE Dirham' },
-                { value: 'SAR', label: 'SAR — Saudi Riyal' },
-              ]} value={watch('txnCurrency') || currency} onChange={(v) => setValue('txnCurrency', v)} />
+              <Select
+                label="Currency"
+                options={currencyOptions}
+                value={watch('txnCurrency') || currency}
+                onChange={(v) => setValue('txnCurrency', v)}
+              />
             </div>
             {watch('txnCurrency') && watch('txnCurrency') !== currency && (
-              <Input label={`Exchange Rate (1 ${watch('txnCurrency')} = ? ${currency})`}
-                type="number" step="0.0001" min="0" placeholder="e.g., 280.50"
-                {...register('exchangeRate', { valueAsNumber: true })} />
+              <div className="space-y-2">
+                <Input
+                  label={`Exchange Rate (1 ${watch('txnCurrency')} = ? ${currency})`}
+                  type="number" step="0.0001" min="0" placeholder="e.g., 280.50"
+                  {...register('exchangeRate', { valueAsNumber: true })}
+                />
+                {/* Live conversion preview */}
+                {convPreview && (
+                  <div className="flex items-center gap-2 rounded-lg border border-cyan/20 bg-cyan/5 px-3 py-2 text-xs">
+                    <span className="text-text-muted">Preview:</span>
+                    <span className="font-mono font-semibold text-text-primary">
+                      {watchedAmount?.toLocaleString()} {watch('txnCurrency')}
+                    </span>
+                    <span className="text-text-muted">→</span>
+                    <span className="font-mono font-bold text-cyan">
+                      {convPreview.converted?.toLocaleString(undefined, { maximumFractionDigits: 2 })} {currency}
+                    </span>
+                    <span className="ml-auto text-text-muted">@ {convPreview.rate}</span>
+                  </div>
+                )}
+              </div>
             )}
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <Input label={`Tax Amount (${currency}) — optional`} type="number" step="0.01" min="0"

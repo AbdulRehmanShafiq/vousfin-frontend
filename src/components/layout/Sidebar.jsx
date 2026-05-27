@@ -23,6 +23,7 @@ import {
   Lightbulb,
   Sparkles,
   CalendarDays,
+  DollarSign,
 } from 'lucide-react'
 import { useAuthStore } from '@/stores/useAuthStore'
 
@@ -62,9 +63,10 @@ const NAV = [
       { name: 'AI Insights',       href: '/ai-analyst/insights',  icon: Lightbulb    },
     ],
   },
-  { kind: 'link',  name: 'Fiscal Years',  href: '/accounting/fiscal-years', icon: CalendarDays },
-  { kind: 'link',  name: 'AI Assistant', href: '/ai/assistant',      icon: Sparkles  },
-  { kind: 'link',  name: 'Settings',     href: '/business/settings', icon: Settings  },
+  { kind: 'link',  name: 'Fiscal Years',    href: '/accounting/fiscal-years',    icon: CalendarDays },
+  { kind: 'link',  name: 'Exchange Rates', href: '/settings/exchange-rates',    icon: DollarSign, activePrefix: '/settings/exchange-rates' },
+  { kind: 'link',  name: 'AI Assistant',   href: '/ai/assistant',               icon: Sparkles  },
+  { kind: 'link',  name: 'Settings',       href: '/business/settings',          icon: Settings  },
 ]
 
 /* Decide which group should be expanded based on current URL */

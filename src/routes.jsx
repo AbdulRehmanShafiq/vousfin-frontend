@@ -28,6 +28,7 @@ const AIAssistantPage = lazy(() => import('@/pages/ai/AIAssistantPage'))
 const FinancialReportsPage = lazy(() => import('@/pages/reports/FinancialReportsPage'))
 const AIAnalystPage        = lazy(() => import('@/pages/ai/AIAnalystPage'))
 const FiscalYearPage       = lazy(() => import('@/pages/accounting/FiscalYearPage'))
+const CurrencyRatesPage    = lazy(() => import('@/pages/settings/CurrencyRatesPage'))
 
 const LoadingFallback = () => (
   <div className="flex h-screen w-full items-center justify-center bg-navy">
@@ -125,7 +126,8 @@ export const routes = [
           { path: 'purchases',              element: <Navigate to="/vendors" replace /> },
           { path: 'purchases/vendors',      element: <Navigate to="/vendors" replace /> },
           { path: 'business/settings', element: withSuspense(BusinessSettings)  },
-          { path: 'accounting/fiscal-years', element: withSuspense(FiscalYearPage) },
+          { path: 'accounting/fiscal-years',    element: withSuspense(FiscalYearPage)     },
+          { path: 'settings/exchange-rates',    element: withSuspense(CurrencyRatesPage)  },
 
           /* ── Financial Reports hub ─────────────────────────────────────── */
           /* /financial-reports  → default tab */

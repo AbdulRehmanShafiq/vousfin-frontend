@@ -24,6 +24,7 @@ import KPICard from '@/components/ui/KPICard'
 import Badge from '@/components/ui/Badge'
 import Modal from '@/components/modals/Modal'
 import Input from '@/components/ui/Input'
+import CurrencyBadge from '@/components/ui/CurrencyBadge'
 import TransactionFormModal from '@/components/forms/TransactionFormModal'
 import TransactionReversalModal from '@/components/forms/TransactionReversalModal'
 
@@ -35,6 +36,7 @@ const TYPE_GROUP = {
   'expense': 'Expense', 'cash purchase': 'Expense',
   'credit purchase': 'AR/AP', 'payment received': 'AR/AP', 'payment made': 'AR/AP',
   'transfer': 'Transfer',
+  'fx gain': 'Income', 'fx loss': 'Expense', 'fx revaluation': 'Transfer',
 }
 
 const TYPE_VARIANT = {
@@ -43,10 +45,11 @@ const TYPE_VARIANT = {
   'credit sale': 'info', 'payment received': 'info',
   'credit purchase': 'warning', 'payment made': 'warning',
   'transfer': 'default',
+  'fx gain': 'success', 'fx loss': 'danger', 'fx revaluation': 'default',
 }
 
-const INFLOW_TYPES = new Set(['income', 'cash sale', 'credit sale', 'payment received'])
-const OUTFLOW_TYPES = new Set(['expense', 'cash purchase', 'credit purchase', 'payment made'])
+const INFLOW_TYPES = new Set(['income', 'cash sale', 'credit sale', 'payment received', 'fx gain'])
+const OUTFLOW_TYPES = new Set(['expense', 'cash purchase', 'credit purchase', 'payment made', 'fx loss'])
 const FILTERS = ['All', 'Income', 'Expense', 'AR/AP', 'Transfer']
 
 // ─── memoized sub-components ──────────────────────────────────────────────────
@@ -147,9 +150,19 @@ const MobileCard = memo(function MobileCard({
         <p className={`text-sm font-semibold leading-snug truncate flex-1 ${isReversed ? 'line-through text-text-muted' : 'text-text-primary'}`}>
           {row.description}
         </p>
-        <span className={`text-sm font-bold shrink-0 tabular-nums ${isReversed ? 'line-through text-text-muted' : isInflow ? 'text-emerald-400' : 'text-text-primary'}`}>
-          {isInflow ? '+' : '−'}{formatCurrency(row.amount, currency)}
-        </span>
+        <div className="flex flex-col items-end shrink-0 gap-0.5">
+          <span className={`text-sm font-bold tabular-nums ${isReversed ? 'line-through text-text-muted' : isInflow ? 'text-emerald-400' : 'text-text-primary'}`}>
+            {isInflow ? '+' : '−'}{formatCurrency(row.baseCurrencyAmount ?? row.amount, currency)}
+          </span>
+          {row.currencyCode && row.currencyCode !== currency && (
+            <div className="flex items-center gap-1">
+              <span className="text-[10px] text-text-muted tabular-nums">
+                {row.amount?.toLocaleString(undefined, { maximumFractionDigits: 2 })}
+              </span>
+              <CurrencyBadge code={row.currencyCode} baseCurrency={currency} />
+            </div>
+          )}
+        </div>
       </div>
 
       {/* Row 2: accounts */}
@@ -390,9 +403,19 @@ export default function TransactionsList() {
 
                           {/* Amount */}
                           <td className="px-4 py-2.5 text-right">
-                            <span className={`text-sm font-bold tabular-nums ${isReversed ? 'line-through text-text-muted' : isInflow ? 'text-emerald-400' : 'text-text-primary'}`}>
-                              {isInflow ? '+' : '−'}{formatCurrency(row.amount, currency)}
-                            </span>
+                            <div className="flex flex-col items-end gap-0.5">
+                              <span className={`text-sm font-bold tabular-nums ${isReversed ? 'line-through text-text-muted' : isInflow ? 'text-emerald-400' : 'text-text-primary'}`}>
+                                {isInflow ? '+' : '−'}{formatCurrency(row.baseCurrencyAmount ?? row.amount, currency)}
+                              </span>
+                              {row.currencyCode && row.currencyCode !== currency && (
+                                <div className="flex items-center gap-1">
+                                  <span className="text-[10px] text-text-muted tabular-nums">
+                                    {row.amount?.toLocaleString(undefined, { maximumFractionDigits: 2 })}
+                                  </span>
+                                  <CurrencyBadge code={row.currencyCode} baseCurrency={currency} rate={row.exchangeRate} />
+                                </div>
+                              )}
+                            </div>
                           </td>
 
                           {/* Actions */}
