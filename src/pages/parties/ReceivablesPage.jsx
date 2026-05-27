@@ -30,7 +30,20 @@ import Button from '@/components/ui/Button'
 import DataTable from '@/components/tables/DataTable'
 import Input from '@/components/ui/Input'
 import Select from '@/components/ui/Select'
+import InvoiceStatusBadge from '@/components/invoice/InvoiceStatusBadge'
+import ApprovalChip from '@/components/invoice/ApprovalChip'
 import { cn } from '@/utils/cn'
+
+/* ── Phase 1: map legacy paymentStatus to new InvoiceStatusBadge state ────── */
+function paymentStatusToInvoiceState(ps) {
+  switch ((ps || '').toLowerCase()) {
+    case 'paid':           return 'paid'
+    case 'partially_paid': return 'partially_paid'
+    case 'overdue':        return 'overdue'
+    case 'unpaid':         return 'sent' // unpaid = invoice issued and waiting for payment
+    default:               return null
+  }
+}
 
 /* ── Helpers ────────────────────────────────────────────────────────── */
 
@@ -284,10 +297,16 @@ export default function ReceivablesPage() {
       key: 'status',
       header: 'Status',
       render: (r) => {
-        const status = r._paymentStatus?.toLowerCase()
-        return status
-          ? <Badge variant={STATUS_VARIANT[status] || 'secondary'}>{STATUS_LABEL[status] || status}</Badge>
-          : <Badge variant="warning">Unpaid</Badge>
+        // Phase 1: prefer first-class Invoice.state if present, fall back to legacy paymentStatus.
+        const invoiceState = r.invoiceState || paymentStatusToInvoiceState(r._paymentStatus) || 'sent'
+        return (
+          <div className="flex items-center gap-1.5">
+            <InvoiceStatusBadge state={invoiceState} kind="invoice" size="sm" />
+            {r.approvalStatus && r.approvalStatus !== 'not_required'
+              ? <ApprovalChip status={r.approvalStatus} compact />
+              : null}
+          </div>
+        )
       },
     },
     {

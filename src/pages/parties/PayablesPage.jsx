@@ -30,7 +30,20 @@ import Button from '@/components/ui/Button'
 import DataTable from '@/components/tables/DataTable'
 import Input from '@/components/ui/Input'
 import Select from '@/components/ui/Select'
+import InvoiceStatusBadge from '@/components/invoice/InvoiceStatusBadge'
+import ApprovalChip from '@/components/invoice/ApprovalChip'
 import { cn } from '@/utils/cn'
+
+/* ── Phase 1: legacy paymentStatus → new Bill state ──────────────────────── */
+function paymentStatusToBillState(ps) {
+  switch ((ps || '').toLowerCase()) {
+    case 'paid':           return 'paid'
+    case 'partially_paid': return 'partially_paid'
+    case 'overdue':        return 'overdue'
+    case 'unpaid':         return 'approved' // unpaid bill = approved + waiting to pay
+    default:               return null
+  }
+}
 
 /* ── Helpers ─────────────────────────────────────────────────────────── */
 
@@ -279,10 +292,15 @@ export default function PayablesPage() {
       key: 'status',
       header: 'Status',
       render: (r) => {
-        const status = r._paymentStatus?.toLowerCase()
-        return status
-          ? <Badge variant={STATUS_VARIANT[status] || 'secondary'}>{STATUS_LABEL[status] || status}</Badge>
-          : <Badge variant="warning">Unpaid</Badge>
+        const billState = r.billState || paymentStatusToBillState(r._paymentStatus) || 'approved'
+        return (
+          <div className="flex items-center gap-1.5">
+            <InvoiceStatusBadge state={billState} kind="bill" size="sm" />
+            {r.approvalStatus && r.approvalStatus !== 'not_required'
+              ? <ApprovalChip status={r.approvalStatus} compact />
+              : null}
+          </div>
+        )
       },
     },
     {
