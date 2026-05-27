@@ -1,9 +1,10 @@
 // src/hooks/useInvoices.js
-// Phase 1 — React Query hooks for first-class Invoice + Bill domain.
+// Phase 1 + Phase 2 — React Query hooks for Invoice, Bill, and Credit Note domains.
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import toast from 'react-hot-toast'
 import invoiceService from '@/services/invoice.service'
 import billService    from '@/services/bill.service'
+import creditNoteService from '@/services/creditNote.service'
 import { getErrorMessage } from '@/utils/errorHandler'
 
 // ── Invoices ──────────────────────────────────────────────────────────────────
@@ -65,6 +66,10 @@ function makeInvoiceMutation(call, { successMessage, invalidateId } = {}) {
 export const useCreateInvoiceDraft   = makeInvoiceMutation((data) => invoiceService.createDraft(data),
   { successMessage: 'Invoice draft created' })
 
+// Phase 2: Update draft
+export const useUpdateInvoiceDraft   = makeInvoiceMutation(({ id, ...data }) => invoiceService.updateDraft(id, data),
+  { successMessage: 'Invoice draft updated', invalidateId: true })
+
 export const useSubmitInvoice        = makeInvoiceMutation(({ id })           => invoiceService.submitForApproval(id),
   { successMessage: 'Invoice submitted',   invalidateId: true })
 
@@ -88,6 +93,22 @@ export const useWriteOffInvoice      = makeInvoiceMutation(({ id, reason })   =>
 
 export const useArchiveInvoice       = makeInvoiceMutation(({ id })           => invoiceService.archive(id),
   { successMessage: 'Invoice archived',    invalidateId: true })
+
+// Phase 2: PDF download (non-mutation — triggers browser download)
+export function useDownloadInvoicePdf() {
+  return useMutation({
+    mutationFn: async (id) => {
+      const resp = await invoiceService.downloadPdf(id)
+      const url = window.URL.createObjectURL(new Blob([resp.data], { type: 'application/pdf' }))
+      const a = document.createElement('a')
+      a.href = url
+      a.download = `Invoice-${id}.pdf`
+      a.click()
+      window.URL.revokeObjectURL(url)
+    },
+    onError: (err) => toast.error(getErrorMessage(err)),
+  })
+}
 
 // ── Bills ─────────────────────────────────────────────────────────────────────
 
@@ -164,3 +185,71 @@ export const useCancelBill        = makeBillMutation(({ id, reason })     => bil
 
 export const useArchiveBill       = makeBillMutation(({ id })             => billService.archive(id),
   { successMessage: 'Bill archived',   invalidateId: true })
+
+// ── Credit Notes ──────────────────────────────────────────────────────────────
+
+export function useCreditNotes(params = {}) {
+  return useQuery({
+    queryKey: ['credit-notes', params],
+    queryFn: async () => {
+      const { data } = await creditNoteService.list(params)
+      return data.data
+    },
+    staleTime: 60 * 1000,
+  })
+}
+
+export function useCreditNote(id) {
+  return useQuery({
+    queryKey: ['credit-note', id],
+    enabled: !!id,
+    queryFn: async () => {
+      const { data } = await creditNoteService.getById(id)
+      return data.data
+    },
+  })
+}
+
+export function useCreditNotesByInvoice(invoiceId) {
+  return useQuery({
+    queryKey: ['credit-notes', 'invoice', invoiceId],
+    enabled: !!invoiceId,
+    queryFn: async () => {
+      const { data } = await creditNoteService.listByInvoice(invoiceId)
+      return data.data
+    },
+  })
+}
+
+function makeCreditNoteMutation(call, { successMessage, invalidateId } = {}) {
+  return function useCNMutation() {
+    const qc = useQueryClient()
+    return useMutation({
+      mutationFn: call,
+      onSuccess: (_resp, vars) => {
+        if (successMessage) toast.success(typeof successMessage === 'function' ? successMessage(vars) : successMessage)
+        qc.invalidateQueries({ queryKey: ['credit-notes'] })
+        qc.invalidateQueries({ queryKey: ['invoices'] })
+        if (invalidateId && vars?.id) {
+          qc.invalidateQueries({ queryKey: ['credit-note', vars.id] })
+        }
+      },
+      onError: (err) => toast.error(getErrorMessage(err)),
+    })
+  }
+}
+
+export const useCreateCreditNote  = makeCreditNoteMutation((data) => creditNoteService.create(data),
+  { successMessage: 'Credit note created' })
+
+export const useApproveCreditNote = makeCreditNoteMutation(({ id }) => creditNoteService.approve(id),
+  { successMessage: 'Credit note approved', invalidateId: true })
+
+export const useApplyCreditNote   = makeCreditNoteMutation(({ id }) => creditNoteService.apply(id),
+  { successMessage: 'Credit note applied', invalidateId: true })
+
+export const useCancelCreditNote  = makeCreditNoteMutation(({ id, reason }) => creditNoteService.cancel(id, reason),
+  { successMessage: 'Credit note cancelled', invalidateId: true })
+
+export const useArchiveCreditNote = makeCreditNoteMutation(({ id }) => creditNoteService.archive(id),
+  { successMessage: 'Credit note archived', invalidateId: true })
