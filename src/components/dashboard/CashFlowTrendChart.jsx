@@ -25,14 +25,17 @@ export default function CashFlowTrendChart({ data = [], loading, currency }) {
   if (loading) return <SkeletonLoader type="card" count={1} className="h-80" />
 
   return (
-    <div className="premium-card p-6">
-      <h3 className="text-base font-bold text-text-primary mb-6">Cash Flow Trend</h3>
+    <div className="premium-card p-5">
+      <div className="mb-5">
+        <h3 className="text-sm font-bold text-text-primary">Cash Flow Trend</h3>
+        <p className="text-[11px] text-text-muted mt-0.5">Net cash movement · YTD</p>
+      </div>
       {data.length === 0 ? (
-        <div className="h-72 flex items-center justify-center text-text-muted text-sm">
+        <div className="h-64 flex items-center justify-center text-text-muted text-sm border border-dashed border-glass rounded-xl">
           No cash flow data for this period.
         </div>
       ) : (
-        <ResponsiveContainer width="100%" height={288}>
+        <ResponsiveContainer width="100%" height={256}>
           <LineChart data={data}>
             <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.06)" vertical={false} />
             <XAxis
@@ -42,11 +45,16 @@ export default function CashFlowTrendChart({ data = [], loading, currency }) {
               tickLine={false}
             />
             <YAxis
-              tickFormatter={(v) => formatCurrency(v, currency).replace(/\.\d+/, '')}
+              tickFormatter={(v) => {
+                const abs = Math.abs(v)
+                if (abs >= 1_000_000) return `${(v / 1_000_000).toFixed(1)}M`
+                if (abs >= 1_000)     return `${(v / 1_000).toFixed(0)}K`
+                return String(Math.round(v))
+              }}
               tick={{ fontSize: 11, fill: '#94A3B8' }}
               axisLine={false}
               tickLine={false}
-              width={72}
+              width={52}
             />
             <Tooltip content={<CustomTooltip currency={currency} />} />
             <ReferenceLine y={0} stroke="rgba(255,255,255,0.15)" strokeDasharray="4 4" />
