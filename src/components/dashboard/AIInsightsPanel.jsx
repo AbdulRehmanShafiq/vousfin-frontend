@@ -181,36 +181,42 @@ export default function AIInsightsPanel() {
 
       {/* ── Body ── */}
       {isLoading ? (
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
-          {[1, 2, 3, 4].map(i => (
-            <div key={i} className="h-14 rounded-xl animate-pulse bg-glass-panel" />
+        <div className="space-y-2">
+          {[1, 2, 3].map(i => (
+            <div key={i} className="h-12 rounded-xl animate-pulse bg-glass-panel" />
           ))}
         </div>
       ) : isError ? (
-        <div className="flex flex-col items-center justify-center py-8 gap-3 text-center">
-          <div className="p-3 rounded-full bg-glass-panel">
-            <Zap className="h-5 w-5 text-text-muted" />
+        /* ── compact error state ── */
+        <div className="flex items-center gap-3 py-3">
+          <div className="p-2 rounded-xl bg-glass-panel flex-shrink-0">
+            <Zap className="h-4 w-4 text-text-muted" />
           </div>
-          <p className="text-sm text-text-muted max-w-xs">
-            AI insights unavailable — the engine may still be warming up.
-          </p>
-          <button onClick={() => refetch()} className="text-xs text-cyan hover:underline font-medium">
+          <div className="flex-1 min-w-0">
+            <p className="text-sm font-semibold text-text-secondary">Engine warming up</p>
+            <p className="text-xs text-text-muted">AI insights temporarily unavailable.</p>
+          </div>
+          <button
+            onClick={() => refetch()}
+            className="text-xs text-cyan hover:underline font-medium flex-shrink-0"
+          >
             Retry
           </button>
         </div>
       ) : all.length === 0 ? (
-        <div className="flex flex-col items-center justify-center py-8 gap-3 text-center">
-          <div className="p-3 rounded-full bg-emerald-400/10">
-            <CheckCircle2 className="h-6 w-6 text-emerald-400" />
+        /* ── compact all-clear state ── */
+        <div className="flex items-center gap-3 py-3">
+          <div className="p-2 rounded-xl bg-emerald-400/10 flex-shrink-0">
+            <CheckCircle2 className="h-5 w-5 text-emerald-400" />
           </div>
           <div>
             <p className="text-sm font-semibold text-text-primary">All clear!</p>
-            <p className="text-xs text-text-muted mt-1">No anomalies or financial risks detected.</p>
+            <p className="text-xs text-text-muted">No anomalies or financial risks detected.</p>
           </div>
         </div>
       ) : (
         <>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
+          <div className="space-y-2">
             {visible.map((insight, i) => (
               <InsightCard key={insight.id || insight._id || i} insight={insight} idx={i} />
             ))}

@@ -33,7 +33,6 @@ import RevenueExpensesChart    from '@/components/dashboard/RevenueExpensesChart
 import CashFlowTrendChart      from '@/components/dashboard/CashFlowTrendChart'
 import TransactionFormModal    from '@/components/forms/TransactionFormModal'
 import SkeletonLoader          from '@/components/ui/SkeletonLoader'
-import Button                  from '@/components/ui/Button'
 
 /* ── helpers ──────────────────────────────────────────────────────── */
 const INFLOW_TYPES = new Set([
@@ -112,14 +111,14 @@ function TxRow({ tx, currency }) {
   )
 }
 
-/* ── Quick Actions ───────────────────────────────────────────────── */
-/* Uses EXPLICIT Tailwind colour classes — CSS-var opacity modifiers  */
-/* (hover:bg-[var(...)]/n) are NOT processed by Tailwind's JIT.       */
+/* ── Quick Actions — horizontal toolbar pills ────────────────────── */
+/* Rendered right below the header greeting; uses explicit Tailwind    */
+/* colour classes (CSS-var opacity modifiers break Tailwind JIT).      */
 const ACTION_DEFS = [
   {
     label: 'New Transaction',
     Icon: Plus,
-    action: 'modal',          // ← triggers the inline modal, not a Link
+    action: 'modal',
     iconClass:    'bg-cyan/15 text-cyan',
     wrapperHover: 'hover:bg-cyan/10 hover:border-cyan/40',
     labelHover:   'group-hover:text-cyan',
@@ -150,50 +149,40 @@ const ACTION_DEFS = [
   },
 ]
 
-function QuickActions({ onNewTransaction }) {
-  const baseClass = cn(
-    'group flex flex-col items-center gap-2 p-3.5 rounded-xl border border-glass',
-    'transition-all duration-150 active:scale-95 cursor-pointer text-center',
+function QuickActionsBar({ onNewTransaction }) {
+  const pillBase = cn(
+    'group flex items-center gap-2 px-4 py-2 rounded-xl border border-glass',
+    'transition-all duration-150 active:scale-95 cursor-pointer',
   )
 
   return (
-    <div className="premium-card p-4">
-      <h3 className="text-[11px] font-bold uppercase tracking-widest text-text-muted mb-3">
-        Quick Actions
-      </h3>
-      <div className="grid grid-cols-2 gap-2">
-        {ACTION_DEFS.map(({ label, to, Icon, action, iconClass, wrapperHover, labelHover }) => {
-          const content = (
-            <>
-              <div className={cn('p-2.5 rounded-xl transition-transform duration-150 group-hover:scale-110', iconClass)}>
-                <Icon className="h-4 w-4" />
-              </div>
-              <span className={cn('text-[11px] font-semibold text-text-secondary transition-colors leading-tight', labelHover)}>
-                {label}
-              </span>
-            </>
-          )
+    <div className="flex items-center gap-2 flex-wrap">
+      {ACTION_DEFS.map(({ label, to, Icon, action, iconClass, wrapperHover, labelHover }) => {
+        const content = (
+          <>
+            <div className={cn('p-1.5 rounded-lg transition-transform duration-150 group-hover:scale-110 flex-shrink-0', iconClass)}>
+              <Icon className="h-3.5 w-3.5" />
+            </div>
+            <span className={cn('text-xs font-semibold text-text-secondary transition-colors whitespace-nowrap', labelHover)}>
+              {label}
+            </span>
+          </>
+        )
 
-          if (action === 'modal') {
-            return (
-              <button
-                key={label}
-                type="button"
-                onClick={onNewTransaction}
-                className={cn(baseClass, wrapperHover)}
-              >
-                {content}
-              </button>
-            )
-          }
-
+        if (action === 'modal') {
           return (
-            <Link key={label} to={to} className={cn(baseClass, wrapperHover)}>
+            <button key={label} type="button" onClick={onNewTransaction}
+              className={cn(pillBase, wrapperHover)}>
               {content}
-            </Link>
+            </button>
           )
-        })}
-      </div>
+        }
+        return (
+          <Link key={label} to={to} className={cn(pillBase, wrapperHover)}>
+            {content}
+          </Link>
+        )
+      })}
     </div>
   )
 }
@@ -302,31 +291,29 @@ export default function Dashboard() {
   return (
     <div className="space-y-7 animate-fade-in pb-10">
 
-      {/* ── 1. HEADER ───────────────────────────────────────────── */}
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-        <div>
-          <h1 className="text-2xl font-black text-text-primary tracking-tight">
-            {greeting}, <span className="text-cyan">{firstName}</span> 👋
-          </h1>
-          <p className="text-sm text-text-secondary mt-1 flex items-center gap-2 flex-wrap">
-            <span className="font-semibold text-text-primary">
-              {activeBusiness?.businessName || 'Your Business'}
-            </span>
-            <span className="text-text-muted">·</span>
-            <span className="flex items-center gap-1.5 text-text-muted">
-              <Clock className="h-3.5 w-3.5" />
-              YTD {new Date().getFullYear()} snapshot
-            </span>
-          </p>
+      {/* ── 1. HEADER + QUICK ACTIONS ───────────────────────────── */}
+      <div className="space-y-4">
+        {/* Title row */}
+        <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-2">
+          <div>
+            <h1 className="text-2xl font-black text-text-primary tracking-tight">
+              {greeting}, <span className="text-cyan">{firstName}</span> 👋
+            </h1>
+            <p className="text-sm text-text-secondary mt-1 flex items-center gap-2 flex-wrap">
+              <span className="font-semibold text-text-primary">
+                {activeBusiness?.businessName || 'Your Business'}
+              </span>
+              <span className="text-text-muted">·</span>
+              <span className="flex items-center gap-1.5 text-text-muted">
+                <Clock className="h-3.5 w-3.5" />
+                YTD {new Date().getFullYear()} snapshot
+              </span>
+            </p>
+          </div>
         </div>
-        <Button
-          size="sm"
-          className="flex items-center gap-2 shrink-0"
-          onClick={() => setShowNewTx(true)}
-        >
-          <Plus className="h-4 w-4" />
-          New Transaction
-        </Button>
+
+        {/* Quick Actions — horizontal pill bar right below the greeting */}
+        <QuickActionsBar onNewTransaction={() => setShowNewTx(true)} />
       </div>
 
       {/* ── 2. KPI STRIP ────────────────────────────────────────── */}
@@ -360,13 +347,15 @@ export default function Dashboard() {
       </Section>
 
       {/* ── 4. AI INSIGHTS + FORECAST — side by side on xl ─────── */}
+      {/* items-start: each panel is only as tall as its content,    */}
+      {/* so AI Insights doesn't stretch to match the chart height.  */}
       <Section label="AI Intelligence & Forecasting">
-        <div className="grid grid-cols-1 xl:grid-cols-5 gap-4">
-          {/* AI Insights — narrower (text / cards) */}
+        <div className="grid grid-cols-1 xl:grid-cols-5 gap-4 items-start">
+          {/* AI Insights — narrower (text cards, compact) */}
           <div className="xl:col-span-2">
             <AIInsightsPanel />
           </div>
-          {/* Forecast — wider (chart needs space) */}
+          {/* Forecast — wider (chart needs horizontal space) */}
           <div className="xl:col-span-3">
             <ForecastWidget />
           </div>
@@ -415,11 +404,8 @@ export default function Dashboard() {
             </div>
           </div>
 
-          {/* Right: Quick Actions (top) + Financial Snapshot (below) */}
-          <div className="lg:col-span-1 flex flex-col gap-4">
-            {/* Quick Actions moved to TOP of sidebar */}
-            <QuickActions onNewTransaction={() => setShowNewTx(true)} />
-            {/* Financial Position below */}
+          {/* Right: Financial Snapshot only */}
+          <div className="lg:col-span-1">
             <FinancialSnapshot
               ar={kpis.accountsReceivable ?? 0}
               ap={kpis.accountsPayable    ?? 0}
