@@ -120,3 +120,25 @@ export function useRunRevaluation() {
     },
   })
 }
+
+/**
+ * Fetch live rates from open.er-api.com and upsert into the DB.
+ * Called manually (button) or automatically on page load when rates are stale.
+ */
+export function useSyncLiveRates() {
+  const qc = useQueryClient()
+  return useMutation({
+    mutationFn: (currencies) => fxRateService.syncLiveRates(currencies),
+    onSuccess: (res) => {
+      qc.invalidateQueries({ queryKey: QUERY_KEY })
+      const d = res.data?.data
+      toast.success(
+        `${d?.synced ?? 0} live rates fetched from ${d?.source ?? 'API'} for ${d?.date ?? 'today'}`,
+        { duration: 4000 }
+      )
+    },
+    onError: (err) => {
+      toast.error(err.response?.data?.message || 'Failed to fetch live rates — check your internet connection')
+    },
+  })
+}

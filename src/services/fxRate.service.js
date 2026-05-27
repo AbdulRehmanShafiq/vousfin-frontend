@@ -29,6 +29,10 @@ const fxRateService = {
   convert: ({ from, to, amount, date }) =>
     api.get('/fx-rates/convert', { params: { from, to, amount, ...(date ? { date } : {}) } }),
 
+  // Fetch live rates from open.er-api.com and save to DB (no API key needed)
+  syncLiveRates: (currencies) =>
+    api.post('/fx-rates/sync', currencies?.length ? { currencies } : {}),
+
   // Trigger month-end unrealised FX revaluation
   runRevaluation: (revaluationDate) =>
     api.post('/fx-rates/revaluate', revaluationDate ? { revaluationDate } : {}),
