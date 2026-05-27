@@ -460,28 +460,43 @@ const TABS = [
 
 // ─── Main Component ───────────────────────────────────────────────────────────
 /**
+ * Robustly extracts a string ObjectId from a value that may be:
+ *  - already a plain string  ("64abc...")
+ *  - a Mongoose ObjectId     (ObjectId("64abc..."))
+ *  - a populated sub-doc     ({ _id: ObjectId("64abc..."), accountName: "..." })
+ *  - null / undefined
+ */
+function extractId(val) {
+  if (!val) return ''
+  if (typeof val === 'string') return val
+  // Mongoose ObjectId or populated sub-doc
+  const raw = val._id ?? val.id ?? val
+  return raw ? String(raw) : ''
+}
+
+/**
  * Maps a stored transaction document to the shape StructuredFormTab expects
  * as initialValues.  Only the fields the update endpoint accepts are included.
  */
 function txToInitialValues(tx, currency) {
   return {
     transactionDate:     tx.transactionDate ? new Date(tx.transactionDate).toISOString().slice(0, 10) : '',
-    description:         tx.description          || '',
+    description:         tx.description     || '',
     amount:              typeof tx.amount === 'number' ? tx.amount : 0,
-    debitAccountId:      tx.debitAccountId?._id  || tx.debitAccountId  || '',
-    creditAccountId:     tx.creditAccountId?._id || tx.creditAccountId || '',
-    transactionType:     tx.transactionType       || '',
-    invoiceNumber:       tx.invoiceNumber         || '',
-    notes:               tx.notes                 || '',
+    debitAccountId:      extractId(tx.debitAccountId),
+    creditAccountId:     extractId(tx.creditAccountId),
+    transactionType:     tx.transactionType  || '',
+    invoiceNumber:       tx.invoiceNumber    || '',
+    notes:               tx.notes            || '',
     dueDate:             tx.dueDate ? new Date(tx.dueDate).toISOString().slice(0, 10) : '',
-    paymentMethod:       tx.paymentMethod         || '',
-    txnCurrency:         tx.currencyCode          || currency,
-    exchangeRate:        tx.exchangeRate           || 1,
-    taxAmount:           tx.taxAmount             || 0,
-    taxRate:             tx.taxRate               || 0,
-    customerName:        tx.customerName || tx.customerId?.name || '',
-    vendorName:          tx.vendorName   || tx.vendorId?.name   || '',
-    referenceNumber:     tx.transactionReference  || '',
+    paymentMethod:       tx.paymentMethod    || '',
+    txnCurrency:         tx.currencyCode     || currency,
+    exchangeRate:        tx.exchangeRate     || 1,
+    taxAmount:           tx.taxAmount        || 0,
+    taxRate:             tx.taxRate          || 0,
+    customerName:        tx.customerName     || tx.customerId?.fullName || tx.customerId?.businessName || '',
+    vendorName:          tx.vendorName       || tx.vendorId?.vendorName || '',
+    referenceNumber:     tx.transactionReference || '',
     // never pre-fill installment fields in edit mode
     isInstallment:       false,
   }
@@ -929,10 +944,10 @@ function StructuredFormTab({ currency, onSuccess, onCancel, initialValues, editT
         debitAccountId:       resolvedDebitId,
         creditAccountId:      resolvedCreditId,
         transactionType:      initialValues.transactionType      || '',
-        referenceNumber:      '',
+        referenceNumber:      initialValues.referenceNumber      || '',
         invoiceNumber:        initialValues.invoiceNumber        || '',
         notes:                initialValues.notes                || '',
-        dueDate:              '',
+        dueDate:              initialValues.dueDate              || '',
         paymentMethod:        initialValues.paymentMethod        || '',
         txnCurrency:          initialValues.txnCurrency          || currency,
         exchangeRate:         initialValues.exchangeRate         || 1,
@@ -1093,7 +1108,14 @@ function StructuredFormTab({ currency, onSuccess, onCancel, initialValues, editT
 
       // ── EDIT MODE ────────────────────────────────────────────────────────────
       if (isEditMode) {
-        const payload = { ...base }
+        // Strip account IDs from base; only include them if they are valid
+        // 24-char hex ObjectIds. Empty strings from unpopulated dropdowns would
+        // fail backend Joi validation and produce "Validation failed" errors.
+        const { debitAccountId, creditAccountId, ...rest } = base
+        const payload = { ...rest }
+        const OID_RE = /^[0-9a-fA-F]{24}$/
+        if (OID_RE.test(debitAccountId))  payload.debitAccountId  = debitAccountId
+        if (OID_RE.test(creditAccountId)) payload.creditAccountId = creditAccountId
         if (transactionType)         payload.transactionType      = transactionType
         if (customerName?.trim())    payload.customerName         = customerName.trim()
         if (vendorName?.trim())      payload.vendorName           = vendorName.trim()

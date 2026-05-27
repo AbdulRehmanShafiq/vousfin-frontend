@@ -249,13 +249,17 @@ export default function TransactionsList() {
 
   /**
    * GAAP edit time-lock — transactions older than 30 days are read-only.
-   * Standard double-entry accounting principle: once a period has passed,
-   * corrections must go through reversals, not edits.
+   *
+   * We check BOTH the transaction date (accounting date) AND the recording date
+   * (createdAt). If either is older than 30 days the entry is considered locked:
+   *  • transactionDate: April entry → locked in May regardless of when recorded
+   *  • createdAt:       entry recorded > 30 days ago → locked even if date is recent
+   * This prevents both backdating into stale periods and editing aged postings.
    */
   const EDIT_LOCK_MS = 30 * 24 * 60 * 60 * 1000 // 30 days
   const isEditLocked = useCallback((row) => {
-    if (!row.createdAt) return false
-    return Date.now() - new Date(row.createdAt).getTime() > EDIT_LOCK_MS
+    const isOld = (d) => d && Date.now() - new Date(d).getTime() > EDIT_LOCK_MS
+    return isOld(row.transactionDate) || isOld(row.createdAt)
   }, [])
 
   const canReverse = useCallback(
