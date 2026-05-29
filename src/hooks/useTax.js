@@ -5,7 +5,6 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import taxService from '@/services/tax.service'
 import toast from 'react-hot-toast'
-import { useBusinessStore } from '@/stores/useBusinessStore'
 
 const QUERY_KEY = ['tax']
 
@@ -100,15 +99,22 @@ export function useUpdateVendorWht() {
  * Live tax calculation preview.
  * Only fires when amount > 0 and transactionType is set.
  *
- * @param {{ amount, transactionType, mode, taxType, taxRate }} params
+ * @param {{ amount, transactionType, mode, taxType, taxRate,
+ *           isReverseCharge, isImportedService, whtApply, whtCategory }} params
  * @returns { data: TaxPreviewResult, isLoading }
  */
-export function useTaxPreview({ amount, transactionType, mode, taxType, taxRate } = {}) {
+export function useTaxPreview({
+  amount, transactionType, mode, taxType, taxRate,
+  isReverseCharge, isImportedService, whtApply, whtCategory,
+} = {}) {
   const enabled = !!(amount > 0 && transactionType)
   return useQuery({
-    queryKey: [...QUERY_KEY, 'preview', amount, transactionType, mode, taxType, taxRate],
-    queryFn:  () => taxService.preview({ amount, transactionType, mode, taxType, taxRate })
-                      .then(r => r.data?.data),
+    queryKey: [...QUERY_KEY, 'preview', amount, transactionType, mode, taxType, taxRate,
+               isReverseCharge, isImportedService, whtApply, whtCategory],
+    queryFn:  () => taxService.preview({
+                      amount, transactionType, mode, taxType, taxRate,
+                      isReverseCharge, isImportedService, whtApply, whtCategory,
+                    }).then(r => r.data?.data),
     enabled,
     staleTime: 30 * 1000,
     placeholderData: null,

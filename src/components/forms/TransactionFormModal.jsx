@@ -10,6 +10,7 @@ import Modal from '@/components/modals/Modal'
 import Input from '@/components/ui/Input'
 import Select from '@/components/ui/Select'
 import Button from '@/components/ui/Button'
+import TaxPreviewPanel from '@/components/ui/TaxPreviewPanel'
 import { useAccounts } from '@/hooks/useAccounts'
 import { useCustomers, useVendors } from '@/hooks/useParties'
 import { useInventoryItems } from '@/hooks/useInventory'
@@ -1396,6 +1397,15 @@ function StructuredFormTab({ currency, onSuccess, onCancel, initialValues, editT
           </div>
         </div>
       )}
+
+      {/* Live tax breakdown — self-hides when the business has tax disabled or
+          the type isn't taxable. Fires /tax/preview as the amount changes. */}
+      <TaxPreviewPanel
+        amount={Number(amount) || 0}
+        transactionType={transactionType}
+        mode="inclusive"
+        className="mt-1"
+      />
 
       {/* Customer / Vendor + Invoice — shown when transaction type/accounts indicate AR or AP */}
       {(requiresCustomer || requiresVendor) && (

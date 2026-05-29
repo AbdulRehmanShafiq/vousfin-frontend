@@ -14,8 +14,12 @@ const taxService = {
   listTaxAccounts: ()      => api.get('/tax/accounts'),
 
   // ── Preview (pure calc) ───────────────────────────────────────────────────────
-  preview: ({ amount, transactionType, mode, taxType, taxRate }) =>
-    api.post('/tax/preview', { amount, transactionType, mode, taxType, taxRate }),
+  preview: ({ amount, transactionType, mode, taxType, taxRate,
+              isReverseCharge, isImportedService, whtApply, whtCategory }) =>
+    api.post('/tax/preview', {
+      amount, transactionType, mode, taxType, taxRate,
+      isReverseCharge, isImportedService, whtApply, whtCategory,
+    }),
 
   // ── Country profiles ─────────────────────────────────────────────────────────
   listProfiles:  ()        => api.get('/tax/profiles'),
