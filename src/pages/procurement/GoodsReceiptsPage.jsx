@@ -4,8 +4,8 @@
  */
 import { useMemo, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { Truck, Search, CheckCircle, AlertTriangle, Trash2 } from 'lucide-react'
-import { useGoodsReceipts, useConfirmGRN, useCancelGRN, useArchiveGRN } from '@/hooks/useProcurement'
+import { Truck, Search, CheckCircle, AlertTriangle, Trash2, PackageCheck, Package } from 'lucide-react'
+import { useGoodsReceipts, useConfirmGRN, useArchiveGRN } from '@/hooks/useProcurement'
 import { useBusinessStore } from '@/stores/useBusinessStore'
 import { formatCurrency, formatDate } from '@/utils/formatters'
 import Input from '@/components/ui/Input'
@@ -54,7 +54,6 @@ export default function GoodsReceiptsPage() {
   })
 
   const confirmGRN = useConfirmGRN()
-  const cancelGRN  = useCancelGRN()
   const archiveGRN = useArchiveGRN()
 
   const receipts = useMemo(() => {
@@ -125,6 +124,19 @@ export default function GoodsReceiptsPage() {
       render: (r) => <GRNStateBadge state={r.state} />,
     },
     {
+      key: 'inventory',
+      header: 'In Stock',
+      render: (r) => r.inventoryApplied ? (
+        <span className="flex items-center gap-1 text-xs text-emerald-400" title="Items added to inventory at landed cost">
+          <PackageCheck className="h-3.5 w-3.5" /> Added
+        </span>
+      ) : r.state === 'draft' ? (
+        <span className="flex items-center gap-1 text-xs text-text-muted" title="Confirm the receipt to add items to inventory">
+          <Package className="h-3.5 w-3.5" /> Pending
+        </span>
+      ) : <span className="text-xs text-text-muted">—</span>,
+    },
+    {
       key: 'actions',
       header: '',
       render: (r) => (
@@ -132,9 +144,14 @@ export default function GoodsReceiptsPage() {
           {r.state === 'draft' && (
             <button
               type="button"
-              onClick={(e) => { e.stopPropagation(); confirmGRN.mutate({ id: r._id }) }}
+              onClick={(e) => {
+                e.stopPropagation()
+                if (confirm(`Confirm receipt of ${r.grnNumber}?\n\nReceived items will be added to inventory at their landed cost and the purchase order's received quantities updated.`)) {
+                  confirmGRN.mutate({ id: r._id })
+                }
+              }}
               className="text-text-muted hover:text-emerald-400 transition-colors"
-              title="Confirm receipt"
+              title="Confirm receipt → adds items to inventory stock"
             >
               <CheckCircle className="h-4 w-4" />
             </button>
@@ -164,7 +181,8 @@ export default function GoodsReceiptsPage() {
             Goods Receipts
           </h1>
           <p className="text-text-secondary mt-1 text-sm">
-            Record what was physically received against purchase orders.
+            Record what was physically received against purchase orders. Confirming a
+            receipt adds the accepted items to inventory at their landed cost.
           </p>
         </div>
       </div>
