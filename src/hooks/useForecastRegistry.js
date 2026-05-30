@@ -23,6 +23,14 @@ export function useForecastModels(key) {
   })
 }
 
+export function useEnsembleForecast(target = 'Revenue', horizon = 6) {
+  return useQuery({
+    queryKey: ['forecast-ensemble', target, horizon],
+    queryFn: () => forecastRegistryService.ensemble({ target, horizon }).then((r) => r.data?.data),
+    staleTime: 5 * 60 * 1000,
+  })
+}
+
 export function useRunBacktest() {
   const qc = useQueryClient()
   return useMutation({
