@@ -44,6 +44,10 @@ const aiService = {
   // + proactive signals, derived from the ensemble forecast.
   healthOutlook: (horizon = 6) =>
     api.get('/ai/health-outlook', { params: { horizon } }),
+
+  // Unified "Needs attention" feed — merged + ranked insights/forecast/anomalies.
+  needsAttention: () =>
+    api.get('/ai/needs-attention'),
 }
 
 export default aiService

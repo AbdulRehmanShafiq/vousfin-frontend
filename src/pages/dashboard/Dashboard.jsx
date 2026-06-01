@@ -27,7 +27,7 @@ import { formatCurrency, formatDate } from '@/utils/formatters'
 import { cn } from '@/utils/cn'
 
 import SmartKPIStrip           from '@/components/dashboard/SmartKPIStrip'
-import AIInsightsPanel         from '@/components/dashboard/AIInsightsPanel'
+import NeedsAttentionFeed      from '@/components/dashboard/NeedsAttentionFeed'
 import BusinessHealthWidget    from '@/components/dashboard/BusinessHealthWidget'
 import BusinessOutlookWidget   from '@/components/dashboard/BusinessOutlookWidget'
 import ForecastWidget          from '@/components/dashboard/ForecastWidget'
@@ -356,11 +356,17 @@ export default function Dashboard() {
           />
         </Section>
 
-        {/* ── 3. BUSINESS HEALTH + OUTLOOK ────────────────────────── */}
+        {/* ── 3. BUSINESS INTELLIGENCE (unified) ──────────────────── */}
+        {/* One place for the AI read on the business: what needs you now
+            (merged feed), then where you stand (health) and where you're
+            headed (outlook). */}
         <Section label="Business Intelligence" collapsible defaultOpen>
-          <div className="grid grid-cols-1 xl:grid-cols-2 gap-4">
-            <BusinessHealthWidget kpis={kpis} loading={loadDash} />
-            <BusinessOutlookWidget horizon={6} />
+          <div className="space-y-4">
+            <NeedsAttentionFeed />
+            <div className="grid grid-cols-1 xl:grid-cols-2 gap-4">
+              <BusinessHealthWidget kpis={kpis} loading={loadDash} />
+              <BusinessOutlookWidget horizon={6} />
+            </div>
           </div>
         </Section>
 
@@ -392,21 +398,20 @@ export default function Dashboard() {
           </div>
         </Section>
 
-        {/* ── 5. AI ACCOUNTANT + FORECAST ─────────────────────────── */}
-        <Section label="AI Accountant & Forecasting" collapsible defaultOpen>
+        {/* ── 5. FORECASTING & CASH POSITION ──────────────────────── */}
+        <Section label="Forecasting & Cash Position" collapsible defaultOpen>
           <div className="grid grid-cols-1 lg:grid-cols-5 gap-4">
-            {/* Left: AI Insights panel */}
-            <div className="lg:col-span-2 flex">
-              <AIInsightsPanel />
-            </div>
-            {/* Right: Financial Position stacked above Forecast */}
-            <div className="lg:col-span-3 flex flex-col gap-4">
+            {/* Left: what you're owed / owe */}
+            <div className="lg:col-span-2">
               <FinancialSnapshot
                 ar={kpis.accountsReceivable ?? 0}
                 ap={kpis.accountsPayable    ?? 0}
                 currency={currency}
                 loading={loadDash}
               />
+            </div>
+            {/* Right: forecast engine */}
+            <div className="lg:col-span-3">
               <ForecastWidget />
             </div>
           </div>

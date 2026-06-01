@@ -64,7 +64,7 @@ const withSuspense = (Component) => (
   </ErrorBoundary>
 )
 
-const hasBusiness = (user) => !!(user?.businessId?._id || user?.businessId)
+const hasBusiness = (user) => !!user?.businessId
 
 /** Smart entry: / → login | setup | dashboard */
 function RootRedirect() {
