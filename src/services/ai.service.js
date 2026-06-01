@@ -34,6 +34,11 @@ const aiService = {
 
   parseNL: (text) =>
     api.post('/ai/parse-nl', { text }),
+
+  // Auditable server-side Business Health Score (liquidity/profitability/
+  // efficiency/leverage/tax) with data-sufficiency confidence.
+  healthScore: () =>
+    api.get('/ai/health-score'),
 }
 
 export default aiService

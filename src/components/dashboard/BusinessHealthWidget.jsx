@@ -10,10 +10,25 @@
  */
 import { memo, useMemo } from 'react'
 import {
-  Activity, TrendingUp, DollarSign, Shield,
+  Activity, TrendingUp, DollarSign, Shield, Scale,
   AlertTriangle, CheckCircle2, Zap,
 } from 'lucide-react'
-import { cn } from '@/utils/cn'
+import { useHealthScore } from '@/hooks/useAI'
+
+/* Server category → ring presentation. Order = display order. */
+const CATEGORY_META = {
+  liquidity:     { label: 'Liquidity',  icon: DollarSign, color: '#06b6d4' },
+  profitability: { label: 'Profit',     icon: TrendingUp, color: '#34d399' },
+  efficiency:    { label: 'Operations', icon: Activity,   color: '#a78bfa' },
+  leverage:      { label: 'Leverage',   icon: Scale,      color: '#f472b6' },
+  tax:           { label: 'Tax',        icon: Shield,     color: '#fbbf24' },
+}
+
+const CONFIDENCE_META = {
+  high:   { label: 'High confidence',   color: '#34d399' },
+  medium: { label: 'Medium confidence', color: '#fbbf24' },
+  low:    { label: 'Low confidence',    color: '#fb923c' },
+}
 
 /* ── Score computation ─────────────────────────────────────────────── */
 function computeScores(kpis) {
@@ -157,69 +172,175 @@ function RiskMeter({ riskLevel, riskPct, runway }) {
 }
 
 /* ══════════════════════════════════════════════════════════════════ */
+/* Build a unified view-model from the server health score, or fall back to the
+   client-side heuristic when the server has no/insufficient data. */
+function buildView(server, kpis) {
+  const serverReady = server && !server.insufficient && Number.isFinite(server.overall)
+
+  if (serverReady) {
+    const rings = Object.entries(CATEGORY_META)
+      .filter(([key]) => server.categories?.[key] && Number.isFinite(server.categories[key].score))
+      .map(([key, meta]) => ({
+        key, ...meta,
+        score: Math.round(server.categories[key].score),
+        drivers: server.categories[key].drivers || [],
+      }))
+
+    // Top "why" drivers: take the weakest categories first.
+    const drivers = [...rings]
+      .sort((a, b) => a.score - b.score)
+      .map(r => r.drivers[0])
+      .filter(Boolean)
+      .slice(0, 3)
+
+    const runway = server.metrics?.runwayMonths == null ? 99 : server.metrics.runwayMonths
+    const riskLevel = runway >= 3 ? 'safe' : runway >= 1 ? 'warning' : 'critical'
+    const riskPct = Math.min(100, Math.max(4, (runway / 6) * 100))
+
+    return {
+      estimated: false,
+      overall: server.overall,
+      rings,
+      risk: { riskLevel, riskPct, runway },
+      confidenceKey: server.confidence,
+      monthsOfData: server.monthsOfData,
+      drivers,
+    }
+  }
+
+  // Fallback — previous client heuristic (clearly labelled "estimated").
+  const s = computeScores(kpis)
+  return {
+    estimated: true,
+    overall: s.overall,
+    rings: [
+      { key: 'liquidity',     label: 'Liquidity',  icon: DollarSign, color: '#06b6d4', score: s.liquidity,                 drivers: [] },
+      { key: 'profitability', label: 'Profit',     icon: TrendingUp, color: '#34d399', score: Math.round(s.profitability), drivers: [] },
+      { key: 'operational',   label: 'Operations', icon: Activity,   color: '#a78bfa', score: s.operational,               drivers: [] },
+      { key: 'tax',           label: 'Tax',        icon: Shield,     color: '#fbbf24', score: s.tax,                       drivers: [] },
+    ],
+    risk: { riskLevel: s.riskLevel, riskPct: s.riskPct, runway: s.runway },
+    confidenceKey: null,
+    monthsOfData: null,
+    drivers: [],
+  }
+}
+
 const BusinessHealthWidget = memo(function BusinessHealthWidget({ kpis = {}, loading }) {
-  const scores = useMemo(() => computeScores(kpis), [kpis])
-  const overallColor = scoreColor(scores.overall)
+  const { data: server, isLoading: healthLoading } = useHealthScore()
+  const view = useMemo(() => buildView(server, kpis), [server, kpis])
+  const overallColor = scoreColor(view.overall)
+  const isLoading = loading || healthLoading
+  const insufficient = server && server.insufficient
+  const conf = view.confidenceKey ? CONFIDENCE_META[view.confidenceKey] : null
 
   return (
     <div className="premium-card p-5">
       {/* ── header row ── */}
-      <div className="flex items-center gap-2 mb-4">
-        <div className="p-1.5 rounded-lg bg-emerald-400/15">
-          <Activity className="h-4 w-4 text-emerald-400" />
+      <div className="flex items-center justify-between gap-2 mb-4">
+        <div className="flex items-center gap-2">
+          <div className="p-1.5 rounded-lg bg-emerald-400/15">
+            <Activity className="h-4 w-4 text-emerald-400" />
+          </div>
+          <div>
+            <h3 className="text-sm font-bold text-text-primary">Business Health Score</h3>
+            <p className="text-[11px] text-text-muted">
+              {view.estimated
+                ? 'Estimated from your KPIs'
+                : 'Computed from your live ledger (auditable)'}
+            </p>
+          </div>
         </div>
-        <div>
-          <h3 className="text-sm font-bold text-text-primary">Business Health Score</h3>
-          <p className="text-[11px] text-text-muted">Computed from your live financials</p>
-        </div>
+        {/* Confidence / source chip */}
+        {!isLoading && !insufficient && (
+          <div className="flex items-center gap-1.5 flex-shrink-0">
+            {conf && (
+              <span
+                className="px-2 py-0.5 rounded-full text-[9px] font-bold uppercase tracking-wide"
+                style={{ backgroundColor: `${conf.color}22`, color: conf.color }}
+                title={view.monthsOfData != null ? `${view.monthsOfData} months of data` : undefined}
+              >
+                {conf.label}{view.monthsOfData != null ? ` · ${view.monthsOfData}mo` : ''}
+              </span>
+            )}
+            {view.estimated && (
+              <span className="px-2 py-0.5 rounded-full text-[9px] font-bold uppercase tracking-wide bg-white/[0.06] text-text-muted">
+                Estimated
+              </span>
+            )}
+          </div>
+        )}
       </div>
 
-      {loading ? (
+      {isLoading ? (
         <div className="grid grid-cols-1 md:grid-cols-[1fr_auto_1fr] gap-4">
           <div className="h-20 animate-pulse rounded-xl bg-white/[0.04]" />
           <div className="hidden md:block w-px bg-glass" />
           <div className="h-20 animate-pulse rounded-xl bg-white/[0.04]" />
         </div>
-      ) : (
-        <div className="flex flex-col md:flex-row md:items-center gap-4 md:gap-6">
-
-          {/* Risk Meter — full width on mobile */}
-          <div className="flex-1 min-w-0">
-            <RiskMeter
-              riskLevel={scores.riskLevel}
-              riskPct={scores.riskPct}
-              runway={scores.runway}
-            />
-          </div>
-
-          {/* Divider */}
-          <div className="hidden md:block h-16 w-px bg-glass flex-shrink-0" />
-
-          {/* 4 score rings — 4-col on mobile too */}
-          <div className="flex items-center justify-around md:justify-center gap-4 md:gap-6 flex-shrink-0">
-            <ScoreRing score={scores.liquidity}                    label="Liquidity"   icon={DollarSign}  ringColor="#06b6d4" />
-            <ScoreRing score={Math.round(scores.profitability)}    label="Profit"      icon={TrendingUp}  ringColor="#34d399" />
-            <ScoreRing score={scores.operational}                  label="Operations"  icon={Activity}    ringColor="#a78bfa" />
-            <ScoreRing score={scores.tax}                          label="Tax"         icon={Shield}      ringColor="#fbbf24" />
-          </div>
-
-          {/* Divider */}
-          <div className="hidden md:block h-16 w-px bg-glass flex-shrink-0" />
-
-          {/* Overall score */}
-          <div className="flex md:flex-col items-center md:justify-center gap-2 md:gap-0.5 flex-shrink-0">
-            <p className="text-3xl font-black leading-none" style={{ color: overallColor }}>
-              {scores.overall}
-            </p>
-            <div className="flex md:flex-col items-center gap-1 md:gap-0.5">
-              <p className="text-[10px] text-text-muted font-semibold">/100</p>
-              <p className="text-[10px] font-bold uppercase tracking-wide" style={{ color: overallColor }}>
-                {scores.overall >= 80 ? 'Excellent' : scores.overall >= 65 ? 'Good' : scores.overall >= 50 ? 'Fair' : 'Poor'}
-              </p>
-            </div>
-          </div>
-
+      ) : insufficient ? (
+        <div className="flex items-center gap-3 py-4 px-2 text-text-muted">
+          <Activity className="h-5 w-5 flex-shrink-0 opacity-60" />
+          <p className="text-xs leading-relaxed">
+            {server.message || 'Not enough financial activity yet to score business health. Record a few transactions to unlock this.'}
+          </p>
         </div>
+      ) : (
+        <>
+          <div className="flex flex-col md:flex-row md:items-center gap-4 md:gap-6">
+
+            {/* Risk Meter — full width on mobile */}
+            <div className="flex-1 min-w-0">
+              <RiskMeter
+                riskLevel={view.risk.riskLevel}
+                riskPct={view.risk.riskPct}
+                runway={view.risk.runway}
+              />
+            </div>
+
+            {/* Divider */}
+            <div className="hidden md:block h-16 w-px bg-glass flex-shrink-0" />
+
+            {/* Dynamic score rings */}
+            <div className="flex items-center justify-around md:justify-center gap-4 md:gap-5 flex-shrink-0">
+              {view.rings.map(r => (
+                <ScoreRing key={r.key} score={r.score} label={r.label} icon={r.icon} ringColor={r.color} />
+              ))}
+            </div>
+
+            {/* Divider */}
+            <div className="hidden md:block h-16 w-px bg-glass flex-shrink-0" />
+
+            {/* Overall score */}
+            <div className="flex md:flex-col items-center md:justify-center gap-2 md:gap-0.5 flex-shrink-0">
+              <p className="text-3xl font-black leading-none" style={{ color: overallColor }}>
+                {view.overall}
+              </p>
+              <div className="flex md:flex-col items-center gap-1 md:gap-0.5">
+                <p className="text-[10px] text-text-muted font-semibold">/100</p>
+                <p className="text-[10px] font-bold uppercase tracking-wide" style={{ color: overallColor }}>
+                  {view.overall >= 80 ? 'Excellent' : view.overall >= 65 ? 'Good' : view.overall >= 50 ? 'Fair' : 'Poor'}
+                </p>
+              </div>
+            </div>
+
+          </div>
+
+          {/* ── "Why" drivers ── */}
+          {view.drivers.length > 0 && (
+            <div className="mt-4 pt-3 border-t border-glass">
+              <p className="text-[10px] font-bold uppercase tracking-widest text-text-muted mb-1.5">What's driving this</p>
+              <ul className="space-y-1">
+                {view.drivers.map((d, i) => (
+                  <li key={i} className="flex items-start gap-1.5 text-[11px] text-text-secondary">
+                    <span className="mt-1 h-1 w-1 rounded-full bg-text-muted flex-shrink-0" />
+                    <span>{d}</span>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          )}
+        </>
       )}
     </div>
   )
