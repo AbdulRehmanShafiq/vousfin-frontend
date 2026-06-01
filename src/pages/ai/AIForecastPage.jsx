@@ -124,17 +124,29 @@ function ConfBadge({ label, score }) {
   )
 }
 
-/** Model source badge */
+/** Honest engine/source labels — reflect the engine that ACTUALLY ran. */
+const STRONG_SOURCES = new Set(['global', 'statistical', 'worker', 'lstm_live'])
+const SOURCE_LABEL = {
+  global:      '🌐 Global transfer model (cross-business ML)',
+  statistical: '📈 Statistical model (conformal)',
+  worker:      '🤖 AI worker (live data)',
+  lstm_live:   '🤖 AI worker (live data)',
+  live:        '✅ Live transactions',
+  seed:        '🌱 Demo data',
+}
+function sourceLabel(ds) { return SOURCE_LABEL[ds] || '📊 Your data' }
+
+/** Model source badge — shows the real model name, not a fixed brand. */
 function ModelBadge({ dataSource, modelType }) {
-  const isReal = dataSource === 'lstm_live'
-  if (!dataSource) return null
+  if (!dataSource || dataSource === 'none') return null
+  const strong = STRONG_SOURCES.has(dataSource)
   return (
     <span className={cn(
       'inline-flex items-center gap-1.5 text-xs font-semibold px-3 py-1 rounded-full border',
-      isReal ? 'text-cyan bg-cyan/10 border-cyan/30' : 'text-text-muted bg-glass border-glass'
+      strong ? 'text-cyan bg-cyan/10 border-cyan/30' : 'text-text-muted bg-glass border-glass'
     )}>
       <BrainCircuit className="h-3 w-3" />
-      {isReal ? 'Bi-LSTM (Real ML)' : 'Holt-Winters Seasonal'}
+      {modelType || (strong ? 'ML worker' : 'Statistical model')}
     </span>
   )
 }
@@ -510,13 +522,9 @@ function UnifiedTab() {
               </h3>
               <p><span className="text-text-muted">Engine:</span> {result.modelMeta.modelType}</p>
               <p><span className="text-text-muted">Look-back:</span> {result.modelMeta.lookBack} months</p>
-              <p><span className="text-text-muted">Source:</span> {
-                result.modelMeta.dataSource === 'lstm_live' ? '🤖 Bi-LSTM live data'
-                : result.modelMeta.dataSource === 'live'    ? '✅ Live transactions'
-                : '📊 Your data'
-              }</p>
+              <p><span className="text-text-muted">Source:</span> {sourceLabel(result.modelMeta.dataSource)}</p>
               <div className="flex flex-wrap gap-2 pt-1.5">
-                <ModelBadge dataSource={result.modelMeta.dataSource} />
+                <ModelBadge dataSource={result.modelMeta.dataSource} modelType={result.modelMeta.modelType} />
                 {result.confidenceLabel && (
                   <ConfBadge label={result.confidenceLabel} score={result.confidenceNumeric} />
                 )}
@@ -645,11 +653,7 @@ function MetricForecastTab({ useHook, label, metricKey }) {
               <h3 className="text-xs font-semibold text-text-primary border-b border-glass pb-1.5 mb-2">Model Info</h3>
               <p><span className="text-text-muted">Engine:</span> {result.modelMeta.modelType}</p>
               <p><span className="text-text-muted">Sequences:</span> {result.modelMeta.sequencesUsed} windows</p>
-              <p><span className="text-text-muted">Source:</span> {
-                result.modelMeta.dataSource === 'lstm_live' ? '🤖 Bi-LSTM live data'
-                : result.modelMeta.dataSource === 'live'    ? '✅ Live transactions'
-                : '📊 Your data'
-              }</p>
+              <p><span className="text-text-muted">Source:</span> {sourceLabel(result.modelMeta.dataSource)}</p>
               <div className="flex flex-wrap gap-2 pt-1.5">
                 {result.anomalyRisk && (
                   <AnomalyRiskChip score={result.anomalyRisk.riskScore} count={result.anomalyRisk.total} />
@@ -1007,8 +1011,8 @@ export default function AIForecastPage() {
               )} />
               <span className="text-text-muted whitespace-nowrap">
                 {healthData.lstmReady
-                  ? '🤖 Real Bi-LSTM active'
-                  : 'Holt-Winters seasonal engine'}
+                  ? '🤖 AI forecast worker active'
+                  : 'Built-in forecast engine'}
               </span>
             </div>
           )}
