@@ -215,9 +215,10 @@ function FinancialSnapshot({ ar, ap, currency, loading }) {
 
   return (
     <div className="premium-card p-5">
-      <h3 className="text-[11px] font-bold uppercase tracking-widest text-text-muted mb-4">
+      <h3 className="text-[11px] font-bold uppercase tracking-widest text-text-muted">
         Financial Position
       </h3>
+      <p className="text-[11px] text-text-muted mb-4 mt-0.5">Money owed to you, and money you owe</p>
 
       {loading ? (
         <div className="space-y-3">
@@ -226,7 +227,7 @@ function FinancialSnapshot({ ar, ap, currency, loading }) {
         </div>
       ) : (
         <>
-          {/* Receivable — always show absolute value */}
+          {/* Receivable — money customers owe you */}
           <Link to="/sales/receivables" className="flex items-center justify-between mb-3 p-3 rounded-xl bg-violet-500/8 border border-violet-500/15 hover:border-violet-500/35 transition-colors">
             <div className="flex items-center gap-2.5">
               <div className="p-1.5 rounded-lg bg-violet-500/20">
@@ -235,13 +236,13 @@ function FinancialSnapshot({ ar, ap, currency, loading }) {
               <div>
                 <p className="text-[10px] font-semibold text-violet-400 uppercase tracking-wider">Accounts Receivable</p>
                 <p className="text-base font-black text-text-primary leading-tight">{fmtAmt(Math.abs(ar), currency)}</p>
-                <p className="text-[10px] text-text-muted mt-0.5">Due from customers</p>
+                <p className="text-[10px] text-text-muted mt-0.5">Customers still owe you this</p>
               </div>
             </div>
-            <span className="text-[10px] font-bold text-violet-300 bg-violet-400/15 px-2 py-1 rounded-full">Due</span>
+            <ExternalLink className="h-3.5 w-3.5 text-text-muted flex-shrink-0" />
           </Link>
 
-          {/* Payable — always show absolute value */}
+          {/* Payable — money you owe vendors */}
           <Link to="/purchases/payables" className="flex items-center justify-between mb-4 p-3 rounded-xl bg-orange-500/8 border border-orange-500/15 hover:border-orange-500/35 transition-colors">
             <div className="flex items-center gap-2.5">
               <div className="p-1.5 rounded-lg bg-orange-500/20">
@@ -250,18 +251,18 @@ function FinancialSnapshot({ ar, ap, currency, loading }) {
               <div>
                 <p className="text-[10px] font-semibold text-orange-400 uppercase tracking-wider">Accounts Payable</p>
                 <p className="text-base font-black text-text-primary leading-tight">{fmtAmt(Math.abs(ap), currency)}</p>
-                <p className="text-[10px] text-text-muted mt-0.5">Owed to vendors</p>
+                <p className="text-[10px] text-text-muted mt-0.5">You still owe vendors this</p>
               </div>
             </div>
-            <span className="text-[10px] font-bold text-orange-300 bg-orange-400/15 px-2 py-1 rounded-full">Owed</span>
+            <ExternalLink className="h-3.5 w-3.5 text-text-muted flex-shrink-0" />
           </Link>
 
           {/* Net exposure bar */}
           {total > 0 && (
             <div>
               <div className="flex justify-between text-[10px] text-text-muted mb-1.5">
-                <span>AR {arPct.toFixed(0)}%</span>
-                <span>AP {(100 - arPct).toFixed(0)}%</span>
+                <span>Owed to you {arPct.toFixed(0)}%</span>
+                <span>{(100 - arPct).toFixed(0)}% you owe</span>
               </div>
               <div className="h-1.5 rounded-full bg-glass-panel overflow-hidden flex">
                 <div className="bg-violet-400 rounded-l-full transition-all duration-700" style={{ width: `${arPct}%` }} />
@@ -396,7 +397,7 @@ export default function Dashboard() {
           <div className="grid grid-cols-1 lg:grid-cols-5 gap-4">
             {/* Left: AI Insights panel */}
             <div className="lg:col-span-2 flex">
-              <AIInsightsPanel kpis={kpis} currency={currency} kpiLoading={loadDash} />
+              <AIInsightsPanel />
             </div>
             {/* Right: Financial Position stacked above Forecast */}
             <div className="lg:col-span-3 flex flex-col gap-4">
@@ -456,10 +457,17 @@ export default function Dashboard() {
                   </div>
                 ) : (
                   <div className="space-y-0.5">
-                    {/* Mobile: 3 entries + prompt; Desktop: all 6 */}
-                    {recentTxs.slice(0, window.innerWidth < 1024 ? 3 : 6).map(tx => (
-                      <TxRow key={tx._id} tx={tx} currency={currency} />
-                    ))}
+                    {/* CSS-driven (resize/rotation safe): 3 rows on mobile, 6 on desktop */}
+                    <div className="lg:hidden space-y-0.5">
+                      {recentTxs.slice(0, 3).map(tx => (
+                        <TxRow key={tx._id} tx={tx} currency={currency} />
+                      ))}
+                    </div>
+                    <div className="hidden lg:block space-y-0.5">
+                      {recentTxs.slice(0, 6).map(tx => (
+                        <TxRow key={tx._id} tx={tx} currency={currency} />
+                      ))}
+                    </div>
                     {recentTxs.length > 3 && (
                       <button
                         onClick={() => setShowTxDrawer(true)}

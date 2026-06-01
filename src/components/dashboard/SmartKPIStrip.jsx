@@ -8,7 +8,7 @@
  * Primary cards : Revenue, Expenses, Net Profit, Cash Balance
  * Secondary chips: Profit Margin, Monthly Burn, Avg Monthly Rev, Revenue Target
  */
-import { memo, useMemo, useRef, useState } from 'react'
+import { memo, useMemo } from 'react'
 import { Link } from 'react-router-dom'
 import {
   TrendingUp, TrendingDown, DollarSign, Wallet,
@@ -65,13 +65,13 @@ function TrendBadge({ trend, label }) {
 }
 
 /* ── Primary card ─────────────────────────────────────────────────── */
-function PrimaryCard({ title, value, format, currency, icon: Icon, color, trend, trendLabel, sparkData, to, loading }) {
+function PrimaryCard({ title, subtitle, value, format, currency, icon: Icon, color, trend, trendLabel, sparkData, to, loading }) {
   const display = loading ? null : format === 'percent' ? fmtPct(value) : fmtVal(value, currency)
 
   const inner = (
     <div
       className={cn(
-        'group premium-card p-4 sm:p-5 flex flex-col gap-3 border-t-2 h-full',
+        'group premium-card p-4 sm:p-5 flex flex-col gap-2.5 border-t-2 h-full',
         to && 'cursor-pointer',
       )}
       style={{ borderTopColor: color }}
@@ -89,7 +89,10 @@ function PrimaryCard({ title, value, format, currency, icon: Icon, color, trend,
         <p className="text-2xl font-black tracking-tight text-text-primary leading-none">{display}</p>
       )}
 
-      <div className="flex items-end justify-between gap-2 pt-1">
+      {/* plain-English one-liner */}
+      {subtitle && <p className="text-[10px] text-text-muted leading-tight">{subtitle}</p>}
+
+      <div className="flex items-end justify-between gap-2 pt-1 mt-auto">
         {sparkData?.length > 1 && <Sparkline data={sparkData} color={color} />}
         {!loading && <TrendBadge trend={trend} label={trendLabel} />}
       </div>
@@ -100,7 +103,7 @@ function PrimaryCard({ title, value, format, currency, icon: Icon, color, trend,
 }
 
 /* ── Secondary chip ───────────────────────────────────────────────── */
-function SecondaryChip({ title, value, format, currency, icon: Icon, color, trend, trendLabel, to, loading }) {
+function SecondaryChip({ title, subtitle, value, format, currency, icon: Icon, color, trend, trendLabel, to, loading }) {
   const display = loading ? null
     : format === 'percent' ? fmtPct(value)
     : format === 'text'    ? String(value)
@@ -119,8 +122,9 @@ function SecondaryChip({ title, value, format, currency, icon: Icon, color, tren
         {loading
           ? <div className="h-5 w-16 mt-0.5 animate-pulse rounded bg-white/[0.04]" />
           : <p className="text-sm font-black text-text-primary leading-tight truncate">{display}</p>}
+        {subtitle && !loading && <p className="text-[9px] text-text-muted leading-tight truncate">{subtitle}</p>}
       </div>
-      {!loading && <TrendBadge trend={trend} label={trendLabel} />}
+      {!loading && trend != null && <TrendBadge trend={trend} label={trendLabel} />}
     </div>
   )
 
@@ -138,31 +142,36 @@ const SmartKPIStrip = memo(function SmartKPIStrip({ kpis = {}, revenueVsExpenses
   const profitSpark = useMemo(() => revenueVsExpenses.map(d => (d.revenue ?? 0) - (d.expenses ?? 0)), [revenueVsExpenses])
 
   const monthsElapsed   = Math.max(1, new Date().getMonth() + 1)
-  const burnRate        = expenses > 0 ? Math.round(expenses / monthsElapsed) : 0
+  const avgMonthlySpend = expenses > 0 ? Math.round(expenses / monthsElapsed) : 0
   const avgMonthlyRev   = revenue  > 0 ? Math.round(revenue  / monthsElapsed) : 0
   const profitMarginPct = revenue  > 0 ? (netProfit / revenue) * 100 : 0
+  const expenseRatioPct = revenue  > 0 ? (expenses  / revenue) * 100 : 0
 
-  /* Define primary cards as config for DRY carousel + grid rendering */
+  /* Define primary cards as config for DRY carousel + grid rendering.
+     Each carries a plain-English one-liner so non-finance users get it. */
   const primaryCards = [
     {
-      key: 'revenue', title: 'Total Revenue', value: revenue, icon: TrendingUp, color: '#34d399',
+      key: 'revenue', title: 'Total Revenue', subtitle: 'Money coming in this year',
+      value: revenue, icon: TrendingUp, color: '#34d399',
       trend: revenue > 0 ? 1 : 0, trendLabel: 'YTD', sparkData: revSpark,
       to: '/reports/income-statement',
     },
     {
-      key: 'expenses', title: 'Total Expenses', value: expenses, icon: TrendingDown, color: '#f87171',
+      key: 'expenses', title: 'Total Expenses', subtitle: 'Money going out this year',
+      value: expenses, icon: TrendingDown, color: '#f87171',
       trend: expenses > 0 ? -1 : 0, trendLabel: 'YTD', sparkData: expSpark,
       to: '/reports/income-statement',
     },
     {
-      key: 'profit', title: 'Net Profit', value: netProfit,
-      icon: DollarSign, color: netProfit >= 0 ? '#34d399' : '#f87171',
+      key: 'profit', title: 'Net Profit', subtitle: "What's left after all costs",
+      value: netProfit, icon: DollarSign, color: netProfit >= 0 ? '#34d399' : '#f87171',
       trend: netProfit > 0 ? 1 : netProfit < 0 ? -1 : 0,
       trendLabel: netProfit >= 0 ? 'Profit' : 'Loss', sparkData: profitSpark,
       to: '/reports/income-statement',
     },
     {
-      key: 'cash', title: 'Cash Balance', value: cashBalance, icon: Wallet, color: '#06b6d4',
+      key: 'cash', title: 'Cash Balance', subtitle: 'Money available right now',
+      value: cashBalance, icon: Wallet, color: '#06b6d4',
       trend: cashBalance > 0 ? 1 : cashBalance < 0 ? -1 : 0,
       trendLabel: cashBalance > 0 ? 'Positive' : 'Deficit', sparkData: [],
       to: '/reports/balance-sheet',
@@ -202,27 +211,22 @@ const SmartKPIStrip = memo(function SmartKPIStrip({ kpis = {}, revenueVsExpenses
         ))}
       </div>
 
-      {/* ── Secondary chips — 2-col on mobile, 4-col on md+ ── */}
+      {/* ── Secondary chips — 2-col on mobile, 4-col on md+ ──
+          No trend badges here: the figure itself is the point, and a badge that
+          just repeats the same number is noise. ── */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-2.5">
-        <SecondaryChip title="Profit Margin" value={profitMarginPct} format="percent" icon={Percent}
+        <SecondaryChip title="Profit Margin" subtitle="Kept as profit" value={profitMarginPct} format="percent" icon={Percent}
           color={profitMarginPct >= 0 ? '#34d399' : '#f87171'}
-          trend={profitMarginPct > 0 ? 1 : profitMarginPct < 0 ? -1 : 0}
-          trendLabel={`${profitMarginPct.toFixed(1)}%`}
           currency={currency} loading={loading} to="/reports/income-statement" />
 
-        <SecondaryChip title="Monthly Burn" value={burnRate} icon={Flame} color="#facc15"
-          trend={burnRate > 0 ? -1 : 0} trendLabel="/mo avg"
+        <SecondaryChip title="Avg Monthly Spend" subtitle="Typical monthly costs" value={avgMonthlySpend} icon={Flame} color="#facc15"
           currency={currency} loading={loading} to="/reports/income-statement" />
 
-        <SecondaryChip title="Avg Monthly Rev" value={avgMonthlyRev} icon={Activity} color="#a78bfa"
-          trend={avgMonthlyRev > 0 ? 1 : 0} trendLabel="/mo avg"
+        <SecondaryChip title="Avg Monthly Sales" subtitle="Typical monthly income" value={avgMonthlyRev} icon={Activity} color="#a78bfa"
           currency={currency} loading={loading} to="/reports/income-statement" />
 
-        <SecondaryChip title="Revenue Target" value={profitMarginPct >= 20 ? 'On track' : 'Below 20%'}
-          format="text" icon={Target}
-          color={profitMarginPct >= 20 ? '#34d399' : '#f87171'}
-          trend={profitMarginPct >= 20 ? 1 : -1}
-          trendLabel={profitMarginPct >= 20 ? 'Healthy' : 'Review'}
+        <SecondaryChip title="Expense Ratio" subtitle="Of sales spent on costs" value={expenseRatioPct} format="percent" icon={Target}
+          color={expenseRatioPct <= 80 ? '#34d399' : '#f87171'}
           currency={currency} loading={loading} to="/reports/income-statement" />
       </div>
     </div>
