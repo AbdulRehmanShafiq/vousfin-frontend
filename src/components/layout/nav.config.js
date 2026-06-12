@@ -22,24 +22,14 @@ import {
 
 export const NAV_SECTIONS = [
   {
-    label: null, key: 'overview',
+    label: null, key: 'home',
     items: [
-      { name: 'Dashboard', href: '/dashboard', icon: LayoutDashboard },
-      { name: 'Activity',  href: '/activity',  icon: Activity },
+      { name: 'Home',     href: '/dashboard', icon: LayoutDashboard },
+      { name: 'Activity', href: '/activity',  icon: Activity },
     ],
   },
   {
-    label: 'Accounting', key: 'accounting',
-    items: [
-      { name: 'Transactions',      href: '/transactions',           icon: Receipt, exact: true },
-      { name: 'Chart of Accounts', href: '/accounts',               icon: BookOpen },
-      { name: 'Recurring',         href: '/transactions/templates', icon: Repeat },
-      { name: 'Approvals',         href: '/approvals',              icon: ClipboardCheck, badgeKey: 'approvals' },
-      { name: 'Fiscal Years',      href: '/accounting/fiscal-years', icon: CalendarDays },
-    ],
-  },
-  {
-    label: 'Sales', key: 'sales',
+    label: 'Money In', key: 'money-in',
     items: [
       { name: 'Customers',   href: '/customers',         icon: Users },
       { name: 'Invoices',    href: '/sales/invoices',    icon: FileText },
@@ -47,7 +37,7 @@ export const NAV_SECTIONS = [
     ],
   },
   {
-    label: 'Purchases', key: 'purchases',
+    label: 'Money Out', key: 'money-out',
     items: [
       { name: 'Vendors',         href: '/vendors',                     icon: Briefcase },
       { name: 'Bills',           href: '/purchases/bills',             icon: FileText },
@@ -57,26 +47,31 @@ export const NAV_SECTIONS = [
     ],
   },
   {
-    label: 'Banking', key: 'banking',
+    label: 'Ledger', key: 'ledger',
     items: [
-      { name: 'Bank Reconciliation', href: '/reconciliation/bank',       icon: Landmark },
+      { name: 'Transactions',      href: '/transactions',            icon: Receipt, exact: true },
+      { name: 'Chart of Accounts', href: '/accounts',                icon: BookOpen },
+      { name: 'Recurring',         href: '/transactions/templates',  icon: Repeat },
+      { name: 'Approvals',         href: '/approvals',               icon: ClipboardCheck, badgeKey: 'approvals' },
+      { name: 'Inventory',         href: '/inventory',               icon: Boxes },
+      { name: 'Fiscal Years',      href: '/accounting/fiscal-years', icon: CalendarDays },
+    ],
+  },
+  {
+    label: 'Autopilot', key: 'autopilot',
+    items: [
       { name: 'AI Review Queue',     href: '/ai/review-queue',           icon: BrainCircuit },
+      { name: 'Bank Reconciliation', href: '/reconciliation/bank',       icon: Landmark },
       { name: 'Exceptions',          href: '/reconciliation/exceptions', icon: ShieldAlert },
     ],
   },
   {
-    label: 'Operations', key: 'operations',
-    items: [
-      { name: 'Inventory', href: '/inventory', icon: Boxes },
-    ],
-  },
-  {
-    label: 'Insights', key: 'insights',
+    label: 'Intelligence', key: 'intelligence',
     items: [
       { name: 'Financial Reports', href: '/financial-reports/income-statement', activePrefix: '/financial-reports', icon: FileBarChart2 },
       { name: 'Forecast',          href: '/ai-analyst/forecast',  icon: TrendingUp },
+      { name: 'Scenarios',         href: '/ai-analyst/scenarios', icon: Lightbulb },
       { name: 'Anomalies',         href: '/ai-analyst/anomalies', icon: ShieldAlert },
-      { name: 'AI Insights',       href: '/ai-analyst/insights',  icon: Lightbulb },
       { name: 'AI Assistant',      href: '/ai/assistant',         icon: Sparkles },
     ],
   },
@@ -131,7 +126,7 @@ export function isItemActive(item, pathname) {
 
 /** Section key containing the active route (for default-expanding). */
 export function activeSectionKey(pathname) {
-  if (pathname.startsWith('/procurement')) return 'purchases'
+  if (pathname.startsWith('/procurement')) return 'money-out'
   for (const section of NAV_SECTIONS) {
     if (section.items.some((i) => isItemActive(i, pathname))) return section.key
   }

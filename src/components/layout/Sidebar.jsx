@@ -157,8 +157,8 @@ export default function Sidebar({ isCollapsed, toggleCollapse, isMobile = false,
           {!compact ? (
             <div className="flex items-center gap-2.5">
               <img src={vousFinLogo} alt="VousFin" className="h-7 w-7 object-contain" />
-              <span className="text-xl font-bold tracking-tight text-text-primary">
-                vous<span className="text-gradient">Fin</span>
+              <span className="font-display text-xl font-semibold tracking-tight text-text-primary">
+                vous<span className="text-accent">Fin</span>
               </span>
             </div>
           ) : (

@@ -3,35 +3,34 @@
 @tailwind utilities;
 
 /*
- * VousFin global styles — "calm terminal luxury"
- * Neutral charcoal surfaces, hairline borders, one azure accent.
- * Utility class NAMES are preserved (premium-card, bg-glass, btn-gradient…)
- * so the whole app restyles without call-site edits.
+ * VousFin global styles — "Heritage Ledger"
+ * Warm ivory paper, white cards, ink type, deep forest-green accent, gold
+ * highlights. Utility class NAMES preserved (premium-card, bg-glass,
+ * btn-gradient…) so the whole app restyles without call-site edits.
  */
 
 @layer base {
   :root {
-    --bg: #0B0E14;        /* page canvas */
-    --bg2: #10141C;       /* card surface */
-    --bg3: #151A23;       /* elevated: sidebar, modals, sheets */
-    --text: #EDF1F7;
-    --text2: #A9B4C4;
-    --text3: #5F6B7C;
-    --border: rgba(255, 255, 255, 0.07);
-    --border2: rgba(255, 255, 255, 0.13);
-    --accent: #4DA8F0;
-    --accent2: #2563EB;
-    /* legacy aliases — values now neutral/semantic */
-    --cyan: #4DA8F0;
-    --cyan2: #2563EB;
-    --emerald: #34D399;
-    --emerald2: #10B981;
-    --emerald3: #6EE7B7;
+    --bg: #F6F4EE;        /* page canvas — warm ivory paper */
+    --bg2: #FFFFFF;       /* card surface */
+    --bg3: #FCFBF7;       /* elevated: sidebar, modals, sheets */
+    --text: #20241F;
+    --text2: #54594F;
+    --text3: #8A8F83;
+    --border: rgba(32, 36, 31, 0.10);
+    --border2: rgba(32, 36, 31, 0.18);
+    --accent: #1E5A3C;    /* deep forest green */
+    --accent2: #143F2A;
+    --gold: #B98A2F;
+    /* legacy aliases */
+    --cyan: #1E5A3C;
+    --cyan2: #143F2A;
+    --emerald: #1E7A4A;
+    --emerald2: #16613A;
+    --emerald3: #2E9960;
   }
 
-  html {
-    scroll-behavior: smooth;
-  }
+  html { scroll-behavior: smooth; }
 
   body {
     @apply font-sans antialiased;
@@ -39,68 +38,43 @@
     color: var(--text);
     overflow-x: hidden;
     line-height: 1.55;
-    font-feature-settings: 'cv05' on; /* IBM Plex: open four */
   }
 
-  h1, h2, h3, h4 {
-    letter-spacing: -0.01em;
+  /* Display serif for page titles — the heritage signature */
+  h1, h2 {
+    font-family: 'Fraunces', Georgia, serif;
+    letter-spacing: -0.015em;
+    font-weight: 600;
   }
+  h3, h4 { letter-spacing: -0.01em; }
 
-  /* Financial data must not wiggle — tabular figures in every table cell */
-  tbody td, thead th {
-    font-variant-numeric: tabular-nums;
-  }
+  /* Financial data must not wiggle */
+  tbody td, thead th { font-variant-numeric: tabular-nums; }
 
-  ::selection {
-    background: rgba(77, 168, 240, 0.30);
-    color: #fff;
-  }
+  ::selection { background: rgba(30, 90, 60, 0.18); color: var(--text); }
 }
 
 @layer utilities {
-  /* ═══ NUMERIC ═══ */
-  /* Apply to any element rendering money or counts outside a table */
-  .num {
-    font-variant-numeric: tabular-nums;
-  }
+  .num { font-variant-numeric: tabular-nums; font-family: 'IBM Plex Mono', monospace; font-size: 0.95em; }
 
-  /* ═══ SCROLLBAR ═══ */
-  .scrollbar-none {
-    scrollbar-width: none;
-    -ms-overflow-style: none;
-  }
+  .scrollbar-none { scrollbar-width: none; -ms-overflow-style: none; }
   .scrollbar-none::-webkit-scrollbar { display: none; }
 
-  .scrollbar-thin {
-    scrollbar-width: thin;
-    scrollbar-color: var(--text3) transparent;
-  }
-  .scrollbar-thin::-webkit-scrollbar {
-    width: 6px;
-    height: 6px;
-  }
-  .scrollbar-thin::-webkit-scrollbar-track {
-    background: transparent;
-  }
-  .scrollbar-thin::-webkit-scrollbar-thumb {
-    background: var(--text3);
-    border-radius: 4px;
-  }
+  .scrollbar-thin { scrollbar-width: thin; scrollbar-color: var(--text3) transparent; }
+  .scrollbar-thin::-webkit-scrollbar { width: 6px; height: 6px; }
+  .scrollbar-thin::-webkit-scrollbar-track { background: transparent; }
+  .scrollbar-thin::-webkit-scrollbar-thumb { background: var(--border2); border-radius: 4px; }
 
-  /* Micro-animations & interactive elements */
   .transition-premium {
     @apply transition-all duration-200;
     transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
   }
 
-  .hover-scale {
-    /* cards are not buttons — no scale theatrics, just a border lift */
-    @apply transition-colors duration-200;
-  }
+  .hover-scale { @apply transition-colors duration-200; }
 
   /* ═══ CORE SURFACES ═══ */
   .bg-glass {
-    background: rgba(255, 255, 255, 0.04);
+    background: rgba(32, 36, 31, 0.04);
     border: 1px solid var(--border);
   }
 
@@ -108,201 +82,122 @@
     background: var(--bg2);
     border: 1px solid var(--border);
     border-radius: 12px;
-    @apply transition-colors duration-200 relative;
+    box-shadow: 0 1px 2px 0 rgb(32 36 31 / 0.04), 0 1px 4px -1px rgb(32 36 31 / 0.05);
+    @apply transition-shadow duration-200 relative;
   }
-
   .premium-card:hover {
-    border-color: var(--border2);
+    box-shadow: 0 2px 8px -2px rgb(32 36 31 / 0.10), 0 1px 3px rgb(32 36 31 / 0.06);
   }
 
-  /* ── sticky invoice/bill summary sidebar ─────────────────────── */
   .sticky-summary {
-    position: sticky;
-    top: 1.5rem;
-    align-self: flex-start;
-    max-height: calc(100vh - 3rem);
-    overflow-y: auto;
+    position: sticky; top: 1.5rem; align-self: flex-start;
+    max-height: calc(100vh - 3rem); overflow-y: auto;
   }
-
   .sticky-summary::-webkit-scrollbar { width: 4px; }
-  .sticky-summary::-webkit-scrollbar-thumb {
-    background: var(--border2);
-    border-radius: 2px;
-  }
+  .sticky-summary::-webkit-scrollbar-thumb { background: var(--border2); border-radius: 2px; }
 
-  /* ── mobile-friendly table row tap target ────────────────────── */
   @media (max-width: 640px) {
     table.responsive-rows tbody tr {
-      display: flex;
-      flex-direction: column;
-      padding: 0.75rem;
+      display: flex; flex-direction: column; padding: 0.75rem;
       border-bottom: 1px solid var(--border);
     }
     table.responsive-rows tbody td {
-      display: flex;
-      justify-content: space-between;
-      gap: 0.75rem;
-      padding: 0.25rem 0;
-      border: 0;
+      display: flex; justify-content: space-between; gap: 0.75rem;
+      padding: 0.25rem 0; border: 0;
     }
     table.responsive-rows thead { display: none; }
   }
 
-  /* ═══ BUTTONS (legacy class names, restrained styling) ═══ */
+  /* ═══ BUTTONS (legacy names) ═══ */
   .btn-gradient {
-    background: linear-gradient(180deg, #3B82F6, var(--accent2));
-    color: #fff;
-    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.12);
+    background: linear-gradient(180deg, #236847, var(--accent2));
+    color: #FCFBF7;
+    box-shadow: 0 1px 2px rgb(20 63 42 / 0.35), inset 0 1px 0 rgba(255, 255, 255, 0.12);
   }
-
   .btn-gradient:hover {
-    background: linear-gradient(180deg, #4D8FF7, #2E6BEE);
-    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.45), inset 0 1px 0 rgba(255, 255, 255, 0.12);
+    background: linear-gradient(180deg, #1E5A3C, #102F20);
   }
 
   .btn-outline {
-    background: transparent;
+    background: var(--bg2);
     border: 1px solid var(--border2);
     color: var(--text2);
   }
-
   .btn-outline:hover {
-    background: rgba(255, 255, 255, 0.05);
-    border-color: rgba(255, 255, 255, 0.22);
-    color: var(--text);
+    border-color: var(--accent);
+    color: var(--accent);
+    background: rgba(30, 90, 60, 0.04);
   }
 
   .text-gradient {
-    background: linear-gradient(135deg, #6EB7F7, var(--accent));
+    background: linear-gradient(135deg, var(--accent), var(--gold));
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
   }
 
-  /* Responsive Table Container (scrolls inside cards only) */
   .table-scroll-container {
-    @apply overflow-x-auto scrollbar-thin max-w-full rounded-lg border border-glass;
+    @apply overflow-x-auto scrollbar-thin max-w-full rounded-lg border border-glass bg-white;
   }
 
-  /* Bottom sheet style for mobile modals */
   .mobile-bottom-sheet {
     @apply fixed inset-x-0 bottom-0 z-50 rounded-t-2xl bg-charcoal p-6 shadow-2xl transition-all duration-300 md:relative md:inset-auto md:rounded-xl md:p-6 md:shadow-md border border-glass;
   }
 }
 
-.prose-sm p {
-  @apply mb-2 last:mb-0;
-}
+.prose-sm p { @apply mb-2 last:mb-0; }
+.prose-sm ul { @apply mb-2 list-disc pl-5; }
 
-.prose-sm ul {
-  @apply mb-2 list-disc pl-5;
-}
-
-/* Skeleton animation loader */
 @keyframes skeleton-loading {
-  0% {
-    background-color: rgba(30, 36, 48, 0.7);
-  }
-  50% {
-    background-color: rgba(44, 52, 66, 0.5);
-  }
-  100% {
-    background-color: rgba(30, 36, 48, 0.7);
-  }
+  0% { background-color: rgba(32, 36, 31, 0.06); }
+  50% { background-color: rgba(32, 36, 31, 0.10); }
+  100% { background-color: rgba(32, 36, 31, 0.06); }
 }
+.skeleton-loader { animation: skeleton-loading 1.5s infinite ease-in-out; }
 
-.skeleton-loader {
-  animation: skeleton-loading 1.5s infinite ease-in-out;
-}
+@keyframes spin-slow { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+.animate-spin-slow { animation: spin-slow 2.5s linear infinite; }
 
-/* Slow spin for AI loading icons */
-@keyframes spin-slow {
-  from { transform: rotate(0deg); }
-  to   { transform: rotate(360deg); }
-}
+@keyframes fade-in { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; } }
+.animate-fade-in { animation: fade-in 0.35s ease-out both; }
 
-.animate-spin-slow {
-  animation: spin-slow 2.5s linear infinite;
-}
-
-/* Fade-in for page transitions */
-@keyframes fade-in {
-  from { opacity: 0; transform: translateY(8px); }
-  to   { opacity: 1; }
-}
-
-.animate-fade-in {
-  animation: fade-in 0.35s ease-out both;
-}
-
-/* Bottom sheet slide-up (mobile drawers) */
 @keyframes slide-up-sheet {
   from { transform: translateY(100%); opacity: 0; }
-  to   { transform: translateY(0);    opacity: 1; }
+  to   { transform: translateY(0); opacity: 1; }
 }
+.animate-slide-up-sheet { animation: slide-up-sheet 0.28s cubic-bezier(0.32, 0.72, 0, 1) both; }
 
-.animate-slide-up-sheet {
-  animation: slide-up-sheet 0.28s cubic-bezier(0.32, 0.72, 0, 1) both;
-}
-
-/* Section collapse animation */
 @keyframes collapse-down {
   from { opacity: 0; transform: translateY(-6px); }
   to   { opacity: 1; transform: translateY(0); }
 }
+.animate-collapse-down { animation: collapse-down 0.2s ease-out both; }
 
-.animate-collapse-down {
-  animation: collapse-down 0.2s ease-out both;
-}
-
-/* Chart container — pop in when data arrives */
 @keyframes chart-enter {
   from { opacity: 0; transform: scaleY(0.92); }
   to   { opacity: 1; transform: scaleY(1); }
 }
+.animate-chart-enter { animation: chart-enter 0.35s cubic-bezier(0.16, 1, 0.3, 1) both; transform-origin: bottom; }
 
-.animate-chart-enter {
-  animation: chart-enter 0.35s cubic-bezier(0.16, 1, 0.3, 1) both;
-  transform-origin: bottom;
-}
+@keyframes value-glow { 0% { opacity: 0.4; } 100% { opacity: 1; } }
+.animate-value-glow { animation: value-glow 0.5s ease-out 1; }
 
-/* KPI value entrance — legacy name kept, glow removed */
-@keyframes value-glow {
-  0%   { opacity: 0.4; }
-  100% { opacity: 1; }
-}
-
-.animate-value-glow {
-  animation: value-glow 0.5s ease-out 1;
-}
-
-/* Focus ring — consistent across inputs/buttons */
 .focus-ring {
-  @apply focus:outline-none focus-visible:ring-2 focus-visible:ring-cyan/50 focus-visible:ring-offset-1 focus-visible:ring-offset-transparent;
+  @apply focus:outline-none focus-visible:ring-2 focus-visible:ring-accent/40 focus-visible:ring-offset-1 focus-visible:ring-offset-transparent;
 }
 
-/* Hairline dividers */
-.divider-x {
-  background: var(--border);
-  height: 1px;
-  width: 100%;
-}
-
-.divider-y {
-  background: var(--border);
-  width: 1px;
-  height: 100%;
-}
+.divider-x { background: var(--border); height: 1px; width: 100%; }
+.divider-y { background: var(--border); width: 1px; height: 100%; }
 
 /* Elevated panel (tooltips, drawers, AI widget) */
 .glass-panel {
-  background: rgba(21, 26, 35, 0.96);
+  background: rgba(252, 251, 247, 0.97);
   backdrop-filter: blur(12px);
   border: 1px solid var(--border2);
   border-radius: 12px;
+  box-shadow: 0 12px 32px -12px rgb(32 36 31 / 0.18);
 }
 
-/* Subtle grain texture on hero sections */
 .bg-grain {
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='300' height='300' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E");
 }
