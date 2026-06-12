@@ -28,6 +28,7 @@ import EditorActionBar from './EditorActionBar'
 const emptyLine = () => ({
   _tempId: `li-${Date.now()}-${Math.random().toString(36).slice(2, 7)}`,
   itemType: 'custom',
+  inventoryItemId: null,
   name: '',
   description: '',
   quantity: 1,
@@ -107,6 +108,7 @@ export default function InvoiceEditor({
   onAddCustomer,          // () => void — opens PartyFormModal
   saving = false,
   customers = [],         // [{_id, fullName, businessName, email}]
+  inventoryItems = [],    // [{_id, name, sku, currentStock, unit, unitCostPrice}]
   className,
 }) {
   const isEdit = !!invoice
@@ -210,6 +212,7 @@ export default function InvoiceEditor({
     bankDetails: Object.keys(bankDetails).length ? bankDetails : undefined,
     lineItems: lineItems
       .filter(li => li.name && li.quantity > 0) // strip empty rows
+      // eslint-disable-next-line no-unused-vars
       .map(({ _tempId, ...rest }, i) => ({ ...rest, sortOrder: i })),
   })
 
@@ -224,8 +227,8 @@ export default function InvoiceEditor({
         kind="invoice"
         doc={invoice}
         isReadOnly={isReadOnly}
-        canSave={!!invoiceNumber}
-        canSubmit={!!invoiceNumber && totals.totalAmount > 0}
+        canSave={true}
+        canSubmit={totals.totalAmount > 0}
         saving={saving}
         onSaveDraft={handleSave}
         onSubmit={handleSubmit}
@@ -255,8 +258,8 @@ export default function InvoiceEditor({
               label="Invoice #"
               value={invoiceNumber}
               onChange={e => setInvoiceNumber(e.target.value)}
-              placeholder="INV-001"
-              required
+              placeholder="Auto-generated"
+              disabled={isReadOnly}
             />
             <Input
               label="Issue Date"
@@ -373,6 +376,8 @@ export default function InvoiceEditor({
                     onChange={handleLineChange}
                     onRemove={removeLine}
                     canRemove={lineItems.length > 1}
+                    inventoryItems={inventoryItems}
+                    mode="invoice"
                   />
                 ))}
               </tbody>
@@ -383,6 +388,8 @@ export default function InvoiceEditor({
           <div className="md:hidden space-y-3 px-4 pb-4">
             {lineItems.map((item, i) => {
               const { lineTotal } = computeLineValues(item)
+              const selInv = item.inventoryItemId ? inventoryItems.find(v => v._id === item.inventoryItemId) : null
+              const overStk = selInv && item.quantity > selInv.currentStock
               return (
                 <div key={item._tempId || i} className="rounded-lg border border-glass p-3 space-y-2">
                   <div className="flex items-center justify-between">
@@ -393,12 +400,36 @@ export default function InvoiceEditor({
                       </button>
                     )}
                   </div>
+                  {inventoryItems.length > 0 && (
+                    <select
+                      className="w-full rounded border border-glass bg-glass-panel px-2 py-1 text-xs text-text-secondary focus:border-cyan focus:outline-none"
+                      value={item.inventoryItemId || ''}
+                      onChange={e => {
+                        const invId = e.target.value
+                        if (!invId) { handleLineChange(i, { ...item, inventoryItemId: null }); return }
+                        const inv = inventoryItems.find(v => v._id === invId)
+                        if (inv) handleLineChange(i, { ...item, inventoryItemId: inv._id, name: inv.name, description: inv.description || (inv.sku ? `SKU: ${inv.sku}` : ''), unitPrice: inv.unitCostPrice || 0 })
+                      }}
+                    >
+                      <option value="">— pick from inventory —</option>
+                      {inventoryItems.map(inv => (
+                        <option key={inv._id} value={inv._id}>
+                          {inv.name} ({inv.currentStock} {inv.unit || 'units'} left)
+                        </option>
+                      ))}
+                    </select>
+                  )}
                   <input
                     className="w-full rounded border border-glass bg-glass-panel px-2 py-1.5 text-sm text-text-primary"
                     value={item.name || ''}
                     onChange={e => handleLineChange(i, { ...item, name: e.target.value })}
                     placeholder="Item name"
                   />
+                  {selInv && (
+                    <p className={`text-[11px] ${overStk ? 'text-red-400' : 'text-text-muted'}`}>
+                      {overStk ? `⚠ Only ${selInv.currentStock} ${selInv.unit || 'units'} in stock` : `${selInv.currentStock} ${selInv.unit || 'units'} in stock`}
+                    </p>
+                  )}
                   <div className="grid grid-cols-3 gap-2">
                     <div>
                       <label className="text-[10px] text-text-muted">Qty</label>

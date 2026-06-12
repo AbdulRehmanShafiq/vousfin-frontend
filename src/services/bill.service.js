@@ -8,6 +8,7 @@ const billService = {
   list:               (params)            => api.get('/bills', { params }),
   getById:            (id)                => api.get(`/bills/${id}`),
   getTimeline:        (id)                => api.get(`/bills/${id}/timeline`),
+  downloadPdf:        (id)                => api.get(`/bills/${id}/pdf`, { responseType: 'blob' }),
 
   // Approval workflow
   submitForApproval:  (id)                => api.post(`/bills/${id}/submit`),

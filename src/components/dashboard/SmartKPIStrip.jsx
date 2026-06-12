@@ -186,9 +186,9 @@ const SmartKPIStrip = memo(function SmartKPIStrip({ kpis = {}, revenueVsExpenses
       {/* Mobile (<md): horizontal swipe carousel — shows 1.4 cards to hint scroll */}
       <div className="md:hidden -mx-4 px-4">
         <div className="flex overflow-x-auto snap-x snap-mandatory scrollbar-none gap-3 pb-1">
-          {primaryCards.map(card => (
+          {primaryCards.map(({ key, ...card }) => (
             <div
-              key={card.key}
+              key={key}
               className="snap-start flex-shrink-0"
               style={{ width: 'calc(72vw)', maxWidth: '240px', minWidth: '180px' }}
             >
@@ -206,8 +206,8 @@ const SmartKPIStrip = memo(function SmartKPIStrip({ kpis = {}, revenueVsExpenses
 
       {/* Desktop (md+): 4-column grid */}
       <div className="hidden md:grid md:grid-cols-4 gap-3">
-        {primaryCards.map(card => (
-          <PrimaryCard key={card.key} {...card} currency={currency} loading={loading} />
+        {primaryCards.map(({ key, ...card }) => (
+          <PrimaryCard key={key} {...card} currency={currency} loading={loading} />
         ))}
       </div>
 

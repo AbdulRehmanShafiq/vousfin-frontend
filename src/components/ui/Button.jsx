@@ -1,12 +1,24 @@
 import { forwardRef } from 'react'
 import { cn } from '@/utils/cn'
 
+/*
+ * Button — single canonical button for the app.
+ *
+ * Variant vocabulary unifies the two legacy sets:
+ *   gradient | primary   → solid accent (the one loud element on a screen)
+ *   outline  | secondary → neutral hairline
+ *   ghost                → borderless quiet action
+ *   amber                → caution
+ *   danger               → destructive
+ */
 const variants = {
-  gradient: 'btn-gradient border-none',
+  gradient: 'btn-gradient border border-transparent',
+  primary: 'btn-gradient border border-transparent',
   outline: 'btn-outline',
-  ghost: 'bg-glass-panel text-text-secondary border border-glass hover:bg-glass-hover hover:border-glass-2 hover:text-cyan',
-  amber: 'bg-amber/10 text-amber-2 border border-amber/20 hover:bg-amber/20 hover:border-amber',
-  danger: 'bg-red-500/10 text-red-400 border border-red-500/20 hover:bg-red-500/20 hover:border-red-500/40',
+  secondary: 'btn-outline',
+  ghost: 'bg-transparent text-text-secondary border border-transparent hover:bg-glass-hover hover:text-text-primary',
+  amber: 'bg-amber/10 text-amber-2 border border-amber/20 hover:bg-amber/20 hover:border-amber/40',
+  danger: 'bg-negative-muted text-negative border border-negative/20 hover:bg-negative/20 hover:border-negative/40',
 }
 
 export const Button = forwardRef(({
@@ -29,8 +41,8 @@ export const Button = forwardRef(({
       type={type}
       disabled={isDisabled}
       className={cn(
-        'inline-flex items-center justify-center gap-2 rounded-lg px-5 py-3 text-sm font-bold transition-premium focus:outline-none focus:ring-2 focus:ring-cyan/50 focus:ring-offset-2 focus:ring-offset-navy disabled:cursor-not-allowed disabled:opacity-50',
-        variants[variant],
+        'inline-flex items-center justify-center gap-2 rounded-md px-4 py-2.5 text-sm font-semibold transition-premium focus:outline-none focus-visible:ring-2 focus-visible:ring-accent/50 focus-visible:ring-offset-2 focus-visible:ring-offset-navy disabled:cursor-not-allowed disabled:opacity-50',
+        variants[variant] || variants.gradient,
         fullWidth && 'w-full',
         className
       )}

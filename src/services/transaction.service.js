@@ -2,6 +2,8 @@ import api from './api'
 
 const transactionService = {
   create: (data) => api.post('/transactions/form', data),
+  // #9 — post many transactions in one call (gated + idempotent)
+  batch: (items) => api.post('/transactions/batch', { items }),
   list: (params) => api.get('/transactions', { params }),
   getById: (id) => api.get(`/transactions/${id}`),
   update: (id, data) => api.put(`/transactions/${id}`, data),

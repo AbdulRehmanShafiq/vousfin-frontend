@@ -16,17 +16,21 @@ export default function IncomeStatementPage() {
   const { data, isLoading } = useIncomeStatement(dateRange)
   const currency = useBusinessStore(s => s.currency)
 
+  // Build export — section totals and subtotals always appear; zero-balance
+  // individual accounts are suppressed so the CSV only contains active lines.
   const exportData = []
   if (data) {
-    const push = (label, amt) => exportData.push({ Category: label, Amount: amt ?? 0 })
-    ;(data.revenue?.accounts || []).forEach(a => push(a.accountName, a.balance))
+    const push    = (label, amt) => exportData.push({ Category: label, Amount: amt ?? 0 })
+    const nonZero = (accts) => (accts || []).filter(a => (a.balance || 0) !== 0)
+
+    nonZero(data.revenue?.accounts).forEach(a => push(a.accountName, a.balance))
     push('Total Revenue', data.totalRevenue)
-    ;(data.cogs?.accounts || []).forEach(a => push(a.accountName, -a.balance))
+    nonZero(data.cogs?.accounts).forEach(a => push(a.accountName, -a.balance))
     if (data.cogs?.total) push('Total COGS', -data.cogs.total)
     push('Gross Profit', data.grossProfit)
-    ;(data.operatingExpenses?.accounts || []).forEach(a => push(a.accountName, -a.balance))
+    nonZero(data.operatingExpenses?.accounts).forEach(a => push(a.accountName, -a.balance))
     push('Total Operating Expenses', -(data.operatingExpenses?.total || 0))
-    ;(data.depreciationAmortization?.accounts || []).forEach(a => push(a.accountName, -a.balance))
+    nonZero(data.depreciationAmortization?.accounts).forEach(a => push(a.accountName, -a.balance))
     push('Operating Profit (EBIT)', data.operatingProfit)
     push('EBITDA', data.ebitda)
     push('Interest Expense', -(data.interestExpense?.total || 0))
@@ -138,15 +142,19 @@ export default function IncomeStatementPage() {
 
 function PLSection({ title, section, currency, negate = false }) {
   if (!section) return null
-  const accounts = section?.accounts || (Array.isArray(section) ? section : [])
-  const total    = section?.total ?? accounts.reduce((s, a) => s + (a.balance || 0), 0)
-  if (total === 0 && accounts.length === 0) return null
+  const allAccounts = section?.accounts || (Array.isArray(section) ? section : [])
+  const total       = section?.total ?? allAccounts.reduce((s, a) => s + (a.balance || 0), 0)
+  if (total === 0 && allAccounts.length === 0) return null
+
+  // Hide individual accounts that have zero balance; the section header + total
+  // always appear so the reader sees the category even when all lines are zero.
+  const visibleAccounts = allAccounts.filter(a => (a.balance || 0) !== 0)
 
   return (
     <div className="space-y-1">
       <h3 className="text-xs font-bold text-text-secondary uppercase tracking-wider px-1">{title}</h3>
       <div>
-        {accounts.map((acc, i) => (
+        {visibleAccounts.map((acc, i) => (
           <div key={acc.accountId || i} className="flex justify-between items-center py-1.5 px-4 hover:bg-glass-hover rounded-lg transition-colors">
             <span className="text-sm text-text-primary">{acc.accountName}</span>
             <span className="text-sm font-medium text-text-primary tabular-nums">

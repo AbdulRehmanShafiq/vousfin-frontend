@@ -11,6 +11,7 @@ import Input from '@/components/ui/Input'
 import Select from '@/components/ui/Select'
 import Button from '@/components/ui/Button'
 import TaxPreviewPanel from '@/components/ui/TaxPreviewPanel'
+import AIClassifyPanel from '@/components/ai/AIClassifyPanel'
 import { useAccounts } from '@/hooks/useAccounts'
 import { useCustomers, useVendors } from '@/hooks/useParties'
 import { useInventoryItems } from '@/hooks/useInventory'
@@ -507,6 +508,7 @@ export default function TransactionFormModal({ isOpen, onClose, onSuccess, trans
   const isEditMode = Boolean(transaction)
 
   const [activeTab,  setActiveTab]  = useState('form')
+  const [engineMode, setEngineMode] = useState('manual')   // 'manual' (direct post) | 'ai' (AI classify)
   const [wasOpen,    setWasOpen]    = useState(isOpen)
   const [nlPrefill,  setNlPrefill]  = useState(null)
   const currency = useBusinessStore((s) => s.currency)
@@ -515,6 +517,7 @@ export default function TransactionFormModal({ isOpen, onClose, onSuccess, trans
     setWasOpen(isOpen)
     if (isOpen) {
       setActiveTab('form')
+      setEngineMode('manual')
       setNlPrefill(null)
     }
   }
@@ -575,8 +578,32 @@ export default function TransactionFormModal({ isOpen, onClose, onSuccess, trans
       title={isEditMode ? `Edit Transaction` : 'Record Transaction'}
       className="sm:max-w-2xl"
     >
-      {/* Tabs — hidden in edit mode (always structured form) */}
+      {/* Engine toggle: Manual (direct post) vs AI Auto-Classify — create mode only */}
       {!isEditMode && (
+        <div className="flex gap-1 p-1 rounded-xl bg-navy/40 border border-glass mb-4">
+          <button
+            type="button"
+            onClick={() => setEngineMode('manual')}
+            className={`flex-1 flex items-center justify-center gap-2 py-2 px-3 rounded-lg text-sm font-semibold transition-all ${
+              engineMode === 'manual' ? 'bg-cyan text-navy shadow-glow-cyan' : 'text-text-secondary hover:text-text-primary hover:bg-glass-hover'
+            }`}
+          >
+            <LayoutList className="h-4 w-4" /> Manual Entry
+          </button>
+          <button
+            type="button"
+            onClick={() => setEngineMode('ai')}
+            className={`flex-1 flex items-center justify-center gap-2 py-2 px-3 rounded-lg text-sm font-semibold transition-all ${
+              engineMode === 'ai' ? 'bg-cyan text-navy shadow-glow-cyan' : 'text-text-secondary hover:text-text-primary hover:bg-glass-hover'
+            }`}
+          >
+            <Sparkles className="h-4 w-4" /> AI Auto-Classify
+          </button>
+        </div>
+      )}
+
+      {/* Tabs — only in Manual mode, hidden in edit mode */}
+      {!isEditMode && engineMode === 'manual' && (
         <div className="flex gap-1 p-1 rounded-xl bg-glass-panel border border-glass mb-6">
           {TABS.map(({ id, label, icon: Icon }) => (
             <button
@@ -596,6 +623,11 @@ export default function TransactionFormModal({ isOpen, onClose, onSuccess, trans
         </div>
       )}
 
+      {/* AI Auto-Classify mode */}
+      {!isEditMode && engineMode === 'ai' && (
+        <AIClassifyPanel onClose={handleClose} />
+      )}
+
       {/* Edit mode: always structured form, no NL/Excel tabs */}
       {isEditMode && (
         <StructuredFormTab
@@ -607,10 +639,10 @@ export default function TransactionFormModal({ isOpen, onClose, onSuccess, trans
         />
       )}
 
-      {/* Create mode: full tab routing */}
-      {!isEditMode && activeTab === 'nl'    && <NLTab    currency={currency} onParsed={handleNlParsed} />}
-      {!isEditMode && activeTab === 'form'  && <StructuredFormTab currency={currency} onSuccess={handleSuccess} onCancel={handleClose} initialValues={nlPrefill} />}
-      {!isEditMode && activeTab === 'excel' && <ExcelTab onSuccess={handleSuccess} onCancel={handleClose} />}
+      {/* Create mode (Manual engine): full tab routing */}
+      {!isEditMode && engineMode === 'manual' && activeTab === 'nl'    && <NLTab    currency={currency} onParsed={handleNlParsed} />}
+      {!isEditMode && engineMode === 'manual' && activeTab === 'form'  && <StructuredFormTab currency={currency} onSuccess={handleSuccess} onCancel={handleClose} initialValues={nlPrefill} />}
+      {!isEditMode && engineMode === 'manual' && activeTab === 'excel' && <ExcelTab onSuccess={handleSuccess} onCancel={handleClose} />}
     </Modal>
   )
 }
@@ -780,11 +812,11 @@ function StructuredFormTab({ currency, onSuccess, onCancel, initialValues, editT
   }, [rawAccounts])
   const customers = useMemo(() => {
     const d = rawCustomers
-    return Array.isArray(d?.docs) ? d.docs : Array.isArray(d?.customers) ? d.customers : Array.isArray(d) ? d : []
+    return Array.isArray(d?.docs) ? d.docs : Array.isArray(d?.data) ? d.data : Array.isArray(d?.customers) ? d.customers : Array.isArray(d) ? d : []
   }, [rawCustomers])
   const vendors = useMemo(() => {
     const d = rawVendors
-    return Array.isArray(d?.docs) ? d.docs : Array.isArray(d?.vendors) ? d.vendors : Array.isArray(d) ? d : []
+    return Array.isArray(d?.docs) ? d.docs : Array.isArray(d?.data) ? d.data : Array.isArray(d?.vendors) ? d.vendors : Array.isArray(d) ? d : []
   }, [rawVendors])
 
   const inventoryItems = useMemo(() => {

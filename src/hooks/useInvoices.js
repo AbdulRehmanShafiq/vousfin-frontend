@@ -201,6 +201,22 @@ export const useCancelBill        = makeBillMutation(({ id, reason })     => bil
 export const useArchiveBill       = makeBillMutation(({ id })             => billService.archive(id),
   { successMessage: 'Bill archived',   invalidateId: true })
 
+// PDF download (non-mutation — triggers browser download)
+export function useDownloadBillPdf() {
+  return useMutation({
+    mutationFn: async (id) => {
+      const resp = await billService.downloadPdf(id)
+      const url = window.URL.createObjectURL(new Blob([resp.data], { type: 'application/pdf' }))
+      const a = document.createElement('a')
+      a.href = url
+      a.download = `Bill-${id}.pdf`
+      a.click()
+      window.URL.revokeObjectURL(url)
+    },
+    onError: (err) => toast.error(getErrorMessage(err)),
+  })
+}
+
 // Phase 3.2 — 3-way match on demand
 export function useRunBillMatch() {
   const qc = useQueryClient()

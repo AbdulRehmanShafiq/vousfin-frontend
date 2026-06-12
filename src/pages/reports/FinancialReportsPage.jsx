@@ -14,6 +14,7 @@ import {
 } from 'lucide-react'
 import { cn } from '@/utils/cn'
 import SkeletonLoader from '@/components/ui/SkeletonLoader'
+import AINarrativePanel from '@/components/reports/AINarrativePanel'
 
 const IncomeStatementPage   = lazy(() => import('./IncomeStatementPage'))
 const BalanceSheetPage      = lazy(() => import('./BalanceSheetPage'))
@@ -83,6 +84,9 @@ export default function FinancialReportsPage() {
           )
         })}
       </div>
+
+      {/* FR-02.2 — CFO briefing (English/Urdu), grounded in the live GL */}
+      {(tab === 'income-statement' || tab === 'balance-sheet') && <AINarrativePanel />}
 
       {/* Tab panels — mount-once, hide non-active */}
       {TABS.map(t => (

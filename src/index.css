@@ -2,44 +2,69 @@
 @tailwind components;
 @tailwind utilities;
 
+/*
+ * VousFin global styles — "calm terminal luxury"
+ * Neutral charcoal surfaces, hairline borders, one azure accent.
+ * Utility class NAMES are preserved (premium-card, bg-glass, btn-gradient…)
+ * so the whole app restyles without call-site edits.
+ */
+
 @layer base {
   :root {
-    --bg: #0B1020;
-    --bg2: #111827;
-    --bg3: #1E293B;
-    --text: #F8FAFC;
-    --text2: #CBD5E1;
-    --text3: #64748B;
-    --border: rgba(6, 182, 212, 0.15);
-    --border2: rgba(37, 99, 235, 0.20);
-    --cyan: #06B6D4;
-    --emerald: #06B6D4;
+    --bg: #0B0E14;        /* page canvas */
+    --bg2: #10141C;       /* card surface */
+    --bg3: #151A23;       /* elevated: sidebar, modals, sheets */
+    --text: #EDF1F7;
+    --text2: #A9B4C4;
+    --text3: #5F6B7C;
+    --border: rgba(255, 255, 255, 0.07);
+    --border2: rgba(255, 255, 255, 0.13);
+    --accent: #4DA8F0;
+    --accent2: #2563EB;
+    /* legacy aliases — values now neutral/semantic */
+    --cyan: #4DA8F0;
     --cyan2: #2563EB;
-    --emerald2: #2563EB;
-    --emerald3: #38BDF8;
+    --emerald: #34D399;
+    --emerald2: #10B981;
+    --emerald3: #6EE7B7;
   }
 
   html {
     scroll-behavior: smooth;
   }
-  
+
   body {
     @apply font-sans antialiased;
     background-color: var(--bg);
     color: var(--text);
     overflow-x: hidden;
-    line-height: 1.6;
+    line-height: 1.55;
+    font-feature-settings: 'cv05' on; /* IBM Plex: open four */
+  }
+
+  h1, h2, h3, h4 {
+    letter-spacing: -0.01em;
+  }
+
+  /* Financial data must not wiggle — tabular figures in every table cell */
+  tbody td, thead th {
+    font-variant-numeric: tabular-nums;
   }
 
   ::selection {
-    background: rgba(0, 212, 255, 0.25);
+    background: rgba(77, 168, 240, 0.30);
     color: #fff;
   }
 }
 
 @layer utilities {
+  /* ═══ NUMERIC ═══ */
+  /* Apply to any element rendering money or counts outside a table */
+  .num {
+    font-variant-numeric: tabular-nums;
+  }
+
   /* ═══ SCROLLBAR ═══ */
-  /* Hide scrollbar entirely (used for swipe carousels) */
   .scrollbar-none {
     scrollbar-width: none;
     -ms-overflow-style: none;
@@ -64,68 +89,48 @@
 
   /* Micro-animations & interactive elements */
   .transition-premium {
-    @apply transition-all duration-300;
+    @apply transition-all duration-200;
     transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
   }
 
   .hover-scale {
-    @apply transition-transform duration-200 hover:scale-[1.01] active:scale-[0.99];
+    /* cards are not buttons — no scale theatrics, just a border lift */
+    @apply transition-colors duration-200;
   }
 
-  /* ═══ CORE UTILITIES ═══ */
+  /* ═══ CORE SURFACES ═══ */
   .bg-glass {
-    background: rgba(255, 255, 255, 0.03);
+    background: rgba(255, 255, 255, 0.04);
     border: 1px solid var(--border);
-    backdrop-filter: blur(10px);
   }
 
   .premium-card {
-    background: linear-gradient(145deg, var(--bg2), var(--bg3));
+    background: var(--bg2);
     border: 1px solid var(--border);
-    border-radius: 14px;
-    @apply transition-all duration-300 relative overflow-hidden;
-  }
-
-  /* Subtle inner-top shine line */
-  .premium-card::before {
-    content: '';
-    position: absolute;
-    top: 0; left: 0; right: 0;
-    height: 1px;
-    background: linear-gradient(90deg, transparent, rgba(6,182,212,0.20), transparent);
-    pointer-events: none;
-    opacity: 0;
-    transition: opacity 0.3s ease;
-  }
-
-  .premium-card:hover::before {
-    opacity: 1;
+    border-radius: 12px;
+    @apply transition-colors duration-200 relative;
   }
 
   .premium-card:hover {
-    border-color: rgba(6, 182, 212, 0.35);
-    box-shadow: 0 0 0 1px rgba(6,182,212,0.08), 0 0 32px rgba(6, 182, 212, 0.10), 0 8px 32px rgba(0, 0, 0, 0.28);
-    transform: translateY(-1px);
+    border-color: var(--border2);
   }
 
-  /* ── Phase 1: sticky invoice/bill summary sidebar ─────────────────────── */
-  /* Use on the right-column summary card of an invoice/bill detail page. */
+  /* ── sticky invoice/bill summary sidebar ─────────────────────── */
   .sticky-summary {
     position: sticky;
-    top: 1.5rem; /* matches default page padding */
+    top: 1.5rem;
     align-self: flex-start;
     max-height: calc(100vh - 3rem);
     overflow-y: auto;
   }
 
-  /* Hide scrollbar but keep functionality */
   .sticky-summary::-webkit-scrollbar { width: 4px; }
   .sticky-summary::-webkit-scrollbar-thumb {
-    background: rgba(6, 182, 212, 0.20);
+    background: var(--border2);
     border-radius: 2px;
   }
 
-  /* ── Phase 1: mobile-friendly table row tap target ────────────────────── */
+  /* ── mobile-friendly table row tap target ────────────────────── */
   @media (max-width: 640px) {
     table.responsive-rows tbody tr {
       display: flex;
@@ -143,38 +148,38 @@
     table.responsive-rows thead { display: none; }
   }
 
+  /* ═══ BUTTONS (legacy class names, restrained styling) ═══ */
   .btn-gradient {
-    background: linear-gradient(135deg, var(--emerald), var(--cyan2));
+    background: linear-gradient(180deg, #3B82F6, var(--accent2));
     color: #fff;
-    box-shadow: 0 0 28px rgba(6, 182, 212, 0.30);
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.12);
   }
 
   .btn-gradient:hover {
-    background: linear-gradient(135deg, var(--emerald2), var(--cyan));
-    box-shadow: 0 0 44px rgba(6, 182, 212, 0.45);
-    transform: translateY(-1px);
+    background: linear-gradient(180deg, #4D8FF7, #2E6BEE);
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.45), inset 0 1px 0 rgba(255, 255, 255, 0.12);
   }
 
   .btn-outline {
     background: transparent;
-    border: 1.5px solid rgba(6, 182, 212, 0.30);
-    color: var(--cyan);
+    border: 1px solid var(--border2);
+    color: var(--text2);
   }
 
   .btn-outline:hover {
-    background: rgba(6, 182, 212, 0.06);
-    border-color: var(--cyan);
-    box-shadow: 0 0 24px rgba(6, 182, 212, 0.22);
+    background: rgba(255, 255, 255, 0.05);
+    border-color: rgba(255, 255, 255, 0.22);
+    color: var(--text);
   }
 
   .text-gradient {
-    background: linear-gradient(135deg, var(--emerald3), var(--cyan));
+    background: linear-gradient(135deg, #6EB7F7, var(--accent));
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
   }
 
-  /* Responsive Table Container (scrolls inside cards only, no outer scroll) */
+  /* Responsive Table Container (scrolls inside cards only) */
   .table-scroll-container {
     @apply overflow-x-auto scrollbar-thin max-w-full rounded-lg border border-glass;
   }
@@ -196,13 +201,13 @@
 /* Skeleton animation loader */
 @keyframes skeleton-loading {
   0% {
-    background-color: rgba(30, 41, 59, 0.6);
+    background-color: rgba(30, 36, 48, 0.7);
   }
   50% {
-    background-color: rgba(51, 65, 85, 0.4);
+    background-color: rgba(44, 52, 66, 0.5);
   }
   100% {
-    background-color: rgba(30, 41, 59, 0.6);
+    background-color: rgba(30, 36, 48, 0.7);
   }
 }
 
@@ -261,14 +266,14 @@
   transform-origin: bottom;
 }
 
-/* Number counter glow pulse (for KPI values) */
+/* KPI value entrance — legacy name kept, glow removed */
 @keyframes value-glow {
-  0%, 100% { text-shadow: none; }
-  50%       { text-shadow: 0 0 16px rgba(6,182,212,0.45); }
+  0%   { opacity: 0.4; }
+  100% { opacity: 1; }
 }
 
 .animate-value-glow {
-  animation: value-glow 2s ease-in-out 1;
+  animation: value-glow 0.5s ease-out 1;
 }
 
 /* Focus ring — consistent across inputs/buttons */
@@ -276,25 +281,25 @@
   @apply focus:outline-none focus-visible:ring-2 focus-visible:ring-cyan/50 focus-visible:ring-offset-1 focus-visible:ring-offset-transparent;
 }
 
-/* Gradient dividers */
+/* Hairline dividers */
 .divider-x {
-  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.08), transparent);
+  background: var(--border);
   height: 1px;
   width: 100%;
 }
 
 .divider-y {
-  background: linear-gradient(180deg, transparent, rgba(255,255,255,0.08), transparent);
+  background: var(--border);
   width: 1px;
   height: 100%;
 }
 
-/* Glass panel (used in tooltips, drawers, AI widget) */
+/* Elevated panel (tooltips, drawers, AI widget) */
 .glass-panel {
-  background: rgba(17, 24, 39, 0.82);
+  background: rgba(21, 26, 35, 0.96);
   backdrop-filter: blur(12px);
-  border: 1px solid rgba(6,182,212,0.14);
-  border-radius: 14px;
+  border: 1px solid var(--border2);
+  border-radius: 12px;
 }
 
 /* Subtle grain texture on hero sections */

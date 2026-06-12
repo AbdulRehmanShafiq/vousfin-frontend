@@ -61,16 +61,24 @@ export function useCreateTransaction() {
   return useMutation({
     mutationFn: async (transactionData) => {
       const { data } = await api.post('/transactions/form', transactionData)
-      return data.data
+      return { result: data.data, message: data.message }
     },
-    onSuccess: () => {
+    onSuccess: ({ result, message }) => {
       queryClient.invalidateQueries({ queryKey: ['transactions'] })
       queryClient.invalidateQueries({ queryKey: ['accounts'] })
       queryClient.invalidateQueries({ queryKey: ['reports'] })
       queryClient.invalidateQueries({ queryKey: ['customers'] })
       queryClient.invalidateQueries({ queryKey: ['vendors'] })
       queryClient.invalidateQueries({ queryKey: ['dashboard'] })
-      toast.success('Transaction recorded successfully')
+      // #6 — when approvals are on and the amount is over the limit, the backend
+      // parks the transaction (status 'pending') instead of posting it.
+      if (result?.status === 'pending') {
+        queryClient.invalidateQueries({ queryKey: ['approvals'] })
+        queryClient.invalidateQueries({ queryKey: ['approvals-count'] })
+        toast(message || 'Submitted for approval', { icon: '🕓' })
+      } else {
+        toast.success('Transaction recorded successfully')
+      }
     },
     onError: (error) => {
       const resp = error.response?.data
@@ -124,16 +132,22 @@ export function useNLConfirm() {
   return useMutation({
     mutationFn: async (transactionData) => {
       const { data } = await api.post('/transactions/nl/confirm', transactionData)
-      return data.data
+      return { result: data.data, message: data.message }
     },
-    onSuccess: () => {
+    onSuccess: ({ result, message }) => {
       queryClient.invalidateQueries({ queryKey: ['transactions'] })
       queryClient.invalidateQueries({ queryKey: ['accounts'] })
       queryClient.invalidateQueries({ queryKey: ['reports'] })
       queryClient.invalidateQueries({ queryKey: ['customers'] })
       queryClient.invalidateQueries({ queryKey: ['vendors'] })
       queryClient.invalidateQueries({ queryKey: ['dashboard'] })
-      toast.success('Transaction recorded from natural language')
+      if (result?.status === 'pending') {
+        queryClient.invalidateQueries({ queryKey: ['approvals'] })
+        queryClient.invalidateQueries({ queryKey: ['approvals-count'] })
+        toast(message || 'Submitted for approval', { icon: '🕓' })
+      } else {
+        toast.success('Transaction recorded from natural language')
+      }
     },
     onError: (error) => {
       toast.error(error.response?.data?.message || 'Failed to confirm transaction')
@@ -171,7 +185,13 @@ export function useExcelConfirm() {
       queryClient.invalidateQueries({ queryKey: ['customers'] })
       queryClient.invalidateQueries({ queryKey: ['vendors'] })
       queryClient.invalidateQueries({ queryKey: ['dashboard'] })
-      toast.success(`${result?.successful ?? 'All'} transactions imported`)
+      if (result?.pending > 0) {
+        queryClient.invalidateQueries({ queryKey: ['approvals'] })
+        queryClient.invalidateQueries({ queryKey: ['approvals-count'] })
+        toast.success(`${result.successful} imported · ${result.pending} sent for approval`)
+      } else {
+        toast.success(`${result?.successful ?? 'All'} transactions imported`)
+      }
     },
     onError: (error) => {
       toast.error(error.response?.data?.message || 'Import failed')
@@ -266,6 +286,7 @@ export function useReverseTransaction() {
       queryClient.invalidateQueries({ queryKey: ['customers'] })
       queryClient.invalidateQueries({ queryKey: ['vendors'] })
       queryClient.invalidateQueries({ queryKey: ['dashboard'] })
+      queryClient.invalidateQueries({ queryKey: ['inventory'] })
       toast.success('Transaction reversed successfully')
     },
     onError: (error) => {

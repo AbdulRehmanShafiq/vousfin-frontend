@@ -21,12 +21,13 @@ import {
 
 import {
   useTaxConfig, useUpdateTaxConfig, useEnableTax,
-  useTaxProfiles, useTaxAccounts, useWhtSchedules,
+  useTaxProfiles, useTaxAccounts, useWhtSchedules, useFilingSummary,
 } from '@/hooks/useTax'
 import Button   from '@/components/ui/Button'
 import Input    from '@/components/ui/Input'
 import Select   from '@/components/ui/Select'
-import { formatDate } from '@/utils/formatters'
+import { formatDate, formatCurrency } from '@/utils/formatters'
+import { useBusinessStore } from '@/stores/useBusinessStore'
 
 // ── Zod schema ─────────────────────────────────────────────────────────────────
 const taxConfigSchema = z.object({
@@ -392,6 +393,105 @@ export default function TaxConfigPage() {
           </p>
         </SectionCard>
       )}
+
+      {/* Tax Return / Filing summary — only when tax is active */}
+      {anyEnabled && <TaxReturnCard />}
     </div>
+  )
+}
+
+// ── Sub-component: Tax Return (filing summary + ledger reconciliation) ──────────
+function TaxReturnCard() {
+  const currency = useBusinessStore((s) => s.currency)
+  const iso = (d) => d.toISOString().split('T')[0]
+  const [period, setPeriod] = useState(() => {
+    const now = new Date()
+    return {
+      startDate: iso(new Date(now.getFullYear(), now.getMonth(), 1)),
+      endDate:   iso(new Date(now.getFullYear(), now.getMonth() + 1, 0)),
+    }
+  })
+
+  const { data: filing, isLoading } = useFilingSummary(period)
+  const recon = filing?.reconciliation
+
+  const statusColor = {
+    payable:    'text-amber-400',
+    refundable: 'text-emerald-400',
+    nil:        'text-text-muted',
+  }[filing?.status] || 'text-text-primary'
+
+  return (
+    <SectionCard title="Tax Return (Filing Summary)" icon={Receipt}>
+      {/* Period picker */}
+      <div className="grid grid-cols-2 gap-3">
+        <Input type="date" label="From" value={period.startDate}
+          onChange={(e) => setPeriod((p) => ({ ...p, startDate: e.target.value }))} />
+        <Input type="date" label="To" value={period.endDate}
+          onChange={(e) => setPeriod((p) => ({ ...p, endDate: e.target.value }))} />
+      </div>
+
+      {isLoading && <p className="text-sm text-text-muted">Calculating…</p>}
+
+      {!isLoading && filing && (
+        <>
+          {filing.form && (
+            <p className="text-xs text-text-muted">
+              Return form: <strong className="text-text-secondary">{filing.form}</strong>
+              {filing.countryName && <> · {filing.countryName}</>}
+            </p>
+          )}
+
+          {/* Output / Input / Net tiles */}
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+            <div className="rounded-lg border border-glass bg-white/[0.05] px-3 py-2.5">
+              <p className="text-[10px] uppercase tracking-widest text-text-muted">Output Tax (sales)</p>
+              <p className="text-lg font-black text-text-primary">{formatCurrency(filing.outputTax, currency)}</p>
+            </div>
+            <div className="rounded-lg border border-glass bg-white/[0.05] px-3 py-2.5">
+              <p className="text-[10px] uppercase tracking-widest text-text-muted">Input Tax (purchases)</p>
+              <p className="text-lg font-black text-text-primary">{formatCurrency(filing.inputTax, currency)}</p>
+            </div>
+            <div className="rounded-lg border border-glass bg-white/[0.05] px-3 py-2.5">
+              <p className="text-[10px] uppercase tracking-widest text-text-muted">
+                Net {filing.status === 'refundable' ? 'Refundable' : 'Payable'}
+              </p>
+              <p className={`text-lg font-black ${statusColor}`}>
+                {formatCurrency(Math.abs(filing.netPayable), currency)}
+              </p>
+            </div>
+          </div>
+
+          {/* Ledger reconciliation badge — proves the return ties to the GL */}
+          {recon && (
+            <div className={`flex items-start gap-2.5 rounded-lg border px-3 py-2.5 text-sm ${
+              recon.reconciled
+                ? 'border-emerald-500/20 bg-emerald-500/5'
+                : 'border-red-500/20 bg-red-500/5'
+            }`}>
+              {recon.reconciled
+                ? <CheckCircle2 className="h-4 w-4 text-emerald-400 shrink-0 mt-0.5" />
+                : <AlertCircle className="h-4 w-4 text-red-400 shrink-0 mt-0.5" />}
+              <div className="space-y-0.5">
+                {recon.reconciled ? (
+                  <p className="text-emerald-400 font-semibold">Reconciled to the general ledger</p>
+                ) : (
+                  <p className="text-red-400 font-semibold">Does not match the general ledger</p>
+                )}
+                <p className="text-[11px] text-text-muted">
+                  Ledger net {formatCurrency(recon.glNetPayable, currency)} vs return net {formatCurrency(recon.reportNetPayable, currency)}
+                  {!recon.reconciled && ' — a tax posting may be missing from the return. Check the tax accounts.'}
+                </p>
+              </div>
+            </div>
+          )}
+
+          <p className="text-[11px] text-text-muted flex items-center gap-1.5">
+            <Info className="h-3 w-3" />
+            The net figure is computed directly from your tax control accounts in the ledger, so the return always ties to your books.
+          </p>
+        </>
+      )}
+    </SectionCard>
   )
 }

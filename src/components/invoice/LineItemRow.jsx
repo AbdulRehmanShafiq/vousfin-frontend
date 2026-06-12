@@ -1,7 +1,12 @@
 /**
- * LineItemRow — Phase 2 — Single editable row in the invoice line items table.
+ * LineItemRow — Phase 2 — Single editable row in the invoice/bill line items table.
  * Handles product/service/custom item input with qty, unit price, discount, tax.
  * Computes lineTotal in real-time for the live preview.
+ *
+ * Props:
+ *   inventoryItems — array of { _id, name, sku, currentStock, unit, unitCostPrice, description }
+ *   mode           — 'invoice' (shows stock remaining + warns on overstock)
+ *                  | 'bill'    (shows item list, no stock limit — it's a purchase)
  */
 import { Trash2, GripVertical } from 'lucide-react'
 import { cn } from '@/utils/cn'
@@ -27,14 +32,44 @@ function computeLineValues(li) {
   return { discountAmount: disc, taxAmount: tax, lineTotal }
 }
 
+// eslint-disable-next-line react-refresh/only-export-components
 export { computeLineValues }
 
-export default function LineItemRow({ item, index, onChange, onRemove, canRemove = true }) {
-  const { discountAmount, taxAmount, lineTotal } = computeLineValues(item)
+export default function LineItemRow({
+  item,
+  index,
+  onChange,
+  onRemove,
+  canRemove = true,
+  inventoryItems = [],
+  mode = 'invoice',
+}) {
+  const { lineTotal } = computeLineValues(item)
 
   const update = (field, value) => {
     onChange(index, { ...item, [field]: value })
   }
+
+  const handleInventorySelect = (invId) => {
+    if (!invId) {
+      onChange(index, { ...item, inventoryItemId: null })
+      return
+    }
+    const inv = inventoryItems.find(i => i._id === invId)
+    if (!inv) return
+    onChange(index, {
+      ...item,
+      inventoryItemId: inv._id,
+      name: inv.name,
+      description: inv.description || (inv.sku ? `SKU: ${inv.sku}` : ''),
+      unitPrice: inv.unitCostPrice || 0,
+    })
+  }
+
+  const selectedInv = item.inventoryItemId
+    ? inventoryItems.find(i => i._id === item.inventoryItemId)
+    : null
+  const overStock = mode === 'invoice' && selectedInv && item.quantity > selectedInv.currentStock
 
   const inputCls = 'w-full rounded border border-glass bg-glass-panel px-2 py-1.5 text-sm text-text-primary transition-premium focus:border-cyan focus:outline-none focus:ring-1 focus:ring-cyan/20'
   const numCls = cn(inputCls, 'text-right tabular-nums')
@@ -51,8 +86,24 @@ export default function LineItemRow({ item, index, onChange, onRemove, canRemove
         {index + 1}
       </td>
 
-      {/* Item name */}
-      <td className="min-w-[180px] px-1 py-2">
+      {/* Item */}
+      <td className="min-w-[200px] px-1 py-2">
+        {inventoryItems.length > 0 && (
+          <select
+            className="w-full rounded border border-glass bg-glass-panel px-2 py-1 text-xs text-text-secondary mb-1.5 focus:border-cyan focus:outline-none"
+            value={item.inventoryItemId || ''}
+            onChange={e => handleInventorySelect(e.target.value)}
+          >
+            <option value="">— pick from inventory —</option>
+            {inventoryItems.map(inv => (
+              <option key={inv._id} value={inv._id}>
+                {mode === 'invoice'
+                  ? `${inv.name} (${inv.currentStock} ${inv.unit || 'units'} left)`
+                  : `${inv.name}${inv.sku ? ` [${inv.sku}]` : ''}`}
+              </option>
+            ))}
+          </select>
+        )}
         <input
           className={inputCls}
           value={item.name || ''}
@@ -65,13 +116,20 @@ export default function LineItemRow({ item, index, onChange, onRemove, canRemove
           onChange={e => update('description', e.target.value)}
           placeholder="Description (optional)"
         />
+        {selectedInv && mode === 'invoice' && (
+          <p className={cn('text-[11px] mt-0.5', overStock ? 'text-red-400' : 'text-text-muted')}>
+            {overStock
+              ? `⚠ Only ${selectedInv.currentStock} ${selectedInv.unit || 'units'} in stock`
+              : `${selectedInv.currentStock} ${selectedInv.unit || 'units'} in stock`}
+          </p>
+        )}
       </td>
 
       {/* Qty */}
       <td className="w-20 px-1 py-2">
         <input
           type="number"
-          className={numCls}
+          className={cn(numCls, overStock ? 'border-red-500/60' : '')}
           value={item.quantity || ''}
           onChange={e => update('quantity', parseFloat(e.target.value) || 0)}
           min="0"

@@ -40,12 +40,25 @@ export const useBusinessStore = create(
       updateBusiness: async (businessData) => {
         const res = await api.put('/business', businessData)
         const business = res.data.data
-        set({ 
+        set({
           activeBusiness: business,
           currency: business?.currency || business?.baseCurrency || 'PKR',
           fiscalYearStart: business?.fiscalYearStartMonth || 7
         })
         return business
+      },
+
+      // Wipe all data but keep the business profile (fresh chart of accounts).
+      resetBusinessData: async (confirmName) => {
+        const res = await api.post('/business/reset', { confirmName })
+        return res.data.data
+      },
+
+      // Permanently delete the business and everything in it.
+      deleteBusiness: async (confirmName) => {
+        const res = await api.delete('/business', { data: { confirmName } })
+        set({ activeBusiness: null })
+        return res.data.data
       },
     }),
     { name: 'business-storage' }

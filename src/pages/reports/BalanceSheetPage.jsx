@@ -16,15 +16,31 @@ export default function BalanceSheetPage() {
   const totalLiabEquity = (data?.totalLiabilities || 0) + (data?.totalEquity || 0)
   const isBalanced     = !isLoading && !!data && Math.abs(totalAssets - totalLiabEquity) < 0.01
 
+  // Build structured export — section headers always appear; zero-balance
+  // individual accounts are suppressed so the CSV is clean and readable.
   const exportData = []
   if (data) {
-    const push = (label, amt) => exportData.push({ Category: label, Amount: amt ?? 0 })
-    ;(data.assets?.accounts || []).forEach(a => push(a.accountName, a.balance))
-    push('Total Assets', data.totalAssets)
-    ;(data.liabilities?.accounts || []).forEach(a => push(a.accountName, a.balance))
-    push('Total Liabilities', data.totalLiabilities)
-    ;(data.equity?.accounts || []).forEach(a => push(a.accountName, a.balance))
-    push('Total Equity', data.totalEquity)
+    const push    = (label, amt) => exportData.push({ Category: label, Amount: amt ?? 0 })
+    const nonZero = (accts) => (accts || []).filter(a => (a.balance || 0) !== 0)
+
+    const pushSection = (sectionLabel, section) => {
+      const groups = section?.groups || []
+      if (groups.length > 0) {
+        groups.forEach(g => {
+          const visible = nonZero(g.accounts)
+          push(g.label.toUpperCase(), '')       // subtype header always appears
+          visible.forEach(a => push(`  ${a.accountName}`, a.balance))
+          push(`  Subtotal — ${g.label}`, g.total)
+        })
+      } else {
+        nonZero(section?.accounts).forEach(a => push(a.accountName, a.balance))
+      }
+      push(`Total ${sectionLabel}`, section?.total || 0)
+    }
+
+    pushSection('Assets',      data.assets)
+    pushSection('Liabilities', data.liabilities)
+    pushSection('Equity',      data.equity)
     push('Total Liabilities & Equity', totalLiabEquity)
   }
 
@@ -105,16 +121,8 @@ export default function BalanceSheetPage() {
               </div>
               <BSSection section={data.liabilities} currency={currency} title="Liabilities" />
 
-              {/* Retained earnings */}
-              {data.retainedEarnings !== undefined && (
-                <div className="flex justify-between items-center px-4 py-2 bg-glass rounded-lg border border-glass">
-                  <span className="text-sm text-text-secondary">Retained Earnings (cumulative)</span>
-                  <span className={`text-sm font-bold tabular-nums ${data.retainedEarnings >= 0 ? 'text-cyan' : 'text-red-400'}`}>
-                    {formatCurrency(data.retainedEarnings, currency)}
-                  </span>
-                </div>
-              )}
-
+              {/* Equity — now includes the derived "Current Year Earnings" line so
+                  the section foots to totalEquity and the equation balances. */}
               <BSSection section={data.equity} currency={currency} title="Equity" />
 
               <div className={`flex justify-between items-center py-4 px-5 rounded-xl border-2 ${
@@ -163,6 +171,8 @@ function BSSection({ section, currency, title }) {
 
 function SubtypeGroup({ group, currency }) {
   const [open, setOpen] = useState(true)
+  // Only show accounts with a non-zero balance; the group header + total always appear.
+  const visibleAccounts = (group.accounts || []).filter(a => (a.balance || 0) !== 0)
   return (
     <div className="border border-glass rounded-lg overflow-hidden">
       <button
@@ -175,9 +185,9 @@ function SubtypeGroup({ group, currency }) {
           {open ? <ChevronDown className="h-4 w-4 text-text-muted" /> : <ChevronRight className="h-4 w-4 text-text-muted" />}
         </div>
       </button>
-      {open && (
+      {open && visibleAccounts.length > 0 && (
         <div className="divide-y divide-glass">
-          {(group.accounts || []).map((acc, i) => (
+          {visibleAccounts.map((acc, i) => (
             <div key={acc.accountId || i} className="flex justify-between items-center py-1.5 px-6 hover:bg-glass-hover transition-colors">
               <span className="text-sm text-text-primary">{acc.accountName}</span>
               <span className="text-sm font-medium text-text-primary tabular-nums">{formatCurrency(acc.balance, currency)}</span>

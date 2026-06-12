@@ -105,7 +105,7 @@ export default function EditorActionBar({
 
           {isReadOnly && (
             <>
-              {!isBill && id && onDownloadPdf && (
+              {id && onDownloadPdf && (
                 <button
                   type="button"
                   onClick={() => onDownloadPdf(id)}

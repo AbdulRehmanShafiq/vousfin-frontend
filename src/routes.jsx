@@ -11,6 +11,8 @@ import ErrorBoundary from '@/components/common/ErrorBoundary'
 const Login = lazy(() => import('@/pages/auth/Login'))
 const Register = lazy(() => import('@/pages/auth/Register'))
 const ForgotPassword = lazy(() => import('@/pages/auth/ForgotPassword'))
+const ResetPassword = lazy(() => import('@/pages/auth/ResetPassword'))
+const VerifyEmail = lazy(() => import('@/pages/auth/VerifyEmail'))
 const BusinessSetup = lazy(() => import('@/pages/business/BusinessSetup'))
 const BusinessSettings = lazy(() => import('@/pages/business/BusinessSettings'))
 const Dashboard = lazy(() => import('@/pages/dashboard/Dashboard'))
@@ -47,6 +49,13 @@ const APWorkflowBoard      = lazy(() => import('@/pages/ap/APWorkflowBoard'))
 const ProcurementDashboard = lazy(() => import('@/pages/ap/ProcurementDashboard'))
 /* ERP Step 9 — Unified cross-module audit / activity trail */
 const ActivityTimelinePage = lazy(() => import('@/pages/audit/ActivityTimelinePage'))
+/* FR-01 — Autonomous Transaction Engine */
+const TransactionReviewQueuePage      = lazy(() => import('@/pages/ai/TransactionReviewQueuePage'))
+const ReconciliationExceptionQueuePage= lazy(() => import('@/pages/reconciliation/ReconciliationExceptionQueuePage'))
+/* #5 Recurring/Templates + #6 Approval workflow + #7 Bank reconciliation */
+const TemplatesPage        = lazy(() => import('@/pages/transactions/TemplatesPage'))
+const ApprovalsQueuePage   = lazy(() => import('@/pages/approvals/ApprovalsQueuePage'))
+const BankReconciliationPage = lazy(() => import('@/pages/reconciliation/BankReconciliationPage'))
 
 const LoadingFallback = () => (
   <div className="flex h-screen w-full items-center justify-center bg-navy">
@@ -109,6 +118,8 @@ export const routes = [
       { path: 'login', element: withSuspense(Login) },
       { path: 'register', element: withSuspense(Register) },
       { path: 'forgot-password', element: withSuspense(ForgotPassword) },
+      { path: 'reset-password', element: withSuspense(ResetPassword) },
+      { path: 'verify-email', element: withSuspense(VerifyEmail) },
     ],
   },
 
@@ -130,6 +141,8 @@ export const routes = [
           { path: 'dashboard',         element: withSuspense(Dashboard)         },
           { path: 'accounts',          element: withSuspense(AccountsPage)      },
           { path: 'transactions',      element: withSuspense(TransactionsList)  },
+          { path: 'transactions/templates', element: withSuspense(TemplatesPage)      }, // #5
+          { path: 'approvals',              element: withSuspense(ApprovalsQueuePage) }, // #6
           /* ── Sales (Customers + AR) ───────────────────────────────────── */
           { path: 'customers',              element: withSuspense(CustomersList)   },
           { path: 'customers/:id',          element: withSuspense(CustomerDetail)  },
@@ -168,6 +181,9 @@ export const routes = [
           { path: 'settings/tax',               element: withSuspense(TaxConfigPage)      }, // Phase 5.4.8
           { path: 'inventory',                  element: withSuspense(InventoryPage)      }, // Phase 5.5 Step 4
           { path: 'activity',                   element: withSuspense(ActivityTimelinePage) }, // ERP Step 9
+          { path: 'ai/review-queue',            element: withSuspense(TransactionReviewQueuePage) }, // FR-01.2
+          { path: 'reconciliation/exceptions',  element: withSuspense(ReconciliationExceptionQueuePage) }, // FR-01.3
+          { path: 'reconciliation/bank',        element: withSuspense(BankReconciliationPage) }, // #7
 
           /* ── Financial Reports hub ─────────────────────────────────────── */
           /* /financial-reports  → default tab */

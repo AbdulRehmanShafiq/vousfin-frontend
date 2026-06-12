@@ -19,17 +19,19 @@
  */
 import { lazy, Suspense, useState, useCallback } from 'react'
 import { useParams, useNavigate, Navigate } from 'react-router-dom'
-import { TrendingUp, ShieldAlert, Lightbulb } from 'lucide-react'
+import { TrendingUp, ShieldAlert, Lightbulb, FlaskConical } from 'lucide-react'
 import { cn } from '@/utils/cn'
 import SkeletonLoader from '@/components/ui/SkeletonLoader'
 
 const AIForecastPage    = lazy(() => import('./AIForecastPage'))
 const AnomalyReviewPage = lazy(() => import('./AnomalyReviewPage'))
 const AIAssistantPage   = lazy(() => import('./AIAssistantPage'))
+const ScenariosPage     = lazy(() => import('./ScenariosPage'))
 
 const TABS = [
   { key: 'forecast',  label: 'AI Forecast',      icon: TrendingUp,  Component: AIForecastPage    },
   { key: 'anomalies', label: 'Anomaly Detection', icon: ShieldAlert, Component: AnomalyReviewPage },
+  { key: 'scenarios', label: 'Scenarios',          icon: FlaskConical, Component: ScenariosPage    }, // FR-03.3
   { key: 'insights',  label: 'AI Insights',       icon: Lightbulb,   Component: AIAssistantPage   },
 ]
 

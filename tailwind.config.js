@@ -1,71 +1,101 @@
 /** @type {import('tailwindcss').Config} */
+
+/*
+ * VousFin design tokens — "calm terminal luxury"
+ *
+ * One dark theme, one accent. Surfaces are neutral charcoal (no purple/navy
+ * cast), borders are white-alpha hairlines (never tinted), money semantics are
+ * honest: emerald = positive, red = negative, amber = attention, azure = brand
+ * accent reserved for interactive elements.
+ *
+ * IMPORTANT: legacy token names (navy, charcoal, cyan, emerald, glass…) are
+ * kept so the 26k+ lines referencing them keep compiling — only their VALUES
+ * changed. New code should prefer the semantic names (accent, positive,
+ * negative) but both map to the same scale.
+ */
+
+const ACCENT = {
+  DEFAULT: '#4DA8F0', // interactive text/icons on dark
+  2: '#2563EB',       // gradient anchor / pressed
+  soft: 'rgba(77, 168, 240, 0.12)',
+}
+
 export default {
   content: ['./index.html', './public/**/*.html', './src/**/*.{js,ts,jsx,tsx}'],
   darkMode: 'class',
   theme: {
     extend: {
       colors: {
+        /* ── Surfaces (legacy names, new neutral values) ── */
         navy: {
-          DEFAULT: '#0B1020',
-          2: '#111827',
+          DEFAULT: '#0B0E14', // page canvas
+          2: '#10141C',       // card surface
         },
         charcoal: {
-          DEFAULT: '#1E293B',
+          DEFAULT: '#151A23', // elevated: sidebar, modals, sheets
         },
-        cyan: {
-          DEFAULT: '#06B6D4',
-          2: '#2563EB',
-        },
+
+        /* ── Accent (legacy: cyan; semantic: accent) ── */
+        cyan: ACCENT,
+        accent: ACCENT,
+
+        /* ── Money semantics — emerald is GREEN again ── */
         emerald: {
-          DEFAULT: '#06B6D4',
-          2: '#2563EB',
-          3: '#38BDF8',
+          DEFAULT: '#34D399',
+          2: '#10B981',
+          3: '#6EE7B7',
         },
+        positive: { DEFAULT: '#34D399', muted: 'rgba(52, 211, 153, 0.12)' },
+        negative: { DEFAULT: '#F87171', muted: 'rgba(248, 113, 113, 0.12)' },
         amber: {
           DEFAULT: '#F59E0B',
           2: '#FBBF24',
         },
+
+        /* ── Text hierarchy ── */
         text: {
-          primary: '#F8FAFC',
-          secondary: '#CBD5E1',
-          muted: '#64748B',
+          primary: '#EDF1F7',
+          secondary: '#A9B4C4',
+          muted: '#5F6B7C',
         },
+
+        /* ── Legacy light-theme tokens (kept for stragglers) ── */
         brand: {
-          50: '#eef9ff',
-          100: '#d9f0ff',
-          200: '#bce5ff',
-          300: '#8ed4ff',
-          400: '#58b8ff',
-          500: '#3296f5',
-          600: '#1a78e8',
-          700: '#1560c4',
-          800: '#1751a0',
-          900: '#19457f',
-          950: '#122b4f',
+          50: '#eef7ff', 100: '#d9edff', 200: '#bce0ff', 300: '#8ecdff',
+          400: '#58b0ff', 500: '#4DA8F0', 600: '#2563EB', 700: '#1d4fc4',
+          800: '#1e42a0', 900: '#1e3a7f', 950: '#16254f',
         },
         surface: {
-          DEFAULT: '#ffffff',
-          muted: '#f8fafc',
-          border: '#e2e8f0',
+          DEFAULT: '#10141C',
+          muted: '#151A23',
+          border: 'rgba(255, 255, 255, 0.07)',
         },
       },
+
       fontFamily: {
-        sans: ['Inter', 'system-ui', 'Segoe UI', 'sans-serif'],
+        sans: ['IBM Plex Sans', 'Inter', 'system-ui', 'Segoe UI', 'sans-serif'],
+        mono: ['IBM Plex Mono', 'ui-monospace', 'SFMono-Regular', 'monospace'],
       },
+
+      /* ── Elevation — quiet depth, no neon ── */
       boxShadow: {
-        card: '0 1px 3px 0 rgb(0 0 0 / 0.06), 0 1px 2px -1px rgb(0 0 0 / 0.06)',
-        elevated: '0 10px 40px -10px rgb(15 23 42 / 0.12)',
-        'glow-cyan': '0 0 24px rgba(6, 182, 212, 0.22)',
-        'glow-em': '0 0 24px rgba(37, 99, 235, 0.18)',
+        card: '0 1px 2px 0 rgb(0 0 0 / 0.35)',
+        elevated: '0 8px 28px -8px rgb(0 0 0 / 0.55)',
+        // legacy glow names neutralized: same quiet elevation
+        'glow-cyan': '0 1px 2px 0 rgb(0 0 0 / 0.35)',
+        'glow-em': '0 1px 2px 0 rgb(0 0 0 / 0.35)',
       },
+
+      /* Hairline borders — neutral, never tinted */
       borderColor: {
-        glass: 'rgba(6, 182, 212, 0.15)',
-        'glass-2': 'rgba(37, 99, 235, 0.20)',
+        glass: 'rgba(255, 255, 255, 0.07)',
+        'glass-2': 'rgba(255, 255, 255, 0.13)',
       },
       backgroundColor: {
-        'glass-panel': 'rgba(255, 255, 255, 0.03)',
-        'glass-hover': 'rgba(255, 255, 255, 0.06)',
+        'glass-panel': 'rgba(255, 255, 255, 0.04)',
+        'glass-hover': 'rgba(255, 255, 255, 0.07)',
       },
+
       animation: {
         'fade-in': 'fadeIn 0.2s ease-out',
         'slide-up': 'slideUp 0.25s ease-out',
@@ -85,9 +115,11 @@ export default {
           '50%': { opacity: '0.3' },
         },
       },
+
+      /* Enterprise radius — crisp, not bubbly */
       borderRadius: {
-        sm: '9px',
-        DEFAULT: '14px',
+        sm: '6px',
+        DEFAULT: '10px',
       },
     },
   },

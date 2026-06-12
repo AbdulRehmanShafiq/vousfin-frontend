@@ -2,17 +2,17 @@ import { cn } from '@/utils/cn'
 
 const variants = {
   default: 'bg-glass-panel text-text-secondary border-glass',
-  success: 'bg-emerald/10 text-emerald-300 border-emerald/20',
+  success: 'bg-positive-muted text-positive border-emerald/20',
   warning: 'bg-amber/10 text-amber-2 border-amber/20',
-  danger: 'bg-red-500/10 text-red-400 border-red-500/20',
-  info: 'bg-cyan/10 text-cyan border-cyan/20',
+  danger: 'bg-negative-muted text-negative border-negative/20',
+  info: 'bg-accent-soft text-accent border-accent/20',
 }
 
 export default function Badge({ children, variant = 'default', className }) {
   return (
     <span
       className={cn(
-        'inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-bold tracking-wide',
+        'inline-flex items-center rounded-md border px-2 py-0.5 text-xs font-semibold',
         variants[variant],
         className
       )}

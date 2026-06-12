@@ -8,8 +8,10 @@ import { ArrowLeft } from 'lucide-react'
 import {
   useBill, useCreateBillDraft, useUpdateBillDraft, useSubmitBill,
   useApproveBill, useScheduleBill, useCancelBill, useRunBillMatch,
+  useDownloadBillPdf,
 } from '@/hooks/useInvoices'
 import { useVendors } from '@/hooks/useParties'
+import { useInventoryItems } from '@/hooks/useInventory'
 import BillEditor from '@/components/invoice/BillEditor'
 import ThreeWayMatchPanel from '@/components/invoice/ThreeWayMatchPanel'
 import AccountingImpactPanel from '@/components/invoice/AccountingImpactPanel'
@@ -30,6 +32,10 @@ export default function BillEditorPage() {
                  : Array.isArray(vendorsData?.data) ? vendorsData.data
                  : Array.isArray(vendorsData) ? vendorsData : []
 
+  const { data: rawInventory } = useInventoryItems({ limit: 500 })
+  const inventoryItems = Array.isArray(rawInventory?.data) ? rawInventory.data
+                       : Array.isArray(rawInventory) ? rawInventory : []
+
   const createDraft = useCreateBillDraft()
   const updateDraft = useUpdateBillDraft()
   const submit      = useSubmitBill()
@@ -38,6 +44,7 @@ export default function BillEditorPage() {
   const cancel      = useCancelBill()
 
   const runMatch = useRunBillMatch()
+  const downloadPdf = useDownloadBillPdf()
   const [showVendorModal, setShowVendorModal] = useState(false)
   const [pendingVendorId, setPendingVendorId] = useState(null)
 
@@ -91,6 +98,7 @@ export default function BillEditorPage() {
         key={`${bill?._id || 'new'}-${pendingVendorId || ''}`}
         bill={isEdit ? bill : null}
         vendors={vendors}
+        inventoryItems={inventoryItems}
         defaultVendorId={pendingVendorId || (isEdit ? bill?.vendorId : null)}
         saving={saving}
         onSaveDraft={handleSaveDraft}
@@ -98,6 +106,7 @@ export default function BillEditorPage() {
         onApprove={(billId) => approve.mutate({ id: billId })}
         onSchedule={(billId, payDate) => schedule.mutate({ id: billId, payDate })}
         onCancel={(billId, reason) => cancel.mutate({ id: billId, reason })}
+        onDownloadPdf={(billId) => downloadPdf.mutate(billId)}
         onAddVendor={() => setShowVendorModal(true)}
       />
 

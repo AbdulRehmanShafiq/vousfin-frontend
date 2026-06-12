@@ -23,6 +23,7 @@ import EditorActionBar from './EditorActionBar'
 const emptyLine = () => ({
   _tempId: `li-${Date.now()}-${Math.random().toString(36).slice(2, 7)}`,
   itemType: 'custom',
+  inventoryItemId: null,
   name: '',
   description: '',
   quantity: 1,
@@ -84,11 +85,13 @@ export default function BillEditor({
   vendors = [],
   defaultVendorId = null,
   saving = false,
+  inventoryItems = [],  // [{_id, name, sku, currentStock, unit, unitCostPrice}]
   onSaveDraft,
   onSubmit,
   onApprove,            // (id) => void  — pending approval
   onSchedule,           // (id, payDate) => void — approved bills
   onCancel,             // (id, reason) => void
+  onDownloadPdf,        // (id) => void
   onAddVendor,          // () => void — opens PartyFormModal
   className,
 }) {
@@ -178,6 +181,7 @@ export default function BillEditor({
     roundingAdjustment,
     lineItems: lineItems
       .filter(li => li.name && li.quantity > 0)
+      // eslint-disable-next-line no-unused-vars
       .map(({ _tempId, ...rest }, i) => ({ ...rest, sortOrder: i })),
   })
 
@@ -188,14 +192,15 @@ export default function BillEditor({
         kind="bill"
         doc={bill}
         isReadOnly={isReadOnly}
-        canSave={!!billNumber}
-        canSubmit={!!billNumber && totals.totalAmount > 0}
+        canSave={true}
+        canSubmit={totals.totalAmount > 0}
         saving={saving}
         onSaveDraft={() => onSaveDraft?.(buildFormData())}
         onSubmit={() => onSubmit?.(buildFormData())}
         onApprove={onApprove}
         onSchedule={onSchedule}
         onCancel={onCancel}
+        onDownloadPdf={onDownloadPdf}
       />
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
@@ -216,8 +221,8 @@ export default function BillEditor({
               label="Bill #"
               value={billNumber}
               onChange={e => setBillNumber(e.target.value)}
-              placeholder="BILL-001"
-              required
+              placeholder="Auto-generated"
+              disabled={isReadOnly}
             />
             <Input
               label="Vendor's Bill Ref"
@@ -339,6 +344,8 @@ export default function BillEditor({
                     onChange={handleLineChange}
                     onRemove={removeLine}
                     canRemove={lineItems.length > 1}
+                    inventoryItems={inventoryItems}
+                    mode="bill"
                   />
                 ))}
               </tbody>

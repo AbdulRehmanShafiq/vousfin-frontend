@@ -2,6 +2,7 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import toast from 'react-hot-toast'
 import inventoryService from '@/services/inventory.service'
 import { getErrorMessage } from '@/utils/errorHandler'
+import { invalidateLedgerQueries } from '@/utils/invalidateLedger'
 
 export function useInventoryItems(params = { limit: 100 }) {
   return useQuery({
@@ -91,11 +92,11 @@ export function useAddStock() {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['inventory-items'] })
-      queryClient.invalidateQueries({ queryKey: ['inventory-valuation'] })
       queryClient.invalidateQueries({ queryKey: ['inventory-low-stock'] })
-      // Also invalidate transactions + AP balances (stock purchase posts a JE)
-      queryClient.invalidateQueries({ queryKey: ['transactions'] })
-      queryClient.invalidateQueries({ queryKey: ['outstanding-balances'] })
+      // A stock purchase posts a journal entry → refresh every ledger-derived
+      // view (Balance Sheet, P&L, Trial Balance, dashboard, accounts, …) so they
+      // never show stale data. (Fixes: stock purchase not reflected on reports.)
+      invalidateLedgerQueries(queryClient)
       toast.success('Stock added & journal posted')
     },
     onError: (error) => toast.error(getErrorMessage(error)),

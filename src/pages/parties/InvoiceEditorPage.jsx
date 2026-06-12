@@ -15,6 +15,7 @@ import {
   useSendInvoice, useCancelInvoice,
 } from '@/hooks/useInvoices'
 import { useCustomers } from '@/hooks/useParties'
+import { useInventoryItems } from '@/hooks/useInventory'
 import InvoiceEditor from '@/components/invoice/InvoiceEditor'
 import AccountingImpactPanel from '@/components/invoice/AccountingImpactPanel'
 import SmartContextPanel from '@/components/common/SmartContextPanel'
@@ -33,6 +34,10 @@ export default function InvoiceEditorPage() {
   const customers = Array.isArray(customersData?.docs) ? customersData.docs
                    : Array.isArray(customersData?.data) ? customersData.data
                    : Array.isArray(customersData) ? customersData : []
+
+  const { data: rawInventory } = useInventoryItems({ limit: 500 })
+  const inventoryItems = Array.isArray(rawInventory?.data) ? rawInventory.data
+                       : Array.isArray(rawInventory) ? rawInventory : []
 
   const createDraft = useCreateInvoiceDraft()
   const updateDraft = useUpdateInvoiceDraft()
@@ -100,6 +105,7 @@ export default function InvoiceEditorPage() {
         key={`${invoice?._id || 'new'}-${pendingCustomerId || ''}`}
         invoice={isEdit ? invoice : null}
         customers={customers}
+        inventoryItems={inventoryItems}
         defaultCustomerId={pendingCustomerId || (isEdit ? invoice?.customerId : null)}
         saving={saving}
         onSaveDraft={handleSaveDraft}

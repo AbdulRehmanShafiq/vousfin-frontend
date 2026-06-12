@@ -23,15 +23,15 @@ export default function KPICard({ title, value, format = 'currency', trend, load
   return (
     <Card className="hover-scale">
       <div className="flex items-center justify-between">
-        <p className="text-sm font-medium text-text-muted uppercase tracking-wider">{title}</p>
-        {Icon && <Icon className="h-5 w-5 text-cyan opacity-50" />}
+        <p className="text-[11px] font-semibold text-text-muted uppercase tracking-[0.08em]">{title}</p>
+        {Icon && <Icon className="h-4 w-4 text-text-muted" />}
       </div>
-      <p className="mt-2 text-2xl font-black tracking-tight text-text-primary">{display}</p>
+      <p className="num mt-2 text-2xl font-semibold tracking-tight text-text-primary">{display}</p>
       {trend !== undefined && trend !== 0 && (
         <p
           className={cn(
-            'mt-2 flex items-center gap-1.5 text-xs font-medium tracking-wide',
-            trend > 0 ? 'text-emerald-400' : 'text-red-400'
+            'mt-2 flex items-center gap-1.5 text-xs font-medium',
+            trend > 0 ? 'text-positive' : 'text-negative'
           )}
         >
           {trend > 0 ? <TrendingUp className="h-3.5 w-3.5" /> : <TrendingDown className="h-3.5 w-3.5" />}
