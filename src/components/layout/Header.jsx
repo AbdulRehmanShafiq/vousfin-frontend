@@ -25,7 +25,7 @@ export default function Header({ toggleMobileDrawer }) {
       <div className="h-5 w-px bg-glass lg:hidden" aria-hidden="true" />
 
       <div className="flex flex-1 items-center justify-between gap-x-4 lg:gap-x-6">
-        <h1 className="text-[15px] font-semibold text-text-primary tracking-tight">{title}</h1>
+        <h1 className="font-display text-lg font-semibold text-text-primary tracking-tight">{title}</h1>
 
         <div className="flex items-center gap-x-3 lg:gap-x-4">
           <button type="button" className="-m-2 p-2 rounded-md text-text-muted hover:text-text-primary hover:bg-glass-hover transition-colors">

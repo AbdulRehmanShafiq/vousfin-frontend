@@ -87,7 +87,7 @@ function ToggleRow({ label, description, checked, onChange }) {
           checked ? 'bg-cyan' : 'bg-glass'
         }`}
       >
-        <span className={`inline-block h-4 w-4 transform rounded-full bg-white shadow-sm transition duration-200 ${checked ? 'translate-x-4' : 'translate-x-0'}`} />
+        <span className={`inline-block h-4 w-4 transform rounded-full bg-navy-2 shadow-sm transition duration-200 ${checked ? 'translate-x-4' : 'translate-x-0'}`} />
       </button>
     </label>
   )

@@ -103,7 +103,7 @@ export default function ActivityTimeline({ timeline = [], loading = false, empty
           <TimelineRow
             key={i}
             icon={Pencil}
-            color="bg-slate-500/10 text-slate-300 border-slate-500/30"
+            color="bg-glass-panel text-text-muted border-glass-2"
             title={`Field edited: ${entry.field}`}
             subtitle={`${String(entry.before ?? '—')} → ${String(entry.after ?? '—')}`}
             timestamp={entry.timestamp || entry.changedAt}

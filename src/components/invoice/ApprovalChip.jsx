@@ -6,7 +6,7 @@ import { ShieldCheck, ShieldAlert, ShieldQuestion, ShieldOff } from 'lucide-reac
 import { cn } from '@/utils/cn'
 
 const VARIANTS = {
-  not_required: { label: 'No approval needed', cls: 'bg-slate-500/10 text-slate-400 border-slate-500/20', Icon: ShieldOff },
+  not_required: { label: 'No approval needed', cls: 'bg-glass-panel text-text-muted border-glass', Icon: ShieldOff },
   pending:      { label: 'Awaiting approval',  cls: 'bg-amber-500/15 text-amber-300 border-amber-500/30', Icon: ShieldQuestion },
   approved:     { label: 'Approved',           cls: 'bg-emerald/15 text-emerald-300 border-emerald/30',   Icon: ShieldCheck },
   rejected:     { label: 'Rejected',           cls: 'bg-red-500/15 text-red-400 border-red-500/30',       Icon: ShieldAlert },

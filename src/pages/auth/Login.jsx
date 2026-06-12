@@ -52,7 +52,7 @@ export default function Login() {
   return (
     <div className="w-full">
       <div className="mb-8 text-center">
-        <h1 className="text-3xl font-black text-text-primary tracking-tight">Welcome Back</h1>
+        <h1 className="text-3xl font-semibold text-text-primary tracking-tight">Welcome back</h1>
         <p className="mt-2 text-text-secondary">Log in to manage your finances</p>
       </div>
 

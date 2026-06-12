@@ -20,22 +20,22 @@ export default function Input({
   return (
     <div className="w-full">
       {label && (
-        <label htmlFor={inputId} className="mb-1.5 block text-sm font-medium text-slate-700">
+        <label htmlFor={inputId} className="mb-1.5 block text-sm font-medium text-text-secondary">
           {label}
         </label>
       )}
       <div className="relative">
         {Icon && (
-          <Icon className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
+          <Icon className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-text-muted" />
         )}
         <input
           id={inputId}
           type={inputType}
           className={cn(
-            'w-full rounded-lg border bg-white px-3 py-2.5 text-sm text-slate-900 transition placeholder:text-slate-400 focus:border-brand-500 focus:outline-none focus:ring-2 focus:ring-brand-500/20',
+            'w-full rounded-lg border bg-navy-2 px-3 py-2.5 text-sm text-text-primary transition placeholder:text-text-muted focus:border-brand-500 focus:outline-none focus:ring-2 focus:ring-brand-500/20',
             Icon && 'pl-10',
             isPassword && 'pr-10',
-            error ? 'border-red-500' : 'border-slate-300',
+            error ? 'border-red-500' : 'border-glass-2',
             className
           )}
           {...props}
@@ -44,15 +44,15 @@ export default function Input({
           <button
             type="button"
             onClick={() => setShowPassword((v) => !v)}
-            className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600"
+            className="absolute right-3 top-1/2 -translate-y-1/2 text-text-muted hover:text-text-secondary"
             tabIndex={-1}
           >
             {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
           </button>
         )}
       </div>
-      {error && <p className="mt-1 text-xs text-red-600">{error}</p>}
-      {!error && helperText && <p className="mt-1 text-xs text-slate-500">{helperText}</p>}
+      {error && <p className="mt-1 text-xs text-red-400">{error}</p>}
+      {!error && helperText && <p className="mt-1 text-xs text-text-muted">{helperText}</p>}
     </div>
   )
 }

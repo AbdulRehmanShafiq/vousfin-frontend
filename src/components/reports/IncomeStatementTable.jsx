@@ -9,14 +9,14 @@ export default function IncomeStatementTable({ data, loading }) {
   const rows = Array.isArray(sections) ? sections : []
 
   return (
-    <div className="overflow-x-auto rounded-xl border border-slate-200 bg-white shadow-card">
+    <div className="overflow-x-auto rounded-xl border border-glass bg-navy-2 shadow-card">
       <table className="w-full text-sm">
-        <thead className="border-b bg-slate-50">
+        <thead className="border-b bg-glass-panel">
           <tr><th className="px-4 py-3 text-left font-semibold">Account</th><th className="px-4 py-3 text-right font-semibold">Amount</th></tr>
         </thead>
         <tbody className="divide-y">
           {rows.map((row, i) => (
-            <tr key={i} className={row.isTotal ? 'bg-slate-50 font-semibold' : ''}>
+            <tr key={i} className={row.isTotal ? 'bg-glass-panel font-semibold' : ''}>
               <td className={`px-4 py-2 ${row.indent ? 'pl-8' : ''}`}>{row.name || row.label}</td>
               <td className="px-4 py-2 text-right">{formatCurrency(row.amount)}</td>
             </tr>

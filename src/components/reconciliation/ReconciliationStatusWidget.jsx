@@ -68,7 +68,7 @@ export default function ReconciliationStatusWidget({ bankAccountId, accountName 
   }, [bankAccountId])
 
   if (!display) return (
-    <div className="bg-white rounded-xl border border-gray-200 p-4 h-32 animate-pulse" />
+    <div className="bg-navy-2 rounded-xl border border-glass p-4 h-32 animate-pulse" />
   )
 
   const pct      = Math.round(display.score_pct ?? 0)
@@ -77,25 +77,25 @@ export default function ReconciliationStatusWidget({ bankAccountId, accountName 
   const oldest   = display.oldest_unmatched_date
 
   return (
-    <div className="bg-white rounded-xl border border-gray-200 p-4 flex gap-4 items-center">
+    <div className="bg-navy-2 rounded-xl border border-glass p-4 flex gap-4 items-center">
       <ScoreRing pct={pct} />
 
       <div className="flex-1 min-w-0">
-        <p className="font-semibold text-sm text-gray-900 truncate">{accountName}</p>
-        <p className="text-xs text-gray-500 mt-0.5">
+        <p className="font-semibold text-sm text-text-primary truncate">{accountName}</p>
+        <p className="text-xs text-text-muted mt-0.5">
           {display.matched ?? 0} / {display.total ?? 0} matched
         </p>
         {stale > 0 && (
-          <p className="text-xs text-red-600 mt-0.5">
+          <p className="text-xs text-red-400 mt-0.5">
             ⚠ {stale} item{stale > 1 ? 's' : ''} older than 7 days
           </p>
         )}
         {oldest && (
-          <p className="text-xs text-gray-400 mt-0.5">Oldest: {oldest}</p>
+          <p className="text-xs text-text-muted mt-0.5">Oldest: {oldest}</p>
         )}
         <button
           onClick={() => navigate(`/reconciliation/exceptions?account=${bankAccountId}`)}
-          className="mt-2 text-xs text-blue-600 hover:underline"
+          className="mt-2 text-xs text-sky-400 hover:underline"
         >
           Review {unmatched} exception{unmatched !== 1 ? 's' : ''} →
         </button>

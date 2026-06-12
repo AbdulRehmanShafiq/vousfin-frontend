@@ -66,17 +66,17 @@ export default function Sidebar({ isCollapsed, toggleCollapse, isMobile = false,
         className={cn(
           'group relative flex items-center rounded-md px-3 py-2 text-[13px] font-medium transition-premium',
           active
-            ? 'bg-glass-panel text-text-primary'
+            ? 'bg-accent-soft text-text-primary shadow-[inset_0_1px_0_rgba(255,255,255,0.04)]'
             : 'text-text-secondary hover:bg-glass-hover hover:text-text-primary',
           compact && 'justify-center px-0 py-2.5',
         )}
         title={compact ? item.name : undefined}
       >
-        {/* Active accent bar — quiet, unambiguous */}
+        {/* Active accent bar — jade, softly luminous */}
         <span
           className={cn(
             'absolute left-0 top-1/2 -translate-y-1/2 h-4 w-0.5 rounded-full transition-all duration-200',
-            active ? 'bg-accent' : 'bg-transparent',
+            active ? 'bg-accent shadow-[0_0_10px_rgba(61,220,151,0.9)]' : 'bg-transparent',
           )}
         />
         <span className="relative flex-shrink-0">
@@ -128,7 +128,10 @@ export default function Sidebar({ isCollapsed, toggleCollapse, isMobile = false,
           onClick={() => toggleSection(section.key)}
           className="group flex w-full items-center justify-between px-3 pb-1.5 text-[11px] font-semibold uppercase tracking-[0.08em] text-text-muted hover:text-text-secondary transition-colors"
         >
-          {section.label}
+          <span className="flex items-center gap-2">
+            <span className="h-px w-2.5 bg-gold/50" aria-hidden="true" />
+            {section.label}
+          </span>
           <ChevronDown
             className={cn(
               'h-3 w-3 opacity-0 group-hover:opacity-100 transition-all duration-200',
@@ -158,7 +161,7 @@ export default function Sidebar({ isCollapsed, toggleCollapse, isMobile = false,
             <div className="flex items-center gap-2.5">
               <img src={vousFinLogo} alt="VousFin" className="h-7 w-7 object-contain" />
               <span className="font-display text-xl font-semibold tracking-tight text-text-primary">
-                vous<span className="text-accent">Fin</span>
+                vous<span className="text-gradient">Fin</span>
               </span>
             </div>
           ) : (

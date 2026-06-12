@@ -12,7 +12,7 @@ const BUCKET_COLORS = {
   days_1_30:    'text-yellow-400  bg-yellow-400/10  border-yellow-400/20',
   days_31_60:   'text-orange-400  bg-orange-400/10  border-orange-400/20',
   days_61_90:   'text-red-400     bg-red-400/10     border-red-400/20',
-  days_over_90: 'text-red-600     bg-red-600/10     border-red-600/20',
+  days_over_90: 'text-red-400     bg-red-600/10     border-red-600/20',
 }
 const SEVERITY_ROW = {
   current:  '',

@@ -24,7 +24,7 @@ const STATE_COLOR = {
   approved:           'text-emerald-400',
   fully_received:     'text-cyan',
   billed:             'text-sky-400',
-  closed:             'text-emerald-600',
+  closed:             'text-emerald-400',
   cancelled:          'text-red-400',
   rejected:           'text-red-400',
 }

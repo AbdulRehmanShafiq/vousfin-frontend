@@ -7,12 +7,12 @@
 import { useQuery } from '@tanstack/react-query'
 import classifierApi from '@/services/ai/classifierService'
 
-function StatCard({ label, value, sub, color = 'text-gray-900' }) {
+function StatCard({ label, value, sub, color = 'text-text-primary' }) {
   return (
-    <div className="bg-white rounded-xl border border-gray-200 p-4">
-      <p className="text-xs text-gray-500 mb-1">{label}</p>
+    <div className="bg-navy-2 rounded-xl border border-glass p-4">
+      <p className="text-xs text-text-muted mb-1">{label}</p>
       <p className={`text-2xl font-bold ${color}`}>{value}</p>
-      {sub && <p className="text-xs text-gray-400 mt-1">{sub}</p>}
+      {sub && <p className="text-xs text-text-muted mt-1">{sub}</p>}
     </div>
   )
 }
@@ -27,7 +27,7 @@ function IntegrityBanner() {
   const healthy = data.healthy
   return (
     <div className={`flex flex-wrap items-center gap-x-4 gap-y-1 text-xs px-3 py-2 rounded-lg ${
-      healthy ? 'bg-green-50 text-green-700' : 'bg-red-50 text-red-700'}`}>
+      healthy ? 'bg-emerald-500/10 text-emerald-400' : 'bg-red-500/10 text-red-400'}`}>
       <span className="font-semibold">{healthy ? '✓ Ledger integrity OK' : '⚠ Ledger integrity issue'}</span>
       <span>{data.entries} entries</span>
       <span>Σ debits {Number(data.total_debits).toLocaleString()}</span>
@@ -49,7 +49,7 @@ export default function ClassificationHealthPanel() {
   if (isLoading) return (
     <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
       {[...Array(4)].map((_, i) => (
-        <div key={i} className="bg-gray-100 rounded-xl h-24 animate-pulse" />
+        <div key={i} className="bg-glass-panel rounded-xl h-24 animate-pulse" />
       ))}
     </div>
   )
@@ -65,7 +65,7 @@ export default function ClassificationHealthPanel() {
 
   return (
     <div className="space-y-4">
-      <h3 className="text-sm font-semibold text-gray-700">AI Classification Health (Last 7 Days)</h3>
+      <h3 className="text-sm font-semibold text-text-secondary">AI Classification Health (Last 7 Days)</h3>
 
       <IntegrityBanner />
 
@@ -74,31 +74,31 @@ export default function ClassificationHealthPanel() {
           label="Auto-Post Rate"
           value={`${Math.round(autoPostRate * 100)}%`}
           sub={`${autoPosted} of ${totalProc} transactions`}
-          color={autoPostRate >= 0.70 ? 'text-green-600' : 'text-amber-600'}
+          color={autoPostRate >= 0.70 ? 'text-emerald-400' : 'text-amber-400'}
         />
         <StatCard
           label="7-Day Accuracy"
           value={`${Math.round(accuracy * 100)}%`}
           sub={accuracy >= 0.94 ? '✓ Meets FR-01.2 target' : 'Below 94% target'}
-          color={accuracy >= 0.94 ? 'text-green-600' : 'text-red-600'}
+          color={accuracy >= 0.94 ? 'text-emerald-400' : 'text-red-400'}
         />
         <StatCard
           label="Correction Rate"
           value={`${Math.round(corrRate * 100)}%`}
           sub="Lower is better"
-          color={corrRate <= 0.06 ? 'text-green-600' : 'text-amber-600'}
+          color={corrRate <= 0.06 ? 'text-emerald-400' : 'text-amber-400'}
         />
         <StatCard
           label="Model Version"
           value={modelVersion}
           sub="MLflow run ID prefix"
-          color="text-gray-700"
+          color="text-text-secondary"
         />
       </div>
 
       {/* FR-01.2 acceptance criterion indicator */}
       <div className={`flex items-center gap-2 text-xs px-3 py-2 rounded-lg ${
-        accuracy >= 0.94 ? 'bg-green-50 text-green-700' : 'bg-amber-50 text-amber-700'
+        accuracy >= 0.94 ? 'bg-emerald-500/10 text-emerald-400' : 'bg-amber-500/10 text-amber-400'
       }`}>
         <span>{accuracy >= 0.94 ? '✓' : '⚠'}</span>
         <span>

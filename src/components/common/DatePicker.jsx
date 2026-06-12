@@ -17,25 +17,25 @@ export default function DatePicker({
     return (
       <div className={cn('flex flex-col gap-3 sm:flex-row', className)}>
         <div className="flex-1">
-          <label className="mb-1.5 block text-sm font-medium text-slate-700">From</label>
+          <label className="mb-1.5 block text-sm font-medium text-text-secondary">From</label>
           <input
             type="date"
             value={startDate || ''}
             min={min}
             max={endDate || max}
             onChange={(e) => onRangeChange?.({ startDate: e.target.value, endDate })}
-            className="w-full rounded-lg border border-slate-300 px-3 py-2.5 text-sm focus:border-brand-500 focus:ring-2 focus:ring-brand-500/20"
+            className="w-full rounded-lg border border-glass-2 px-3 py-2.5 text-sm focus:border-brand-500 focus:ring-2 focus:ring-brand-500/20"
           />
         </div>
         <div className="flex-1">
-          <label className="mb-1.5 block text-sm font-medium text-slate-700">To</label>
+          <label className="mb-1.5 block text-sm font-medium text-text-secondary">To</label>
           <input
             type="date"
             value={endDate || ''}
             min={startDate || min}
             max={max}
             onChange={(e) => onRangeChange?.({ startDate, endDate: e.target.value })}
-            className="w-full rounded-lg border border-slate-300 px-3 py-2.5 text-sm focus:border-brand-500 focus:ring-2 focus:ring-brand-500/20"
+            className="w-full rounded-lg border border-glass-2 px-3 py-2.5 text-sm focus:border-brand-500 focus:ring-2 focus:ring-brand-500/20"
           />
         </div>
       </div>
@@ -44,7 +44,7 @@ export default function DatePicker({
 
   return (
     <div className={className}>
-      {label && <label className="mb-1.5 block text-sm font-medium text-slate-700">{label}</label>}
+      {label && <label className="mb-1.5 block text-sm font-medium text-text-secondary">{label}</label>}
       <input
         type="date"
         value={value || ''}
@@ -53,10 +53,10 @@ export default function DatePicker({
         onChange={(e) => onChange?.(e.target.value)}
         className={cn(
           'w-full rounded-lg border px-3 py-2.5 text-sm focus:border-brand-500 focus:ring-2 focus:ring-brand-500/20',
-          error ? 'border-red-500' : 'border-slate-300'
+          error ? 'border-red-500' : 'border-glass-2'
         )}
       />
-      {error && <p className="mt-1 text-xs text-red-600">{error}</p>}
+      {error && <p className="mt-1 text-xs text-red-400">{error}</p>}
     </div>
   )
 }

@@ -89,40 +89,40 @@ function TemplateModal({ open, onClose, onSaved, editing }) {
     } finally { setSaving(false) }
   }
 
-  const inp = 'w-full text-sm border border-gray-300 rounded-lg px-3 py-2 outline-none focus:ring-2 focus:ring-blue-200'
+  const inp = 'w-full text-sm border border-glass-2 rounded-lg px-3 py-2 outline-none focus:ring-2 focus:ring-blue-200'
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4" onClick={onClose}>
-      <div className="bg-white rounded-xl shadow-xl w-full max-w-lg max-h-[90vh] overflow-y-auto" onClick={(e) => e.stopPropagation()}>
+      <div className="bg-navy-2 rounded-xl shadow-xl w-full max-w-lg max-h-[90vh] overflow-y-auto" onClick={(e) => e.stopPropagation()}>
         <div className="flex items-center justify-between px-5 py-4 border-b">
-          <h3 className="font-semibold text-gray-900">{editId ? 'Edit template' : 'New template'}</h3>
-          <button onClick={onClose} className="text-gray-400 hover:text-gray-600"><X className="w-5 h-5" /></button>
+          <h3 className="font-semibold text-text-primary">{editId ? 'Edit template' : 'New template'}</h3>
+          <button onClick={onClose} className="text-text-muted hover:text-text-secondary"><X className="w-5 h-5" /></button>
         </div>
 
         <div className="p-5 space-y-4">
           <div>
-            <label className="text-xs font-medium text-gray-600">Template name</label>
+            <label className="text-xs font-medium text-text-secondary">Template name</label>
             <input className={inp} value={form.name} onChange={(e) => set('name', e.target.value)} placeholder="e.g. Monthly office rent" />
           </div>
           <div>
-            <label className="text-xs font-medium text-gray-600">Description (shown on each transaction)</label>
+            <label className="text-xs font-medium text-text-secondary">Description (shown on each transaction)</label>
             <input className={inp} value={form.description} onChange={(e) => set('description', e.target.value)} placeholder="Office rent" />
           </div>
           <div>
-            <label className="text-xs font-medium text-gray-600">Amount</label>
+            <label className="text-xs font-medium text-text-secondary">Amount</label>
             <input type="number" min="0" step="0.01" className={inp} value={form.amount} onChange={(e) => set('amount', e.target.value)} placeholder="25000" />
           </div>
 
           <div className="grid grid-cols-2 gap-3">
             <div>
-              <label className="text-xs font-medium text-gray-600">Debit account</label>
+              <label className="text-xs font-medium text-text-secondary">Debit account</label>
               <select className={inp} value={form.debitAccountId} onChange={(e) => set('debitAccountId', e.target.value)}>
                 <option value="">Select…</option>
                 {accounts.map((a) => <option key={a._id} value={a._id}>{a.accountName} ({a.accountType})</option>)}
               </select>
             </div>
             <div>
-              <label className="text-xs font-medium text-gray-600">Credit account</label>
+              <label className="text-xs font-medium text-text-secondary">Credit account</label>
               <select className={inp} value={form.creditAccountId} onChange={(e) => set('creditAccountId', e.target.value)}>
                 <option value="">Select…</option>
                 {accounts.map((a) => <option key={a._id} value={a._id}>{a.accountName} ({a.accountType})</option>)}
@@ -132,7 +132,7 @@ function TemplateModal({ open, onClose, onSaved, editing }) {
 
           <div className="grid grid-cols-2 gap-3">
             <div>
-              <label className="text-xs font-medium text-gray-600">Party (optional)</label>
+              <label className="text-xs font-medium text-text-secondary">Party (optional)</label>
               <select className={inp} value={form.partyType} onChange={(e) => set('partyType', e.target.value)}>
                 <option value="">None</option>
                 <option value="customer">Customer</option>
@@ -140,31 +140,31 @@ function TemplateModal({ open, onClose, onSaved, editing }) {
               </select>
             </div>
             <div>
-              <label className="text-xs font-medium text-gray-600">Party name</label>
+              <label className="text-xs font-medium text-text-secondary">Party name</label>
               <input className={inp} value={form.partyName} onChange={(e) => set('partyName', e.target.value)} disabled={!form.partyType} placeholder={form.partyType ? 'Name' : '—'} />
             </div>
           </div>
 
           {/* Recurring */}
-          <div className="rounded-lg border border-gray-200 p-3 space-y-3">
-            <label className="flex items-center gap-2 text-sm font-medium text-gray-800 cursor-pointer">
+          <div className="rounded-lg border border-glass p-3 space-y-3">
+            <label className="flex items-center gap-2 text-sm font-medium text-text-primary cursor-pointer">
               <input type="checkbox" checked={form.isRecurring} onChange={(e) => set('isRecurring', e.target.checked)} className="rounded" />
-              <Repeat className="w-4 h-4 text-blue-600" /> Repeat automatically
+              <Repeat className="w-4 h-4 text-sky-400" /> Repeat automatically
             </label>
             {form.isRecurring && (
               <div className="grid grid-cols-3 gap-3">
                 <div>
-                  <label className="text-xs text-gray-500">How often</label>
+                  <label className="text-xs text-text-muted">How often</label>
                   <select className={inp} value={form.recurrencePattern} onChange={(e) => set('recurrencePattern', e.target.value)}>
                     {PATTERNS.map((p) => <option key={p.value} value={p.value}>{p.label}</option>)}
                   </select>
                 </div>
                 <div>
-                  <label className="text-xs text-gray-500">Start</label>
+                  <label className="text-xs text-text-muted">Start</label>
                   <input type="date" className={inp} value={form.startDate} onChange={(e) => set('startDate', e.target.value)} />
                 </div>
                 <div>
-                  <label className="text-xs text-gray-500">End (optional)</label>
+                  <label className="text-xs text-text-muted">End (optional)</label>
                   <input type="date" className={inp} value={form.endDate} onChange={(e) => set('endDate', e.target.value)} />
                 </div>
               </div>
@@ -173,8 +173,8 @@ function TemplateModal({ open, onClose, onSaved, editing }) {
         </div>
 
         <div className="flex justify-end gap-2 px-5 py-4 border-t">
-          <button onClick={onClose} className="px-4 py-2 text-sm border rounded-lg text-gray-600 hover:bg-gray-50">Cancel</button>
-          <button onClick={submit} disabled={saving} className="px-4 py-2 text-sm bg-blue-600 hover:bg-blue-700 text-white rounded-lg disabled:opacity-50 flex items-center gap-1.5">
+          <button onClick={onClose} className="px-4 py-2 text-sm border rounded-lg text-text-secondary hover:bg-glass-hover">Cancel</button>
+          <button onClick={submit} disabled={saving} className="px-4 py-2 text-sm btn-gradient rounded-lg disabled:opacity-50 flex items-center gap-1.5">
             {saving && <Loader2 className="w-4 h-4 animate-spin" />} {editId ? 'Save changes' : 'Save template'}
           </button>
         </div>
@@ -223,22 +223,22 @@ export default function TemplatesPage() {
     <div className="max-w-5xl mx-auto px-4 py-6 space-y-6">
       <div className="flex items-start justify-between gap-4">
         <div>
-          <h1 className="text-xl font-bold text-gray-900">Recurring &amp; Templates</h1>
-          <p className="text-sm text-gray-500 mt-1">
+          <h1 className="text-xl font-bold text-text-primary">Recurring &amp; Templates</h1>
+          <p className="text-sm text-text-muted mt-1">
             Save transactions you record often. Use them with one click, or let them repeat automatically.
           </p>
         </div>
-        <button onClick={openNew} className="shrink-0 flex items-center gap-1.5 bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium px-3.5 py-2 rounded-lg">
+        <button onClick={openNew} className="shrink-0 flex items-center gap-1.5 btn-gradient text-sm font-medium px-3.5 py-2 rounded-lg">
           <Plus className="w-4 h-4" /> New template
         </button>
       </div>
 
       {isLoading ? (
         <div className="grid gap-4 sm:grid-cols-2">
-          {[...Array(4)].map((_, i) => <div key={i} className="h-32 bg-gray-100 animate-pulse rounded-xl" />)}
+          {[...Array(4)].map((_, i) => <div key={i} className="h-32 bg-glass-panel animate-pulse rounded-xl" />)}
         </div>
       ) : templates.length === 0 ? (
-        <div className="text-center py-20 text-gray-400">
+        <div className="text-center py-20 text-text-muted">
           <Repeat className="w-10 h-10 mx-auto mb-3 opacity-40" />
           <p className="text-sm">No templates yet.</p>
           <p className="text-xs mt-1">Create one to reuse a common transaction or schedule it to repeat.</p>
@@ -246,23 +246,23 @@ export default function TemplatesPage() {
       ) : (
         <div className="grid gap-4 sm:grid-cols-2">
           {templates.map((t) => (
-            <div key={t._id} className="bg-white rounded-xl border border-gray-200 p-4 shadow-sm space-y-3">
+            <div key={t._id} className="bg-navy-2 rounded-xl border border-glass p-4 shadow-sm space-y-3">
               <div className="flex items-start justify-between gap-2">
                 <div className="min-w-0">
-                  <p className="font-semibold text-gray-900 text-sm truncate">{t.name}</p>
-                  <p className="text-xs text-gray-500 truncate">{t.description}</p>
+                  <p className="font-semibold text-text-primary text-sm truncate">{t.name}</p>
+                  <p className="text-xs text-text-muted truncate">{t.description}</p>
                 </div>
-                <p className="font-bold text-gray-900 text-sm shrink-0">{Number(t.amount).toLocaleString()}</p>
+                <p className="font-bold text-text-primary text-sm shrink-0">{Number(t.amount).toLocaleString()}</p>
               </div>
 
-              <div className="bg-gray-50 rounded-lg p-2.5 text-xs space-y-1">
-                <div className="flex justify-between"><span className="text-gray-500">Debit</span><span className="font-medium text-gray-800 truncate ml-2">{accName(t.debitAccountId)}</span></div>
-                <div className="flex justify-between"><span className="text-gray-500">Credit</span><span className="font-medium text-gray-800 truncate ml-2">{accName(t.creditAccountId)}</span></div>
-                {t.partyName && <div className="flex justify-between"><span className="text-gray-500">{t.partyType === 'vendor' ? 'Vendor' : 'Customer'}</span><span className="font-medium text-blue-700 truncate ml-2">{t.partyName}</span></div>}
+              <div className="bg-glass-panel rounded-lg p-2.5 text-xs space-y-1">
+                <div className="flex justify-between"><span className="text-text-muted">Debit</span><span className="font-medium text-text-primary truncate ml-2">{accName(t.debitAccountId)}</span></div>
+                <div className="flex justify-between"><span className="text-text-muted">Credit</span><span className="font-medium text-text-primary truncate ml-2">{accName(t.creditAccountId)}</span></div>
+                {t.partyName && <div className="flex justify-between"><span className="text-text-muted">{t.partyType === 'vendor' ? 'Vendor' : 'Customer'}</span><span className="font-medium text-sky-400 truncate ml-2">{t.partyName}</span></div>}
               </div>
 
               {t.isRecurring && (
-                <div className="flex items-center gap-1.5 text-xs text-blue-700 bg-blue-50 rounded-lg px-2.5 py-1.5">
+                <div className="flex items-center gap-1.5 text-xs text-sky-400 bg-sky-500/10 rounded-lg px-2.5 py-1.5">
                   <Clock className="w-3.5 h-3.5" />
                   {patternLabel(t.recurrencePattern)} · next {fmtDate(t.nextRunDate)}
                   {t.runCount > 0 && <span className="text-blue-400">· run {t.runCount}×</span>}
@@ -271,11 +271,11 @@ export default function TemplatesPage() {
 
               <div className="flex gap-2 pt-1">
                 <button onClick={() => applyNow(t)} disabled={busyId === t._id}
-                  className="flex-1 flex items-center justify-center gap-1.5 bg-green-600 hover:bg-green-700 text-white text-xs font-medium py-1.5 rounded-lg disabled:opacity-50">
+                  className="flex-1 flex items-center justify-center gap-1.5 bg-emerald-2 hover:bg-emerald text-white text-xs font-medium py-1.5 rounded-lg disabled:opacity-50">
                   {busyId === t._id ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Play className="w-3.5 h-3.5" />} Use now
                 </button>
-                <button onClick={() => openEdit(t)} className="px-3 border border-gray-300 hover:bg-gray-50 text-gray-600 rounded-lg"><Pencil className="w-3.5 h-3.5" /></button>
-                <button onClick={() => del(t)} className="px-3 border border-gray-300 hover:bg-red-50 hover:border-red-200 text-red-500 rounded-lg"><Trash2 className="w-3.5 h-3.5" /></button>
+                <button onClick={() => openEdit(t)} className="px-3 border border-glass-2 hover:bg-glass-hover text-text-secondary rounded-lg"><Pencil className="w-3.5 h-3.5" /></button>
+                <button onClick={() => del(t)} className="px-3 border border-glass-2 hover:bg-red-500/15 hover:border-red-500/40 text-red-500 rounded-lg"><Trash2 className="w-3.5 h-3.5" /></button>
               </div>
             </div>
           ))}

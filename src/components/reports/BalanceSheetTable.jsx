@@ -13,11 +13,11 @@ export default function BalanceSheetTable({ data, loading }) {
 
   const renderSection = (title, items = []) => (
     <div className="mb-6">
-      <h4 className="mb-2 font-semibold text-slate-900">{title}</h4>
+      <h4 className="mb-2 font-semibold text-text-primary">{title}</h4>
       <table className="w-full text-sm">
         <tbody>
           {(items.lines || items || []).map((row, i) => (
-            <tr key={i} className="border-b border-slate-100">
+            <tr key={i} className="border-b border-glass">
               <td className="py-2">{row.name}</td>
               <td className="py-2 text-right">{formatCurrency(row.amount)}</td>
             </tr>
@@ -29,10 +29,10 @@ export default function BalanceSheetTable({ data, loading }) {
 
   return (
     <div>
-      <div className={cn('mb-4 rounded-lg px-4 py-2 text-sm', balanced ? 'bg-emerald-50 text-emerald-800' : 'bg-red-50 text-red-800')}>
+      <div className={cn('mb-4 rounded-lg px-4 py-2 text-sm', balanced ? 'bg-emerald-500/10 text-emerald-300' : 'bg-red-500/10 text-red-300')}>
         {balanced ? '? Balance sheet balances (Assets = Liabilities + Equity)' : '? Assets do not equal Liabilities + Equity'}
       </div>
-      <div className="grid gap-6 rounded-xl border border-slate-200 bg-white p-6 shadow-card lg:grid-cols-2">
+      <div className="grid gap-6 rounded-xl border border-glass bg-navy-2 p-6 shadow-card lg:grid-cols-2">
         {renderSection('Assets', data.assets)}
         <div>
           {renderSection('Liabilities', data.liabilities)}

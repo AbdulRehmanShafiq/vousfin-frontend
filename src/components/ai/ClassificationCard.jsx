@@ -119,56 +119,56 @@ export default function ClassificationCard({ draft, onResolved }) {
   }
 
   return (
-    <div className="bg-white rounded-xl border border-gray-200 p-4 shadow-sm space-y-3">
+    <div className="bg-navy-2 rounded-xl border border-glass p-4 shadow-sm space-y-3">
       {/* Header */}
       <div className="flex items-start justify-between">
         <div className="min-w-0">
-          <p className="font-semibold text-gray-900 text-sm truncate">{draft.payee_raw}</p>
-          <p className="text-xs text-gray-500">{draft.tx_date} · {draft.channel}</p>
+          <p className="font-semibold text-text-primary text-sm truncate">{draft.payee_raw}</p>
+          <p className="text-xs text-text-muted">{draft.tx_date} · {draft.channel}</p>
         </div>
-        <p className={`font-bold text-base shrink-0 ${isExpense ? 'text-red-600' : 'text-green-600'}`}>
+        <p className={`font-bold text-base shrink-0 ${isExpense ? 'text-red-400' : 'text-emerald-400'}`}>
           {isExpense ? '-' : '+'}{draft.currency} {Number(draft.amount).toLocaleString()}
         </p>
       </div>
 
       {/* Confidence */}
       <div>
-        <div className="flex justify-between text-xs text-gray-500 mb-1">
+        <div className="flex justify-between text-xs text-text-muted mb-1">
           <span>AI Confidence</span><span className="font-medium">{confPct}%</span>
         </div>
-        <div className="h-1.5 bg-gray-100 rounded-full overflow-hidden">
+        <div className="h-1.5 bg-glass-panel rounded-full overflow-hidden">
           <div className={`h-full rounded-full ${CONF_COLOR(confidence)}`} style={{ width: `${confPct}%` }} />
         </div>
       </div>
 
       {/* Paid now vs On credit (AR/AP) */}
       {canOnCredit && (
-        <div className="flex gap-1 p-0.5 bg-gray-100 rounded-lg text-xs">
+        <div className="flex gap-1 p-0.5 bg-glass-panel rounded-lg text-xs">
           <button onClick={() => setOnCredit(false)}
-            className={`flex-1 py-1 rounded-md font-medium ${!onCredit ? 'bg-white shadow text-gray-800' : 'text-gray-500'}`}>
+            className={`flex-1 py-1 rounded-md font-medium ${!onCredit ? 'bg-navy-2 shadow text-text-primary' : 'text-text-muted'}`}>
             Paid now
           </button>
           <button onClick={() => setOnCredit(true)}
-            className={`flex-1 py-1 rounded-md font-medium ${onCredit ? 'bg-white shadow text-gray-800' : 'text-gray-500'}`}>
+            className={`flex-1 py-1 rounded-md font-medium ${onCredit ? 'bg-navy-2 shadow text-text-primary' : 'text-text-muted'}`}>
             {isExpense ? 'On credit (bill)' : 'On credit (invoice)'}
           </button>
         </div>
       )}
 
       {/* Double-entry preview (REAL accounts) */}
-      <div className="bg-gray-50 rounded-lg p-3 text-xs space-y-1.5">
+      <div className="bg-glass-panel rounded-lg p-3 text-xs space-y-1.5">
         <div className="flex justify-between">
-          <span className="text-gray-500">Debit</span>
-          <span className="font-medium text-gray-800">{isExpense ? categoryName : counterpartyName || '—'}</span>
+          <span className="text-text-muted">Debit</span>
+          <span className="font-medium text-text-primary">{isExpense ? categoryName : counterpartyName || '—'}</span>
         </div>
         <div className="flex justify-between">
-          <span className="text-gray-500">Credit</span>
-          <span className="font-medium text-gray-800">{isExpense ? counterpartyName || '—' : categoryName}</span>
+          <span className="text-text-muted">Credit</span>
+          <span className="font-medium text-text-primary">{isExpense ? counterpartyName || '—' : categoryName}</span>
         </div>
         {onCredit && draft.party_name && (
-          <div className="flex justify-between pt-1 border-t border-gray-200">
-            <span className="text-gray-500">{isExpense ? 'Vendor' : 'Customer'}</span>
-            <span className="font-medium text-blue-700">{draft.party_name}</span>
+          <div className="flex justify-between pt-1 border-t border-glass">
+            <span className="text-text-muted">{isExpense ? 'Vendor' : 'Customer'}</span>
+            <span className="font-medium text-sky-400">{draft.party_name}</span>
           </div>
         )}
       </div>
@@ -178,7 +178,7 @@ export default function ClassificationCard({ draft, onResolved }) {
         <select
           value={categoryId}
           onChange={(e) => setCategoryId(e.target.value)}
-          className="w-full text-xs border border-gray-300 rounded-lg px-2 py-1.5 outline-none focus:ring-2 focus:ring-blue-200"
+          className="w-full text-xs border border-glass-2 rounded-lg px-2 py-1.5 outline-none focus:ring-2 focus:ring-blue-200"
         >
           <option value="">Select account…</option>
           {accounts.map(a => (
@@ -186,7 +186,7 @@ export default function ClassificationCard({ draft, onResolved }) {
           ))}
         </select>
       ) : (
-        <button onClick={() => setEditing(true)} className="text-xs text-blue-600 hover:underline">
+        <button onClick={() => setEditing(true)} className="text-xs text-sky-400 hover:underline">
           Change {isExpense ? 'expense' : 'income'} account
         </button>
       )}
@@ -196,14 +196,14 @@ export default function ClassificationCard({ draft, onResolved }) {
         <button
           onClick={handleConfirm}
           disabled={loading || !canPost}
-          className="flex-1 bg-green-600 hover:bg-green-700 text-white text-xs font-medium py-1.5 rounded-lg disabled:opacity-50"
+          className="flex-1 bg-emerald-2 hover:bg-emerald text-white text-xs font-medium py-1.5 rounded-lg disabled:opacity-50"
         >
           ✓ Confirm &amp; Post
         </button>
         <button
           onClick={handleDismiss}
           disabled={loading}
-          className="px-3 border border-gray-300 hover:bg-gray-50 text-gray-600 text-xs font-medium py-1.5 rounded-lg"
+          className="px-3 border border-glass-2 hover:bg-glass-hover text-text-secondary text-xs font-medium py-1.5 rounded-lg"
         >
           Dismiss
         </button>

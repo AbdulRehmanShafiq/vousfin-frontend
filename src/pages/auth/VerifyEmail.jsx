@@ -36,7 +36,7 @@ export default function VerifyEmail() {
   }
 
   return (
-    <div className="rounded-2xl border border-slate-200 bg-white p-8 shadow-elevated text-center">
+    <div className="rounded-2xl border border-glass bg-navy-2 p-8 shadow-elevated text-center">
       <h1 className="text-2xl font-bold">Verify your email</h1>
       {verified ? (
         <p className="mt-4"><Link to="/login" className="text-brand-600">Go to login</Link></p>

@@ -12,14 +12,14 @@ import {
 import { cn } from '@/utils/cn'
 
 const INVOICE_VARIANTS = {
-  draft:            { label: 'Draft',        cls: 'bg-slate-500/15 text-slate-300 border-slate-500/30',     Icon: FileEdit },
+  draft:            { label: 'Draft',        cls: 'bg-glass-panel text-text-muted border-glass-2',     Icon: FileEdit },
   pending_approval: { label: 'Pending',      cls: 'bg-amber-500/15 text-amber-300 border-amber-500/30',     Icon: ClipboardCheck },
   approved:         { label: 'Approved',     cls: 'bg-cyan/15 text-cyan border-cyan/30',                    Icon: CheckCircle2 },
   sent:             { label: 'Sent',         cls: 'bg-indigo-500/15 text-indigo-300 border-indigo-500/30',  Icon: Send },
   partially_paid:   { label: 'Partial',      cls: 'bg-blue-500/15 text-blue-300 border-blue-500/30',        Icon: Banknote },
   paid:             { label: 'Paid',         cls: 'bg-emerald/15 text-emerald-300 border-emerald/30',       Icon: Trophy },
   overdue:          { label: 'Overdue',      cls: 'bg-red-500/15 text-red-400 border-red-500/30',           Icon: AlertTriangle },
-  cancelled:        { label: 'Cancelled',    cls: 'bg-zinc-500/15 text-zinc-400 border-zinc-500/30',        Icon: XCircle },
+  cancelled:        { label: 'Cancelled',    cls: 'bg-glass-panel text-text-muted border-glass-2',        Icon: XCircle },
   disputed:         { label: 'Disputed',     cls: 'bg-orange-500/15 text-orange-300 border-orange-500/30',  Icon: AlertOctagon },
   written_off:      { label: 'Written Off',  cls: 'bg-rose-500/15 text-rose-300 border-rose-500/30',        Icon: Slash },
   rejected:         { label: 'Rejected',     cls: 'bg-red-500/15 text-red-300 border-red-500/30',           Icon: XCircle },
@@ -37,7 +37,7 @@ const BILL_VARIANTS = {
   rejected:           INVOICE_VARIANTS.rejected,
 }
 
-const FALLBACK = { label: 'Unknown', cls: 'bg-slate-500/10 text-slate-400 border-slate-500/20', Icon: FileEdit }
+const FALLBACK = { label: 'Unknown', cls: 'bg-glass-panel text-text-muted border-glass', Icon: FileEdit }
 
 export default function InvoiceStatusBadge({
   state,

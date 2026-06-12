@@ -101,7 +101,7 @@ function POStateBadge({ state }) {
     partially_received: { label: 'Partially Received', color: 'text-indigo-400 border-indigo-400/30' },
     fully_received:     { label: 'Fully Received',     color: 'text-cyan       border-cyan/30'       },
     billed:             { label: 'Billed',             color: 'text-emerald-400 border-emerald-400/30' },
-    closed:             { label: 'Closed',             color: 'text-emerald-600 border-emerald-600/30' },
+    closed:             { label: 'Closed',             color: 'text-emerald-400 border-emerald-600/30' },
     cancelled:          { label: 'Cancelled',          color: 'text-red-400    border-red-400/30'    },
   }
   const { label, color } = MAP[state] || { label: state, color: 'text-text-muted border-glass' }

@@ -1736,7 +1736,7 @@ function StructuredFormTab({ currency, onSuccess, onCancel, initialValues, editT
         <label className="flex items-center gap-3 cursor-pointer group">
           <div className="relative flex items-center">
             <input type="checkbox" className="peer sr-only" {...register('isInstallment')} />
-            <div className="h-6 w-11 rounded-full bg-charcoal border border-glass peer-checked:bg-cyan peer-checked:border-cyan transition-colors after:absolute after:left-[2px] after:top-[2px] after:h-5 after:w-5 after:rounded-full after:bg-white after:transition-all peer-checked:after:translate-x-full" />
+            <div className="h-6 w-11 rounded-full bg-charcoal border border-glass peer-checked:bg-cyan peer-checked:border-cyan transition-colors after:absolute after:left-[2px] after:top-[2px] after:h-5 after:w-5 after:rounded-full after:bg-navy-2 after:transition-all peer-checked:after:translate-x-full" />
           </div>
           <span className="text-sm font-medium text-text-primary group-hover:text-cyan transition-colors">
             Set up as Installment / EMI Plan

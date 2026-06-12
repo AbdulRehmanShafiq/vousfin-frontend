@@ -37,14 +37,14 @@ export default function App() {
             className: '!bg-charcoal !text-text-primary !border !border-glass !shadow-elevated',
             success: {
               iconTheme: {
-                primary: '#06B6D4',
-                secondary: '#1E293B',
+                primary: '#3DDC97',
+                secondary: '#06231A',
               },
             },
             error: {
               iconTheme: {
-                primary: '#EF4444',
-                secondary: '#1E293B',
+                primary: '#F2705B',
+                secondary: '#0A100D',
               },
             },
           }} 

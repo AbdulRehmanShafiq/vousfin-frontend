@@ -98,7 +98,7 @@ function TxRow({ tx, currency }) {
     <div className="flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-glass-hover transition-colors">
       <div className={cn(
         'p-2 rounded-lg flex-shrink-0',
-        inflow ? 'bg-emerald-400/10 text-emerald-400' : 'bg-red-400/10 text-red-400',
+        inflow ? 'bg-positive-muted text-positive' : 'bg-negative-muted text-negative',
       )}>
         {inflow ? <TrendingUp className="h-3.5 w-3.5" /> : <TrendingDown className="h-3.5 w-3.5" />}
       </div>
@@ -115,7 +115,7 @@ function TxRow({ tx, currency }) {
             </span>
           )}
           {isUnpaid && (
-            <span className="text-[10px] px-1.5 py-0.5 rounded-md bg-amber-400/15 text-amber-300 font-medium capitalize">
+            <span className="text-[10px] px-1.5 py-0.5 rounded-md bg-amber/15 text-amber font-medium capitalize">
               {tx.paymentStatus}
             </span>
           )}
@@ -123,8 +123,8 @@ function TxRow({ tx, currency }) {
       </div>
 
       <p className={cn(
-        'text-sm font-bold flex-shrink-0 tabular-nums',
-        inflow ? 'text-emerald-400' : 'text-text-primary',
+        'num text-sm font-semibold flex-shrink-0',
+        inflow ? 'text-positive' : 'text-text-primary',
       )}>
         {inflow ? '+' : '−'}{fmtAmt(tx.amount, currency)}
       </p>
@@ -148,25 +148,25 @@ const ACTION_DEFS = [
     label: 'Reports',
     to: '/financial-reports',
     Icon: BarChart2,
-    iconClass:    'bg-violet-500/15 text-violet-400',
-    wrapperHover: 'hover:bg-violet-500/10 hover:border-violet-500/40',
-    labelHover:   'group-hover:text-violet-400',
+    iconClass:    'bg-gold/15 text-gold',
+    wrapperHover: 'hover:bg-gold/10 hover:border-gold/40',
+    labelHover:   'group-hover:text-gold',
   },
   {
     label: 'AI Forecast',
     to: '/ai/forecast',
     Icon: Cpu,
-    iconClass:    'bg-emerald-400/15 text-emerald-400',
-    wrapperHover: 'hover:bg-emerald-400/10 hover:border-emerald-400/40',
-    labelHover:   'group-hover:text-emerald-400',
+    iconClass:    'bg-emerald-3/15 text-emerald-3',
+    wrapperHover: 'hover:bg-emerald-3/10 hover:border-emerald-3/40',
+    labelHover:   'group-hover:text-emerald-3',
   },
   {
     label: 'Journal',
     to: '/financial-reports/general-ledger',
     Icon: BookOpen,
-    iconClass:    'bg-orange-400/15 text-orange-400',
-    wrapperHover: 'hover:bg-orange-400/10 hover:border-orange-400/40',
-    labelHover:   'group-hover:text-orange-400',
+    iconClass:    'bg-amber/15 text-amber',
+    wrapperHover: 'hover:bg-amber/10 hover:border-amber/40',
+    labelHover:   'group-hover:text-amber',
   },
 ]
 
@@ -228,14 +228,14 @@ function FinancialSnapshot({ ar, ap, currency, loading }) {
       ) : (
         <>
           {/* Receivable — money customers owe you */}
-          <Link to="/sales/receivables" className="flex items-center justify-between mb-3 p-3 rounded-xl bg-violet-500/8 border border-violet-500/15 hover:border-violet-500/35 transition-colors">
+          <Link to="/sales/receivables" className="flex items-center justify-between mb-3 p-3 rounded-xl bg-cyan/[0.06] border border-cyan/15 hover:border-cyan/35 transition-colors">
             <div className="flex items-center gap-2.5">
-              <div className="p-1.5 rounded-lg bg-violet-500/20">
-                <ArrowDownRight className="h-4 w-4 text-violet-400" />
+              <div className="p-1.5 rounded-lg bg-cyan/15">
+                <ArrowDownRight className="h-4 w-4 text-cyan" />
               </div>
               <div>
-                <p className="text-[10px] font-semibold text-violet-400 uppercase tracking-wider">Accounts Receivable</p>
-                <p className="text-base font-black text-text-primary leading-tight">{fmtAmt(Math.abs(ar), currency)}</p>
+                <p className="text-[10px] font-semibold text-cyan uppercase tracking-wider">Accounts Receivable</p>
+                <p className="num text-base font-semibold text-text-primary leading-tight">{fmtAmt(Math.abs(ar), currency)}</p>
                 <p className="text-[10px] text-text-muted mt-0.5">Customers still owe you this</p>
               </div>
             </div>
@@ -243,14 +243,14 @@ function FinancialSnapshot({ ar, ap, currency, loading }) {
           </Link>
 
           {/* Payable — money you owe vendors */}
-          <Link to="/purchases/payables" className="flex items-center justify-between mb-4 p-3 rounded-xl bg-orange-500/8 border border-orange-500/15 hover:border-orange-500/35 transition-colors">
+          <Link to="/purchases/payables" className="flex items-center justify-between mb-4 p-3 rounded-xl bg-amber/[0.06] border border-amber/15 hover:border-amber/35 transition-colors">
             <div className="flex items-center gap-2.5">
-              <div className="p-1.5 rounded-lg bg-orange-500/20">
-                <ArrowUpRight className="h-4 w-4 text-orange-400" />
+              <div className="p-1.5 rounded-lg bg-amber/15">
+                <ArrowUpRight className="h-4 w-4 text-amber" />
               </div>
               <div>
-                <p className="text-[10px] font-semibold text-orange-400 uppercase tracking-wider">Accounts Payable</p>
-                <p className="text-base font-black text-text-primary leading-tight">{fmtAmt(Math.abs(ap), currency)}</p>
+                <p className="text-[10px] font-semibold text-amber uppercase tracking-wider">Accounts Payable</p>
+                <p className="num text-base font-semibold text-text-primary leading-tight">{fmtAmt(Math.abs(ap), currency)}</p>
                 <p className="text-[10px] text-text-muted mt-0.5">You still owe vendors this</p>
               </div>
             </div>
@@ -265,8 +265,8 @@ function FinancialSnapshot({ ar, ap, currency, loading }) {
                 <span>{(100 - arPct).toFixed(0)}% you owe</span>
               </div>
               <div className="h-1.5 rounded-full bg-glass-panel overflow-hidden flex">
-                <div className="bg-violet-400 rounded-l-full transition-all duration-700" style={{ width: `${arPct}%` }} />
-                <div className="bg-orange-400 rounded-r-full flex-1" />
+                <div className="bg-cyan rounded-l-full transition-all duration-700" style={{ width: `${arPct}%` }} />
+                <div className="bg-amber rounded-r-full flex-1" />
               </div>
             </div>
           )}
@@ -324,8 +324,8 @@ export default function Dashboard() {
 
       {/* ── 1. HEADER ───────────────────────────────────────────── */}
       <div className="mb-4">
-        <h1 className="text-xl sm:text-2xl font-black text-text-primary tracking-tight">
-          {greeting}, <span className="text-cyan">{firstName}</span> 👋
+        <h1 className="text-2xl sm:text-[1.75rem] font-semibold text-text-primary tracking-tight">
+          {greeting}, <span className="text-gradient">{firstName}</span>
         </h1>
         <p className="text-sm text-text-secondary mt-1 flex items-center gap-2 flex-wrap">
           <span className="font-semibold text-text-primary">

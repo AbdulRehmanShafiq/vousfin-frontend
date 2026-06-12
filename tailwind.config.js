@@ -1,27 +1,28 @@
 /** @type {import('tailwindcss').Config} */
 
 /*
- * VousFin design tokens — "Heritage Ledger"
+ * VousFin design tokens — "Nocturne Ledger"
  *
- * A premium private-banking identity: warm ivory paper canvas, white cards,
- * ink typography, ONE deep forest-green accent (interactive), gold reserved
- * for highlights/badges. Money semantics: green in, warm red out.
- * Display type is Fraunces (serif); UI is IBM Plex Sans; figures IBM Plex Mono.
+ * A private bank vault at midnight: deep moss-black canvas under an aurora
+ * atmosphere, obsidian-gloss cards lit from above, ONE luminous jade accent
+ * (green is money), champagne gold reserved for foil details and highlights.
+ * Display type is Fraunces (serif); UI is Schibsted Grotesk; figures are
+ * Spline Sans Mono.
  *
  * IMPORTANT: legacy token NAMES (navy, charcoal, cyan, emerald, glass…) are
- * kept so all existing code compiles — only their VALUES changed. The app was
- * dark; these same tokens now express the light heritage theme because every
- * usage is semantic (text-primary on bg-navy, hairline borders, etc).
+ * kept so all existing code compiles — only their VALUES changed. Every usage
+ * is semantic (text-primary on bg-navy, hairline borders, etc), so the whole
+ * app retunes from this file + index.css.
  */
 
 const ACCENT = {
-  DEFAULT: '#1E5A3C', // deep forest green — interactive elements
-  2: '#143F2A',       // pressed / gradient anchor
-  soft: 'rgba(30, 90, 60, 0.10)',
+  DEFAULT: '#3DDC97', // luminous jade — interactive elements
+  2: '#2BB67C',       // pressed / gradient anchor
+  soft: 'rgba(61, 220, 151, 0.12)',
 }
 const GOLD = {
-  DEFAULT: '#B98A2F',
-  2: '#9A7226',
+  DEFAULT: '#D4A94E', // champagne foil
+  2: '#B68A33',
 }
 
 export default {
@@ -30,13 +31,13 @@ export default {
   theme: {
     extend: {
       colors: {
-        /* ── Surfaces (legacy names, heritage values) ── */
+        /* ── Surfaces (legacy names, nocturne values) ── */
         navy: {
-          DEFAULT: '#F6F4EE', // page canvas — warm ivory paper
-          2: '#FFFFFF',       // card surface
+          DEFAULT: '#070B09', // page canvas — deep moss black
+          2: '#0D1411',       // card surface
         },
         charcoal: {
-          DEFAULT: '#FCFBF7', // elevated: sidebar, modals, sheets (warm white)
+          DEFAULT: '#0A100D', // elevated: sidebar, modals, sheets
         },
 
         /* ── Accent (legacy: cyan; semantic: accent) ── */
@@ -44,61 +45,61 @@ export default {
         accent: ACCENT,
         gold: GOLD,
         amber: {
-          DEFAULT: '#B98A2F', // attention = heritage gold
-          2: '#9A7226',
+          DEFAULT: '#E0B14B', // attention = candlelight amber
+          2: '#C99A38',
         },
 
         /* ── Money semantics ── */
         emerald: {
-          DEFAULT: '#1E7A4A',
-          2: '#16613A',
-          3: '#2E9960',
+          DEFAULT: '#3DDC97',
+          2: '#2BB67C',
+          3: '#6FE8B4',
         },
-        positive: { DEFAULT: '#1E7A4A', muted: 'rgba(30, 122, 74, 0.10)' },
-        negative: { DEFAULT: '#B3402A', muted: 'rgba(179, 64, 42, 0.10)' },
+        positive: { DEFAULT: '#3DDC97', muted: 'rgba(61, 220, 151, 0.10)' },
+        negative: { DEFAULT: '#F2705B', muted: 'rgba(242, 112, 91, 0.10)' },
 
-        /* ── Text hierarchy — ink on paper ── */
+        /* ── Text hierarchy — moonlit ivory on moss black ── */
         text: {
-          primary: '#20241F',
-          secondary: '#54594F',
-          muted: '#8A8F83',
+          primary: '#E9EFEA',
+          secondary: '#A3B0A8',
+          muted: '#6C7A71',
         },
 
-        /* ── Legacy light tokens (now aligned to heritage) ── */
+        /* ── Legacy light tokens (now aligned to nocturne) ── */
         brand: {
-          50: '#f0f7f2', 100: '#dcebe1', 200: '#bcd8c6', 300: '#8fbda1',
-          400: '#5d9c78', 500: '#3d8059', 600: '#1E5A3C', 700: '#1a4d34',
-          800: '#173e2b', 900: '#133324', 950: '#0a1c14',
+          50: '#0a1c14', 100: '#0e2a1d', 200: '#133b29', 300: '#1a5239',
+          400: '#22754f', 500: '#2BB67C', 600: '#3DDC97', 700: '#6FE8B4',
+          800: '#a3f2cf', 900: '#d2f9e7', 950: '#eefcf5',
         },
         surface: {
-          DEFAULT: '#FFFFFF',
-          muted: '#F6F4EE',
-          border: 'rgba(32, 36, 31, 0.10)',
+          DEFAULT: '#0D1411',
+          muted: '#070B09',
+          border: 'rgba(233, 239, 234, 0.08)',
         },
       },
 
       fontFamily: {
-        sans: ['IBM Plex Sans', 'Inter', 'system-ui', 'Segoe UI', 'sans-serif'],
+        sans: ['Schibsted Grotesk', 'IBM Plex Sans', 'system-ui', 'Segoe UI', 'sans-serif'],
         display: ['Fraunces', 'Georgia', 'serif'],
-        mono: ['IBM Plex Mono', 'ui-monospace', 'SFMono-Regular', 'monospace'],
+        mono: ['Spline Sans Mono', 'IBM Plex Mono', 'ui-monospace', 'monospace'],
       },
 
-      /* ── Elevation — soft warm depth ── */
+      /* ── Elevation — deep night shadows + jade/gold bloom ── */
       boxShadow: {
-        card: '0 1px 2px 0 rgb(32 36 31 / 0.05), 0 1px 4px -1px rgb(32 36 31 / 0.06)',
-        elevated: '0 12px 32px -12px rgb(32 36 31 / 0.18)',
-        'glow-cyan': '0 1px 2px 0 rgb(32 36 31 / 0.06)',
-        'glow-em': '0 1px 2px 0 rgb(32 36 31 / 0.06)',
+        card: 'inset 0 1px 0 rgba(255, 255, 255, 0.04), 0 10px 30px -14px rgba(0, 0, 0, 0.55)',
+        elevated: 'inset 0 1px 0 rgba(255, 255, 255, 0.05), 0 24px 60px -24px rgba(0, 0, 0, 0.75)',
+        'glow-cyan': '0 0 0 1px rgba(61, 220, 151, 0.18), 0 8px 28px -10px rgba(61, 220, 151, 0.35)',
+        'glow-em': '0 0 0 1px rgba(61, 220, 151, 0.18), 0 8px 28px -10px rgba(61, 220, 151, 0.35)',
       },
 
-      /* Warm ink hairlines */
+      /* Moonlit hairlines */
       borderColor: {
-        glass: 'rgba(32, 36, 31, 0.10)',
-        'glass-2': 'rgba(32, 36, 31, 0.18)',
+        glass: 'rgba(233, 239, 234, 0.08)',
+        'glass-2': 'rgba(233, 239, 234, 0.16)',
       },
       backgroundColor: {
-        'glass-panel': 'rgba(32, 36, 31, 0.04)',
-        'glass-hover': 'rgba(32, 36, 31, 0.06)',
+        'glass-panel': 'rgba(233, 239, 234, 0.045)',
+        'glass-hover': 'rgba(233, 239, 234, 0.07)',
       },
 
       animation: {

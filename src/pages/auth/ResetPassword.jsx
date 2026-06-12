@@ -31,7 +31,7 @@ export default function ResetPassword() {
   }
 
   return (
-    <div className="rounded-2xl border border-slate-200 bg-white p-8 shadow-elevated">
+    <div className="rounded-2xl border border-glass bg-navy-2 p-8 shadow-elevated">
       <h1 className="text-2xl font-bold">Set new password</h1>
       <form onSubmit={submit} className="mt-6 space-y-4">
         <Input label="Reset token" value={form.token} onChange={(e) => setForm({ ...form, token: e.target.value })} />

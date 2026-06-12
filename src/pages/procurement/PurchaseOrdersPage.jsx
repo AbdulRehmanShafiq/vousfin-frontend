@@ -33,7 +33,7 @@ const STATE_COLOR = {
   partially_received: 'text-indigo-400',
   fully_received:     'text-cyan',
   billed:             'text-emerald-400',
-  closed:             'text-emerald-600',
+  closed:             'text-emerald-400',
   cancelled:          'text-red-400',
 }
 

@@ -56,7 +56,7 @@ function TrendBadge({ trend, label }) {
   return (
     <span className={cn(
       'inline-flex items-center gap-0.5 text-[10px] font-bold flex-shrink-0',
-      trend > 0 ? 'text-emerald-400' : 'text-red-400',
+      trend > 0 ? 'text-positive' : 'text-negative',
     )}>
       {trend > 0 ? <TrendingUp className="h-2.5 w-2.5" /> : <TrendingDown className="h-2.5 w-2.5" />}
       {label}
@@ -71,13 +71,18 @@ function PrimaryCard({ title, subtitle, value, format, currency, icon: Icon, col
   const inner = (
     <div
       className={cn(
-        'group premium-card p-4 sm:p-5 flex flex-col gap-2.5 border-t-2 h-full',
+        'group premium-card p-4 sm:p-5 flex flex-col gap-2.5 h-full',
         to && 'cursor-pointer',
       )}
-      style={{ borderTopColor: color }}
     >
+      {/* Luminous hairline along the top edge — the card's semantic color */}
+      <span
+        aria-hidden="true"
+        className="absolute top-0 left-3.5 right-3.5 h-px pointer-events-none"
+        style={{ background: `linear-gradient(90deg, transparent, ${color}99, ${color}1A, transparent)` }}
+      />
       <div className="flex items-center gap-2">
-        <div className="p-1.5 rounded-lg flex-shrink-0" style={{ background: color + '20' }}>
+        <div className="p-1.5 rounded-lg flex-shrink-0" style={{ background: color + '1C' }}>
           <Icon className="h-4 w-4" style={{ color }} />
         </div>
         <span className="text-[10px] font-semibold text-text-muted uppercase tracking-wider leading-tight">{title}</span>
@@ -86,7 +91,7 @@ function PrimaryCard({ title, subtitle, value, format, currency, icon: Icon, col
       {loading ? (
         <div className="h-8 w-28 animate-pulse rounded-lg bg-white/[0.04]" />
       ) : (
-        <p className="text-2xl font-black tracking-tight text-text-primary leading-none">{display}</p>
+        <p className="num text-2xl font-semibold tracking-tight text-text-primary leading-none">{display}</p>
       )}
 
       {/* plain-English one-liner */}
@@ -121,7 +126,7 @@ function SecondaryChip({ title, subtitle, value, format, currency, icon: Icon, c
         <p className="text-[10px] font-semibold text-text-muted uppercase tracking-wider truncate">{title}</p>
         {loading
           ? <div className="h-5 w-16 mt-0.5 animate-pulse rounded bg-white/[0.04]" />
-          : <p className="text-sm font-black text-text-primary leading-tight truncate">{display}</p>}
+          : <p className="num text-sm font-semibold text-text-primary leading-tight truncate">{display}</p>}
         {subtitle && !loading && <p className="text-[9px] text-text-muted leading-tight truncate">{subtitle}</p>}
       </div>
       {!loading && trend != null && <TrendBadge trend={trend} label={trendLabel} />}
@@ -152,26 +157,26 @@ const SmartKPIStrip = memo(function SmartKPIStrip({ kpis = {}, revenueVsExpenses
   const primaryCards = [
     {
       key: 'revenue', title: 'Total Revenue', subtitle: 'Money coming in this year',
-      value: revenue, icon: TrendingUp, color: '#34d399',
+      value: revenue, icon: TrendingUp, color: '#3DDC97',
       trend: revenue > 0 ? 1 : 0, trendLabel: 'YTD', sparkData: revSpark,
       to: '/reports/income-statement',
     },
     {
       key: 'expenses', title: 'Total Expenses', subtitle: 'Money going out this year',
-      value: expenses, icon: TrendingDown, color: '#f87171',
+      value: expenses, icon: TrendingDown, color: '#F2705B',
       trend: expenses > 0 ? -1 : 0, trendLabel: 'YTD', sparkData: expSpark,
       to: '/reports/income-statement',
     },
     {
       key: 'profit', title: 'Net Profit', subtitle: "What's left after all costs",
-      value: netProfit, icon: DollarSign, color: netProfit >= 0 ? '#34d399' : '#f87171',
+      value: netProfit, icon: DollarSign, color: netProfit >= 0 ? '#3DDC97' : '#F2705B',
       trend: netProfit > 0 ? 1 : netProfit < 0 ? -1 : 0,
       trendLabel: netProfit >= 0 ? 'Profit' : 'Loss', sparkData: profitSpark,
       to: '/reports/income-statement',
     },
     {
       key: 'cash', title: 'Cash Balance', subtitle: 'Money available right now',
-      value: cashBalance, icon: Wallet, color: '#06b6d4',
+      value: cashBalance, icon: Wallet, color: '#D4A94E',
       trend: cashBalance > 0 ? 1 : cashBalance < 0 ? -1 : 0,
       trendLabel: cashBalance > 0 ? 'Positive' : 'Deficit', sparkData: [],
       to: '/reports/balance-sheet',
@@ -216,17 +221,17 @@ const SmartKPIStrip = memo(function SmartKPIStrip({ kpis = {}, revenueVsExpenses
           just repeats the same number is noise. ── */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-2.5">
         <SecondaryChip title="Profit Margin" subtitle="Kept as profit" value={profitMarginPct} format="percent" icon={Percent}
-          color={profitMarginPct >= 0 ? '#34d399' : '#f87171'}
+          color={profitMarginPct >= 0 ? '#3DDC97' : '#F2705B'}
           currency={currency} loading={loading} to="/reports/income-statement" />
 
-        <SecondaryChip title="Avg Monthly Spend" subtitle="Typical monthly costs" value={avgMonthlySpend} icon={Flame} color="#facc15"
+        <SecondaryChip title="Avg Monthly Spend" subtitle="Typical monthly costs" value={avgMonthlySpend} icon={Flame} color="#E0B14B"
           currency={currency} loading={loading} to="/reports/income-statement" />
 
-        <SecondaryChip title="Avg Monthly Sales" subtitle="Typical monthly income" value={avgMonthlyRev} icon={Activity} color="#a78bfa"
+        <SecondaryChip title="Avg Monthly Sales" subtitle="Typical monthly income" value={avgMonthlyRev} icon={Activity} color="#6FE8B4"
           currency={currency} loading={loading} to="/reports/income-statement" />
 
         <SecondaryChip title="Expense Ratio" subtitle="Of sales spent on costs" value={expenseRatioPct} format="percent" icon={Target}
-          color={expenseRatioPct <= 80 ? '#34d399' : '#f87171'}
+          color={expenseRatioPct <= 80 ? '#3DDC97' : '#F2705B'}
           currency={currency} loading={loading} to="/reports/income-statement" />
       </div>
     </div>
