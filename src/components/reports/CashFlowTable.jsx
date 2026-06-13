@@ -15,7 +15,7 @@ export default function CashFlowTable({ data, loading }) {
         const lines = section.lines || section.items || []
         return (
           <div key={group} className="rounded-xl border border-glass bg-navy-2 shadow-card">
-            <h4 className="border-b bg-glass-panel px-4 py-3 font-semibold capitalize">{group} Activities</h4>
+            <h4 className="border-b border-glass bg-glass-panel px-4 py-3 font-semibold capitalize text-text-primary">{group} Activities</h4>
             <table className="w-full text-sm">
               <tbody>
                 {lines.map((row, i) => (

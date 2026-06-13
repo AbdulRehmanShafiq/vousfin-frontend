@@ -403,6 +403,20 @@
 @keyframes value-glow { 0% { opacity: 0.4; } 100% { opacity: 1; } }
 .animate-value-glow { animation: value-glow 0.5s ease-out 1; }
 
+/* Staggered entrance — a calm rise for grid children (KPIs, module cards) */
+@keyframes rise-in { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+@media (prefers-reduced-motion: no-preference) {
+  .stagger-rise > * { animation: rise-in 0.5s cubic-bezier(0.16, 1, 0.3, 1) both; }
+  .stagger-rise > *:nth-child(1) { animation-delay: 0.03s; }
+  .stagger-rise > *:nth-child(2) { animation-delay: 0.08s; }
+  .stagger-rise > *:nth-child(3) { animation-delay: 0.13s; }
+  .stagger-rise > *:nth-child(4) { animation-delay: 0.18s; }
+  .stagger-rise > *:nth-child(5) { animation-delay: 0.23s; }
+  .stagger-rise > *:nth-child(6) { animation-delay: 0.28s; }
+  .stagger-rise > *:nth-child(7) { animation-delay: 0.33s; }
+  .stagger-rise > *:nth-child(8) { animation-delay: 0.38s; }
+}
+
 .focus-ring {
   @apply focus:outline-none focus-visible:ring-2 focus-visible:ring-accent/40 focus-visible:ring-offset-1 focus-visible:ring-offset-transparent;
 }
