@@ -97,7 +97,7 @@ export default function ComparativeReportPage() {
         {PRESETS.map((p, idx) => (
           <button key={p.label} onClick={() => applyPreset(p, idx)}
             className={`px-4 py-2 rounded-lg text-sm font-medium border transition-all ${
-              preset === idx ? 'bg-cyan text-navy border-cyan font-bold' : 'border-glass text-text-secondary hover:border-cyan/40 hover:text-text-primary'
+              preset === idx ? 'bg-cyan text-ink-on-accent border-cyan font-bold' : 'border-glass text-text-secondary hover:border-cyan/40 hover:text-text-primary'
             }`}>
             {p.label}
           </button>

@@ -102,7 +102,7 @@ export default function ExpenseAllocationForm({ bill, existing, onSave, onCancel
             onClick={() => setMethod(m.value)}
             className={`px-3 py-1.5 rounded text-xs font-medium transition-colors
               ${method === m.value
-                ? 'bg-cyan text-navy'
+                ? 'bg-cyan text-ink-on-accent'
                 : 'bg-glass text-text-secondary hover:text-text-primary'}`}
           >
             {m.label}
@@ -218,7 +218,7 @@ export default function ExpenseAllocationForm({ bill, existing, onSave, onCancel
         <button
           type="submit"
           disabled={isSaving || (!balanced && method !== 'equal')}
-          className="px-4 py-1.5 bg-cyan text-navy rounded text-sm font-medium
+          className="px-4 py-1.5 bg-cyan text-ink-on-accent rounded text-sm font-medium
                      hover:bg-cyan/80 disabled:opacity-50 transition-colors"
         >
           {isSaving ? 'Saving…' : 'Save Allocation'}

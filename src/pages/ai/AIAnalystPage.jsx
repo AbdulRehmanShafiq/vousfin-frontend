@@ -74,7 +74,7 @@ export default function AIAnalystPage() {
                 'flex items-center gap-2 px-4 py-2.5 rounded-lg text-sm font-medium',
                 'transition-all whitespace-nowrap',
                 isActive
-                  ? 'bg-cyan text-navy font-bold shadow-sm'
+                  ? 'bg-cyan text-ink-on-accent font-bold shadow-sm'
                   : 'text-text-secondary hover:text-text-primary hover:bg-glass-hover'
               )}
             >

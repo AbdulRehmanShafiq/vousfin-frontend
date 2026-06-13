@@ -258,7 +258,7 @@ export default function APWorkflowBoard() {
             type="button"
             onClick={() => setStateFilter(f)}
             className={`px-3 py-1 rounded text-xs font-medium transition-colors capitalize
-              ${stateFilter === f ? 'bg-cyan text-navy' : 'bg-glass text-text-muted hover:text-text-primary'}`}
+              ${stateFilter === f ? 'bg-cyan text-ink-on-accent' : 'bg-glass text-text-muted hover:text-text-primary'}`}
           >
             {f === 'all' ? 'All Bills' : f}
           </button>

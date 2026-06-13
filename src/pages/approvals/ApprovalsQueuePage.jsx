@@ -62,7 +62,7 @@ function Queue() {
       <div className="flex gap-1">
         {STATUS_FILTERS.map((s) => (
           <button key={s.key} onClick={() => setStatus(s.key)}
-            className={`text-xs px-3 py-1.5 rounded-lg font-medium ${status === s.key ? 'bg-cyan text-navy' : 'bg-glass-panel text-text-secondary hover:bg-glass-hover'}`}>
+            className={`text-xs px-3 py-1.5 rounded-lg font-medium ${status === s.key ? 'bg-cyan text-ink-on-accent' : 'bg-glass-panel text-text-secondary hover:bg-glass-hover'}`}>
             {s.label}
           </button>
         ))}

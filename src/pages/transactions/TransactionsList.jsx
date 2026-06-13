@@ -330,7 +330,7 @@ export default function TransactionsList() {
               <button key={f} onClick={() => setActiveFilter(f)}
                 className={`shrink-0 rounded-full px-3 py-1 text-xs font-medium transition-colors ${
                   activeFilter === f
-                    ? 'bg-cyan text-navy shadow-glow-cyan'
+                    ? 'bg-cyan text-ink-on-accent shadow-glow-cyan'
                     : 'bg-glass-panel text-text-secondary hover:bg-glass-hover border border-glass'
                 }`}
               >{f}</button>

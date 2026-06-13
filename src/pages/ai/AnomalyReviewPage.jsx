@@ -220,7 +220,7 @@ export default function AnomalyReviewPage() {
               className={cn(
                 'px-3 py-2 rounded-lg text-xs font-medium transition-all flex items-center gap-1.5',
                 activeTab === tab.key
-                  ? 'bg-cyan text-navy font-bold shadow-sm'
+                  ? 'bg-cyan text-ink-on-accent font-bold shadow-sm'
                   : 'text-text-secondary hover:text-text-primary'
               )}
             >
@@ -229,7 +229,7 @@ export default function AnomalyReviewPage() {
                 <span className={cn(
                   'px-1.5 py-0.5 rounded-full text-[12px] font-bold',
                   activeTab === tab.key
-                    ? 'bg-navy/20 text-navy'
+                    ? 'bg-navy/20 text-ink-on-accent'
                     : tab.key === 'pending' ? 'bg-amber/20 text-amber'
                     : tab.key === 'fraud'   ? 'bg-negative/20 text-negative'
                     : tab.key === 'legit'   ? 'bg-positive/20 text-positive'

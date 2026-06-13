@@ -86,14 +86,14 @@ export default function Sidebar({ isCollapsed, toggleCollapse, isMobile = false,
             !compact && 'mr-3',
           )} />
           {badge > 0 && compact && (
-            <span className="absolute -top-1.5 -right-1 min-w-[16px] h-4 px-1 rounded-full bg-amber text-[12px] font-bold text-navy flex items-center justify-center">
+            <span className="absolute -top-1.5 -right-1 min-w-[16px] h-4 px-1 rounded-full bg-amber text-[12px] font-bold text-ink-on-accent flex items-center justify-center">
               {badge > 99 ? '99+' : badge}
             </span>
           )}
         </span>
         {!compact && <span className="flex-1 truncate">{item.name}</span>}
         {!compact && badge > 0 && (
-          <span className="ml-auto min-w-[18px] h-[18px] px-1.5 rounded-full bg-amber text-[12.5px] font-bold text-navy flex items-center justify-center">
+          <span className="ml-auto min-w-[18px] h-[18px] px-1.5 rounded-full bg-amber text-[12.5px] font-bold text-ink-on-accent flex items-center justify-center">
             {badge > 99 ? '99+' : badge}
           </span>
         )}

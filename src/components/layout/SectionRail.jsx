@@ -62,7 +62,7 @@ function RailButton({ item, active, badge, isMobile, onNavigate }) {
         />
         {badge > 0 && (
           <span
-            className="absolute -top-1 -right-1 min-w-[15px] h-[15px] px-1 rounded-full bg-amber text-[12.5px] font-bold text-navy flex items-center justify-center"
+            className="absolute -top-1 -right-1 min-w-[15px] h-[15px] px-1 rounded-full bg-amber text-[12.5px] font-bold text-ink-on-accent flex items-center justify-center"
           >
             {badge > 99 ? '99+' : badge}
           </span>
@@ -112,7 +112,7 @@ export default function SectionRail({ isMobile = false, closeMobile }) {
         className={cn('flex items-center', isMobile ? 'gap-2.5 px-3 mb-3' : 'justify-center mb-4')}
         aria-label="VousFin home"
       >
-        <img src={vousFinLogo} alt="VousFin" className="h-7 w-7 object-contain drop-shadow-[0_0_8px_rgba(61,220,151,0.35)]" />
+        <img src={vousFinLogo} alt="VousFin" className="h-7 w-7 object-contain drop-shadow-[0_0_8px_rgb(var(--c-accent)/0.35)]" />
         {isMobile && (
           <span className="font-display text-lg font-semibold tracking-tight text-text-primary">
             vous<span className="text-gradient">Fin</span>

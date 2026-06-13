@@ -190,7 +190,7 @@ export default function CustomersList() {
               className={cn(
                 'px-3 py-1.5 rounded-lg text-xs font-semibold transition-all',
                 filter === f.key
-                  ? 'bg-cyan text-navy shadow-sm'
+                  ? 'bg-cyan text-ink-on-accent shadow-sm'
                   : 'text-text-secondary hover:text-text-primary hover:bg-glass-hover'
               )}
             >

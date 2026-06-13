@@ -69,7 +69,7 @@ export default function AgingReportPage() {
         {['receivable', 'payable'].map(t => (
           <button key={t} onClick={() => { setType(t); setBucket('all') }}
             className={`px-5 py-2 rounded-lg text-sm font-medium transition-all ${
-              type === t ? 'bg-cyan text-navy font-bold' : 'text-text-secondary hover:text-text-primary'
+              type === t ? 'bg-cyan text-ink-on-accent font-bold' : 'text-text-secondary hover:text-text-primary'
             }`}>
             {t === 'receivable' ? 'Receivables (AR)' : 'Payables (AP)'}
           </button>

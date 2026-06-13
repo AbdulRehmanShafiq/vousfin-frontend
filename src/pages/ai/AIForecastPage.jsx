@@ -1039,7 +1039,7 @@ export default function AIForecastPage() {
                 active
                   ? tab.id === 'scenario'
                     ? 'bg-accent-2 text-white shadow-md'
-                    : 'bg-cyan text-navy shadow-glow-cyan'
+                    : 'bg-cyan text-ink-on-accent shadow-glow-cyan'
                   : 'text-text-secondary hover:text-text-primary hover:bg-glass'
               )}
             >

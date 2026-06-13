@@ -183,7 +183,7 @@ export default function VendorPortal() {
                 <h3 className="text-sm font-semibold text-text-primary">Open Bills</h3>
                 <Link
                   to="/purchases/bills/new"
-                  className="flex items-center gap-1.5 px-3 py-1.5 bg-cyan text-navy
+                  className="flex items-center gap-1.5 px-3 py-1.5 bg-cyan text-ink-on-accent
                              rounded text-xs font-medium hover:bg-cyan/80 transition-colors"
                 >
                   <Upload className="h-3.5 w-3.5" />

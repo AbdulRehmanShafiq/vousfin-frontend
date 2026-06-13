@@ -66,6 +66,8 @@ export default {
           secondary: withAlpha('--c-text2'),
           muted: withAlpha('--c-text3'),
         },
+        /* Readable ink ON the accent fill (dark for bright accents, light for dark) */
+        'ink-on-accent': 'rgb(var(--c-on-accent))',
 
         /* ── Legacy ramp (mapped to accent family) ── */
         brand: {

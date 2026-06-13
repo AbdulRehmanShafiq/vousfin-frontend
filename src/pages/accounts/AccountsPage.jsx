@@ -134,7 +134,7 @@ export default function AccountsPage() {
                 onClick={() => setActiveFilter(f)}
                 className={`whitespace-nowrap rounded-full px-4 py-1.5 text-sm font-medium transition-colors ${
                   activeFilter === f
-                    ? 'bg-cyan text-navy shadow-glow-cyan'
+                    ? 'bg-cyan text-ink-on-accent shadow-glow-cyan'
                     : 'bg-glass-panel text-text-secondary hover:bg-glass-hover hover:text-text-primary border border-glass'
                 }`}
               >

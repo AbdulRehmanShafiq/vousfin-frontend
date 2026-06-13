@@ -193,7 +193,7 @@ export default function CurrencyRatesPage() {
             icon={isSyncing ? Loader2 : RefreshCw}
             loading={isSyncing}
             onClick={handleManualSync}
-            className="bg-cyan text-navy hover:bg-cyan/90"
+            className="bg-cyan text-ink-on-accent hover:bg-cyan/90"
           >
             {isSyncing ? 'Fetching…' : 'Sync Live Rates'}
           </Button>

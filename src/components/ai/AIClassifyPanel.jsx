@@ -171,7 +171,7 @@ export default function AIClassifyPanel({ onClose }) {
             className="flex-1 bg-glass-panel border border-glass rounded-lg px-3 py-2 text-sm text-text-primary placeholder:text-text-muted focus:border-cyan outline-none"
           />
           <button onClick={handleNlParse} disabled={nlBusy}
-            className="px-4 bg-cyan text-navy disabled:opacity-40 text-sm font-semibold rounded-lg shadow-glow-cyan">
+            className="px-4 bg-cyan text-ink-on-accent disabled:opacity-40 text-sm font-semibold rounded-lg shadow-glow-cyan">
             {nlBusy ? <Loader2 className="w-4 h-4 animate-spin" /> : 'Read'}
           </button>
         </div>
@@ -190,7 +190,7 @@ export default function AIClassifyPanel({ onClose }) {
               <span>Cr <strong className="text-text-primary">{nlResult.credit_account_name || '—'}</strong></span>
             </div>
             <button onClick={handleNlPost} disabled={nlBusy || !nlResult.debit_account_id}
-              className="w-full bg-cyan text-navy disabled:opacity-40 text-sm font-semibold py-2 rounded-lg shadow-glow-cyan flex items-center justify-center gap-2">
+              className="w-full bg-cyan text-ink-on-accent disabled:opacity-40 text-sm font-semibold py-2 rounded-lg shadow-glow-cyan flex items-center justify-center gap-2">
               {nlBusy ? <Loader2 className="w-4 h-4 animate-spin" /> : <CheckCircle2 className="w-4 h-4" />}
               Post to ledger
             </button>
@@ -230,7 +230,7 @@ export default function AIClassifyPanel({ onClose }) {
                 onChange={(e) => pick(e.target.files?.[0])} />
             </div>
             <button onClick={upload} disabled={!file}
-              className="mt-3 w-full bg-cyan text-navy disabled:opacity-40 text-sm font-semibold py-2.5 rounded-xl flex items-center justify-center gap-2 shadow-glow-cyan">
+              className="mt-3 w-full bg-cyan text-ink-on-accent disabled:opacity-40 text-sm font-semibold py-2.5 rounded-xl flex items-center justify-center gap-2 shadow-glow-cyan">
               <Sparkles className="w-4 h-4" /> Classify with AI
             </button>
           </>
@@ -266,7 +266,7 @@ export default function AIClassifyPanel({ onClose }) {
             </div>
             <div className="flex gap-2">
               <button onClick={goQueue}
-                className="flex-1 bg-cyan text-navy text-sm font-semibold py-2.5 rounded-xl flex items-center justify-center gap-2 shadow-glow-cyan">
+                className="flex-1 bg-cyan text-ink-on-accent text-sm font-semibold py-2.5 rounded-xl flex items-center justify-center gap-2 shadow-glow-cyan">
                 View AI Review Queue <ArrowRight className="w-4 h-4" />
               </button>
               <button onClick={() => { setFile(null); setResult(null); setPhase('idle') }}
@@ -314,7 +314,7 @@ export default function AIClassifyPanel({ onClose }) {
           </div>
         </div>
         <button type="submit" disabled={busy}
-          className="w-full bg-cyan text-navy disabled:opacity-40 text-sm font-semibold py-2.5 rounded-xl flex items-center justify-center gap-2 shadow-glow-cyan">
+          className="w-full bg-cyan text-ink-on-accent disabled:opacity-40 text-sm font-semibold py-2.5 rounded-xl flex items-center justify-center gap-2 shadow-glow-cyan">
           {busy ? <Loader2 className="w-4 h-4 animate-spin" /> : <Sparkles className="w-4 h-4" />}
           Send to AI
         </button>

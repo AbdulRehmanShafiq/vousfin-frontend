@@ -86,7 +86,7 @@ function Bubble({ m }) {
       <div className={cn(
         'max-w-[80%] rounded-xl px-3 py-2 text-xs leading-relaxed',
         isUser
-          ? 'bg-cyan text-navy font-medium rounded-tr-sm'
+          ? 'bg-cyan text-ink-on-accent font-medium rounded-tr-sm'
           : 'bg-glass-panel border border-glass text-text-primary rounded-tl-sm',
       )}>
         {isUser ? m.content : (
@@ -170,7 +170,7 @@ export default function GlobalAIWidget() {
     return (
       <button
         onClick={() => setIsOpen(true)}
-        className="fixed bottom-6 right-6 z-[60] hidden lg:flex items-center gap-2 rounded-full bg-cyan text-navy px-4 py-3 shadow-lg shadow-cyan/25 hover:bg-cyan/90 active:scale-95 transition-all duration-150 font-semibold text-sm select-none"
+        className="fixed bottom-6 right-6 z-[60] hidden lg:flex items-center gap-2 rounded-full bg-cyan text-ink-on-accent px-4 py-3 shadow-lg shadow-cyan/25 hover:bg-cyan/90 active:scale-95 transition-all duration-150 font-semibold text-sm select-none"
         aria-label="Open AI Assistant"
       >
         <BrainCircuit className="h-5 w-5 flex-shrink-0" />
@@ -308,7 +308,7 @@ export default function GlobalAIWidget() {
         <button
           type="submit"
           disabled={loading || !input.trim()}
-          className="flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-xl bg-cyan text-navy hover:bg-cyan/80 disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
+          className="flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-xl bg-cyan text-ink-on-accent hover:bg-cyan/80 disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
           title="Send"
         >
           <Send className="h-3.5 w-3.5" />

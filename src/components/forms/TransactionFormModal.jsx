@@ -585,7 +585,7 @@ export default function TransactionFormModal({ isOpen, onClose, onSuccess, trans
             type="button"
             onClick={() => setEngineMode('manual')}
             className={`flex-1 flex items-center justify-center gap-2 py-2 px-3 rounded-lg text-sm font-semibold transition-all ${
-              engineMode === 'manual' ? 'bg-cyan text-navy shadow-glow-cyan' : 'text-text-secondary hover:text-text-primary hover:bg-glass-hover'
+              engineMode === 'manual' ? 'bg-cyan text-ink-on-accent shadow-glow-cyan' : 'text-text-secondary hover:text-text-primary hover:bg-glass-hover'
             }`}
           >
             <LayoutList className="h-4 w-4" /> Manual Entry
@@ -594,7 +594,7 @@ export default function TransactionFormModal({ isOpen, onClose, onSuccess, trans
             type="button"
             onClick={() => setEngineMode('ai')}
             className={`flex-1 flex items-center justify-center gap-2 py-2 px-3 rounded-lg text-sm font-semibold transition-all ${
-              engineMode === 'ai' ? 'bg-cyan text-navy shadow-glow-cyan' : 'text-text-secondary hover:text-text-primary hover:bg-glass-hover'
+              engineMode === 'ai' ? 'bg-cyan text-ink-on-accent shadow-glow-cyan' : 'text-text-secondary hover:text-text-primary hover:bg-glass-hover'
             }`}
           >
             <Sparkles className="h-4 w-4" /> AI Auto-Classify
@@ -612,7 +612,7 @@ export default function TransactionFormModal({ isOpen, onClose, onSuccess, trans
               onClick={() => setActiveTab(id)}
               className={`flex-1 flex items-center justify-center gap-2 py-2 px-3 rounded-lg text-sm font-medium transition-all duration-200 ${
                 activeTab === id
-                  ? 'bg-cyan text-navy shadow-glow-cyan'
+                  ? 'bg-cyan text-ink-on-accent shadow-glow-cyan'
                   : 'text-text-secondary hover:text-text-primary hover:bg-glass-hover'
               }`}
             >
