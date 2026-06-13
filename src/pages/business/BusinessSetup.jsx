@@ -241,7 +241,7 @@ export default function BusinessSetup() {
               {/* Divider */}
               <div className="flex items-center gap-3">
                 <div className="flex-1 h-px bg-glass" />
-                <span className="text-[11px] font-medium text-text-muted uppercase tracking-wider">or choose from all types</span>
+                <span className="text-[12.5px] font-medium text-text-muted uppercase tracking-wider">or choose from all types</span>
                 <div className="flex-1 h-px bg-glass" />
               </div>
 

@@ -87,7 +87,7 @@ export default function ForecastCard({ target = 'Revenue', horizon = 6 }) {
         </div>
       )}
 
-      <div className="flex flex-wrap items-center gap-x-4 gap-y-1 text-[11px] text-text-muted">
+      <div className="flex flex-wrap items-center gap-x-4 gap-y-1 text-[12.5px] text-text-muted">
         {ensemble.modelType && <span>Model: {ensemble.modelType}</span>}
         {score?.confidence != null && <span>Confidence score: {score.confidence}/100</span>}
         {ensemble.baselineGate?.gatePassed != null && (

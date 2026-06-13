@@ -36,7 +36,7 @@ function KpiTile({ icon: Icon, label, value, sub, accent }) {
         </div>
       )}
       <div className="min-w-0">
-        <p className="text-[11px] text-text-muted font-semibold uppercase tracking-wider truncate">
+        <p className="text-[12.5px] text-text-muted font-semibold uppercase tracking-wider truncate">
           {label}
         </p>
         <p className="text-lg font-black text-text-primary leading-tight">{value}</p>

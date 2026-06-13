@@ -203,7 +203,7 @@ export default function GlobalAIWidget() {
           </div>
           <div>
             <p className="text-sm font-bold text-text-primary leading-tight">vousFin AI</p>
-            <p className="text-[10px] text-text-muted leading-tight">Gemini Flash · Live data</p>
+            <p className="text-[12px] text-text-muted leading-tight">Gemini Flash · Live data</p>
           </div>
         </div>
 
@@ -263,7 +263,7 @@ export default function GlobalAIWidget() {
                   key={p}
                   type="button"
                   onClick={() => submit(p)}
-                  className="rounded-full border border-glass bg-glass-panel px-2.5 py-1 text-[11px] text-text-secondary hover:border-cyan/40 hover:text-text-primary hover:bg-glass-hover transition-colors"
+                  className="rounded-full border border-glass bg-glass-panel px-2.5 py-1 text-[12.5px] text-text-secondary hover:border-cyan/40 hover:text-text-primary hover:bg-glass-hover transition-colors"
                 >
                   {p}
                 </button>

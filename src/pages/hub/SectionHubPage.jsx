@@ -66,7 +66,7 @@ function ModuleCard({ item, accent, stat, index }) {
           <span className="num text-[15px] font-semibold" style={{ color: stat.tint || 'var(--text)' }}>
             {stat.value}
           </span>
-          <span className="text-[11px] text-text-muted">{stat.label}</span>
+          <span className="text-[12.5px] text-text-muted">{stat.label}</span>
         </div>
       )}
     </Link>
@@ -129,7 +129,7 @@ export default function SectionHubPage() {
       <div className="mb-7 max-w-2xl">
         <div className="mb-3 flex items-center gap-2.5">
           <span className="h-px w-7" style={{ background: `rgb(${accent} / 0.60)` }} aria-hidden="true" />
-          <span className="text-[11px] font-semibold uppercase tracking-[0.18em]" style={{ color: accentColor }}>
+          <span className="text-[12.5px] font-semibold uppercase tracking-[0.18em]" style={{ color: accentColor }}>
             {section.label}
           </span>
         </div>

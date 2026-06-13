@@ -62,7 +62,7 @@ function RailButton({ item, active, badge, isMobile, onNavigate }) {
         />
         {badge > 0 && (
           <span
-            className="absolute -top-1 -right-1 min-w-[15px] h-[15px] px-1 rounded-full bg-amber text-[9px] font-bold text-navy flex items-center justify-center"
+            className="absolute -top-1 -right-1 min-w-[15px] h-[15px] px-1 rounded-full bg-amber text-[12.5px] font-bold text-navy flex items-center justify-center"
           >
             {badge > 99 ? '99+' : badge}
           </span>

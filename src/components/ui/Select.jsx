@@ -196,7 +196,7 @@ export const Select = forwardRef(({
                   nodes.push(
                     <div
                       key={`__grp_${groupLabel}`}
-                      className="sticky top-0 z-[1] px-4 py-1.5 text-[10px] font-bold uppercase tracking-wider text-text-muted bg-charcoal/95 border-b border-glass/40"
+                      className="sticky top-0 z-[1] px-4 py-1.5 text-[12px] font-bold uppercase tracking-wider text-text-muted bg-charcoal/95 border-b border-glass/40"
                     >
                       {groupLabel}
                     </div>
@@ -230,7 +230,7 @@ export const Select = forwardRef(({
                   {/* Subtitle — account subtype shown as dim secondary line */}
                   {opt.subtitle && (
                     <span className={cn(
-                      'block text-[10px] leading-tight mt-0.5',
+                      'block text-[12px] leading-tight mt-0.5',
                       isSelected ? 'text-cyan/60' : 'text-text-muted'
                     )}>
                       {opt.subtitle}

@@ -86,11 +86,11 @@ export default function ProcurementTimeline({ timeline }) {
             <div>
               <p className="text-xs text-text-primary leading-snug">{entryLabel(entry)}</p>
               {(entry.reason || entry.note) && (
-                <p className="text-[11px] text-text-muted mt-0.5 italic">
+                <p className="text-[12.5px] text-text-muted mt-0.5 italic">
                   {entry.reason || entry.note}
                 </p>
               )}
-              <time className="text-[10px] text-text-muted">
+              <time className="text-[12px] text-text-muted">
                 {entry.timestamp ? new Date(entry.timestamp).toLocaleString() : ''}
               </time>
             </div>

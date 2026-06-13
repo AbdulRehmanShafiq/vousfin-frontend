@@ -19,7 +19,7 @@ export default function ReminderStateBadge({ state }) {
   if (!cfg) return null
   const { Icon } = cfg
   return (
-    <span className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[11px]
+    <span className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[12.5px]
                        font-medium ${cfg.bg} ${cfg.text}`}>
       <Icon className="h-3 w-3" />
       {cfg.label}

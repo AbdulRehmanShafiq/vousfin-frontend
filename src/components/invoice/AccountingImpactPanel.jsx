@@ -30,13 +30,13 @@ function LedgerLine({ side, account, code, amount, currency }) {
     <div className="flex items-center justify-between gap-3 text-sm py-1">
       <span className="flex items-center gap-2 min-w-0">
         <span className={cn(
-          'inline-flex h-5 w-7 flex-shrink-0 items-center justify-center rounded text-[10px] font-black',
+          'inline-flex h-5 w-7 flex-shrink-0 items-center justify-center rounded text-[12px] font-black',
           isDebit ? 'bg-cyan/15 text-cyan' : 'bg-amber/15 text-amber'
         )}>
           {side}
         </span>
         <span className="truncate text-text-primary">{account}</span>
-        {code && <span className="text-[10px] text-text-muted font-mono">{code}</span>}
+        {code && <span className="text-[12px] text-text-muted font-mono">{code}</span>}
       </span>
       <span className="font-mono font-semibold text-text-primary whitespace-nowrap">
         {formatCurrency(amount, currency)}
@@ -79,7 +79,7 @@ export default function AccountingImpactPanel({ kind, entity, currency }) {
       <div className="flex items-center gap-2">
         <BookOpen className="h-4 w-4 text-cyan" />
         <h3 className="text-sm font-bold text-text-primary">Accounting Impact</h3>
-        <span className="ml-auto text-[10px] uppercase tracking-wider font-semibold text-positive/90 flex items-center gap-1">
+        <span className="ml-auto text-[12px] uppercase tracking-wider font-semibold text-positive/90 flex items-center gap-1">
           <CheckCircle2 className="h-3 w-3" /> Ledger-synced
         </span>
       </div>

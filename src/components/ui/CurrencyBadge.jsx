@@ -20,7 +20,7 @@ export default function CurrencyBadge({ code, baseCurrency, rate, size = 'xs' })
 
   const sizeClass = size === 'sm'
     ? 'px-2 py-0.5 text-xs'
-    : 'px-1.5 py-px text-[10px]'
+    : 'px-1.5 py-px text-[12px]'
 
   return (
     <span

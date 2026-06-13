@@ -48,7 +48,7 @@ export default function BillAgingHeatmap({ data, isLoading }) {
           <BarChart2 className="h-4 w-4 text-cyan" />
           AP Aging
         </h3>
-        <span className="text-[11px] text-text-muted">{billCount} open bills</span>
+        <span className="text-[12.5px] text-text-muted">{billCount} open bills</span>
       </div>
 
       {/* Stacked progress bar */}
@@ -75,14 +75,14 @@ export default function BillAgingHeatmap({ data, isLoading }) {
         {BUCKETS.map(({ key, label, color }) => (
           <div key={key} className="text-center space-y-0.5">
             <div className={`h-1 rounded-full ${color} mx-auto w-3/4`} />
-            <p className="text-[11px] font-semibold text-text-primary">{fmt(buckets[key] || 0)}</p>
-            <p className="text-[9px] text-text-muted">{label}</p>
+            <p className="text-[12.5px] font-semibold text-text-primary">{fmt(buckets[key] || 0)}</p>
+            <p className="text-[12.5px] text-text-muted">{label}</p>
           </div>
         ))}
       </div>
 
       {total > 0 && (
-        <div className="flex justify-between text-[10px] text-text-muted border-t border-glass pt-2">
+        <div className="flex justify-between text-[12px] text-text-muted border-t border-glass pt-2">
           <span>Total outstanding</span>
           <span className="font-semibold text-text-primary">{fmt(total)}</span>
         </div>

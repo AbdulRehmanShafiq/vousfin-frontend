@@ -23,7 +23,7 @@ export default function KPICard({ title, value, format = 'currency', trend, load
   return (
     <Card className="hover-scale">
       <div className="flex items-center justify-between">
-        <p className="text-[11px] font-semibold text-text-muted uppercase tracking-[0.08em]">{title}</p>
+        <p className="text-[12.5px] font-semibold text-text-muted uppercase tracking-[0.08em]">{title}</p>
         {Icon && <Icon className="h-4 w-4 text-text-muted" />}
       </div>
       <p className="num mt-2 text-2xl font-semibold tracking-tight text-text-primary">{display}</p>

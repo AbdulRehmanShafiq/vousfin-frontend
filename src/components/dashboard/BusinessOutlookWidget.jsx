@@ -37,9 +37,9 @@ function scoreColor(s) {
 function Stat({ label, children, hint }) {
   return (
     <div className="flex flex-col gap-0.5 min-w-0">
-      <p className="text-[10px] font-bold uppercase tracking-widest text-text-muted">{label}</p>
+      <p className="text-[12px] font-bold uppercase tracking-widest text-text-muted">{label}</p>
       {children}
-      {hint && <p className="text-[10px] text-text-muted truncate">{hint}</p>}
+      {hint && <p className="text-[12px] text-text-muted truncate">{hint}</p>}
     </div>
   )
 }
@@ -60,14 +60,14 @@ const BusinessOutlookWidget = memo(function BusinessOutlookWidget({ horizon = 6 
           </div>
           <div>
             <h3 className="text-sm font-bold text-text-primary">Forward Outlook</h3>
-            <p className="text-[11px] text-text-muted">
+            <p className="text-[12.5px] text-text-muted">
               Next {data?.horizonMonths || horizon} months · projected from your forecast
             </p>
           </div>
         </div>
         {!isLoading && !insufficient && conf && (
           <span
-            className="px-2 py-0.5 rounded-full text-[9px] font-bold uppercase tracking-wide flex-shrink-0"
+            className="px-2 py-0.5 rounded-full text-[12.5px] font-bold uppercase tracking-wide flex-shrink-0"
             style={{ backgroundColor: `rgb(${conf.color} / 0.13)`, color: `rgb(${conf.color})` }}
           >
             {conf.label}
@@ -107,7 +107,7 @@ const BusinessOutlookWidget = memo(function BusinessOutlookWidget({ horizon = 6 
                 >
                   {data.runway.survivesHorizon ? `${data.horizonMonths}+` : data.runway.months}
                 </span>
-                <span className="text-[11px] text-text-muted font-semibold">months</span>
+                <span className="text-[12.5px] text-text-muted font-semibold">months</span>
               </div>
             </Stat>
 
@@ -118,7 +118,7 @@ const BusinessOutlookWidget = memo(function BusinessOutlookWidget({ horizon = 6 
                 <span className="text-2xl font-black leading-none" style={{ color: scoreColor(data.forwardHealth.overall) }}>
                   {data.forwardHealth.overall ?? '—'}
                 </span>
-                <span className="text-[11px] text-text-muted font-semibold">/100</span>
+                <span className="text-[12.5px] text-text-muted font-semibold">/100</span>
               </div>
             </Stat>
 
@@ -145,8 +145,8 @@ const BusinessOutlookWidget = memo(function BusinessOutlookWidget({ horizon = 6 
                   <div key={s.id || i} className="flex items-start gap-2">
                     <meta.Icon className="h-3.5 w-3.5 mt-0.5 flex-shrink-0" style={{ color: meta.color }} />
                     <div className="min-w-0">
-                      <p className="text-[11px] font-bold" style={{ color: meta.color }}>{s.title}</p>
-                      <p className="text-[11px] text-text-secondary leading-snug">{s.message}</p>
+                      <p className="text-[12.5px] font-bold" style={{ color: meta.color }}>{s.title}</p>
+                      <p className="text-[12.5px] text-text-secondary leading-snug">{s.message}</p>
                     </div>
                   </div>
                 )

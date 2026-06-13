@@ -72,13 +72,13 @@ export default function ForecastWidget() {
             <h2 className="text-sm font-bold text-text-primary flex items-center gap-2">
               AI Forecasting Engine
               <span className={cn(
-                'text-[10px] font-medium px-1.5 py-0.5 rounded-full',
+                'text-[12px] font-medium px-1.5 py-0.5 rounded-full',
                 engineOnline ? 'bg-positive/15 text-positive' : 'bg-glass-panel text-text-muted',
               )}>
                 {engineOnline ? '● Online' : '○ Standby'}
               </span>
             </h2>
-            <p className="text-[11px] text-text-muted">
+            <p className="text-[12.5px] text-text-muted">
               {engineOnline
                 ? 'Global transfer model + ensemble · confidence bands included'
                 : 'Ensemble forecast · confidence bands included'}
@@ -97,7 +97,7 @@ export default function ForecastWidget() {
                   runForecast(m.key, horizon)
                 }}
                 className={cn(
-                  'flex items-center gap-1 text-[11px] font-medium px-2.5 py-1 rounded-md transition-all',
+                  'flex items-center gap-1 text-[12.5px] font-medium px-2.5 py-1 rounded-md transition-all',
                   activeMetric === m.key
                     ? 'shadow-sm'
                     : 'text-text-muted hover:text-text-secondary',
@@ -120,7 +120,7 @@ export default function ForecastWidget() {
                   runForecast(activeMetric, h)
                 }}
                 className={cn(
-                  'text-[11px] font-medium px-2.5 py-1 rounded-md transition-all',
+                  'text-[12.5px] font-medium px-2.5 py-1 rounded-md transition-all',
                   horizon === h
                     ? 'bg-cyan/15 text-cyan shadow-sm'
                     : 'text-text-muted hover:text-text-secondary',
@@ -139,7 +139,7 @@ export default function ForecastWidget() {
             }}
             disabled={isLoading}
             className={cn(
-              'flex items-center gap-1.5 text-[11px] font-semibold px-3 py-1.5 rounded-lg border transition-all',
+              'flex items-center gap-1.5 text-[12.5px] font-semibold px-3 py-1.5 rounded-lg border transition-all',
               isLoading
                 ? 'border-glass text-text-muted cursor-not-allowed'
                 : 'border-cyan/30 text-cyan bg-cyan/5 hover:bg-cyan/10',
@@ -198,12 +198,12 @@ export default function ForecastWidget() {
 
       {/* ── Footer ── */}
       <div className="mt-3 flex items-center justify-between gap-2">
-        <p className="text-[10px] text-text-muted">
+        <p className="text-[12px] text-text-muted">
           {currentData?.modelInfo
             ? `Model: ${currentData.modelInfo}`
             : 'LSTM auto-tuned per your transaction history'}
         </p>
-        <Link to="/ai/forecast" className="text-[11px] text-cyan hover:underline font-medium flex-shrink-0">
+        <Link to="/ai/forecast" className="text-[12.5px] text-cyan hover:underline font-medium flex-shrink-0">
           Full forecast →
         </Link>
       </div>

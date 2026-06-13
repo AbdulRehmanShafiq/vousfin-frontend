@@ -6,12 +6,14 @@
  * Series semantics: money in = positive, money out = negative, cash = highlight.
  */
 
+/* The vars hold space-separated RGB *channels*, so they MUST be wrapped in
+ * rgb() to be valid SVG colors — passing the bare var renders black. */
 export const CHART_COLORS = {
-  revenue:  'var(--chart-revenue, #3DDC97)',
-  expenses: 'var(--chart-expenses, #F2705B)',
-  profit:   'var(--chart-profit, #6FE8B4)',
-  cash:     'var(--chart-cash, #D4A94E)',
-  neutral:  'var(--chart-neutral, #6C7A71)',
+  revenue:  'rgb(var(--chart-revenue))',
+  expenses: 'rgb(var(--chart-expenses))',
+  profit:   'rgb(var(--chart-profit))',
+  cash:     'rgb(var(--chart-cash))',
+  neutral:  'rgb(var(--chart-neutral))',
 }
 
 export const GRID_PROPS = {

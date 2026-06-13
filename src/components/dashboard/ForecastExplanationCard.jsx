@@ -163,7 +163,7 @@ const ForecastExplanationCard = memo(function ForecastExplanationCard({ forecast
         <div className="p-1 rounded-md bg-accent-2/15">
           <Lightbulb className="h-3.5 w-3.5 text-accent-2" />
         </div>
-        <p className="text-[11px] font-bold text-accent-2 uppercase tracking-wider">
+        <p className="text-[12.5px] font-bold text-accent-2 uppercase tracking-wider">
           What this means for your business
         </p>
       </div>
@@ -180,7 +180,7 @@ const ForecastExplanationCard = memo(function ForecastExplanationCard({ forecast
             <div className="p-0.5 rounded flex-shrink-0 mt-0.5" style={{ color: d.color }}>
               <d.Icon className="h-3 w-3" />
             </div>
-            <p className="text-[11px] text-text-secondary leading-snug">{d.text}</p>
+            <p className="text-[12.5px] text-text-secondary leading-snug">{d.text}</p>
           </div>
         ))}
       </div>

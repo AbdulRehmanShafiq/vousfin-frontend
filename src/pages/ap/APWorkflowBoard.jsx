@@ -58,7 +58,7 @@ function BillCard({ bill }) {
         {bill.reminderState && <ReminderStateBadge state={bill.reminderState} />}
       </div>
 
-      <p className="text-[11px] text-text-muted truncate">
+      <p className="text-[12.5px] text-text-muted truncate">
         {bill.vendorSnapshot?.vendorName || 'Vendor'}
       </p>
 
@@ -66,17 +66,17 @@ function BillCard({ bill }) {
         <span className="text-sm font-semibold text-text-primary">
           {fmt(bill.totalAmount)}
         </span>
-        <span className="text-[10px] text-text-muted">{fmtDate(bill.dueDate)}</span>
+        <span className="text-[12px] text-text-muted">{fmtDate(bill.dueDate)}</span>
       </div>
 
       {matchStatus && matchStatus !== 'none' && matchStatus !== 'pending' && (
-        <span className={`text-[10px] font-medium capitalize ${MATCH_STATUS_COLORS[matchStatus] || 'text-text-muted'}`}>
+        <span className={`text-[12px] font-medium capitalize ${MATCH_STATUS_COLORS[matchStatus] || 'text-text-muted'}`}>
           {matchStatus.replace(/_/g, ' ')}
         </span>
       )}
 
       {bill.isRecurring && (
-        <div className="flex items-center gap-1 text-[10px] text-cyan">
+        <div className="flex items-center gap-1 text-[12px] text-cyan">
           <Repeat className="h-3 w-3" />
           Recurring
         </div>
@@ -92,17 +92,17 @@ function Column({ col, bills }) {
       <div className={`${col.headerBg} px-3 py-2.5 rounded-t-xl`}>
         <div className="flex items-center justify-between">
           <span className="text-xs font-bold text-text-primary">{col.label}</span>
-          <span className="text-[10px] text-text-muted bg-glass rounded-full px-1.5 py-0.5">
+          <span className="text-[12px] text-text-muted bg-glass rounded-full px-1.5 py-0.5">
             {bills.length}
           </span>
         </div>
         {bills.length > 0 && (
-          <p className="text-[10px] text-text-muted mt-0.5">{fmt(total)}</p>
+          <p className="text-[12px] text-text-muted mt-0.5">{fmt(total)}</p>
         )}
       </div>
       <div className="flex flex-col gap-2 p-2 overflow-y-auto max-h-[60vh]">
         {bills.length === 0 ? (
-          <p className="text-[11px] text-text-muted text-center py-4">No bills</p>
+          <p className="text-[12.5px] text-text-muted text-center py-4">No bills</p>
         ) : (
           bills.map(b => <BillCard key={b._id} bill={b} />)
         )}
@@ -117,12 +117,12 @@ function ScheduleRow({ schedule, onDeactivate }) {
     <div className="flex items-center justify-between py-2 border-b border-glass last:border-0">
       <div>
         <p className="text-sm text-text-primary">{schedule.name}</p>
-        <p className="text-[11px] text-text-muted">
+        <p className="text-[12.5px] text-text-muted">
           {schedule.recurrencePattern} · Next: {fmtDate(schedule.nextRunDate)}
         </p>
       </div>
       <div className="flex items-center gap-2">
-        <span className={`text-[11px] px-1.5 py-0.5 rounded ${schedule.isActive ? 'bg-positive/15 text-positive' : 'bg-glass text-text-muted'}`}>
+        <span className={`text-[12.5px] px-1.5 py-0.5 rounded ${schedule.isActive ? 'bg-positive/15 text-positive' : 'bg-glass text-text-muted'}`}>
           {schedule.isActive ? 'Active' : 'Inactive'}
         </span>
         {schedule.isActive && (
@@ -130,7 +130,7 @@ function ScheduleRow({ schedule, onDeactivate }) {
             type="button"
             onClick={() => deactivate.mutate(schedule._id)}
             disabled={deactivate.isPending}
-            className="text-[11px] text-negative hover:text-negative transition-colors"
+            className="text-[12.5px] text-negative hover:text-negative transition-colors"
           >
             Stop
           </button>
@@ -221,7 +221,7 @@ export default function APWorkflowBoard() {
                 ].map(({ key, label, color }) => (
                   <div key={key} className="text-center">
                     <p className={`text-lg font-bold ${color}`}>{reminderData[key]?.count || 0}</p>
-                    <p className="text-[10px] text-text-muted">{label}</p>
+                    <p className="text-[12px] text-text-muted">{label}</p>
                   </div>
                 ))}
               </div>
@@ -241,7 +241,7 @@ export default function APWorkflowBoard() {
                 ].map(({ level, color }) => riskSummary[level] > 0 && (
                   <div key={level} className="text-center">
                     <p className={`text-base font-bold ${color}`}>{riskSummary[level]}</p>
-                    <p className="text-[10px] text-text-muted capitalize">{level}</p>
+                    <p className="text-[12px] text-text-muted capitalize">{level}</p>
                   </div>
                 ))}
               </div>

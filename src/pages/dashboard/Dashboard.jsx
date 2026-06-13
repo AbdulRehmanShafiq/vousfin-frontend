@@ -59,10 +59,10 @@ function Section({ label, to, children, collapsible = false, defaultOpen = true 
   return (
     <section>
       <div className="flex items-center gap-3 mb-3">
-        <span className="text-[11px] font-bold uppercase tracking-widest text-text-muted">{label}</span>
+        <span className="text-[12.5px] font-bold uppercase tracking-widest text-text-muted">{label}</span>
         <div className="flex-1 h-px bg-glass" />
         {to && (
-          <Link to={to} className="flex items-center gap-1 text-[11px] text-cyan hover:underline font-medium shrink-0">
+          <Link to={to} className="flex items-center gap-1 text-[12.5px] text-cyan hover:underline font-medium shrink-0">
             View all <ExternalLink className="h-3 w-3" />
           </Link>
         )}
@@ -108,14 +108,14 @@ function TxRow({ tx, currency }) {
           {tx.description}
         </p>
         <div className="flex items-center gap-2 mt-0.5 flex-wrap">
-          <span className="text-[11px] text-text-muted">{formatDate(tx.transactionDate, 'MMM d')}</span>
+          <span className="text-[12.5px] text-text-muted">{formatDate(tx.transactionDate, 'MMM d')}</span>
           {tx.transactionType && (
-            <span className="text-[10px] px-1.5 py-0.5 rounded-md bg-glass-panel text-text-muted capitalize">
+            <span className="text-[12px] px-1.5 py-0.5 rounded-md bg-glass-panel text-text-muted capitalize">
               {tx.transactionType}
             </span>
           )}
           {isUnpaid && (
-            <span className="text-[10px] px-1.5 py-0.5 rounded-md bg-amber/15 text-amber font-medium capitalize">
+            <span className="text-[12px] px-1.5 py-0.5 rounded-md bg-amber/15 text-amber font-medium capitalize">
               {tx.paymentStatus}
             </span>
           )}
@@ -215,10 +215,10 @@ function FinancialSnapshot({ ar, ap, currency, loading }) {
 
   return (
     <div className="premium-card p-5">
-      <h3 className="text-[11px] font-bold uppercase tracking-widest text-text-muted">
+      <h3 className="text-[12.5px] font-bold uppercase tracking-widest text-text-muted">
         Financial Position
       </h3>
-      <p className="text-[11px] text-text-muted mb-4 mt-0.5">Money owed to you, and money you owe</p>
+      <p className="text-[12.5px] text-text-muted mb-4 mt-0.5">Money owed to you, and money you owe</p>
 
       {loading ? (
         <div className="space-y-3">
@@ -234,9 +234,9 @@ function FinancialSnapshot({ ar, ap, currency, loading }) {
                 <ArrowDownRight className="h-4 w-4 text-cyan" />
               </div>
               <div>
-                <p className="text-[10px] font-semibold text-cyan uppercase tracking-wider">Accounts Receivable</p>
+                <p className="text-[12px] font-semibold text-cyan uppercase tracking-wider">Accounts Receivable</p>
                 <p className="num text-base font-semibold text-text-primary leading-tight">{fmtAmt(Math.abs(ar), currency)}</p>
-                <p className="text-[10px] text-text-muted mt-0.5">Customers still owe you this</p>
+                <p className="text-[12px] text-text-muted mt-0.5">Customers still owe you this</p>
               </div>
             </div>
             <ExternalLink className="h-3.5 w-3.5 text-text-muted flex-shrink-0" />
@@ -249,9 +249,9 @@ function FinancialSnapshot({ ar, ap, currency, loading }) {
                 <ArrowUpRight className="h-4 w-4 text-amber" />
               </div>
               <div>
-                <p className="text-[10px] font-semibold text-amber uppercase tracking-wider">Accounts Payable</p>
+                <p className="text-[12px] font-semibold text-amber uppercase tracking-wider">Accounts Payable</p>
                 <p className="num text-base font-semibold text-text-primary leading-tight">{fmtAmt(Math.abs(ap), currency)}</p>
-                <p className="text-[10px] text-text-muted mt-0.5">You still owe vendors this</p>
+                <p className="text-[12px] text-text-muted mt-0.5">You still owe vendors this</p>
               </div>
             </div>
             <ExternalLink className="h-3.5 w-3.5 text-text-muted flex-shrink-0" />
@@ -260,7 +260,7 @@ function FinancialSnapshot({ ar, ap, currency, loading }) {
           {/* Net exposure bar */}
           {total > 0 && (
             <div>
-              <div className="flex justify-between text-[10px] text-text-muted mb-1.5">
+              <div className="flex justify-between text-[12px] text-text-muted mb-1.5">
                 <span>Owed to you {arPct.toFixed(0)}%</span>
                 <span>{(100 - arPct).toFixed(0)}% you owe</span>
               </div>
@@ -426,20 +426,20 @@ export default function Dashboard() {
               <div className="flex items-center justify-between px-4 sm:px-5 py-4 border-b border-glass">
                 <div>
                   <h3 className="text-sm font-bold text-text-primary">Recent Transactions</h3>
-                  <p className="text-[11px] text-text-muted mt-0.5">Last entries</p>
+                  <p className="text-[12.5px] text-text-muted mt-0.5">Last entries</p>
                 </div>
                 <div className="flex items-center gap-3">
                   {/* Mobile: drawer button */}
                   {recentTxs.length > 0 && (
                     <button
                       onClick={() => setShowTxDrawer(true)}
-                      className="lg:hidden text-[11px] text-cyan font-semibold hover:underline"
+                      className="lg:hidden text-[12.5px] text-cyan font-semibold hover:underline"
                     >
                       See all
                     </button>
                   )}
                   <Link to="/transactions"
-                    className="hidden lg:flex items-center gap-1 text-[11px] text-cyan hover:underline font-medium">
+                    className="hidden lg:flex items-center gap-1 text-[12.5px] text-cyan hover:underline font-medium">
                     View all <ExternalLink className="h-3 w-3" />
                   </Link>
                 </div>
@@ -519,7 +519,7 @@ export default function Dashboard() {
               <div className="flex items-center justify-between px-4 pb-3 border-b border-glass">
                 <div>
                   <h3 className="text-sm font-bold text-text-primary">All Transactions</h3>
-                  <p className="text-[11px] text-text-muted">{recentTxs.length} recent entries</p>
+                  <p className="text-[12.5px] text-text-muted">{recentTxs.length} recent entries</p>
                 </div>
                 <button
                   onClick={() => setShowTxDrawer(false)}

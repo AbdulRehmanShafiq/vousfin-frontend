@@ -35,12 +35,12 @@ function CustomTooltip({ active, payload, label, currency, metricName, showScena
 
   return (
     <div className="bg-charcoal/95 border border-glass/60 p-3 rounded-xl shadow-2xl min-w-[180px] backdrop-blur-sm">
-      <p className="text-text-muted text-[11px] mb-2.5 font-semibold uppercase tracking-wide border-b border-glass/40 pb-1.5">
+      <p className="text-text-muted text-[12.5px] mb-2.5 font-semibold uppercase tracking-wide border-b border-glass/40 pb-1.5">
         {label}
       </p>
       {items.map((entry, i) => (
         <div key={i} className="flex items-center justify-between gap-6 mb-1">
-          <span className="flex items-center gap-1.5 text-[11px]" style={{ color: entry.color }}>
+          <span className="flex items-center gap-1.5 text-[12.5px]" style={{ color: entry.color }}>
             <span className="h-1.5 w-4 rounded-full inline-block" style={{ background: entry.color, opacity: 0.8 }} />
             {entry.name}
           </span>
@@ -56,7 +56,7 @@ function CustomTooltip({ active, payload, label, currency, metricName, showScena
 /* ── Custom legend ── */
 function CustomLegend({ color, showScenarios }) {
   return (
-    <div className="flex flex-wrap items-center gap-x-5 gap-y-1.5 text-[11px] text-text-secondary mt-2 justify-center">
+    <div className="flex flex-wrap items-center gap-x-5 gap-y-1.5 text-[12.5px] text-text-secondary mt-2 justify-center">
       <span className="flex items-center gap-1.5">
         <span className="w-4 h-0.5 rounded inline-block" style={{ background: color, opacity: 0.9 }} />
         Historical
@@ -195,7 +195,7 @@ export default function ForecastChart({
         <div className="flex justify-end mb-2">
           <button
             onClick={() => setShowScenarios(s => !s)}
-            className={`text-[11px] font-medium px-3 py-1 rounded-full border transition-all ${
+            className={`text-[12.5px] font-medium px-3 py-1 rounded-full border transition-all ${
               showScenarios
                 ? 'bg-cyan/10 border-cyan/30 text-cyan'
                 : 'border-glass text-text-muted hover:text-text-secondary'
@@ -373,7 +373,7 @@ export default function ForecastChart({
 
       {/* Risk zone warning */}
       {showRiskZone && (
-        <p className="text-[10px] text-negative/80 text-center mt-1.5 flex items-center justify-center gap-1.5">
+        <p className="text-[12px] text-negative/80 text-center mt-1.5 flex items-center justify-center gap-1.5">
           <span className="h-1.5 w-1.5 rounded-full bg-negative inline-block animate-pulse" />
           Anomaly risk {Math.round(anomalyRisk * 100)}% — confidence bands are widened
         </p>

@@ -54,7 +54,7 @@ function BreakdownBar({ label, value, max = 1 }) {
   const pct = Math.round((value / max) * 100)
   const color = pct >= 60 ? 'bg-negative' : pct >= 30 ? 'bg-amber' : 'bg-cyan/60'
   return (
-    <div className="flex items-center gap-2 text-[10px]">
+    <div className="flex items-center gap-2 text-[12px]">
       <span className="w-20 text-text-muted truncate">{label}</span>
       <div className="flex-1 h-1.5 rounded-full bg-glass-panel overflow-hidden">
         <div className={cn('h-full rounded-full transition-all', color)} style={{ width: `${pct}%` }} />
@@ -108,16 +108,16 @@ export default function AnomalyAlerts({ anomalies = [], onClassify }) {
                     <span className="font-bold text-text-primary text-sm truncate">
                       {a.title || a.description || 'Unknown Transaction'}
                     </span>
-                    <Badge variant={cfg.badge} className="text-[10px] capitalize shrink-0">
+                    <Badge variant={cfg.badge} className="text-[12px] capitalize shrink-0">
                       {a.severity || 'medium'}
                     </Badge>
                     {a.anomalyStatus && (
-                      <span className="text-[10px] font-medium text-text-muted capitalize shrink-0">
+                      <span className="text-[12px] font-medium text-text-muted capitalize shrink-0">
                         · {statusLabel}
                       </span>
                     )}
                     {a.status && a.status !== 'pending' && a.status !== 'pending_review' && (
-                      <Badge variant="info" className="text-[10px] capitalize shrink-0">
+                      <Badge variant="info" className="text-[12px] capitalize shrink-0">
                         {String(a.status).replace(/_/g, ' ')}
                       </Badge>
                     )}
@@ -132,12 +132,12 @@ export default function AnomalyAlerts({ anomalies = [], onClassify }) {
                   {rules.length > 0 && (
                     <div className="mt-2 flex flex-wrap gap-1">
                       {rules.slice(0, 4).map((r, k) => (
-                        <span key={k} className="px-1.5 py-0.5 rounded-full bg-glass-panel border border-glass text-[10px] text-text-secondary">
+                        <span key={k} className="px-1.5 py-0.5 rounded-full bg-glass-panel border border-glass text-[12px] text-text-secondary">
                           {RULE_LABELS[r] || r.replace(/_/g, ' ')}
                         </span>
                       ))}
                       {rules.length > 4 && (
-                        <span className="px-1.5 py-0.5 text-[10px] text-text-muted">+{rules.length - 4} more</span>
+                        <span className="px-1.5 py-0.5 text-[12px] text-text-muted">+{rules.length - 4} more</span>
                       )}
                     </div>
                   )}
@@ -150,13 +150,13 @@ export default function AnomalyAlerts({ anomalies = [], onClassify }) {
                     )}
                     {a.transactionType && <span className="capitalize">{a.transactionType}</span>}
                     {score !== null && (
-                      <span className={cn('inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold', cfg.scoreBg)}>
+                      <span className={cn('inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[12px] font-bold', cfg.scoreBg)}>
                         <Activity className="h-3 w-3" />
                         Score {score}
                       </span>
                     )}
                     {conf !== null && (
-                      <span className="text-[10px] text-text-secondary">
+                      <span className="text-[12px] text-text-secondary">
                         · {conf}% confidence
                       </span>
                     )}
@@ -212,7 +212,7 @@ export default function AnomalyAlerts({ anomalies = [], onClassify }) {
                 {/* Full explanation */}
                 {a.explanation && a.explanation !== a.reason && (
                   <div>
-                    <p className="text-[10px] font-semibold uppercase tracking-wide text-text-muted mb-1">Why this was flagged</p>
+                    <p className="text-[12px] font-semibold uppercase tracking-wide text-text-muted mb-1">Why this was flagged</p>
                     <p className="text-xs text-text-secondary leading-relaxed">{a.explanation}</p>
                   </div>
                 )}
@@ -220,7 +220,7 @@ export default function AnomalyAlerts({ anomalies = [], onClassify }) {
                 {/* Score breakdown */}
                 {Object.keys(breakdown).length > 0 && (
                   <div>
-                    <p className="text-[10px] font-semibold uppercase tracking-wide text-text-muted mb-1.5">Ensemble component scores</p>
+                    <p className="text-[12px] font-semibold uppercase tracking-wide text-text-muted mb-1.5">Ensemble component scores</p>
                     <div className="space-y-1">
                       <BreakdownBar label="Isolation Forest" value={breakdown.isolationForest || 0} />
                       <BreakdownBar label="Z-Score"          value={breakdown.zScore          || 0} />
@@ -235,10 +235,10 @@ export default function AnomalyAlerts({ anomalies = [], onClassify }) {
                 {/* All triggered rules */}
                 {rules.length > 0 && (
                   <div>
-                    <p className="text-[10px] font-semibold uppercase tracking-wide text-text-muted mb-1">Triggered rules</p>
+                    <p className="text-[12px] font-semibold uppercase tracking-wide text-text-muted mb-1">Triggered rules</p>
                     <div className="flex flex-wrap gap-1">
                       {rules.map((r, k) => (
-                        <span key={k} className="px-1.5 py-0.5 rounded-full bg-glass-panel border border-glass text-[10px] text-text-secondary">
+                        <span key={k} className="px-1.5 py-0.5 rounded-full bg-glass-panel border border-glass text-[12px] text-text-secondary">
                           {RULE_LABELS[r] || r.replace(/_/g, ' ')}
                         </span>
                       ))}

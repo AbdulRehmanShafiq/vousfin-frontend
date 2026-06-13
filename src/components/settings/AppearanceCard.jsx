@@ -41,7 +41,7 @@ export default function AppearanceCard() {
             >
               <div className="rounded-lg border p-2.5" style={{ background: t.sw.c, borderColor: 'rgba(255,255,255,0.08)' }}>
                 <div className="flex items-center justify-between">
-                  <span className="text-[11px] font-medium num" style={{ color: t.sw.a }}>Rs 3.28M</span>
+                  <span className="text-[12.5px] font-medium num" style={{ color: t.sw.a }}>Rs 3.28M</span>
                   {active && <Check className="h-3.5 w-3.5" style={{ color: t.sw.a }} />}
                 </div>
                 <div className="mt-2 flex items-center gap-1.5">
@@ -52,10 +52,10 @@ export default function AppearanceCard() {
                 </div>
               </div>
               <div className="mt-2 flex items-center justify-between gap-1 px-0.5">
-                <span className="text-[11px] font-medium truncate" style={{ color: t.group === 'light' ? '#2A2620' : '#E9EFEA' }}>
+                <span className="text-[12.5px] font-medium truncate" style={{ color: t.group === 'light' ? '#2A2620' : '#E9EFEA' }}>
                   {t.name}
                 </span>
-                <span className="text-[9px] uppercase tracking-wider flex-shrink-0" style={{ color: t.group === 'light' ? '#6B6457' : '#8A8F83' }}>
+                <span className="text-[12.5px] uppercase tracking-wider flex-shrink-0" style={{ color: t.group === 'light' ? '#6B6457' : '#8A8F83' }}>
                   {t.group}
                 </span>
               </div>

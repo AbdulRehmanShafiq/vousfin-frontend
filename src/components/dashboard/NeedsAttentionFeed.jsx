@@ -36,12 +36,12 @@ function AttentionItem({ item }) {
       </div>
       <div className="flex-1 min-w-0">
         <div className="flex items-center gap-1.5 flex-wrap mb-0.5">
-          <span className={cn('text-[9px] font-bold uppercase tracking-wider px-1.5 py-0.5 rounded', cfg.badge)}>{cfg.label}</span>
+          <span className={cn('text-[12.5px] font-bold uppercase tracking-wider px-1.5 py-0.5 rounded', cfg.badge)}>{cfg.label}</span>
         </div>
         <p className="text-xs font-semibold text-text-primary leading-snug">{item.title}</p>
-        {item.message && <p className="text-[11px] text-text-secondary leading-relaxed mt-0.5">{item.message}</p>}
+        {item.message && <p className="text-[12.5px] text-text-secondary leading-relaxed mt-0.5">{item.message}</p>}
         {item.action && item.actionTo && (
-          <span className="inline-flex items-center gap-1 text-[11px] text-cyan font-medium mt-1.5 group-hover:gap-1.5 transition-all">
+          <span className="inline-flex items-center gap-1 text-[12.5px] text-cyan font-medium mt-1.5 group-hover:gap-1.5 transition-all">
             {item.action} <ArrowRight className="h-2.5 w-2.5" />
           </span>
         )}
@@ -74,13 +74,13 @@ export default function NeedsAttentionFeed() {
             <h2 className="text-sm font-bold text-text-primary flex items-center gap-2 flex-wrap">
               Needs your attention
               {counts.critical > 0 && (
-                <span className="bg-negative/20 text-negative text-[9px] font-bold px-1.5 py-0.5 rounded-full">{counts.critical} need action</span>
+                <span className="bg-negative/20 text-negative text-[12.5px] font-bold px-1.5 py-0.5 rounded-full">{counts.critical} need action</span>
               )}
               {counts.warning > 0 && (
-                <span className="bg-amber/20 text-amber text-[9px] font-bold px-1.5 py-0.5 rounded-full">{counts.warning} to review</span>
+                <span className="bg-amber/20 text-amber text-[12.5px] font-bold px-1.5 py-0.5 rounded-full">{counts.warning} to review</span>
               )}
             </h2>
-            <p className="text-[11px] text-text-muted">Your AI accountant, watching the numbers for you</p>
+            <p className="text-[12.5px] text-text-muted">Your AI accountant, watching the numbers for you</p>
           </div>
         </div>
         <button
@@ -102,7 +102,7 @@ export default function NeedsAttentionFeed() {
         <div className="flex items-center gap-2.5 p-2.5 rounded-xl border border-amber/20 bg-amber/5">
           <Zap className="h-3.5 w-3.5 text-amber flex-shrink-0" />
           <p className="text-xs text-text-secondary flex-1">Couldn&apos;t check right now.</p>
-          <button onClick={() => refetch()} className="text-[11px] text-cyan hover:underline font-medium">Retry</button>
+          <button onClick={() => refetch()} className="text-[12.5px] text-cyan hover:underline font-medium">Retry</button>
         </div>
       ) : items.length === 0 ? (
         /* Honest all-clear — reflects the real merged check across spending,
@@ -111,7 +111,7 @@ export default function NeedsAttentionFeed() {
           <CheckCircle2 className="h-4 w-4 text-positive flex-shrink-0 mt-0.5" />
           <div>
             <p className="text-xs font-bold text-text-primary">All clear — nothing needs you right now</p>
-            <p className="text-[11px] text-text-secondary leading-relaxed mt-0.5">
+            <p className="text-[12.5px] text-text-secondary leading-relaxed mt-0.5">
               We checked your spending, cash flow, receivables, tax and forecast — no risks or unusual activity.
             </p>
           </div>
@@ -125,14 +125,14 @@ export default function NeedsAttentionFeed() {
       {/* Recommended next steps */}
       {!recsLoading && recommendations.length > 0 && (
         <div className="mt-4">
-          <p className="text-[10px] font-bold uppercase tracking-widest text-text-muted mb-2">Recommended next steps</p>
+          <p className="text-[12px] font-bold uppercase tracking-widest text-text-muted mb-2">Recommended next steps</p>
           <div className="grid sm:grid-cols-2 gap-2">
             {recommendations.slice(0, 4).map((rec, i) => {
               const text = rec.recommendation || rec.message || rec.text || rec.suggestion || String(rec)
               return (
                 <div key={i} className="flex items-start gap-2.5 p-2.5 rounded-lg border border-cyan/20 bg-cyan/5">
                   <Zap className="h-3 w-3 text-cyan flex-shrink-0 mt-0.5" />
-                  <p className="text-[11px] text-text-secondary leading-snug">{text}</p>
+                  <p className="text-[12.5px] text-text-secondary leading-snug">{text}</p>
                 </div>
               )
             })}
@@ -142,7 +142,7 @@ export default function NeedsAttentionFeed() {
 
       {/* Quick actions */}
       <div className="pt-3 mt-4 border-t border-glass">
-        <p className="text-[10px] font-bold uppercase tracking-widest text-text-muted mb-2">Quick actions</p>
+        <p className="text-[12px] font-bold uppercase tracking-widest text-text-muted mb-2">Quick actions</p>
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-1.5">
           {QUICK_ACTIONS.map(({ label, to, Icon, color }) => (
             <Link
@@ -153,7 +153,7 @@ export default function NeedsAttentionFeed() {
               <div className="p-1 rounded-md flex-shrink-0" style={{ background: `rgb(${color} / 0.09)` }}>
                 <Icon className="h-3 w-3" style={{ color: `rgb(${color})` }} />
               </div>
-              <span className="text-[10px] font-semibold text-text-muted group-hover:text-text-secondary transition-colors text-center leading-tight">
+              <span className="text-[12px] font-semibold text-text-muted group-hover:text-text-secondary transition-colors text-center leading-tight">
                 {label}
               </span>
             </Link>

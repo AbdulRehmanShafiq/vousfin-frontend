@@ -23,7 +23,7 @@ export default function MobileNav() {
           to={to}
           className={({ isActive }) =>
             cn(
-              'relative flex flex-1 flex-col items-center gap-1 py-3 text-[11px] font-semibold transition-colors min-h-[56px] justify-center',
+              'relative flex flex-1 flex-col items-center gap-1 py-3 text-[12.5px] font-semibold transition-colors min-h-[56px] justify-center',
               isActive ? 'text-cyan' : 'text-text-muted hover:text-text-secondary',
             )
           }

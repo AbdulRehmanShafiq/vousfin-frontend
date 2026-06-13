@@ -56,7 +56,7 @@ function TrendBadge({ trend, label }) {
   if (trend === 0 || trend == null) return null
   return (
     <span className={cn(
-      'inline-flex items-center gap-0.5 text-[10px] font-bold flex-shrink-0',
+      'inline-flex items-center gap-0.5 text-[12px] font-bold flex-shrink-0',
       trend > 0 ? 'text-positive' : 'text-negative',
     )}>
       {trend > 0 ? <TrendingUp className="h-2.5 w-2.5" /> : <TrendingDown className="h-2.5 w-2.5" />}
@@ -86,7 +86,7 @@ function PrimaryCard({ title, subtitle, value, format, currency, icon: Icon, col
         <div className="p-1.5 rounded-lg flex-shrink-0" style={{ background: `rgb(${color} / 0.11)` }}>
           <Icon className="h-4 w-4" style={{ color: `rgb(${color})` }} />
         </div>
-        <span className="text-[10px] font-semibold text-text-muted uppercase tracking-wider leading-tight">{title}</span>
+        <span className="text-[12px] font-semibold text-text-muted uppercase tracking-wider leading-tight">{title}</span>
       </div>
 
       {loading ? (
@@ -96,7 +96,7 @@ function PrimaryCard({ title, subtitle, value, format, currency, icon: Icon, col
       )}
 
       {/* plain-English one-liner */}
-      {subtitle && <p className="text-[10px] text-text-muted leading-tight">{subtitle}</p>}
+      {subtitle && <p className="text-[12px] text-text-muted leading-tight">{subtitle}</p>}
 
       <div className="flex items-end justify-between gap-2 pt-1 mt-auto">
         {sparkData?.length > 1 && <Sparkline data={sparkData} color={color} />}
@@ -124,11 +124,11 @@ function SecondaryChip({ title, subtitle, value, format, currency, icon: Icon, c
         <Icon className="h-3.5 w-3.5" style={{ color: `rgb(${color})` }} />
       </div>
       <div className="flex-1 min-w-0">
-        <p className="text-[10px] font-semibold text-text-muted uppercase tracking-wider truncate">{title}</p>
+        <p className="text-[12px] font-semibold text-text-muted uppercase tracking-wider truncate">{title}</p>
         {loading
           ? <div className="h-5 w-16 mt-0.5 animate-pulse rounded bg-glass-panel" />
           : <p className="num text-sm font-semibold text-text-primary leading-tight truncate">{display}</p>}
-        {subtitle && !loading && <p className="text-[9px] text-text-muted leading-tight truncate">{subtitle}</p>}
+        {subtitle && !loading && <p className="text-[12.5px] text-text-muted leading-tight truncate">{subtitle}</p>}
       </div>
       {!loading && trend != null && <TrendBadge trend={trend} label={trendLabel} />}
     </div>

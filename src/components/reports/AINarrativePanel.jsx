@@ -49,7 +49,7 @@ export default function AINarrativePanel() {
           <Sparkles className="h-4 w-4 text-accent" />
           <h3 className="text-sm font-semibold text-text-primary">CFO Briefing</h3>
           {data && (
-            <span className="num text-[11px] text-text-muted">
+            <span className="num text-[12.5px] text-text-muted">
               generated in {data.generatedInMs}ms · grounded in your ledger
             </span>
           )}
@@ -91,7 +91,7 @@ export default function AINarrativePanel() {
               {data.figures.map((f, i) => (
                 <Link
                   key={i} to={f.link}
-                  className="num text-[11px] px-2 py-1 rounded-md bg-glass-panel border border-glass text-text-muted hover:text-accent hover:border-glass-2"
+                  className="num text-[12.5px] px-2 py-1 rounded-md bg-glass-panel border border-glass text-text-muted hover:text-accent hover:border-glass-2"
                   title={`Drill into ${f.label}`}
                 >
                   {f.label}: Rs {Number(f.value).toLocaleString()}

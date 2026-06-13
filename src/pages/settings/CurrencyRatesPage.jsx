@@ -220,7 +220,7 @@ export default function CurrencyRatesPage() {
               Last synced <strong className="text-text-primary">{timeAgo(lastSynced)}</strong>
               {syncSource && <span className="text-text-muted"> · {syncSource}</span>}
             </span>
-            <span className="ml-auto text-[11px] text-text-muted hidden sm:flex items-center gap-1">
+            <span className="ml-auto text-[12.5px] text-text-muted hidden sm:flex items-center gap-1">
               <Clock className="h-3 w-3" /> Auto-syncs daily at 08:00
             </span>
           </>
@@ -235,7 +235,7 @@ export default function CurrencyRatesPage() {
       {/* ── Latest rates cards ────────────────────────────────────────────── */}
       {latestRates?.length > 0 && (
         <div>
-          <p className="text-[11px] font-semibold text-text-muted uppercase tracking-wider mb-2">
+          <p className="text-[12.5px] font-semibold text-text-muted uppercase tracking-wider mb-2">
             Today's Rates · 1 Foreign = X {baseCurrency}
           </p>
           <div className="flex flex-wrap gap-2">
@@ -250,8 +250,8 @@ export default function CurrencyRatesPage() {
                 <span className="font-mono font-bold text-text-primary tabular-nums text-sm">
                   {r.rate.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 4 })}
                 </span>
-                <span className="text-[10px] text-text-muted">{baseCurrency}</span>
-                <span className={`ml-1 text-[9px] rounded px-1 py-px font-semibold ${
+                <span className="text-[12px] text-text-muted">{baseCurrency}</span>
+                <span className={`ml-1 text-[12.5px] rounded px-1 py-px font-semibold ${
                   r.source === 'imported'
                     ? 'bg-cyan/10 text-cyan border border-cyan/20'
                     : 'bg-amber/10 text-amber border border-amber/20'
@@ -289,7 +289,7 @@ export default function CurrencyRatesPage() {
             <X className="h-4 w-4" />
           </button>
         )}
-        <span className="ml-auto text-[11px] text-text-muted">{rates.length} records</span>
+        <span className="ml-auto text-[12.5px] text-text-muted">{rates.length} records</span>
       </div>
 
       {/* ── Rates table ──────────────────────────────────────────────────── */}
@@ -316,7 +316,7 @@ export default function CurrencyRatesPage() {
         ) : (
           <div className="overflow-x-auto">
             <table className="w-full text-left text-sm">
-              <thead className="bg-glass-panel text-[10px] uppercase text-text-muted tracking-wider">
+              <thead className="bg-glass-panel text-[12px] uppercase text-text-muted tracking-wider">
                 <tr>
                   <th className="px-4 py-2.5 font-semibold">From</th>
                   <th className="px-4 py-2.5 font-semibold">To</th>
@@ -360,7 +360,7 @@ export default function CurrencyRatesPage() {
                       </td>
                       <td className="px-4 py-3 text-xs">{formatDate(r.rateDate)}</td>
                       <td className="px-4 py-3">
-                        <span className={`text-[10px] rounded px-1.5 py-px font-semibold border ${
+                        <span className={`text-[12px] rounded px-1.5 py-px font-semibold border ${
                           r.source === 'imported'
                             ? 'bg-cyan/10 text-cyan border-cyan/20'
                             : 'bg-amber/10 text-amber border-amber/20'
@@ -368,7 +368,7 @@ export default function CurrencyRatesPage() {
                           {r.source === 'imported' ? '⚡ LIVE' : '✎ MANUAL'}
                         </span>
                       </td>
-                      <td className="px-4 py-3 hidden lg:table-cell text-[11px] text-text-muted truncate max-w-[180px]">
+                      <td className="px-4 py-3 hidden lg:table-cell text-[12.5px] text-text-muted truncate max-w-[180px]">
                         {r.notes ? r.notes.replace(/Auto-synced via [^ ]+ on .+/, 'Auto-synced') : '—'}
                       </td>
                       <td className="px-4 py-3">

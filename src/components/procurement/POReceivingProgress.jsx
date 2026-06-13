@@ -56,7 +56,7 @@ export default function POReceivingProgress({ po }) {
           max={totalOrdered}
           colorClass={overallPct >= 100 ? 'bg-positive' : 'bg-cyan'}
         />
-        <div className="flex justify-between text-[10px] text-text-muted">
+        <div className="flex justify-between text-[12px] text-text-muted">
           <span>{fmt(totalReceived)} received</span>
           <span>{fmt(totalOrdered)} ordered</span>
         </div>
@@ -91,7 +91,7 @@ export default function POReceivingProgress({ po }) {
 
       {/* Linked GRNs summary */}
       {Array.isArray(po.linkedGrnIds) && po.linkedGrnIds.length > 0 && (
-        <p className="text-[10px] text-text-muted">
+        <p className="text-[12px] text-text-muted">
           {po.linkedGrnIds.length} GRN{po.linkedGrnIds.length !== 1 ? 's' : ''} linked
         </p>
       )}

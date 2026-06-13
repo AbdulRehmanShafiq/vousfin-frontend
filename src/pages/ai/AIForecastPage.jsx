@@ -92,21 +92,21 @@ function KpiCard({ label, value, sub, isPositive, isCurrency = true, isPercent =
       accent ? 'border-cyan/30 bg-cyan/5' : ''
     )}>
       <div className="flex items-center justify-between">
-        <span className="text-[11px] text-text-muted font-semibold uppercase tracking-wider">{label}</span>
+        <span className="text-[12.5px] text-text-muted font-semibold uppercase tracking-wider">{label}</span>
         {Icon && <Icon className="h-3.5 w-3.5 text-text-muted/60" />}
       </div>
       <div className="flex items-end justify-between mt-0.5">
         <span className="text-xl font-black text-text-primary leading-none">{displayed}</span>
         {isPositive !== null && isPositive !== undefined && (
           <span className={cn(
-            'flex items-center gap-0.5 text-[11px] font-bold px-1.5 py-0.5 rounded-full',
+            'flex items-center gap-0.5 text-[12.5px] font-bold px-1.5 py-0.5 rounded-full',
             up ? 'text-positive bg-positive/10' : 'text-negative bg-negative/10'
           )}>
             {up ? <ArrowUpRight className="h-3 w-3" /> : <ArrowDownRight className="h-3 w-3" />}
           </span>
         )}
       </div>
-      {sub && <span className="text-[11px] text-text-muted leading-tight mt-0.5">{sub}</span>}
+      {sub && <span className="text-[12.5px] text-text-muted leading-tight mt-0.5">{sub}</span>}
     </div>
   )
 }
@@ -273,7 +273,7 @@ function RiskIndicatorCard({ indicator }) {
       <Icon className="h-4 w-4 shrink-0 mt-0.5" />
       <div>
         <p className="text-xs font-bold mb-0.5">{indicator.title}</p>
-        <p className="text-[11px] opacity-80 leading-relaxed">{indicator.message}</p>
+        <p className="text-[12.5px] opacity-80 leading-relaxed">{indicator.message}</p>
       </div>
     </div>
   )
@@ -287,8 +287,8 @@ function FeatureBar({ name, pct, description }) {
   return (
     <div className="group">
       <div className="flex items-center justify-between mb-1">
-        <span className="text-[11px] font-medium text-text-secondary">{name}</span>
-        <span className="text-[11px] font-bold text-text-primary">{pct}%</span>
+        <span className="text-[12.5px] font-medium text-text-secondary">{name}</span>
+        <span className="text-[12.5px] font-bold text-text-primary">{pct}%</span>
       </div>
       <div className="h-1.5 bg-glass rounded-full overflow-hidden">
         <div
@@ -296,7 +296,7 @@ function FeatureBar({ name, pct, description }) {
           style={{ width: `${pct}%`, background: color }}
         />
       </div>
-      <p className="text-[10px] text-text-muted mt-0.5 opacity-0 group-hover:opacity-100 transition-opacity">
+      <p className="text-[12px] text-text-muted mt-0.5 opacity-0 group-hover:opacity-100 transition-opacity">
         {description}
       </p>
     </div>
@@ -415,9 +415,9 @@ function ExplainabilityPanel({ featureImportance = [], riskIndicators = [], mome
           </div>
           {momentum && (
             <div className="mt-3 pt-3 border-t border-glass/40 flex items-center gap-2 flex-wrap">
-              <span className="text-[11px] text-text-muted">Momentum:</span>
+              <span className="text-[12.5px] text-text-muted">Momentum:</span>
               <MomentumBadge momentum={momentum} />
-              <span className="text-[10px] text-text-muted">
+              <span className="text-[12px] text-text-muted">
                 Long-run: {momentum.long >= 0 ? '+' : ''}{momentum.long?.toFixed(1)}% / mo
               </span>
             </div>
@@ -441,7 +441,7 @@ function CategoryBreakdown({ businessCategories }) {
       <h3 className="flex items-center gap-2 text-sm font-bold text-text-primary mb-4 border-b border-glass pb-2">
         <BarChart3 className="h-4 w-4 text-cyan" />
         Category Breakdown
-        <span className="text-[10px] font-normal text-text-muted ml-1">(last 3 months)</span>
+        <span className="text-[12px] font-normal text-text-muted ml-1">(last 3 months)</span>
       </h3>
       <div style={{ width: '100%', height: 140 }}>
         <ResponsiveContainer width="100%" height="100%">
@@ -815,7 +815,7 @@ function ScenarioTab() {
                   onChange={e => setRevenueMulti(+e.target.value)}
                   className="w-full h-1.5 bg-glass rounded-full appearance-none cursor-pointer accent-cyan"
                 />
-                <div className="flex justify-between text-[10px] text-text-muted mt-0.5">
+                <div className="flex justify-between text-[12px] text-text-muted mt-0.5">
                   <span>−50%</span><span>0%</span><span>+100%</span>
                 </div>
               </div>
@@ -835,7 +835,7 @@ function ScenarioTab() {
                   onChange={e => setExpenseMulti(+e.target.value)}
                   className="w-full h-1.5 bg-glass rounded-full appearance-none cursor-pointer accent-cyan"
                 />
-                <div className="flex justify-between text-[10px] text-text-muted mt-0.5">
+                <div className="flex justify-between text-[12px] text-text-muted mt-0.5">
                   <span>−50%</span><span>0%</span><span>+100%</span>
                 </div>
               </div>
@@ -870,7 +870,7 @@ function ScenarioTab() {
                   className="w-full text-left text-xs px-3 py-2 rounded-lg border border-glass hover:bg-glass transition-colors"
                 >
                   <span className={cn('font-semibold', p.color)}>{p.label}</span>
-                  <span className="text-text-muted ml-2 text-[10px]">
+                  <span className="text-text-muted ml-2 text-[12px]">
                     Rev {pctLabel(p.rev)} / Exp {pctLabel(p.exp)}
                   </span>
                 </button>

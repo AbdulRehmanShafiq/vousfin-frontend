@@ -19,7 +19,7 @@ export default function ApprovalChip({ status, compact = false, className }) {
   return (
     <span className={cn(
       'inline-flex items-center gap-1.5 rounded-full border font-semibold',
-      compact ? 'px-1.5 py-0.5 text-[10px]' : 'px-2 py-0.5 text-[11px]',
+      compact ? 'px-1.5 py-0.5 text-[12px]' : 'px-2 py-0.5 text-[12.5px]',
       cfg.cls,
       className,
     )}>

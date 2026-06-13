@@ -227,7 +227,7 @@ export default function AnomalyReviewPage() {
               {tab.label}
               {tabCount != null && tabCount > 0 && (
                 <span className={cn(
-                  'px-1.5 py-0.5 rounded-full text-[10px] font-bold',
+                  'px-1.5 py-0.5 rounded-full text-[12px] font-bold',
                   activeTab === tab.key
                     ? 'bg-navy/20 text-navy'
                     : tab.key === 'pending' ? 'bg-amber/20 text-amber'

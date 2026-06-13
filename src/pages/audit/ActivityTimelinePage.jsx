@@ -138,7 +138,7 @@ export default function ActivityTimelinePage() {
                 <div className="flex items-start justify-between gap-3">
                   <div className="min-w-0">
                     <div className="flex items-center gap-2 flex-wrap">
-                      <span className={cn('inline-flex items-center gap-1 rounded px-1.5 py-0.5 text-[10px] font-bold border', toneFor(it.action))}>
+                      <span className={cn('inline-flex items-center gap-1 rounded px-1.5 py-0.5 text-[12px] font-bold border', toneFor(it.action))}>
                         {it.source === 'event'
                           ? <Zap className="h-2.5 w-2.5" />
                           : <UserCog className="h-2.5 w-2.5" />}
@@ -152,7 +152,7 @@ export default function ActivityTimelinePage() {
                       {it.actorName && it.actorName !== 'system' && <span> · by {it.actorName}</span>}
                     </p>
                   </div>
-                  <span className="shrink-0 text-[11px] text-text-muted whitespace-nowrap" title={it.timestamp ? new Date(it.timestamp).toLocaleString() : ''}>
+                  <span className="shrink-0 text-[12.5px] text-text-muted whitespace-nowrap" title={it.timestamp ? new Date(it.timestamp).toLocaleString() : ''}>
                     {timeAgo(it.timestamp)}
                   </span>
                 </div>

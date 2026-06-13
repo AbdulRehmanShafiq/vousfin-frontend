@@ -44,7 +44,7 @@ function DeltaChip({ value }) {
   const color = flat ? 'rgb(var(--c-text3))' : up ? 'rgb(var(--c-positive))' : 'rgb(var(--c-negative))'
   const Icon = flat ? Minus : up ? TrendingUp : TrendingDown
   return (
-    <span className="inline-flex items-center gap-1 text-[10px] font-bold" style={{ color }}>
+    <span className="inline-flex items-center gap-1 text-[12px] font-bold" style={{ color }}>
       <Icon className="h-3 w-3" />
       {up ? '+' : ''}{value} <span className="text-text-muted font-medium">vs last mo</span>
     </span>
@@ -145,13 +145,13 @@ function ScoreRing({ score, label, icon: Icon, ringColor }) {
           />
         </svg>
         <div className="absolute inset-0 flex items-center justify-center">
-          <span className="text-[11px] font-black leading-none" style={{ color }}>{score}</span>
+          <span className="text-[12.5px] font-black leading-none" style={{ color }}>{score}</span>
         </div>
       </div>
       {/* label */}
       <div className="flex flex-col items-center gap-0.5">
         <Icon className="h-2.5 w-2.5" style={{ color }} />
-        <span className="text-[9px] font-semibold text-text-muted uppercase tracking-wide whitespace-nowrap">{label}</span>
+        <span className="text-[12.5px] font-semibold text-text-muted uppercase tracking-wide whitespace-nowrap">{label}</span>
       </div>
     </div>
   )
@@ -172,10 +172,10 @@ function RiskMeter({ riskLevel, riskPct, runway }) {
     <div className="flex flex-col gap-2 min-w-0">
       {/* title row */}
       <div className="flex items-center justify-between gap-2">
-        <p className="text-[10px] font-bold uppercase tracking-widest text-text-muted">Cash Flow Risk</p>
+        <p className="text-[12px] font-bold uppercase tracking-widest text-text-muted">Cash Flow Risk</p>
         <div className="flex items-center gap-1">
           <cfg.Icon className="h-3 w-3" style={{ color: cfg.color }} />
-          <span className="text-[11px] font-bold" style={{ color: cfg.color }}>{cfg.label}</span>
+          <span className="text-[12.5px] font-bold" style={{ color: cfg.color }}>{cfg.label}</span>
         </div>
       </div>
       {/* bar */}
@@ -197,12 +197,12 @@ function RiskMeter({ riskLevel, riskPct, runway }) {
         ))}
       </div>
       {/* labels */}
-      <div className="flex justify-between text-[9px] text-text-muted font-medium">
+      <div className="flex justify-between text-[12.5px] text-text-muted font-medium">
         <span>Critical</span>
         <span>Runway: {displayRunway}</span>
         <span>Safe (6mo+)</span>
       </div>
-      <p className="text-[10px] text-text-muted">{cfg.hint}</p>
+      <p className="text-[12px] text-text-muted">{cfg.hint}</p>
     </div>
   )
 }
@@ -284,7 +284,7 @@ const BusinessHealthWidget = memo(function BusinessHealthWidget({ kpis = {}, loa
           </div>
           <div>
             <h3 className="text-sm font-bold text-text-primary">Business Health Score</h3>
-            <p className="text-[11px] text-text-muted">
+            <p className="text-[12.5px] text-text-muted">
               {view.estimated
                 ? 'Estimated from your KPIs'
                 : 'Computed from your live ledger (auditable)'}
@@ -296,7 +296,7 @@ const BusinessHealthWidget = memo(function BusinessHealthWidget({ kpis = {}, loa
           <div className="flex items-center gap-1.5 flex-shrink-0">
             {conf && (
               <span
-                className="px-2 py-0.5 rounded-full text-[9px] font-bold uppercase tracking-wide"
+                className="px-2 py-0.5 rounded-full text-[12.5px] font-bold uppercase tracking-wide"
                 style={{ backgroundColor: `rgb(${conf.color} / 0.13)`, color: `rgb(${conf.color})` }}
                 title={view.monthsOfData != null ? `${view.monthsOfData} months of data` : undefined}
               >
@@ -304,7 +304,7 @@ const BusinessHealthWidget = memo(function BusinessHealthWidget({ kpis = {}, loa
               </span>
             )}
             {view.estimated && (
-              <span className="px-2 py-0.5 rounded-full text-[9px] font-bold uppercase tracking-wide bg-glass-panel text-text-muted">
+              <span className="px-2 py-0.5 rounded-full text-[12.5px] font-bold uppercase tracking-wide bg-glass-panel text-text-muted">
                 Estimated
               </span>
             )}
@@ -357,8 +357,8 @@ const BusinessHealthWidget = memo(function BusinessHealthWidget({ kpis = {}, loa
                 {view.overall}
               </p>
               <div className="flex md:flex-col items-center gap-1 md:gap-0.5">
-                <p className="text-[10px] text-text-muted font-semibold">/100</p>
-                <p className="text-[10px] font-bold uppercase tracking-wide" style={{ color: overallColor }}>
+                <p className="text-[12px] text-text-muted font-semibold">/100</p>
+                <p className="text-[12px] font-bold uppercase tracking-wide" style={{ color: overallColor }}>
                   {view.overall >= 80 ? 'Excellent' : view.overall >= 65 ? 'Good' : view.overall >= 50 ? 'Fair' : 'Poor'}
                 </p>
               </div>
@@ -369,10 +369,10 @@ const BusinessHealthWidget = memo(function BusinessHealthWidget({ kpis = {}, loa
           {/* ── "Why" drivers ── */}
           {view.drivers.length > 0 && (
             <div className="mt-4 pt-3 border-t border-glass">
-              <p className="text-[10px] font-bold uppercase tracking-widest text-text-muted mb-1.5">What's driving this</p>
+              <p className="text-[12px] font-bold uppercase tracking-widest text-text-muted mb-1.5">What's driving this</p>
               <ul className="space-y-1">
                 {view.drivers.map((d, i) => (
-                  <li key={i} className="flex items-start gap-1.5 text-[11px] text-text-secondary">
+                  <li key={i} className="flex items-start gap-1.5 text-[12.5px] text-text-secondary">
                     <span className="mt-1 h-1 w-1 rounded-full bg-text-muted flex-shrink-0" />
                     <span>{d}</span>
                   </li>
@@ -385,7 +385,7 @@ const BusinessHealthWidget = memo(function BusinessHealthWidget({ kpis = {}, loa
           {!view.estimated && trendData.length >= 2 && (
             <div className="mt-3 pt-3 border-t border-glass flex items-center justify-between gap-3">
               <div className="flex items-center gap-2.5">
-                <span className="text-[10px] font-bold uppercase tracking-widest text-text-muted">Trend</span>
+                <span className="text-[12px] font-bold uppercase tracking-widest text-text-muted">Trend</span>
                 <Sparkline data={trendData} color={overallColor} />
               </div>
               {delta != null && <DeltaChip value={delta} />}

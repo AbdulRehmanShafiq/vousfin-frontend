@@ -355,7 +355,7 @@ export default function InvoiceEditor({
           <div className="hidden md:block overflow-x-auto px-3 pb-4">
             <table className="w-full text-sm">
               <thead>
-                <tr className="border-b border-glass text-[10px] uppercase tracking-wider text-text-muted">
+                <tr className="border-b border-glass text-[12px] uppercase tracking-wider text-text-muted">
                   <th className="w-8" />
                   <th className="w-8 px-1 py-2 text-center">#</th>
                   <th className="min-w-[180px] px-1 py-2 text-left">Item</th>
@@ -426,21 +426,21 @@ export default function InvoiceEditor({
                     placeholder="Item name"
                   />
                   {selInv && (
-                    <p className={`text-[11px] ${overStk ? 'text-negative' : 'text-text-muted'}`}>
+                    <p className={`text-[12.5px] ${overStk ? 'text-negative' : 'text-text-muted'}`}>
                       {overStk ? `⚠ Only ${selInv.currentStock} ${selInv.unit || 'units'} in stock` : `${selInv.currentStock} ${selInv.unit || 'units'} in stock`}
                     </p>
                   )}
                   <div className="grid grid-cols-3 gap-2">
                     <div>
-                      <label className="text-[10px] text-text-muted">Qty</label>
+                      <label className="text-[12px] text-text-muted">Qty</label>
                       <input type="number" className="w-full rounded border border-glass bg-glass-panel px-2 py-1 text-sm text-right" value={item.quantity || ''} onChange={e => handleLineChange(i, { ...item, quantity: parseFloat(e.target.value) || 0 })} />
                     </div>
                     <div>
-                      <label className="text-[10px] text-text-muted">Price</label>
+                      <label className="text-[12px] text-text-muted">Price</label>
                       <input type="number" className="w-full rounded border border-glass bg-glass-panel px-2 py-1 text-sm text-right" value={item.unitPrice || ''} onChange={e => handleLineChange(i, { ...item, unitPrice: parseFloat(e.target.value) || 0 })} />
                     </div>
                     <div>
-                      <label className="text-[10px] text-text-muted">Tax %</label>
+                      <label className="text-[12px] text-text-muted">Tax %</label>
                       <input type="number" className="w-full rounded border border-glass bg-glass-panel px-2 py-1 text-sm text-right" value={item.taxRate || ''} onChange={e => handleLineChange(i, { ...item, taxRate: parseFloat(e.target.value) || 0 })} />
                     </div>
                   </div>
@@ -641,7 +641,7 @@ function NextStepsCard({ state, kind = 'invoice' }) {
       </h3>
       <div className="space-y-2">
         <div className="rounded-lg border border-cyan/30 bg-cyan/5 p-3">
-          <p className="text-[10px] uppercase tracking-wider text-cyan font-bold mb-1">
+          <p className="text-[12px] uppercase tracking-wider text-cyan font-bold mb-1">
             Current — {current.label}
           </p>
           <p className="text-xs text-text-secondary leading-relaxed">

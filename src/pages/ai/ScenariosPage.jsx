@@ -85,17 +85,17 @@ export default function ScenariosPage() {
 
       {result && (
         <div className="premium-card p-5 border-dashed" style={{ borderStyle: 'dashed' }}>
-          <p className="text-[11px] uppercase tracking-widest text-amber-2 mb-3">Simulated projection · {result.computedInMs}ms</p>
+          <p className="text-[12.5px] uppercase tracking-widest text-amber-2 mb-3">Simulated projection · {result.computedInMs}ms</p>
           <div className="grid gap-4 sm:grid-cols-3">
             {result.horizons.map(h => (
               <div key={h.months} className="rounded-md border border-glass p-3">
                 <p className="text-xs text-text-muted mb-2">{h.months} month{h.months > 1 ? 's' : ''}</p>
                 <p className="num text-lg font-semibold text-text-primary">{fmt(h.projected.netProfit)}</p>
-                <p className="text-[11px] text-text-muted">projected net {h.projected.netProfit < 0 ? '(loss)' : 'profit'}</p>
+                <p className="text-[12.5px] text-text-muted">projected net {h.projected.netProfit < 0 ? '(loss)' : 'profit'}</p>
                 <p className={`num text-xs mt-2 ${h.vsBaseline.netProfitDelta >= 0 ? 'text-positive' : 'text-negative'}`}>
                   {h.vsBaseline.netProfitDelta >= 0 ? '+' : '−'}{fmt(h.vsBaseline.netProfitDelta)} vs baseline
                 </p>
-                <p className="text-[11px] text-text-muted mt-2">
+                <p className="text-[12.5px] text-text-muted mt-2">
                   Break-even {h.breakEven.achieved ? 'covered' : 'NOT covered'}
                   {h.breakEven.paybackMonths ? ` · payback ${h.breakEven.paybackMonths} mo` : ''}
                   {h.cashRunwayMonths !== null ? ` · runway ${h.cashRunwayMonths} mo` : ''}
@@ -103,7 +103,7 @@ export default function ScenariosPage() {
               </div>
             ))}
           </div>
-          <p className="num text-[11px] text-text-muted mt-3">
+          <p className="num text-[12.5px] text-text-muted mt-3">
             Baseline (live GL, trailing 3 months): revenue {fmt(result.baseline.monthlyRevenue)}/mo · expenses {fmt(result.baseline.monthlyExpense)}/mo · cash {fmt(result.baseline.startingCash)}
           </p>
         </div>

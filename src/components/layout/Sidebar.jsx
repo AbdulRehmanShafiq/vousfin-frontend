@@ -86,14 +86,14 @@ export default function Sidebar({ isCollapsed, toggleCollapse, isMobile = false,
             !compact && 'mr-3',
           )} />
           {badge > 0 && compact && (
-            <span className="absolute -top-1.5 -right-1 min-w-[16px] h-4 px-1 rounded-full bg-amber text-[10px] font-bold text-navy flex items-center justify-center">
+            <span className="absolute -top-1.5 -right-1 min-w-[16px] h-4 px-1 rounded-full bg-amber text-[12px] font-bold text-navy flex items-center justify-center">
               {badge > 99 ? '99+' : badge}
             </span>
           )}
         </span>
         {!compact && <span className="flex-1 truncate">{item.name}</span>}
         {!compact && badge > 0 && (
-          <span className="ml-auto min-w-[18px] h-[18px] px-1.5 rounded-full bg-amber text-[11px] font-bold text-navy flex items-center justify-center">
+          <span className="ml-auto min-w-[18px] h-[18px] px-1.5 rounded-full bg-amber text-[12.5px] font-bold text-navy flex items-center justify-center">
             {badge > 99 ? '99+' : badge}
           </span>
         )}
@@ -126,7 +126,7 @@ export default function Sidebar({ isCollapsed, toggleCollapse, isMobile = false,
         <button
           type="button"
           onClick={() => toggleSection(section.key)}
-          className="group flex w-full items-center justify-between px-3 pb-1.5 text-[11px] font-semibold uppercase tracking-[0.08em] text-text-muted hover:text-text-secondary transition-colors"
+          className="group flex w-full items-center justify-between px-3 pb-1.5 text-[12.5px] font-semibold uppercase tracking-[0.08em] text-text-muted hover:text-text-secondary transition-colors"
         >
           <span className="flex items-center gap-2">
             <span className="h-px w-2.5 bg-gold/50" aria-hidden="true" />

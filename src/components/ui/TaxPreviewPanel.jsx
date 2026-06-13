@@ -69,7 +69,7 @@ export default function TaxPreviewPanel({
           <Receipt className="h-4 w-4 shrink-0" />
           Tax Breakdown
           {preview && (
-            <span className="ml-1 text-[10px] rounded px-1.5 py-px bg-amber/15 border border-amber/20 font-semibold uppercase tracking-wide">
+            <span className="ml-1 text-[12px] rounded px-1.5 py-px bg-amber/15 border border-amber/20 font-semibold uppercase tracking-wide">
               {preview.lines?.[0]?.taxType ?? ''} {preview.lines?.[0]?.rate ?? 0}%
             </span>
           )}
@@ -98,7 +98,7 @@ export default function TaxPreviewPanel({
                   <div key={i} className="flex items-center justify-between text-xs">
                     <span className="text-text-muted">
                       {line.taxName}{' '}
-                      <span className="text-[10px] opacity-60">({label})</span>
+                      <span className="text-[12px] opacity-60">({label})</span>
                     </span>
                     <span className={`font-mono font-semibold tabular-nums ${color}`}>
                       {line.isWithholding ? '−' : ''}{fmt(line.taxAmount)}
@@ -134,14 +134,14 @@ export default function TaxPreviewPanel({
 
               {/* Reverse-charge note */}
               {preview.hasReverseCharge && (
-                <p className="text-[10px] text-accent-2 flex items-center gap-1">
+                <p className="text-[12px] text-accent-2 flex items-center gap-1">
                   <Info className="h-3 w-3 shrink-0" />
                   Reverse charge — you self-account for both the input and output tax (nil net cash).
                 </p>
               )}
 
               {/* Mode note */}
-              <p className="pt-0.5 text-[10px] text-text-muted flex items-center gap-1">
+              <p className="pt-0.5 text-[12px] text-text-muted flex items-center gap-1">
                 <Info className="h-3 w-3 shrink-0" />
                 Amount is {mode === 'inclusive' ? 'tax-inclusive' : 'tax-exclusive'} · {preview.countryCode}
               </p>

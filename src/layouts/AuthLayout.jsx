@@ -45,7 +45,7 @@ export default function AuthLayout() {
         </div>
 
         <div className="relative max-w-md">
-          <p className="mb-5 flex items-center gap-2.5 text-[11px] font-semibold uppercase tracking-[0.22em] text-gold/90">
+          <p className="mb-5 flex items-center gap-2.5 text-[12.5px] font-semibold uppercase tracking-[0.22em] text-gold/90">
             <span className="h-px w-7 bg-gold/50" aria-hidden="true" />
             The midnight ledger
           </p>

@@ -43,7 +43,7 @@ function TimelineRow({ icon: Icon, color, title, subtitle, timestamp, last }) {
       <div className="flex flex-col gap-0.5">
         <p className="text-sm font-semibold text-text-primary">{title}</p>
         {subtitle && <p className="text-xs text-text-muted">{subtitle}</p>}
-        {timestamp && <p className="text-[10px] uppercase tracking-wider text-text-muted/70">{formatDate(timestamp)}</p>}
+        {timestamp && <p className="text-[12px] uppercase tracking-wider text-text-muted/70">{formatDate(timestamp)}</p>}
       </div>
     </div>
   )

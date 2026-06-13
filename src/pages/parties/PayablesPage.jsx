@@ -74,7 +74,7 @@ function KpiTile({ label, value, sub, accent }) {
       'premium-card p-5 flex flex-col gap-1',
       accent && 'border-amber/30 bg-amber/5'
     )}>
-      <span className="text-[11px] text-text-muted font-semibold uppercase tracking-wider">
+      <span className="text-[12.5px] text-text-muted font-semibold uppercase tracking-wider">
         {label}
       </span>
       <span className="text-2xl font-black text-text-primary leading-tight">{value}</span>
@@ -300,8 +300,8 @@ export default function PayablesPage() {
         const bucket = ageBucket(d)
         return (
           <div className="flex items-center gap-1.5">
-            <Badge variant={bucket.variant} className="text-[10px]">{bucket.label}</Badge>
-            <span className="text-[10px] text-text-muted">{d}d</span>
+            <Badge variant={bucket.variant} className="text-[12px]">{bucket.label}</Badge>
+            <span className="text-[12px] text-text-muted">{d}d</span>
           </div>
         )
       },
@@ -407,7 +407,7 @@ export default function PayablesPage() {
                 <div key={b.key} className="rounded-xl border border-glass bg-glass-panel p-3">
                   <div className="flex items-center justify-between mb-1">
                     <Badge variant={b.variant}>{b.label}</Badge>
-                    <span className="text-[10px] text-text-muted">
+                    <span className="text-[12px] text-text-muted">
                       {bucket.count} {bucket.count === 1 ? 'bill' : 'bills'}
                     </span>
                   </div>

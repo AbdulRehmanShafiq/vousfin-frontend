@@ -34,7 +34,7 @@ function Pill({ label, value, tone = 'muted' }) {
   return (
     <div className={`rounded-xl border px-3 py-2 text-center ${tones[tone]}`}>
       <p className="text-lg font-bold leading-none">{value}</p>
-      <p className="text-[11px] mt-1">{label}</p>
+      <p className="text-[12.5px] mt-1">{label}</p>
     </div>
   )
 }
@@ -160,7 +160,7 @@ export default function AIClassifyPanel({ onClose }) {
         <div className="flex items-center gap-2 mb-2">
           <MessageSquare className="w-4 h-4 text-cyan" />
           <h4 className="text-sm font-semibold text-text-primary">Type in plain English</h4>
-          <span className="text-[10px] text-text-muted">· runs locally, no API cost</span>
+          <span className="text-[12px] text-text-muted">· runs locally, no API cost</span>
         </div>
         <div className="flex gap-2">
           <input
@@ -199,7 +199,7 @@ export default function AIClassifyPanel({ onClose }) {
       </div>
 
       <div className="flex items-center gap-3">
-        <div className="flex-1 h-px bg-glass" /><span className="text-[11px] text-text-muted">or import a file</span><div className="flex-1 h-px bg-glass" />
+        <div className="flex-1 h-px bg-glass" /><span className="text-[12.5px] text-text-muted">or import a file</span><div className="flex-1 h-px bg-glass" />
       </div>
 
       {/* ── CSV upload ── */}
@@ -245,7 +245,7 @@ export default function AIClassifyPanel({ onClose }) {
             {result?.column_mapping && (
               <div className="mt-3 flex flex-wrap gap-1 justify-center">
                 {Object.entries(result.column_mapping).filter(([, v]) => v).map(([c, f]) => (
-                  <span key={c} className="text-[11px] bg-glass-panel border border-glass text-text-secondary px-2 py-0.5 rounded">{c} → {f}</span>
+                  <span key={c} className="text-[12.5px] bg-glass-panel border border-glass text-text-secondary px-2 py-0.5 rounded">{c} → {f}</span>
                 ))}
               </div>
             )}
@@ -281,7 +281,7 @@ export default function AIClassifyPanel({ onClose }) {
       {/* divider */}
       <div className="flex items-center gap-3">
         <div className="flex-1 h-px bg-glass" />
-        <span className="text-[11px] text-text-muted">or add one transaction</span>
+        <span className="text-[12.5px] text-text-muted">or add one transaction</span>
         <div className="flex-1 h-px bg-glass" />
       </div>
 

@@ -53,7 +53,7 @@ export default function InvoiceStatusBadge({
   return (
     <span className={cn(
       'inline-flex items-center gap-1.5 rounded-full border font-bold tracking-wide',
-      size === 'sm' ? 'px-2 py-0.5 text-[10px]' : 'px-2.5 py-0.5 text-xs',
+      size === 'sm' ? 'px-2 py-0.5 text-[12px]' : 'px-2.5 py-0.5 text-xs',
       cfg.cls,
       className,
     )}>

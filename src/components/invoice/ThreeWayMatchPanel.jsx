@@ -149,7 +149,7 @@ export default function ThreeWayMatchPanel({ bill, onRunMatch, isRunning = false
 
       {/* ── Ran at ── */}
       {matchResult?.ranAt && (
-        <p className="text-[10px] text-text-muted text-right">
+        <p className="text-[12px] text-text-muted text-right">
           Last checked {new Date(matchResult.ranAt).toLocaleString()}
         </p>
       )}

@@ -323,7 +323,7 @@ export default function BillEditor({
           <div className="overflow-x-auto px-3 pb-4">
             <table className="w-full text-sm">
               <thead>
-                <tr className="border-b border-glass text-[10px] uppercase tracking-wider text-text-muted">
+                <tr className="border-b border-glass text-[12px] uppercase tracking-wider text-text-muted">
                   <th className="w-8" />
                   <th className="w-8 px-1 py-2 text-center">#</th>
                   <th className="min-w-[180px] px-1 py-2 text-left">Item</th>
@@ -470,7 +470,7 @@ function NextStepsCard({ state }) {
       </h3>
       <div className="space-y-2">
         <div className="rounded-lg border border-cyan/30 bg-cyan/5 p-3">
-          <p className="text-[10px] uppercase tracking-wider text-cyan font-bold mb-1">
+          <p className="text-[12px] uppercase tracking-wider text-cyan font-bold mb-1">
             Current — {current.label}
           </p>
           <p className="text-xs text-text-secondary leading-relaxed">

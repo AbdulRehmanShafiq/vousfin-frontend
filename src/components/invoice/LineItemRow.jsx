@@ -117,7 +117,7 @@ export default function LineItemRow({
           placeholder="Description (optional)"
         />
         {selectedInv && mode === 'invoice' && (
-          <p className={cn('text-[11px] mt-0.5', overStock ? 'text-negative' : 'text-text-muted')}>
+          <p className={cn('text-[12.5px] mt-0.5', overStock ? 'text-negative' : 'text-text-muted')}>
             {overStock
               ? `⚠ Only ${selectedInv.currentStock} ${selectedInv.unit || 'units'} in stock`
               : `${selectedInv.currentStock} ${selectedInv.unit || 'units'} in stock`}

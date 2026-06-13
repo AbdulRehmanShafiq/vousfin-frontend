@@ -58,7 +58,7 @@ function BillRow({ bill }) {
         {fmt(bill.totalAmount, bill.currencyCode)}
       </td>
       <td className="px-4 py-3">
-        <span className={`inline-block px-2 py-0.5 rounded-full text-[11px] font-medium capitalize ${STATE_COLORS[bill.state] || 'bg-glass text-text-muted'}`}>
+        <span className={`inline-block px-2 py-0.5 rounded-full text-[12.5px] font-medium capitalize ${STATE_COLORS[bill.state] || 'bg-glass text-text-muted'}`}>
           {bill.state?.replace(/_/g, ' ')}
         </span>
       </td>
@@ -133,14 +133,14 @@ export default function VendorPortal() {
         <div className="premium-card p-4">
           <p className="text-xs text-text-muted">Total Outstanding</p>
           <p className="text-xl font-bold text-text-primary mt-1">{fmt(totalPayable)}</p>
-          <p className="text-[11px] text-text-muted mt-0.5">{activeBills.length} open bills</p>
+          <p className="text-[12.5px] text-text-muted mt-0.5">{activeBills.length} open bills</p>
         </div>
         <div className="premium-card p-4">
           <p className="text-xs text-text-muted">Overdue</p>
           <p className={`text-xl font-bold mt-1 ${overdueAmt > 0 ? 'text-negative' : 'text-text-primary'}`}>
             {fmt(overdueAmt)}
           </p>
-          <p className="text-[11px] text-text-muted mt-0.5">
+          <p className="text-[12.5px] text-text-muted mt-0.5">
             {bills.filter(b => b.state === 'overdue').length} overdue bills
           </p>
         </div>
@@ -196,7 +196,7 @@ export default function VendorPortal() {
                     <thead>
                       <tr className="border-b border-glass">
                         {['Bill #', 'Issued', 'Due', 'Amount', 'Status', 'Reminder'].map(h => (
-                          <th key={h} className="px-4 py-2 text-[11px] font-semibold text-text-muted uppercase tracking-wide">
+                          <th key={h} className="px-4 py-2 text-[12.5px] font-semibold text-text-muted uppercase tracking-wide">
                             {h}
                           </th>
                         ))}
@@ -223,7 +223,7 @@ export default function VendorPortal() {
                   <thead>
                     <tr className="border-b border-glass">
                       {['Bill #', 'Due Date', 'Original', 'Remaining', 'State'].map(h => (
-                        <th key={h} className="px-4 py-2 text-[11px] font-semibold text-text-muted uppercase tracking-wide">{h}</th>
+                        <th key={h} className="px-4 py-2 text-[12.5px] font-semibold text-text-muted uppercase tracking-wide">{h}</th>
                       ))}
                     </tr>
                   </thead>
@@ -237,7 +237,7 @@ export default function VendorPortal() {
                           <td className="px-4 py-3 text-sm text-right">{fmt(b.totalAmount, b.currencyCode)}</td>
                           <td className="px-4 py-3 text-sm text-right font-semibold text-amber">{fmt(b.remainingBalance, b.currencyCode)}</td>
                           <td className="px-4 py-3">
-                            <span className={`px-2 py-0.5 rounded-full text-[11px] capitalize ${STATE_COLORS[b.state] || ''}`}>
+                            <span className={`px-2 py-0.5 rounded-full text-[12.5px] capitalize ${STATE_COLORS[b.state] || ''}`}>
                               {b.state?.replace(/_/g, ' ')}
                             </span>
                           </td>
@@ -259,7 +259,7 @@ export default function VendorPortal() {
                   <thead>
                     <tr className="border-b border-glass">
                       {['Bill #', 'Issue Date', 'Amount', 'Paid'].map(h => (
-                        <th key={h} className="px-4 py-2 text-[11px] font-semibold text-text-muted uppercase tracking-wide">{h}</th>
+                        <th key={h} className="px-4 py-2 text-[12.5px] font-semibold text-text-muted uppercase tracking-wide">{h}</th>
                       ))}
                     </tr>
                   </thead>
@@ -272,7 +272,7 @@ export default function VendorPortal() {
                           <td className="px-4 py-3 text-sm text-text-secondary">{fmtDate(b.issueDate)}</td>
                           <td className="px-4 py-3 text-sm text-right">{fmt(b.totalAmount, b.currencyCode)}</td>
                           <td className="px-4 py-3">
-                            <span className="px-2 py-0.5 rounded-full text-[11px] bg-positive/15 text-positive">Paid</span>
+                            <span className="px-2 py-0.5 rounded-full text-[12.5px] bg-positive/15 text-positive">Paid</span>
                           </td>
                         </tr>
                       ))

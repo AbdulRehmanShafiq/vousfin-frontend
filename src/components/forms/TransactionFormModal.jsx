@@ -103,7 +103,7 @@ function NLConfBadge({ score }) {
                 'bg-negative/15    text-negative    border-negative/25'
   const label = pct >= 75 ? 'High' : pct >= 50 ? 'Medium' : 'Low'
   return (
-    <span className={`inline-flex items-center gap-1 rounded-full border px-2 py-0.5 text-[10px] font-semibold ${cls}`}>
+    <span className={`inline-flex items-center gap-1 rounded-full border px-2 py-0.5 text-[12px] font-semibold ${cls}`}>
       {label} · {pct}% confidence
     </span>
   )
@@ -116,7 +116,7 @@ function ConfBadge({ label, score }) {
     label === 'Medium' ? 'bg-amber/10 text-amber border-amber/20' :
                          'bg-negative/10 text-negative border-negative/20'
   return (
-    <span className={`inline-flex items-center gap-1 rounded-full border px-1.5 py-0.5 text-[10px] font-semibold leading-none ${cls}`}>
+    <span className={`inline-flex items-center gap-1 rounded-full border px-1.5 py-0.5 text-[12px] font-semibold leading-none ${cls}`}>
       {score}%
     </span>
   )
@@ -133,11 +133,11 @@ function LiveJournalPreview({ debitAccount, creditAccount, amount, currency }) {
   return (
     <div className="rounded-lg border border-glass bg-glass-panel px-4 py-3 animate-fade-in">
       <div className="flex items-center justify-between mb-2.5">
-        <span className="text-[10px] font-bold text-text-muted uppercase tracking-wider flex items-center gap-1.5">
+        <span className="text-[12px] font-bold text-text-muted uppercase tracking-wider flex items-center gap-1.5">
           <span className="h-1.5 w-1.5 rounded-full bg-cyan inline-block" />
           Journal Entry Preview
         </span>
-        <span className="text-[10px] font-semibold text-positive">✓ Balanced</span>
+        <span className="text-[12px] font-semibold text-positive">✓ Balanced</span>
       </div>
       <div className="space-y-1.5 font-mono text-xs">
         <div className="flex items-center gap-3">
@@ -240,10 +240,10 @@ function InstallmentJournalPreview({
     <div className="rounded-lg border border-cyan/20 bg-navy/40 overflow-hidden">
       <div className="flex items-center gap-2 px-3 py-2 border-b border-cyan/15 bg-cyan/5">
         <div>
-          <span className="text-[10px] font-bold text-cyan uppercase tracking-wider">GAAP / IFRS — Compound Journal Entry</span>
-          <span className="ml-1.5 text-[9px] text-cyan/50 normal-case tracking-normal">(accounting standards)</span>
+          <span className="text-[12px] font-bold text-cyan uppercase tracking-wider">GAAP / IFRS — Compound Journal Entry</span>
+          <span className="ml-1.5 text-[12.5px] text-cyan/50 normal-case tracking-normal">(accounting standards)</span>
         </div>
-        <span className="ml-auto text-[10px] text-text-muted">at purchase date</span>
+        <span className="ml-auto text-[12px] text-text-muted">at purchase date</span>
       </div>
 
       <div className="px-3 py-2 space-y-1">
@@ -261,10 +261,10 @@ function InstallmentJournalPreview({
         )}
         <div className="flex items-center gap-2 text-xs pl-4">
           <span className="font-mono font-bold text-amber w-5 flex-shrink-0">CR</span>
-          <span className="flex-1 text-amber truncate font-medium">Loan Payable <span className="text-[9px] text-amber/70">(liability created)</span></span>
+          <span className="flex-1 text-amber truncate font-medium">Loan Payable <span className="text-[12.5px] text-amber/70">(liability created)</span></span>
           <span className="font-mono text-amber font-semibold flex-shrink-0">{formatCurrency(financed, currency)}</span>
         </div>
-        <div className="border-t border-glass mt-1 pt-1 flex justify-between text-[10px] text-text-muted">
+        <div className="border-t border-glass mt-1 pt-1 flex justify-between text-[12px] text-text-muted">
           <span>Balance check</span>
           <span className={`font-medium ${balanced ? 'text-positive' : 'text-negative'}`}>
             {balanced ? '✓ Balanced' : '✗ Unbalanced'}
@@ -273,7 +273,7 @@ function InstallmentJournalPreview({
       </div>
 
       {financed > 0 && (
-        <div className="border-t border-cyan/15 bg-amber/5 px-3 py-2 flex flex-wrap items-center gap-x-4 gap-y-1 text-[11px]">
+        <div className="border-t border-cyan/15 bg-amber/5 px-3 py-2 flex flex-wrap items-center gap-x-4 gap-y-1 text-[12.5px]">
           <div>
             <span className="text-amber/80 block">Liability Created</span>
             <span className="font-semibold text-amber">{formatCurrency(financed, currency)}</span>
@@ -312,11 +312,11 @@ function InstallmentJournalPreview({
 
       {schedule.length > 0 && financed > 0 && (
         <div className="border-t border-cyan/15">
-          <div className="px-3 py-1.5 bg-glass-panel text-[10px] font-bold text-text-secondary uppercase tracking-wider">
+          <div className="px-3 py-1.5 bg-glass-panel text-[12px] font-bold text-text-secondary uppercase tracking-wider">
             Amortization {schedule.length > 4 ? `(first 3 + last of ${schedule.length})` : `(${schedule.length} payments)`}
           </div>
           <div className="overflow-x-auto">
-            <table className="w-full text-[11px]">
+            <table className="w-full text-[12.5px]">
               <thead className="bg-glass-panel text-text-muted">
                 <tr>
                   <th className="px-2 py-1 text-left font-medium">#</th>
@@ -332,7 +332,7 @@ function InstallmentJournalPreview({
                     <>
                       {showEllipsis && (
                         <tr key={`ellipsis-${idx}`} className="text-text-muted">
-                          <td colSpan="4" className="px-2 py-0.5 text-center text-[10px]">⋯</td>
+                          <td colSpan="4" className="px-2 py-0.5 text-center text-[12px]">⋯</td>
                         </tr>
                       )}
                       <tr key={row.i} className="text-text-secondary">
@@ -386,7 +386,7 @@ function PartyInput({ label, suggestions, value, onChange, placeholder, parties 
       <div className="flex items-center justify-between mb-1">
         <label className="block text-xs font-medium text-text-secondary">{label}</label>
         {aiSuggested && value && (
-          <span className="text-[10px] text-cyan font-medium flex items-center gap-1">
+          <span className="text-[12px] text-cyan font-medium flex items-center gap-1">
             <Sparkles className="h-2.5 w-2.5" /> AI suggested
           </span>
         )}
@@ -402,12 +402,12 @@ function PartyInput({ label, suggestions, value, onChange, placeholder, parties 
       />
       {/* Outstanding balance badge when known party selected */}
       {value && selectedBalance != null && selectedBalance > 0 && (
-        <p className="mt-1 text-[11px] text-amber font-medium">
+        <p className="mt-1 text-[12.5px] text-amber font-medium">
           Outstanding balance: {selectedBalance.toLocaleString()}
         </p>
       )}
       {value && selectedBalance === 0 && (
-        <p className="mt-1 text-[11px] text-positive">No outstanding balance</p>
+        <p className="mt-1 text-[12.5px] text-positive">No outstanding balance</p>
       )}
       {open && (filtered.length > 0 || showNew) && (
         <div className="absolute z-50 w-full mt-1 rounded-lg border border-glass bg-navy shadow-xl overflow-hidden">
@@ -418,12 +418,12 @@ function PartyInput({ label, suggestions, value, onChange, placeholder, parties 
                 className="px-3 py-2 text-sm text-text-primary hover:bg-glass-hover cursor-pointer flex items-center justify-between gap-2">
                 <span>{name}</span>
                 {bal != null && bal > 0 && (
-                  <span className="text-[10px] text-amber font-medium flex-shrink-0">
+                  <span className="text-[12px] text-amber font-medium flex-shrink-0">
                     Due: {bal.toLocaleString()}
                   </span>
                 )}
                 {bal === 0 && (
-                  <span className="text-[10px] text-positive flex-shrink-0">Paid</span>
+                  <span className="text-[12px] text-positive flex-shrink-0">Paid</span>
                 )}
               </div>
             )
@@ -444,10 +444,10 @@ function PartyInput({ label, suggestions, value, onChange, placeholder, parties 
 function SectionLabel({ label, note }) {
   return (
     <div className="flex items-center gap-3 pt-1">
-      <span className="text-[10px] font-bold text-text-muted uppercase tracking-widest whitespace-nowrap">
+      <span className="text-[12px] font-bold text-text-muted uppercase tracking-widest whitespace-nowrap">
         {label}
       </span>
-      {note && <span className="text-[10px] text-text-muted/60">{note}</span>}
+      {note && <span className="text-[12px] text-text-muted/60">{note}</span>}
       <div className="flex-1 h-px bg-glass" />
     </div>
   )
@@ -705,7 +705,7 @@ function NLTab({ onParsed }) {
           value={text}
           onChange={e => setText(e.target.value)}
         />
-        <p className="text-[11px] text-text-muted">
+        <p className="text-[12.5px] text-text-muted">
           AI detects amount, accounts, taxes, installments, and parties — then opens the structured form for confirmation.
         </p>
       </div>
@@ -1293,7 +1293,7 @@ function StructuredFormTab({ currency, onSuccess, onCancel, initialValues, editT
             </div>
             <p className="text-xs text-text-muted">Review all fields. Make changes before saving.</p>
             {initialValues?._rawText && (
-              <p className="text-[11px] text-text-muted italic truncate" title={initialValues._rawText}>
+              <p className="text-[12.5px] text-text-muted italic truncate" title={initialValues._rawText}>
                 Original: &quot;{initialValues._rawText}&quot;
               </p>
             )}
@@ -1375,7 +1375,7 @@ function StructuredFormTab({ currency, onSuccess, onCancel, initialValues, editT
         value={watch('transactionType') || ''}
         onChange={(v) => setValue('transactionType', v)} />
       {!txTypeWatch && (
-        <p className="text-[11px] text-text-muted px-1 -mt-3">
+        <p className="text-[12.5px] text-text-muted px-1 -mt-3">
           💡 Select a type for smart account suggestions, or leave blank for auto-detection.
         </p>
       )}
@@ -1411,7 +1411,7 @@ function StructuredFormTab({ currency, onSuccess, onCancel, initialValues, editT
             <p className="text-xs font-semibold text-cyan uppercase tracking-wide">
               Compound Journal — {aiJournalLines.length} lines
             </p>
-            <span className="text-[10px] text-text-muted">AI-suggested · backend will validate</span>
+            <span className="text-[12px] text-text-muted">AI-suggested · backend will validate</span>
           </div>
           <div className="divide-y divide-glass">
             {aiJournalLines.map((line, i) => (
@@ -1421,7 +1421,7 @@ function StructuredFormTab({ currency, onSuccess, onCancel, initialValues, editT
                 </span>
                 <span className={`flex-1 truncate ${line.resolved !== false ? 'text-text-primary' : 'text-amber'}`}>
                   {line.accountName || line.account}
-                  {line.resolved === false && <span className="ml-1 text-[10px]">(unresolved)</span>}
+                  {line.resolved === false && <span className="ml-1 text-[12px]">(unresolved)</span>}
                 </span>
                 <span className="text-text-secondary font-mono ml-2">
                   {formatCurrency(line.amount, currency)}
@@ -1444,7 +1444,7 @@ function StructuredFormTab({ currency, onSuccess, onCancel, initialValues, editT
       {/* Customer / Vendor + Invoice — shown when transaction type/accounts indicate AR or AP */}
       {(requiresCustomer || requiresVendor) && (
         <div className="animate-fade-in p-4 rounded-xl bg-cyan/5 border border-cyan/20 space-y-3 mt-1">
-          <p className="text-[10px] font-semibold text-cyan uppercase tracking-wider">
+          <p className="text-[12px] font-semibold text-cyan uppercase tracking-wider">
             {requiresCustomer ? 'Customer Details' : 'Vendor Details'}
           </p>
           {requiresCustomer && (
@@ -1480,7 +1480,7 @@ function StructuredFormTab({ currency, onSuccess, onCancel, initialValues, editT
                 {requiresCustomer ? 'Invoice Number' : 'Bill / PO Number'}
               </label>
               {invoiceAutoGenerated && watchedInvoiceNumber?.trim() && (
-                <span className="text-[10px] text-cyan/70 flex items-center gap-1">
+                <span className="text-[12px] text-cyan/70 flex items-center gap-1">
                   <Sparkles className="h-2.5 w-2.5" />
                   Auto-generated — type to override
                 </span>
@@ -1554,7 +1554,7 @@ function StructuredFormTab({ currency, onSuccess, onCancel, initialValues, editT
               const valuationAfter = Math.round(newStock * newAvgCost * 100) / 100
               return (
                 <div className="pt-2 border-t border-positive/15 space-y-2">
-                  <div className="grid grid-cols-3 gap-2 text-[11px]">
+                  <div className="grid grid-cols-3 gap-2 text-[12.5px]">
                     <div>
                       <span className="block text-text-muted">Stock</span>
                       <span className="text-text-primary font-semibold tabular-nums">
@@ -1575,12 +1575,12 @@ function StructuredFormTab({ currency, onSuccess, onCancel, initialValues, editT
                       <span className="text-text-primary font-semibold tabular-nums">
                         {formatCurrency(valuationAfter, currency)}
                       </span>
-                      <span className="ml-1 text-positive text-[10px]">
+                      <span className="ml-1 text-positive text-[12px]">
                         +{formatCurrency(Math.round((valuationAfter - valuationBefore) * 100) / 100, currency)}
                       </span>
                     </div>
                   </div>
-                  <p className="text-[11px] text-text-muted">
+                  <p className="text-[12.5px] text-text-muted">
                     Stock will be <span className="text-positive font-medium">incremented</span> at a
                     weighted-average cost (DR Inventory). No separate journal — this transaction funds it.
                   </p>
@@ -1596,7 +1596,7 @@ function StructuredFormTab({ currency, onSuccess, onCancel, initialValues, editT
             const crossesReorder = newStock >= 0 && newStock <= item.reorderLevel && item.currentStock > item.reorderLevel
             return (
               <div className="pt-2 border-t border-positive/15 space-y-2">
-                <div className="grid grid-cols-3 gap-2 text-[11px]">
+                <div className="grid grid-cols-3 gap-2 text-[12.5px]">
                   <div>
                     <span className="block text-text-muted">Stock</span>
                     <span className="text-text-primary font-semibold tabular-nums">
@@ -1613,17 +1613,17 @@ function StructuredFormTab({ currency, onSuccess, onCancel, initialValues, editT
                   </div>
                 </div>
                 {insufficient ? (
-                  <p className="text-[11px] text-negative font-semibold">
+                  <p className="text-[12.5px] text-negative font-semibold">
                     ⚠ Insufficient stock — only {item.currentStock} {unit} available. This sale will be rejected.
                   </p>
                 ) : crossesReorder ? (
-                  <p className="text-[11px] text-negative font-medium">
+                  <p className="text-[12.5px] text-negative font-medium">
                     ⚠ This sale drops stock to the reorder level ({item.reorderLevel} {unit}) — a reorder alert will fire.
                   </p>
                 ) : item.currentStock <= item.reorderLevel ? (
-                  <p className="text-[11px] text-negative">⚠ Already below reorder level — {item.currentStock} {unit} remaining.</p>
+                  <p className="text-[12.5px] text-negative">⚠ Already below reorder level — {item.currentStock} {unit} remaining.</p>
                 ) : null}
-                <p className="text-[11px] text-text-muted">
+                <p className="text-[12.5px] text-text-muted">
                   Stock will be <span className="text-amber font-medium">decremented</span> and COGS auto-posted
                   (DR Cost of Goods Sold · CR Inventory).
                 </p>
@@ -1651,7 +1651,7 @@ function StructuredFormTab({ currency, onSuccess, onCancel, initialValues, editT
                 <div className="flex items-center justify-between mb-1">
                   <label className="block text-xs font-medium text-text-secondary">Invoice / Bill Reference</label>
                   {invoiceAutoGenerated && watchedInvoiceNumber?.trim() && (
-                    <span className="text-[10px] text-cyan/70 flex items-center gap-1">
+                    <span className="text-[12px] text-cyan/70 flex items-center gap-1">
                       <Sparkles className="h-2.5 w-2.5" />
                       Auto-generated — type to override
                     </span>
@@ -1918,7 +1918,7 @@ function ExcelTab({ onSuccess, onCancel }) {
                 {preview.errors.map((e, i) => (
                   <li key={i} className="px-3 py-1.5 text-xs text-negative">
                     <span className="font-semibold">Row {e.row}</span>
-                    {e.field && e.field !== 'general' && <span className="ml-1 rounded bg-negative/10 px-1 font-mono text-[10px]">{e.field}</span>}
+                    {e.field && e.field !== 'general' && <span className="ml-1 rounded bg-negative/10 px-1 font-mono text-[12px]">{e.field}</span>}
                     {' '}{e.message}
                   </li>
                 ))}
@@ -1999,7 +1999,7 @@ function ExcelTab({ onSuccess, onCancel }) {
           </table>
         </div>
         {rows.length > 0 && (
-          <p className="text-center text-[10px] text-text-muted">
+          <p className="text-center text-[12px] text-text-muted">
             Click any description to edit inline · ✦ = AI-inferred · ⚠ = possible duplicate · <span className="text-negative">red row = fuzzy account match</span>
           </p>
         )}
@@ -2042,7 +2042,7 @@ function ExcelTab({ onSuccess, onCancel }) {
       <div className="rounded-lg border border-glass bg-glass-panel p-3 text-xs">
         <p className="font-medium text-text-secondary mb-1">Required columns (in any order, fuzzy-matched):</p>
         <p className="font-mono text-text-muted">date · description · amount · debit account · credit account</p>
-        <p className="font-mono text-text-muted mt-0.5 text-[10px]">Optional: type · mode · customer · vendor · reference · notes · tax · currency</p>
+        <p className="font-mono text-text-muted mt-0.5 text-[12px]">Optional: type · mode · customer · vendor · reference · notes · tax · currency</p>
       </div>
       <div className="flex justify-end pt-2 border-t border-glass">
         <Button variant="ghost" onClick={onCancel}>Cancel</Button>

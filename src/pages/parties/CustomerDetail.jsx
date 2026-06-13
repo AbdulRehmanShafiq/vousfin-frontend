@@ -65,7 +65,7 @@ function KpiTile({ icon: Icon, label, value, sub, accent, accentColor = 'cyan' }
       accent && accentColor === 'amber' && 'border-amber/30 bg-amber/5',
     )}>
       <div className="flex items-center justify-between">
-        <span className="text-[11px] text-text-muted font-semibold uppercase tracking-wider">{label}</span>
+        <span className="text-[12.5px] text-text-muted font-semibold uppercase tracking-wider">{label}</span>
         {Icon && <Icon className="h-4 w-4 text-text-muted/70" />}
       </div>
       <span className="text-2xl font-black text-text-primary leading-tight">{value}</span>
@@ -81,7 +81,7 @@ function FieldRow({ icon: Icon, label, value }) {
     <div className="flex items-start gap-2.5 text-sm">
       <Icon className="h-4 w-4 flex-shrink-0 text-text-muted mt-0.5" />
       <div className="min-w-0">
-        <p className="text-[11px] text-text-muted uppercase tracking-wider font-semibold">{label}</p>
+        <p className="text-[12.5px] text-text-muted uppercase tracking-wider font-semibold">{label}</p>
         <p className="text-text-primary break-words">{value}</p>
       </div>
     </div>
@@ -506,7 +506,7 @@ export default function CustomerDetail() {
                   { label: 'Overdue',        value: formatCurrency(stmt.summary.overdueAmount || 0, currency), color: 'text-negative'     },
                 ].map(c => (
                   <div key={c.label} className="bg-glass/30 rounded-lg px-4 py-3">
-                    <p className="text-[10px] text-text-muted uppercase tracking-wider font-semibold">{c.label}</p>
+                    <p className="text-[12px] text-text-muted uppercase tracking-wider font-semibold">{c.label}</p>
                     <p className={cn('text-base font-black mt-0.5', c.color)}>{c.value}</p>
                   </div>
                 ))}

@@ -31,7 +31,7 @@ function ScoreBar({ score, level }) {
       <div className="flex-1 h-1.5 rounded-full bg-glass overflow-hidden">
         <div className={`h-full rounded-full ${color}`} style={{ width: `${score}%` }} />
       </div>
-      <span className="text-[10px] text-text-muted font-mono">{score}</span>
+      <span className="text-[12px] text-text-muted font-mono">{score}</span>
     </div>
   )
 }
@@ -39,7 +39,7 @@ function ScoreBar({ score, level }) {
 export default function VendorRiskBadge({ riskLevel, riskScore, riskFactors, showDetails = false }) {
   if (!riskLevel) {
     return (
-      <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[11px]
+      <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[12.5px]
                         bg-glass text-text-muted border border-glass">
         No data
       </span>
@@ -67,7 +67,7 @@ export default function VendorRiskBadge({ riskLevel, riskScore, riskFactors, sho
             .sort(([, a], [, b]) => b - a)
             .slice(0, 3)
             .map(([key, val]) => (
-              <div key={key} className="flex items-center justify-between text-[10px]">
+              <div key={key} className="flex items-center justify-between text-[12px]">
                 <span className="text-text-muted">{FACTOR_LABELS[key] || key}</span>
                 <span className={`font-mono ${cfg.text}`}>{Math.round(val)}%</span>
               </div>

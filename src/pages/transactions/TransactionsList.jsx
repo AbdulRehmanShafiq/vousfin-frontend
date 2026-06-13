@@ -54,12 +54,12 @@ const FILTERS = ['All', 'Income', 'Expense', 'AR/AP', 'Transfer']
 // ─── memoized sub-components ──────────────────────────────────────────────────
 
 const StatusBadge = memo(function StatusBadge({ row }) {
-  if (row.status === 'reversed')        return <Badge variant="danger"  className="text-[10px] py-0.5 px-1.5">Reversed</Badge>
-  if (row.installmentPlanId)            return <Badge variant="info"    className="text-[10px] py-0.5 px-1.5">Instalment</Badge>
-  if (row.paymentStatus === 'unpaid')   return <Badge variant="warning" className="text-[10px] py-0.5 px-1.5">Unpaid</Badge>
-  if (row.paymentStatus === 'partial')  return <Badge variant="warning" className="text-[10px] py-0.5 px-1.5">Partial</Badge>
-  if (row.paymentStatus === 'paid')     return <Badge variant="success" className="text-[10px] py-0.5 px-1.5">Paid</Badge>
-  return <Badge variant="default" className="text-[10px] py-0.5 px-1.5">Posted</Badge>
+  if (row.status === 'reversed')        return <Badge variant="danger"  className="text-[12px] py-0.5 px-1.5">Reversed</Badge>
+  if (row.installmentPlanId)            return <Badge variant="info"    className="text-[12px] py-0.5 px-1.5">Instalment</Badge>
+  if (row.paymentStatus === 'unpaid')   return <Badge variant="warning" className="text-[12px] py-0.5 px-1.5">Unpaid</Badge>
+  if (row.paymentStatus === 'partial')  return <Badge variant="warning" className="text-[12px] py-0.5 px-1.5">Partial</Badge>
+  if (row.paymentStatus === 'paid')     return <Badge variant="success" className="text-[12px] py-0.5 px-1.5">Paid</Badge>
+  return <Badge variant="default" className="text-[12px] py-0.5 px-1.5">Posted</Badge>
 })
 
 // EditDateModal removed — date editing is now part of the full Edit Transaction modal
@@ -71,7 +71,7 @@ const HistoryPanel = memo(function HistoryPanel({ history }) {
   const { reversal, auditTrail } = history
   return (
     <div className="space-y-1.5">
-      <p className="text-[10px] font-bold uppercase tracking-widest text-text-muted flex items-center gap-1">
+      <p className="text-[12px] font-bold uppercase tracking-widest text-text-muted flex items-center gap-1">
         <History className="h-3 w-3" /> Audit Trail
       </p>
       {reversal && (
@@ -83,8 +83,8 @@ const HistoryPanel = memo(function HistoryPanel({ history }) {
       )}
       {auditTrail?.map((e, i) => (
         <div key={i} className="flex items-center gap-2 text-xs">
-          <span className="text-cyan font-mono shrink-0 text-[10px]">{formatDate(e.timestamp || e.createdAt)}</span>
-          <span className={`shrink-0 rounded-full px-1.5 py-px font-semibold text-[10px] ${
+          <span className="text-cyan font-mono shrink-0 text-[12px]">{formatDate(e.timestamp || e.createdAt)}</span>
+          <span className={`shrink-0 rounded-full px-1.5 py-px font-semibold text-[12px] ${
             e.action === 'Reversed' ? 'bg-negative/15 text-negative' :
             e.action === 'Created'  ? 'bg-positive/15 text-positive' :
             e.action === 'Edited'   ? 'bg-amber/15 text-amber-2' :
@@ -123,7 +123,7 @@ const MobileCard = memo(function MobileCard({
           </span>
           {row.currencyCode && row.currencyCode !== currency && (
             <div className="flex items-center gap-1">
-              <span className="text-[10px] text-text-muted tabular-nums">
+              <span className="text-[12px] text-text-muted tabular-nums">
                 {row.amount?.toLocaleString(undefined, { maximumFractionDigits: 2 })}
               </span>
               <CurrencyBadge code={row.currencyCode} baseCurrency={currency} />
@@ -133,15 +133,15 @@ const MobileCard = memo(function MobileCard({
       </div>
 
       {/* Row 2: accounts */}
-      <p className="text-[11px] text-text-muted mt-0.5 truncate">
+      <p className="text-[12.5px] text-text-muted mt-0.5 truncate">
         {row.debitAccountId?.accountName} → {row.creditAccountId?.accountName}
       </p>
 
       {/* Row 3: meta + actions */}
       <div className="mt-1.5 flex items-center justify-between gap-1">
         <div className="flex items-center gap-1.5 flex-wrap min-w-0">
-          <span className="text-[11px] text-text-muted shrink-0">{formatDate(row.transactionDate)}</span>
-          <Badge variant={TYPE_VARIANT[type] || 'default'} className="text-[10px] py-0 px-1.5">
+          <span className="text-[12.5px] text-text-muted shrink-0">{formatDate(row.transactionDate)}</span>
+          <Badge variant={TYPE_VARIANT[type] || 'default'} className="text-[12px] py-0 px-1.5">
             {row.transactionType || 'Unknown'}
           </Badge>
           <StatusBadge row={row} />
@@ -340,7 +340,7 @@ export default function TransactionsList() {
 
         {/* Info bar */}
         <div className="flex items-center justify-between px-3 py-1.5 border-b border-glass">
-          <span className="text-[11px] text-text-muted">
+          <span className="text-[12.5px] text-text-muted">
             {filtered.length}{activeFilter !== 'All' ? ` ${activeFilter}` : ''} / {total} total
           </span>
           {isFetching && <Loader2 className="h-3 w-3 animate-spin text-cyan" />}
@@ -356,7 +356,7 @@ export default function TransactionsList() {
             {/* ── Desktop table (hidden on mobile) ────────────────── */}
             <div className="hidden sm:block overflow-hidden">
               <table className="w-full text-left text-sm">
-                <thead className="bg-glass-panel text-[10px] uppercase text-text-muted tracking-wider">
+                <thead className="bg-glass-panel text-[12px] uppercase text-text-muted tracking-wider">
                   <tr>
                     <th className="px-4 py-2.5 font-semibold w-24">Date</th>
                     <th className="px-4 py-2.5 font-semibold">Description</th>
@@ -382,14 +382,14 @@ export default function TransactionsList() {
                             <p className={`text-sm font-semibold truncate ${isReversed ? 'line-through text-text-muted' : 'text-text-primary'}`}>
                               {row.description}
                             </p>
-                            <p className="text-[11px] text-text-muted truncate">
+                            <p className="text-[12.5px] text-text-muted truncate">
                               {row.debitAccountId?.accountName} → {row.creditAccountId?.accountName}
                             </p>
                           </td>
 
                           {/* Type (large screens only) */}
                           <td className="px-4 py-2.5 hidden lg:table-cell">
-                            <Badge variant={TYPE_VARIANT[type] || 'default'} className="text-[10px] py-0.5">
+                            <Badge variant={TYPE_VARIANT[type] || 'default'} className="text-[12px] py-0.5">
                               {row.transactionType || 'Unknown'}
                             </Badge>
                           </td>
@@ -405,7 +405,7 @@ export default function TransactionsList() {
                               </span>
                               {row.currencyCode && row.currencyCode !== currency && (
                                 <div className="flex items-center gap-1">
-                                  <span className="text-[10px] text-text-muted tabular-nums">
+                                  <span className="text-[12px] text-text-muted tabular-nums">
                                     {row.amount?.toLocaleString(undefined, { maximumFractionDigits: 2 })}
                                   </span>
                                   <CurrencyBadge code={row.currencyCode} baseCurrency={currency} rate={row.exchangeRate} />
@@ -496,7 +496,7 @@ export default function TransactionsList() {
             </div>
           )}
           {!hasNextPage && !isLoading && docs.length > 0 && (
-            <p className="py-3 text-center text-[11px] text-text-muted">
+            <p className="py-3 text-center text-[12.5px] text-text-muted">
               All {total} transactions loaded
             </p>
           )}
