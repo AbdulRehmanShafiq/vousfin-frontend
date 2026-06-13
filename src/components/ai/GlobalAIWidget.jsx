@@ -113,13 +113,13 @@ function Bubble({ m }) {
 }
 
 export default function GlobalAIWidget() {
-  const [isOpen, setIsOpen]             = useState(false)
   const [isFullscreen, setIsFullscreen] = useState(false)
   const [input, setInput]               = useState('')
   const bottomRef                       = useRef(null)
   const inputRef                        = useRef(null)
 
-  const { messages, loading, sendMessage, clearChat } = useAIStore()
+  const { messages, loading, sendMessage, clearChat, chatOpen: isOpen, openChat, closeChat } = useAIStore()
+  const setIsOpen = (v) => (v ? openChat() : closeChat())
   const { pathname } = useLocation()
   const suggestedPrompts = useMemo(() => getContextualPrompts(pathname), [pathname])
 
@@ -142,12 +142,12 @@ export default function GlobalAIWidget() {
     const handler = (e) => {
       if (e.key === 'Escape') {
         if (isFullscreen) setIsFullscreen(false)
-        else if (isOpen) setIsOpen(false)
+        else if (isOpen) closeChat()
       }
     }
     window.addEventListener('keydown', handler)
     return () => window.removeEventListener('keydown', handler)
-  }, [isFullscreen, isOpen])
+  }, [isFullscreen, isOpen, closeChat])
 
   const submit = async (text) => {
     const q = (text ?? input).trim()
@@ -165,12 +165,12 @@ export default function GlobalAIWidget() {
     setIsFullscreen(false)
   }
 
-  /* ── Collapsed FAB ─────────────────────────────────────────────────── */
+  /* ── Collapsed FAB — desktop only (mobile opens AI from the bottom bar) ── */
   if (!isOpen) {
     return (
       <button
         onClick={() => setIsOpen(true)}
-        className="fixed bottom-[4.5rem] sm:bottom-6 right-4 sm:right-6 z-[60] flex items-center gap-2 rounded-full bg-cyan text-navy px-3.5 py-2.5 sm:px-4 sm:py-3 shadow-lg shadow-cyan/25 hover:bg-cyan/90 active:scale-95 transition-all duration-150 font-semibold text-sm select-none"
+        className="fixed bottom-6 right-6 z-[60] hidden lg:flex items-center gap-2 rounded-full bg-cyan text-navy px-4 py-3 shadow-lg shadow-cyan/25 hover:bg-cyan/90 active:scale-95 transition-all duration-150 font-semibold text-sm select-none"
         aria-label="Open AI Assistant"
       >
         <BrainCircuit className="h-5 w-5 flex-shrink-0" />

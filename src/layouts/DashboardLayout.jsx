@@ -1,17 +1,21 @@
-import { useState, useEffect } from 'react'
+import { useEffect } from 'react'
 import { Outlet } from 'react-router-dom'
+import { useQueryClient } from '@tanstack/react-query'
 import SectionRail from '@/components/layout/SectionRail'
 import Header from '@/components/layout/Header'
 import MobileNav from '@/components/layout/MobileNav'
-import Drawer from '@/components/ui/Drawer'
 import GlobalAIWidget from '@/components/ai/GlobalAIWidget'
+import TransactionFormModal from '@/components/forms/TransactionFormModal'
 import { useAuthStore } from '@/stores/useAuthStore'
 import { useBusinessStore } from '@/stores/useBusinessStore'
+import { useUIStore } from '@/stores/useUIStore'
 
 export default function DashboardLayout() {
-  const [isMobileDrawerOpen, setIsMobileDrawerOpen] = useState(false)
   const { user } = useAuthStore()
   const { activeBusiness, fetchBusiness } = useBusinessStore()
+  const queryClient = useQueryClient()
+  const txModalOpen = useUIStore((s) => s.txModalOpen)
+  const closeTxModal = useUIStore((s) => s.closeTxModal)
 
   useEffect(() => {
     if (user?.businessId && !activeBusiness) {
@@ -19,39 +23,44 @@ export default function DashboardLayout() {
     }
   }, [user?.businessId, activeBusiness, fetchBusiness])
 
+  // After a global "Create" succeeds, refresh everything a new transaction
+  // can change so any page reflects it immediately.
+  const handleTxSuccess = () => {
+    closeTxModal()
+    ;['transactions', 'dashboard', 'healthScore', 'healthOutlook', 'financialInsights', 'reports']
+      .forEach((key) => queryClient.invalidateQueries({ queryKey: [key] }))
+  }
+
   return (
     <div className="flex h-screen bg-navy overflow-hidden selection:bg-cyan/30 selection:text-white">
-      {/* Desktop section rail — the "Vault" launcher */}
+      {/* Desktop section rail — the "Vault" launcher (hidden < lg) */}
       <SectionRail />
-
-      {/* Mobile drawer — same section launchers, labeled */}
-      <Drawer
-        isOpen={isMobileDrawerOpen}
-        onClose={() => setIsMobileDrawerOpen(false)}
-        position="left"
-        className="w-72 p-0"
-        title="Sections"
-      >
-        <SectionRail isMobile closeMobile={() => setIsMobileDrawerOpen(false)} />
-      </Drawer>
 
       {/* Main Container */}
       <div className="flex flex-1 flex-col overflow-hidden">
-        <Header toggleMobileDrawer={() => setIsMobileDrawerOpen(true)} />
-        
+        <Header />
+
         <main className="flex-1 overflow-y-auto overflow-x-hidden bg-navy scrollbar-thin">
-          {/* pb-20 on small screens leaves room for the fixed MobileNav bottom bar */}
-          <div className="mx-auto max-w-7xl px-4 py-8 pb-24 sm:px-6 lg:px-8 lg:pb-8 animate-fade-in">
+          {/* pb-24 on small screens leaves room for the fixed MobileNav bottom bar */}
+          <div className="mx-auto max-w-7xl px-4 py-8 pb-28 sm:px-6 lg:px-8 lg:pb-8 animate-fade-in">
             <Outlet />
           </div>
         </main>
       </div>
 
-      {/* Mobile bottom nav — visible on screens < lg */}
+      {/* Mobile bottom nav — the only mobile nav surface (< lg) */}
       <MobileNav />
 
       {/* Global AI Assistant widget — persists across all route changes */}
       <GlobalAIWidget />
+
+      {/* Universal Create modal — openable from the bottom bar on any page */}
+      <TransactionFormModal
+        isOpen={txModalOpen}
+        onClose={closeTxModal}
+        onSuccess={handleTxSuccess}
+        transaction={null}
+      />
     </div>
   )
 }

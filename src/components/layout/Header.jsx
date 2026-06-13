@@ -1,28 +1,20 @@
-import { Menu, Bell } from 'lucide-react'
+import { Bell } from 'lucide-react'
 import { useAuthStore } from '@/stores/useAuthStore'
 import { useLocation } from 'react-router-dom'
+import vousFinLogo from '@/assets/vousfin-logo.png'
 import { pageTitleFor } from './nav.config'
 
-export default function Header({ toggleMobileDrawer }) {
+export default function Header() {
   const user = useAuthStore((s) => s.user)
   const location = useLocation()
 
-  // Title derives from the same nav model the sidebar renders — no drift.
+  // Title derives from the same nav model the rail renders — no drift.
   const title = pageTitleFor(location.pathname)
 
   return (
-    <header className="sticky top-0 z-40 flex h-14 shrink-0 items-center gap-x-4 border-b border-glass bg-navy/85 px-4 backdrop-blur-md sm:gap-x-6 sm:px-6 lg:px-8">
-      <button
-        type="button"
-        className="-m-2.5 p-2.5 text-text-muted hover:text-text-primary lg:hidden"
-        onClick={toggleMobileDrawer}
-      >
-        <span className="sr-only">Open sidebar</span>
-        <Menu className="h-5 w-5" aria-hidden="true" />
-      </button>
-
-      {/* Separator */}
-      <div className="h-5 w-px bg-glass lg:hidden" aria-hidden="true" />
+    <header className="sticky top-0 z-40 flex h-14 shrink-0 items-center gap-x-3 border-b border-glass bg-navy/85 px-4 backdrop-blur-md sm:gap-x-6 sm:px-6 lg:px-8">
+      {/* Brand mark on mobile (rail is desktop-only) */}
+      <img src={vousFinLogo} alt="VousFin" className="h-6 w-6 object-contain lg:hidden" />
 
       <div className="flex flex-1 items-center justify-between gap-x-4 lg:gap-x-6">
         <h1 className="font-display text-lg font-semibold text-text-primary tracking-tight">{title}</h1>

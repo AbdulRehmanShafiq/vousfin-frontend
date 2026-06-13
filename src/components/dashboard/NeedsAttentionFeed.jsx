@@ -9,7 +9,7 @@
 import { Link } from 'react-router-dom'
 import {
   Brain, AlertTriangle, AlertCircle, Info, CheckCircle2,
-  ArrowRight, RefreshCw, Zap, Bell, DollarSign, CreditCard, FileText,
+  ArrowRight, RefreshCw, Zap,
 } from 'lucide-react'
 import { useNeedsAttention, useAIRecommendations } from '@/hooks/useAI'
 import { cn } from '@/utils/cn'
@@ -19,13 +19,6 @@ const SEV = {
   warning:  { Icon: AlertCircle,  color: 'text-amber',  border: 'border-amber/25',  bg: 'bg-amber/8',  badge: 'bg-amber/20 text-amber', label: 'Worth a look' },
   info:     { Icon: Info,         color: 'text-cyan',        border: 'border-cyan/25',        bg: 'bg-cyan/8',        badge: 'bg-cyan/20 text-cyan',           label: 'Heads up'     },
 }
-
-const QUICK_ACTIONS = [
-  { label: 'Chase a payment', to: '/sales/receivables',  Icon: Bell,       color: 'var(--c-highlight)' },
-  { label: 'Record payment',  to: '/transactions',        Icon: DollarSign, color: 'var(--c-positive)' },
-  { label: 'Pay a bill',      to: '/purchases/payables', Icon: CreditCard, color: 'var(--c-negative)' },
-  { label: 'New invoice',     to: '/customers',           Icon: FileText,   color: 'var(--c-accent)' },
-]
 
 function AttentionItem({ item }) {
   const cfg = SEV[item.level] || SEV.info
@@ -139,27 +132,6 @@ export default function NeedsAttentionFeed() {
           </div>
         </div>
       )}
-
-      {/* Quick actions */}
-      <div className="pt-3 mt-4 border-t border-glass">
-        <p className="text-[12px] font-bold uppercase tracking-widest text-text-muted mb-2">Quick actions</p>
-        <div className="grid grid-cols-2 sm:grid-cols-4 gap-1.5">
-          {QUICK_ACTIONS.map(({ label, to, Icon, color }) => (
-            <Link
-              key={label}
-              to={to}
-              className="flex items-center justify-center gap-1.5 p-2 rounded-lg border border-glass-2 hover:border-glass-2 hover:bg-glass-hover transition-all group active:scale-95"
-            >
-              <div className="p-1 rounded-md flex-shrink-0" style={{ background: `rgb(${color} / 0.09)` }}>
-                <Icon className="h-3 w-3" style={{ color: `rgb(${color})` }} />
-              </div>
-              <span className="text-[12px] font-semibold text-text-muted group-hover:text-text-secondary transition-colors text-center leading-tight">
-                {label}
-              </span>
-            </Link>
-          ))}
-        </div>
-      </div>
     </div>
   )
 }

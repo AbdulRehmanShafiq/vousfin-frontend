@@ -14,13 +14,13 @@ import {
   LayoutDashboard, Plus, Clock,
   TrendingUp, TrendingDown,
   ArrowDownRight, ArrowUpRight,
-  BarChart2, BookOpen, Cpu,
+  FileText, CreditCard, Bell,
   ExternalLink, ChevronDown, X,
 } from 'lucide-react'
-import { useQueryClient } from '@tanstack/react-query'
 
 import { useBusinessStore } from '@/stores/useBusinessStore'
 import { useAuthStore }     from '@/stores/useAuthStore'
+import { useUIStore }       from '@/stores/useUIStore'
 import { useTransactions }  from '@/hooks/useTransactions'
 import { useDashboardAll }  from '@/hooks/useReports'
 import { formatCurrency, formatDate } from '@/utils/formatters'
@@ -33,7 +33,6 @@ import BusinessOutlookWidget   from '@/components/dashboard/BusinessOutlookWidge
 import ForecastWidget          from '@/components/dashboard/ForecastWidget'
 import RevenueExpensesChart    from '@/components/dashboard/RevenueExpensesChart'
 import CashFlowTrendChart      from '@/components/dashboard/CashFlowTrendChart'
-import TransactionFormModal    from '@/components/forms/TransactionFormModal'
 import SkeletonLoader          from '@/components/ui/SkeletonLoader'
 
 /* ── helpers ──────────────────────────────────────────────────────── */
@@ -135,9 +134,11 @@ function TxRow({ tx, currency }) {
 /* ── Quick Actions — horizontal toolbar pills ────────────────────── */
 /* Rendered right below the header greeting; uses explicit Tailwind    */
 /* colour classes (CSS-var opacity modifiers break Tailwind JIT).      */
+/* One smart row of real task shortcuts — no nav duplicates (those live in the
+   rail / bottom bar). The first opens the universal Create modal. */
 const ACTION_DEFS = [
   {
-    label: 'New Transaction',
+    label: 'Record Transaction',
     Icon: Plus,
     action: 'modal',
     iconClass:    'bg-cyan/15 text-cyan',
@@ -145,25 +146,25 @@ const ACTION_DEFS = [
     labelHover:   'group-hover:text-cyan',
   },
   {
-    label: 'Reports',
-    to: '/financial-reports',
-    Icon: BarChart2,
-    iconClass:    'bg-gold/15 text-gold',
-    wrapperHover: 'hover:bg-gold/10 hover:border-gold/40',
-    labelHover:   'group-hover:text-gold',
-  },
-  {
-    label: 'AI Forecast',
-    to: '/ai/forecast',
-    Icon: Cpu,
+    label: 'New Invoice',
+    to: '/sales/invoices/new',
+    Icon: FileText,
     iconClass:    'bg-emerald-3/15 text-emerald-3',
     wrapperHover: 'hover:bg-emerald-3/10 hover:border-emerald-3/40',
     labelHover:   'group-hover:text-emerald-3',
   },
   {
-    label: 'Journal',
-    to: '/financial-reports/general-ledger',
-    Icon: BookOpen,
+    label: 'Chase Payment',
+    to: '/sales/receivables',
+    Icon: Bell,
+    iconClass:    'bg-gold/15 text-gold',
+    wrapperHover: 'hover:bg-gold/10 hover:border-gold/40',
+    labelHover:   'group-hover:text-gold',
+  },
+  {
+    label: 'Pay a Bill',
+    to: '/purchases/payables',
+    Icon: CreditCard,
     iconClass:    'bg-amber/15 text-amber',
     wrapperHover: 'hover:bg-amber/10 hover:border-amber/40',
     labelHover:   'group-hover:text-amber',
@@ -280,10 +281,8 @@ function FinancialSnapshot({ ar, ap, currency, loading }) {
 export default function Dashboard() {
   const { user }                     = useAuthStore()
   const { currency, activeBusiness } = useBusinessStore()
-  const queryClient                  = useQueryClient()
+  const openTxModal                  = useUIStore((s) => s.openTxModal)
 
-  /* New-transaction modal */
-  const [showNewTx, setShowNewTx] = useState(false)
   /* Mobile transaction bottom drawer */
   const [showTxDrawer, setShowTxDrawer] = useState(false)
 
@@ -308,17 +307,6 @@ export default function Dashboard() {
   const greeting = hour < 12 ? 'Good morning' : hour < 17 ? 'Good afternoon' : 'Good evening'
   const firstName = (user?.fullName || user?.name || 'there').split(' ')[0]
 
-  function handleTxSuccess() {
-    setShowNewTx(false)
-    // Refresh everything a new transaction can change: ledger views, KPIs, and
-    // the live health/outlook intelligence so the dashboard reflects it at once.
-    queryClient.invalidateQueries({ queryKey: ['transactions'] })
-    queryClient.invalidateQueries({ queryKey: ['dashboard'] })
-    queryClient.invalidateQueries({ queryKey: ['healthScore'] })
-    queryClient.invalidateQueries({ queryKey: ['healthOutlook'] })
-    queryClient.invalidateQueries({ queryKey: ['financialInsights'] })
-  }
-
   return (
     <div className="animate-fade-in pb-10">
 
@@ -341,7 +329,7 @@ export default function Dashboard() {
 
       {/* ── QUICK ACTIONS — fixed position in page, no sticky drift ── */}
       <div className="mb-6">
-        <QuickActionsBar onNewTransaction={() => setShowNewTx(true)} />
+        <QuickActionsBar onNewTransaction={openTxModal} />
       </div>
 
       <div className="space-y-7">
@@ -453,7 +441,7 @@ export default function Dashboard() {
                     <LayoutDashboard className="h-7 w-7 text-text-muted mx-auto mb-2.5 opacity-40" />
                     <p className="text-sm text-text-muted mb-2">No transactions yet</p>
                     <button
-                      onClick={() => setShowNewTx(true)}
+                      onClick={openTxModal}
                       className="inline-flex items-center gap-1.5 text-sm text-cyan font-semibold hover:underline"
                     >
                       <Plus className="h-3.5 w-3.5" />
@@ -490,14 +478,6 @@ export default function Dashboard() {
         </Section>
 
       </div>{/* end space-y-7 */}
-
-      {/* ── New Transaction Modal ────────────────────────────────── */}
-      <TransactionFormModal
-        isOpen={showNewTx}
-        onClose={() => setShowNewTx(false)}
-        onSuccess={handleTxSuccess}
-        transaction={null}
-      />
 
       {/* ── Mobile Transaction Bottom Drawer ─────────────────────── */}
       {showTxDrawer && (

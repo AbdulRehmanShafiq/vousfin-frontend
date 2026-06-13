@@ -5,6 +5,12 @@ export const useAIStore = create((set, get) => ({
   messages: [],
   recommendations: [],
 
+  // Chat panel open/close — lifted to the store so the mobile bottom bar
+  // (and the desktop FAB) share one source of truth.
+  chatOpen: false,
+  openChat: () => set({ chatOpen: true }),
+  closeChat: () => set({ chatOpen: false }),
+
   // Anomaly state
   anomalies: [],          // current list shown in the UI
   anomalyTotal: 0,        // total from DB query
