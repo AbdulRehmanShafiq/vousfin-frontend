@@ -83,7 +83,7 @@ export default {
 
       fontFamily: {
         sans: ['Schibsted Grotesk', 'IBM Plex Sans', 'system-ui', 'Segoe UI', 'sans-serif'],
-        display: ['Fraunces', 'Georgia', 'serif'],
+        display: ['var(--font-display)', 'Fraunces', 'Georgia', 'serif'],
         mono: ['Spline Sans Mono', 'IBM Plex Mono', 'ui-monospace', 'monospace'],
       },
 

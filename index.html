@@ -32,8 +32,8 @@
         try {
           var raw = localStorage.getItem('vf-theme');
           var key = raw ? (JSON.parse(raw).state || {}).theme : null;
-          var valid = ['nocturne','onyx','sapphire','aubergine','graphite','copper','teal','carbon','porcelain','sand'];
-          if (key && valid.indexOf(key) !== -1 && key !== 'nocturne') {
+          var valid = ['terminal','maison','daybreak'];
+          if (key && valid.indexOf(key) !== -1) {
             document.documentElement.setAttribute('data-theme', key);
           }
         } catch (e) {}
