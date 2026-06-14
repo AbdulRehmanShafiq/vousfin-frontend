@@ -33,6 +33,9 @@ const taxService = {
   getPosition:      ()           => api.get('/tax/position'),
   getPositionTrend: (months = 6) => api.get('/tax/position/trend', { params: { months } }),
 
+  // ── Payroll accrual (FR-04.1 · Phase 3 — EOBI/SESSI) ───────────────────────────
+  savePayrollAccrual: (data)     => api.post('/tax/payroll-accrual', data),
+
   // ── Reports ───────────────────────────────────────────────────────────────────
   getLedger:    (params) => api.get('/tax/reports/ledger',  { params }),
   getSummary:   (params) => api.get('/tax/reports/summary', { params }),

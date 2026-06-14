@@ -45,6 +45,22 @@ export function useTaxTrend(months = 6) {
   })
 }
 
+/**
+ * Record a month's employer EOBI/SESSI obligation (FR-04.1, Phase 3).
+ * Invalidates ['tax'] so the live position picks up the new payroll liability.
+ */
+export function useSavePayrollAccrual() {
+  const qc = useQueryClient()
+  return useMutation({
+    mutationFn: (data) => taxService.savePayrollAccrual(data),
+    onSuccess:  (res) => {
+      qc.invalidateQueries({ queryKey: QUERY_KEY })
+      toast.success(res.data?.message || 'Payroll accrual saved')
+    },
+    onError: (err) => toast.error(err.response?.data?.message || 'Failed to save payroll accrual'),
+  })
+}
+
 export function useUpdateTaxConfig() {
   const qc = useQueryClient()
   return useMutation({
