@@ -10,13 +10,14 @@ import { useMemo, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { ShieldCheck, Settings2, RefreshCw, Sparkles } from 'lucide-react'
 
-import { useTaxPosition, useTaxTrend } from '@/hooks/useTax'
+import { useTaxPosition, useTaxTrend, useTaxAdvisories } from '@/hooks/useTax'
 import { useBusinessStore } from '@/stores/useBusinessStore'
 import { formatDate } from '@/utils/formatters'
 
 import TaxPositionCard   from '@/components/tax/TaxPositionCard'
 import DeadlineCountdown from '@/components/tax/DeadlineCountdown'
 import PayrollAccrualModal from '@/components/tax/PayrollAccrualModal'
+import AdvisoryCard      from '@/components/tax/AdvisoryCard'
 import { compactMoney, deadlineTone } from '@/components/tax/taxFormat'
 import { cn } from '@/utils/cn'
 
@@ -94,12 +95,14 @@ export default function TaxAutopilotPage() {
   const { currency: storeCurrency } = useBusinessStore()
   const { data: position, isLoading, isError, isFetching, refetch } = useTaxPosition()
   const { data: trend } = useTaxTrend(6)
+  const { data: advData, isLoading: advLoading } = useTaxAdvisories()
 
   const [payrollOpen, setPayrollOpen] = useState(false)
   const [payrollFocus, setPayrollFocus] = useState('EOBI')
 
-  const currency = position?.currency || storeCurrency || 'PKR'
-  const taxes    = position?.taxes || []
+  const currency   = position?.currency || storeCurrency || 'PKR'
+  const taxes      = position?.taxes || []
+  const advisories = advData?.advisories || []
 
   /* Per-tax sparkline series extracted from the snapshot trend. */
   const seriesFor = useMemo(() => {
@@ -175,6 +178,39 @@ export default function TaxAutopilotPage() {
                 onAddPayroll={openPayroll}
               />
             ))}
+          </div>
+        )}
+      </div>
+
+      {/* ── Ways to pay less tax (FR-04.2 advisories) ──────────────── */}
+      <div>
+        <div className="flex items-center gap-3 mb-3">
+          <span className="text-[12.5px] font-bold uppercase tracking-widest text-text-muted">Ways to pay less tax</span>
+          <div className="flex-1 h-px bg-glass" />
+          {advData?.totalPotentialSavingPKR > 0 && (
+            <span className="text-[12.5px] font-bold text-positive shrink-0">
+              Up to <span className="num">{compactMoney(advData.totalPotentialSavingPKR, currency)}</span>
+            </span>
+          )}
+        </div>
+
+        {advLoading ? (
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            {Array.from({ length: 2 }).map((_, i) => <div key={i} className="premium-card p-5 h-40 animate-pulse" />)}
+          </div>
+        ) : advisories.length === 0 ? (
+          <div className="premium-card p-6 flex items-center gap-3">
+            <div className="p-2.5 rounded-xl bg-positive-muted shrink-0">
+              <ShieldCheck className="h-5 w-5 text-positive" />
+            </div>
+            <div>
+              <p className="text-sm font-semibold text-text-primary">No optimizations found</p>
+              <p className="text-[13px] text-text-muted mt-0.5">Your tax setup looks efficient — we'll flag savings here as your ledger changes.</p>
+            </div>
+          </div>
+        ) : (
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 stagger-rise">
+            {advisories.map(a => <AdvisoryCard key={a.id} advisory={a} currency={currency} />)}
           </div>
         )}
       </div>

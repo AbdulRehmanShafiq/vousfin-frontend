@@ -12,6 +12,8 @@ import {
   ArrowRight, RefreshCw, Zap,
 } from 'lucide-react'
 import { useNeedsAttention, useAIRecommendations } from '@/hooks/useAI'
+import { useTaxAdvisories } from '@/hooks/useTax'
+import { compactMoney } from '@/components/tax/taxFormat'
 import { cn } from '@/utils/cn'
 
 const SEV = {
@@ -49,10 +51,25 @@ function AttentionItem({ item }) {
 export default function NeedsAttentionFeed() {
   const { data, isLoading, isError, refetch, isFetching } = useNeedsAttention()
   const { data: recs, isLoading: recsLoading } = useAIRecommendations()
+  const { data: advData } = useTaxAdvisories()
 
-  const items = Array.isArray(data?.items) ? data.items : []
+  const serverItems = Array.isArray(data?.items) ? data.items : []
   const counts = data?.counts || {}
   const recommendations = Array.isArray(recs) ? recs : []
+
+  // Surface the single highest-value tax-saving advisory as an info item so the
+  // opportunity is visible on the homepage, not buried under /tax (FR-04.2).
+  const topAdvisory = advData?.advisories?.[0]
+  const items = topAdvisory
+    ? [...serverItems, {
+        id: 'tax-advisory',
+        level: 'info',
+        title: `Save ~${compactMoney(topAdvisory.estimatedSavingPKR, advData.currency)} — ${topAdvisory.title}`,
+        message: topAdvisory.explanation,
+        action: 'Open Tax Autopilot',
+        actionTo: '/tax',
+      }]
+    : serverItems
 
   return (
     <div className="premium-card p-5 bg-gradient-to-br from-glass-panel via-transparent to-cyan/5 border-cyan/20">
