@@ -331,11 +331,16 @@
       inset 0 1px 0 rgba(255, 255, 255, 0.25),
       0 8px 24px -10px rgb(var(--c-accent) / 0.5);
   }
-  .btn-gradient:hover {
+  .btn-gradient:hover:not(:disabled) {
     filter: brightness(1.07);
     box-shadow:
       inset 0 1px 0 rgba(255, 255, 255, 0.3),
       0 10px 30px -10px rgb(var(--c-accent) / 0.65);
+  }
+  /* Disabled = clearly inert: drop the accent colour + glow, not just opacity. */
+  .btn-gradient:disabled {
+    filter: saturate(0.12) brightness(0.85);
+    box-shadow: none;
   }
 
   .btn-outline {
