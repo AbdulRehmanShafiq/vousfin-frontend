@@ -85,6 +85,49 @@ export function useBookkeepingDocuments() {
   })
 }
 
+/* ── Orchestrator routines (Phase 6) + NL control (Phase 7) ───────────────── */
+
+/** The routines on offer + the latest plan run. */
+export function usePlans() {
+  return useQuery({
+    queryKey: [...KEY, 'plans'],
+    queryFn:  () => autonomyService.getPlans().then(r => r.data?.data),
+    staleTime: 60 * 1000,
+  })
+}
+
+/** Run a routine (e.g. weekly_cash) → records an observable plan, fills the inbox. */
+export function useRunPlan() {
+  const qc = useQueryClient()
+  return useMutation({
+    mutationFn: (key) => autonomyService.runPlan(key).then(r => r.data?.data),
+    onSuccess:  (run) => {
+      qc.invalidateQueries({ queryKey: [...KEY, 'inbox'] })
+      qc.invalidateQueries({ queryKey: [...KEY, 'plans'] })
+      const n = run?.totalProposed || 0
+      toast.success(n > 0 ? `${run.name}: found ${n} thing${n === 1 ? '' : 's'} for you` : `${run?.name || 'Routine'}: all clear`)
+    },
+    onError: (err) => toast.error(err.response?.data?.message || 'Could not run that routine'),
+  })
+}
+
+/** The plain-language control line — "set tax to autopilot", "don't pay ACME". */
+export function useAutonomyControl() {
+  const qc = useQueryClient()
+  return useMutation({
+    mutationFn: (text) => autonomyService.control(text).then(r => r.data?.data),
+    onSuccess:  (data) => {
+      if (data?.understood) {
+        qc.invalidateQueries({ queryKey: KEY })
+        toast.success(data.message)
+      } else {
+        toast(data?.message || "I didn't catch that", { icon: '💬' })
+      }
+    },
+    onError: (err) => toast.error(err.response?.data?.message || 'Could not apply that'),
+  })
+}
+
 /** Hand the books a document (typed / pasted) → a proposed journal entry. */
 export function useIngestDocument() {
   const qc = useQueryClient()

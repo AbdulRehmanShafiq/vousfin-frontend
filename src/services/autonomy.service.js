@@ -17,6 +17,13 @@ const autonomyService = {
   // Bookkeeper agent (Phase 2) — hand the books a document; list intake + outcomes
   ingestDocument: (rawText, source) => api.post('/bookkeeping/ingest', { rawText, source }),
   getDocuments:   ()                => api.get('/bookkeeping/documents'),
+
+  // Orchestrator (Phase 6) — routines + the observable plan
+  getPlans:       ()                => api.get('/autonomy/plans'),
+  runPlan:        (key)             => api.post(`/autonomy/plans/${key}/run`),
+
+  // NL control line (Phase 7) — plain-language commands → policy changes
+  control:        (text)            => api.post('/autonomy/control', { text }),
 }
 
 export default autonomyService

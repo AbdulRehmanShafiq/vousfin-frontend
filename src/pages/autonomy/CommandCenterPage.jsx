@@ -9,11 +9,12 @@ import { useState, useEffect, useRef } from 'react'
 import { Link } from 'react-router-dom'
 import {
   Brain, CheckCircle2, AlertTriangle, AlertCircle, Info, ArrowUpRight,
-  Check, X, Sparkles, RefreshCw, Receipt, Loader2,
+  Check, X, Sparkles, RefreshCw, Receipt, Loader2, Send, Play, ListChecks,
 } from 'lucide-react'
 import {
   useAutonomyInbox, useAutonomyReport, useSetCapability,
   useApproveAction, useRejectAction, useIngestDocument, useAutonomyScan,
+  usePlans, useRunPlan, useAutonomyControl,
 } from '@/hooks/useAutonomy'
 import { cn } from '@/utils/cn'
 
@@ -198,6 +199,83 @@ function BookkeeperIntake() {
   )
 }
 
+/* ── The plain-language control line ───────────────────────────────────── */
+function ControlLine() {
+  const [text, setText] = useState('')
+  const control = useAutonomyControl()
+  const submit = (e) => {
+    e.preventDefault()
+    const t = text.trim()
+    if (!t || control.isPending) return
+    control.mutate(t, { onSuccess: (d) => { if (d?.understood) setText('') } })
+  }
+  return (
+    <form onSubmit={submit} className="premium-card p-3.5">
+      <div className="flex items-center gap-2.5">
+        <Brain className="h-4 w-4 text-cyan shrink-0" />
+        <input
+          value={text}
+          onChange={(e) => setText(e.target.value)}
+          placeholder='Tell VousFin what to do — e.g. "set tax to autopilot" or "don’t pay ACME for now"'
+          className="flex-1 bg-transparent text-[13px] text-text-primary placeholder:text-text-muted/70 focus:outline-none"
+        />
+        <button type="submit" disabled={!text.trim() || control.isPending} aria-label="Send command"
+          className="p-1.5 rounded-lg bg-cyan/15 text-cyan hover:bg-cyan/25 transition-colors disabled:opacity-40">
+          {control.isPending ? <Loader2 className="h-4 w-4 animate-spin" /> : <Send className="h-4 w-4" />}
+        </button>
+      </div>
+    </form>
+  )
+}
+
+/* ── Routines (the orchestrator) + the observable plan ─────────────────── */
+function Routines() {
+  const { data } = usePlans()
+  const run = useRunPlan()
+  const playbooks = data?.playbooks || []
+  const latest = data?.latest
+  const STEP_TONE = { done: 'text-positive', failed: 'text-negative', pending: 'text-text-muted' }
+
+  return (
+    <div className="premium-card p-5">
+      <div className="flex items-center gap-2.5 mb-3">
+        <div className="p-1.5 rounded-lg bg-amber/15"><ListChecks className="h-4 w-4 text-amber" /></div>
+        <div>
+          <h2 className="text-sm font-bold text-text-primary">Run a routine</h2>
+          <p className="text-[12.5px] text-text-muted">Let the team work a whole cycle at once — it all still comes back here for your OK.</p>
+        </div>
+      </div>
+
+      <div className="flex flex-wrap gap-2">
+        {playbooks.map(pb => (
+          <button key={pb.key} onClick={() => run.mutate(pb.key)} disabled={run.isPending} title={pb.description}
+            className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-glass bg-glass-panel/40 text-[12.5px] font-semibold text-text-secondary hover:border-amber/40 hover:text-text-primary transition-colors disabled:opacity-50">
+            {run.isPending && run.variables === pb.key ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <Play className="h-3.5 w-3.5 text-amber" />}
+            {pb.name}
+          </button>
+        ))}
+      </div>
+
+      {latest && (
+        <div className="mt-4 pt-3 border-t border-glass">
+          <p className="text-[11.5px] uppercase tracking-wider text-text-muted mb-2">
+            Last run · {latest.name}{latest.totalProposed > 0 ? ` · surfaced ${latest.totalProposed}` : ' · all clear'}
+          </p>
+          <div className="flex flex-wrap gap-x-4 gap-y-1">
+            {(latest.steps || []).map((s, i) => (
+              <span key={i} className="inline-flex items-center gap-1.5 text-[12px]">
+                <span className={cn('h-1.5 w-1.5 rounded-full', s.status === 'done' ? 'bg-positive' : s.status === 'failed' ? 'bg-negative' : 'bg-text-muted')} />
+                <span className="text-text-secondary">{s.label}</span>
+                <span className={cn('font-semibold', STEP_TONE[s.status] || 'text-text-muted')}>{s.proposed > 0 ? s.proposed : '✓'}</span>
+              </span>
+            ))}
+          </div>
+        </div>
+      )}
+    </div>
+  )
+}
+
 /* ══════════════════════════════════════════════════════════════════════ */
 export default function CommandCenterPage() {
   const { data, isLoading, isError, isFetching, refetch } = useAutonomyInbox()
@@ -231,9 +309,14 @@ export default function CommandCenterPage() {
         </button>
       </div>
 
+      <ControlLine />
+
       <AutonomyDials />
 
-      <BookkeeperIntake />
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+        <BookkeeperIntake />
+        <Routines />
+      </div>
 
       {/* Waiting for you */}
       <div>
