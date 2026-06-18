@@ -41,6 +41,7 @@ const TaxConfigPage        = lazy(() => import('@/pages/settings/TaxConfigPage')
 const TaxAutopilotPage     = lazy(() => import('@/pages/tax/TaxAutopilotPage'))      // FR-04.1
 const CommandCenterPage    = lazy(() => import('@/pages/autonomy/CommandCenterPage')) // Autonomy Phase 0
 const AppearancePage       = lazy(() => import('@/pages/settings/AppearancePage'))
+const CostCentersPage      = lazy(() => import('@/pages/settings/CostCentersPage'))   // SRS FR-07.1
 const InventoryPage        = lazy(() => import('@/pages/inventory/InventoryPage'))    // Phase 5.5 Step 4
 /* Phase 3.1 — Procurement */
 const PurchaseOrdersPage     = lazy(() => import('@/pages/procurement/PurchaseOrdersPage'))
@@ -186,6 +187,7 @@ export const routes = [
           { path: 'settings/exchange-rates',    element: withSuspense(CurrencyRatesPage)  },
           { path: 'settings/tax',               element: withSuspense(TaxConfigPage)      }, // Phase 5.4.8
           { path: 'settings/appearance',        element: withSuspense(AppearancePage)     },
+          { path: 'settings/cost-centers',      element: withSuspense(CostCentersPage)    }, // SRS FR-07.1
           { path: 'inventory',                  element: withSuspense(InventoryPage)      }, // Phase 5.5 Step 4
           { path: 'activity',                   element: withSuspense(ActivityTimelinePage) }, // ERP Step 9
           { path: 'ai/review-queue',            element: withSuspense(TransactionReviewQueuePage) }, // FR-01.2

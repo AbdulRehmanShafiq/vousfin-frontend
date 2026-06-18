@@ -22,7 +22,7 @@ import {
   Boxes, Bot, Library, Sparkles, Scale, Inbox,
   ArrowDownCircle, ArrowUpCircle,
   FileBarChart2, TrendingUp, Lightbulb,
-  Settings, DollarSign, Percent, Palette,
+  Settings, DollarSign, Percent, Palette, Building2,
 } from 'lucide-react'
 
 /* Section accents — theme variables (recolor per theme), meaning not decoration */
@@ -103,6 +103,7 @@ export const NAV_SECTIONS = [
       { name: 'Appearance',     href: '/settings/appearance',     icon: Palette,    activePrefix: '/settings/appearance', desc: 'Theme and look of the app' },
       { name: 'Tax Engine',     href: '/settings/tax',            icon: Percent,    activePrefix: '/settings/tax', desc: 'Tax rates and how tax is applied' },
       { name: 'Exchange Rates', href: '/settings/exchange-rates', icon: DollarSign, activePrefix: '/settings/exchange-rates', desc: 'Currency conversion rates' },
+      { name: 'Cost Centres',   href: '/settings/cost-centers',   icon: Building2,   activePrefix: '/settings/cost-centers', desc: 'Departments, branches and projects' },
     ],
   },
 ]
