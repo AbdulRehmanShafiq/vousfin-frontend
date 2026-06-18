@@ -61,6 +61,15 @@ export const NAV_SECTIONS = [
     ],
   },
   {
+    label: 'Payroll', key: 'payroll', icon: Wallet, accent: CORAL,
+    blurb: 'Pay your team — set up employees, run payroll each month, and hand out payslips and tax certificates.',
+    items: [
+      { name: 'Employees',   href: '/payroll/employees', icon: Users,    desc: 'The people you pay and their salary setup' },
+      { name: 'Run Payroll', href: '/payroll/run',       icon: Wallet,   desc: 'Calculate take-home pay and post it to the books' },
+      { name: 'Payslips',    href: '/payroll/payslips',  icon: FileText, desc: 'Download payslips, bank file and tax certificates' },
+    ],
+  },
+  {
     label: 'Ledger', key: 'ledger', icon: Library, accent: GOLD,
     blurb: 'The books themselves — every entry, the accounts behind them, and the controls that keep them honest.',
     items: [
