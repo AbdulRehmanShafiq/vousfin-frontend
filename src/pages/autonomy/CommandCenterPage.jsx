@@ -7,9 +7,10 @@
  */
 import { useState, useEffect, useRef } from 'react'
 import { Link } from 'react-router-dom'
+import toast from 'react-hot-toast'
 import {
   Brain, CheckCircle2, AlertTriangle, AlertCircle, Info, ArrowUpRight,
-  Check, X, Sparkles, RefreshCw, Receipt, Loader2, Send, Play, ListChecks,
+  Check, X, Sparkles, RefreshCw, Receipt, Loader2, Send, Play, ListChecks, ImagePlus,
 } from 'lucide-react'
 import {
   useAutonomyInbox, useAutonomyReport, useSetCapability,
@@ -159,16 +160,50 @@ function ActionCard({ item }) {
   )
 }
 
+/* Downscale a photo in the browser → base64 JPEG, so big phone snaps upload fast. */
+function fileToImage(file, maxDim = 1600, quality = 0.82) {
+  return new Promise((resolve, reject) => {
+    const img = new Image()
+    const url = URL.createObjectURL(file)
+    img.onload = () => {
+      URL.revokeObjectURL(url)
+      const scale = Math.min(1, maxDim / Math.max(img.width, img.height))
+      const w = Math.round(img.width * scale), h = Math.round(img.height * scale)
+      const canvas = document.createElement('canvas')
+      canvas.width = w; canvas.height = h
+      canvas.getContext('2d').drawImage(img, 0, 0, w, h)
+      const dataUrl = canvas.toDataURL('image/jpeg', quality)
+      resolve({ base64: dataUrl.split(',')[1], mimeType: 'image/jpeg', preview: dataUrl })
+    }
+    img.onerror = () => { URL.revokeObjectURL(url); reject(new Error('bad image')) }
+    img.src = url
+  })
+}
+
 /* ── Hand it to your bookkeeper ─────────────────────────────────────────── */
 function BookkeeperIntake() {
   const [text, setText] = useState('')
+  const [photo, setPhoto] = useState(null) // { base64, mimeType, preview }
+  const fileRef = useRef(null)
   const ingest = useIngestDocument()
+
+  const pickPhoto = async (e) => {
+    const file = e.target.files?.[0]
+    e.target.value = '' // allow re-selecting the same file
+    if (!file) return
+    if (!file.type.startsWith('image/')) { toast.error('Please choose an image'); return }
+    try { setPhoto(await fileToImage(file)) } catch { toast.error('Could not read that image') }
+  }
 
   const submit = (e) => {
     e.preventDefault()
+    if (ingest.isPending) return
     const rawText = text.trim()
-    if (!rawText || ingest.isPending) return
-    ingest.mutate({ rawText, source: 'manual' }, { onSuccess: () => setText('') })
+    if (!rawText && !photo) return
+    const payload = photo
+      ? { image: photo.base64, mimeType: photo.mimeType, source: 'upload', rawText }
+      : { rawText, source: 'manual' }
+    ingest.mutate(payload, { onSuccess: (d) => { if (d?.action) { setText(''); setPhoto(null) } } })
   }
 
   return (
@@ -177,24 +212,42 @@ function BookkeeperIntake() {
         <div className="p-1.5 rounded-lg bg-positive/15"><Receipt className="h-4 w-4 text-positive" /></div>
         <div>
           <h2 className="text-sm font-bold text-text-primary">Hand it to your bookkeeper</h2>
-          <p className="text-[12.5px] text-text-muted">Paste a bill, receipt or note — VousFin reads it and writes the entry for you.</p>
+          <p className="text-[12.5px] text-text-muted">Snap a photo of a bill, or type it — VousFin reads it and writes the entry for you.</p>
         </div>
       </div>
-      <textarea
-        value={text}
-        onChange={(e) => setText(e.target.value)}
-        rows={2}
-        placeholder='e.g. "Paid Rs 50,000 office rent to ABC Properties on 1 June"'
-        className="w-full mt-3 px-3 py-2.5 rounded-xl border border-glass bg-glass-panel/40 text-[13px] text-text-primary placeholder:text-text-muted/70 focus:outline-none focus:border-cyan/40 resize-none"
-      />
+
+      {photo ? (
+        <div className="relative mt-3">
+          <img src={photo.preview} alt="bill to read" className="max-h-40 w-auto rounded-xl border border-glass" />
+          <button type="button" onClick={() => setPhoto(null)} aria-label="Remove photo"
+            className="absolute top-1.5 left-1.5 p-1 rounded-md bg-charcoal/80 text-text-secondary hover:text-text-primary">
+            <X className="h-3.5 w-3.5" />
+          </button>
+        </div>
+      ) : (
+        <textarea
+          value={text}
+          onChange={(e) => setText(e.target.value)}
+          rows={2}
+          placeholder='e.g. "Paid Rs 50,000 office rent to ABC Properties on 1 June"'
+          className="w-full mt-3 px-3 py-2.5 rounded-xl border border-glass bg-glass-panel/40 text-[13px] text-text-primary placeholder:text-text-muted/70 focus:outline-none focus:border-cyan/40 resize-none"
+        />
+      )}
+
+      <input ref={fileRef} type="file" accept="image/*" capture="environment" onChange={pickPhoto} className="hidden" />
+
       <div className="flex items-center justify-between gap-3 mt-2.5">
-        <p className="text-[11.5px] text-text-muted">It won’t touch your books until you approve — unless you’ve dialed Bookkeeping up.</p>
-        <button type="submit" disabled={!text.trim() || ingest.isPending}
+        <button type="button" onClick={() => fileRef.current?.click()}
+          className="inline-flex items-center gap-1.5 text-[12px] font-medium text-text-muted hover:text-cyan transition-colors">
+          <ImagePlus className="h-3.5 w-3.5" /> {photo ? 'Change photo' : 'Add a photo'}
+        </button>
+        <button type="submit" disabled={(!text.trim() && !photo) || ingest.isPending}
           className="btn-gradient inline-flex items-center gap-1.5 px-4 py-2 rounded-lg text-[12.5px] font-semibold shrink-0">
           {ingest.isPending ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <Sparkles className="h-3.5 w-3.5" />}
           {ingest.isPending ? 'Reading…' : 'Read it'}
         </button>
       </div>
+      <p className="text-[11.5px] text-text-muted mt-2">It won’t touch your books until you approve — unless you’ve dialed Bookkeeping up.</p>
     </form>
   )
 }

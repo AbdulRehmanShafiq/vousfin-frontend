@@ -14,8 +14,8 @@ const autonomyService = {
   rejectAction:  (id)               => api.post(`/autonomy/actions/${id}/reject`),
   reverseAction: (id)               => api.post(`/autonomy/actions/${id}/reverse`),
 
-  // Bookkeeper agent (Phase 2) — hand the books a document; list intake + outcomes
-  ingestDocument: (rawText, source) => api.post('/bookkeeping/ingest', { rawText, source }),
+  // Bookkeeper agent (Phase 2) — hand the books a document (text or photo)
+  ingestDocument: (payload)         => api.post('/bookkeeping/ingest', payload),
   getDocuments:   ()                => api.get('/bookkeeping/documents'),
 
   // Orchestrator (Phase 6) — routines + the observable plan

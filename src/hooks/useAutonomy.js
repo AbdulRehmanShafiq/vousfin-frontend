@@ -12,7 +12,8 @@ export function useAutonomyInbox() {
   return useQuery({
     queryKey: [...KEY, 'inbox'],
     queryFn:  () => autonomyService.getInbox().then(r => r.data?.data),
-    staleTime: 30 * 1000,
+    staleTime: 10 * 1000,
+    refetchOnWindowFocus: true,   // returning to the tab clears any stale cards
   })
 }
 
@@ -56,12 +57,24 @@ export function useSetCapability() {
   })
 }
 
+// A stale card (already handled elsewhere) → refresh the inbox so it disappears,
+// and tell the owner plainly instead of showing a raw "must be queued" error.
+function handleActionError(qc, err, fallback) {
+  const msg = err.response?.data?.message || ''
+  if (/must be (queued|executed)|not found/i.test(msg)) {
+    qc.invalidateQueries({ queryKey: [...KEY, 'inbox'] })
+    toast('Already handled — refreshed', { icon: '↻' })
+  } else {
+    toast.error(msg || fallback)
+  }
+}
+
 export function useApproveAction() {
   const qc = useQueryClient()
   return useMutation({
     mutationFn: (id) => autonomyService.approveAction(id).then(r => r.data),
     onSuccess:  () => { qc.invalidateQueries({ queryKey: [...KEY, 'inbox'] }); toast.success('Approved') },
-    onError:    (err) => toast.error(err.response?.data?.message || 'Could not approve'),
+    onError:    (err) => handleActionError(qc, err, 'Could not approve'),
   })
 }
 
@@ -70,7 +83,7 @@ export function useRejectAction() {
   return useMutation({
     mutationFn: (id) => autonomyService.rejectAction(id).then(r => r.data),
     onSuccess:  () => { qc.invalidateQueries({ queryKey: [...KEY, 'inbox'] }); toast('Dismissed', { icon: '✕' }) },
-    onError:    (err) => toast.error(err.response?.data?.message || 'Could not dismiss'),
+    onError:    (err) => handleActionError(qc, err, 'Could not dismiss'),
   })
 }
 
@@ -128,17 +141,18 @@ export function useAutonomyControl() {
   })
 }
 
-/** Hand the books a document (typed / pasted) → a proposed journal entry. */
+/** Hand the books a document — typed text or a photo → a proposed journal entry. */
 export function useIngestDocument() {
   const qc = useQueryClient()
   return useMutation({
-    mutationFn: ({ rawText, source }) => autonomyService.ingestDocument(rawText, source).then(r => r.data?.data),
+    mutationFn: (payload) => autonomyService.ingestDocument(payload).then(r => r.data?.data),
     onSuccess:  (data) => {
       qc.invalidateQueries({ queryKey: [...KEY, 'inbox'] })
       qc.invalidateQueries({ queryKey: [...KEY, 'documents'] })
       const posted = data?.action?.status === 'executed'
       if (data?.action) toast.success(posted ? 'Recorded for you' : 'Read — waiting for your OK')
-      else toast.error("Couldn't read that — try adding the amount and what it was for")
+      else if (data?.busy) toast('Our reader is busy — try again in a moment', { icon: '⏳' })
+      else toast.error(data?.error || "Couldn't read that — try adding the amount and what it was for")
     },
     onError:    (err) => toast.error(err.response?.data?.message || 'Could not read that'),
   })
