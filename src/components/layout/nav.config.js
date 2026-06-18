@@ -21,7 +21,7 @@ import {
   Landmark, BrainCircuit, ShieldAlert,
   Boxes, Bot, Library, Sparkles, Scale, Inbox,
   ArrowDownCircle, ArrowUpCircle,
-  FileBarChart2, TrendingUp, Lightbulb,
+  FileBarChart2, TrendingUp, Lightbulb, Target,
   Settings, DollarSign, Percent, Palette, Building2,
 } from 'lucide-react'
 
@@ -102,6 +102,14 @@ export const NAV_SECTIONS = [
       { name: 'Scenarios',         href: '/ai-analyst/scenarios', icon: Lightbulb,  desc: "Test 'what if' situations safely" },
       { name: 'Anomalies',         href: '/ai-analyst/anomalies', icon: ShieldAlert, desc: 'Unusual activity we flagged for you' },
       { name: 'AI Assistant',      href: '/ai/assistant',         icon: Sparkles,   desc: 'Ask questions about your finances' },
+    ],
+  },
+  {
+    label: 'Budgets', key: 'budgets', icon: Target, accent: CHAMP,
+    blurb: 'Plan what you expect to earn and spend, then watch your real numbers against the plan — with alerts when something drifts off track.',
+    items: [
+      { name: 'Budget Editor',   href: '/budgets/editor',   icon: Target,        desc: 'Set your plan for the year — income and spending per account' },
+      { name: 'Budget vs Actual', href: '/budgets/variance', icon: FileBarChart2, desc: 'See how your real numbers compare to the plan' },
     ],
   },
   {

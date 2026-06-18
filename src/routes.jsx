@@ -45,6 +45,8 @@ const CostCentersPage      = lazy(() => import('@/pages/settings/CostCentersPage
 const EmployeesPage        = lazy(() => import('@/pages/payroll/EmployeesPage'))      // SRS FR-08
 const PayrollRunPage       = lazy(() => import('@/pages/payroll/PayrollRunPage'))     // SRS FR-08
 const PayslipsPage         = lazy(() => import('@/pages/payroll/PayslipsPage'))       // SRS FR-08
+const BudgetEditorPage      = lazy(() => import('@/pages/budget/BudgetEditorPage'))      // SRS FR-04.1
+const VarianceDashboardPage = lazy(() => import('@/pages/budget/VarianceDashboardPage')) // SRS FR-04.2
 const InventoryPage        = lazy(() => import('@/pages/inventory/InventoryPage'))    // Phase 5.5 Step 4
 /* Phase 3.1 — Procurement */
 const PurchaseOrdersPage     = lazy(() => import('@/pages/procurement/PurchaseOrdersPage'))
@@ -194,6 +196,8 @@ export const routes = [
           { path: 'payroll/employees',          element: withSuspense(EmployeesPage)      }, // SRS FR-08
           { path: 'payroll/run',                element: withSuspense(PayrollRunPage)     }, // SRS FR-08
           { path: 'payroll/payslips',           element: withSuspense(PayslipsPage)       }, // SRS FR-08
+          { path: 'budgets/editor',             element: withSuspense(BudgetEditorPage)      }, // SRS FR-04.1
+          { path: 'budgets/variance',           element: withSuspense(VarianceDashboardPage) }, // SRS FR-04.2
           { path: 'inventory',                  element: withSuspense(InventoryPage)      }, // Phase 5.5 Step 4
           { path: 'activity',                   element: withSuspense(ActivityTimelinePage) }, // ERP Step 9
           { path: 'ai/review-queue',            element: withSuspense(TransactionReviewQueuePage) }, // FR-01.2
