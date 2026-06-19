@@ -8,8 +8,9 @@
  */
 import { useState, useMemo } from 'react'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
+import { Link } from 'react-router-dom'
 import toast from 'react-hot-toast'
-import { Target, Loader2, Sparkles, Save, SendHorizonal } from 'lucide-react'
+import { Target, Loader2, Sparkles, Save, SendHorizonal, CalendarDays } from 'lucide-react'
 import budgetService from '@/services/budget.service'
 import { useAccounts } from '@/hooks/useAccounts'
 import { useFiscalYears } from '@/hooks/useFiscalYear'
@@ -75,9 +76,11 @@ export default function BudgetEditorPage() {
 
   const save = useMutation({
     mutationFn: () => {
+      if (!name.trim()) { const err = new Error('Give your budget a name first.'); err.handled = true; throw err }
       const lines = buildLines()
-      if (budgetId) return budgetService.update(budgetId, { name, lines }).then((r) => r.data?.data)
-      return budgetService.create({ name, fiscalYearId, scenario, lines }).then((r) => r.data?.data)
+      if (lines.length === 0) { const err = new Error('Enter at least one figure before saving.'); err.handled = true; throw err }
+      if (budgetId) return budgetService.update(budgetId, { name: name.trim(), lines }).then((r) => r.data?.data)
+      return budgetService.create({ name: name.trim(), fiscalYearId, scenario, lines }).then((r) => r.data?.data)
     },
     onSuccess: (data) => { setBudgetId(data._id); qc.invalidateQueries({ queryKey: ['budgets'] }); toast.success('Budget saved as a draft') },
     onError: (e) => toast.error(getErrorMessage(e)),
@@ -89,7 +92,7 @@ export default function BudgetEditorPage() {
     onError: (e) => toast.error(getErrorMessage(e)),
   })
 
-  const canEdit = fiscalYearId && name.trim()
+  const canEdit = !!fiscalYearId
   const renderGroup = (type, heading) => {
     const group = rows.filter((a) => a.accountType === type)
     if (group.length === 0) return null
@@ -153,6 +156,23 @@ export default function BudgetEditorPage() {
           {seed.isPending ? <Loader2 className="h-4 w-4 animate-spin" /> : <Sparkles className="h-4 w-4" />} Seed from last year
         </button>
       </div>
+
+      {fiscalYears.length === 0 && (
+        <div className="premium-card p-6 flex flex-col items-center text-center gap-3">
+          <div className="p-2.5 rounded-xl bg-amber/15"><CalendarDays className="h-5 w-5 text-amber" /></div>
+          <div>
+            <p className="text-[14px] font-semibold text-text-primary">Set up a financial year first</p>
+            <p className="text-[12.5px] text-text-secondary mt-1 max-w-md">
+              A budget is a plan for one year, so you need to tell VousFin which year you’re planning for.
+              It only takes a moment — then come back here.
+            </p>
+          </div>
+          <Link to="/accounting/fiscal-years"
+            className="btn-gradient inline-flex items-center gap-1.5 px-4 py-2 rounded-lg text-[12.5px] font-semibold">
+            <CalendarDays className="h-4 w-4" /> Set up a financial year
+          </Link>
+        </div>
+      )}
 
       {canEdit && rows.length > 0 && (
         <div className="premium-card p-4 space-y-3">
