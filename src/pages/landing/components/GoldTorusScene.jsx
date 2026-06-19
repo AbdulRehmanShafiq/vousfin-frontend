@@ -1,6 +1,9 @@
 import { useRef, useEffect } from 'react';
 import * as THREE from 'three';
 
+// A premium floating gold artifact behind the hero: a metallic torus-knot with a
+// wireframe shell and a halo of drifting gold motes. Reacts to mouse + scroll.
+// WebGL-guarded, DPR-capped, paused when hidden, fully disposed on unmount.
 export default function GoldTorusScene() {
   const mountRef = useRef(null);
 
@@ -8,72 +11,105 @@ export default function GoldTorusScene() {
     const mount = mountRef.current;
     if (!mount) return;
 
-    // WebGL support check
     try {
-      const canvas = document.createElement('canvas');
-      if (!window.WebGLRenderingContext || (!canvas.getContext('webgl') && !canvas.getContext('experimental-webgl'))) {
-        return; // Fallback to nothing if WebGL is not supported
-      }
-    } catch {
-      return;
-    }
+      const test = document.createElement('canvas');
+      if (!window.WebGLRenderingContext || (!test.getContext('webgl') && !test.getContext('experimental-webgl'))) return;
+    } catch { return; }
 
+    const SIZE = 460;
     const scene = new THREE.Scene();
     const camera = new THREE.PerspectiveCamera(45, 1, 0.1, 1000);
-    const renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true });
+    camera.position.z = 38;
 
-    renderer.setSize(300, 300);
+    const renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true });
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+    renderer.setSize(SIZE, SIZE);
     mount.appendChild(renderer.domElement);
 
-    const geometry = new THREE.TorusKnotGeometry(10, 3, 100, 16);
+    const group = new THREE.Group();
+    scene.add(group);
+
+    // Core metallic knot
+    const geometry = new THREE.TorusKnotGeometry(9, 2.6, 180, 32);
     const material = new THREE.MeshStandardMaterial({
-      color: 0xC8A96E,
-      metalness: 0.9,
-      roughness: 0.1,
+      color: 0xC8A96E, metalness: 1, roughness: 0.18,
+      emissive: 0x4a3416, emissiveIntensity: 0.35,
     });
-    const torusKnot = new THREE.Mesh(geometry, material);
-    scene.add(torusKnot);
+    const knot = new THREE.Mesh(geometry, material);
+    group.add(knot);
 
-    const ambientLight = new THREE.AmbientLight(0xffffff, 0.4);
-    scene.add(ambientLight);
+    // Wireframe shell for sparkle
+    const wire = new THREE.LineSegments(
+      new THREE.WireframeGeometry(geometry),
+      new THREE.LineBasicMaterial({ color: 0xE7D4A8, transparent: true, opacity: 0.12 })
+    );
+    wire.scale.setScalar(1.04);
+    group.add(wire);
 
-    const pointLight = new THREE.PointLight(0xffffff, 1.5);
-    pointLight.position.set(25, 25, 25);
-    scene.add(pointLight);
+    // Halo of drifting gold motes
+    const COUNT = 140;
+    const positions = new Float32Array(COUNT * 3);
+    for (let i = 0; i < COUNT; i++) {
+      const r = 16 + Math.random() * 14;
+      const th = Math.random() * Math.PI * 2;
+      const ph = Math.acos(2 * Math.random() - 1);
+      positions[i * 3] = r * Math.sin(ph) * Math.cos(th);
+      positions[i * 3 + 1] = r * Math.sin(ph) * Math.sin(th);
+      positions[i * 3 + 2] = r * Math.cos(ph);
+    }
+    const ptsGeo = new THREE.BufferGeometry();
+    ptsGeo.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+    const ptsMat = new THREE.PointsMaterial({ color: 0xD4B87A, size: 0.5, transparent: true, opacity: 0.6, blending: THREE.AdditiveBlending, depthWrite: false });
+    const motes = new THREE.Points(ptsGeo, ptsMat);
+    scene.add(motes);
 
-    const pointLight2 = new THREE.PointLight(0xC8A96E, 2);
-    pointLight2.position.set(-25, -25, 25);
-    scene.add(pointLight2);
+    // Lighting — warm key, gold rim, cool fill
+    scene.add(new THREE.AmbientLight(0xffffff, 0.35));
+    const key = new THREE.PointLight(0xffe9c0, 2.2); key.position.set(25, 25, 25); scene.add(key);
+    const rim = new THREE.PointLight(0xC8A96E, 2.4); rim.position.set(-28, -18, 18); scene.add(rim);
+    const fill = new THREE.PointLight(0x7EB5A6, 0.7); fill.position.set(0, -25, -10); scene.add(fill);
 
-    camera.position.z = 35;
-
-    let animationFrameId;
+    let mx = 0, my = 0, scrollT = 0, raf, t = 0, running = true;
+    const onMove = (e) => { mx = (e.clientX / window.innerWidth - 0.5); my = (e.clientY / window.innerHeight - 0.5); };
+    const onScroll = () => { scrollT = window.scrollY * 0.0012; };
+    window.addEventListener('mousemove', onMove, { passive: true });
+    window.addEventListener('scroll', onScroll, { passive: true });
 
     const animate = () => {
-      animationFrameId = requestAnimationFrame(animate);
-      torusKnot.rotation.x += 0.005;
-      torusKnot.rotation.y += 0.01;
+      if (!running) return;
+      raf = requestAnimationFrame(animate);
+      t += 0.004;
+      group.rotation.y += 0.006;
+      group.rotation.x = THREE.MathUtils.lerp(group.rotation.x, my * 0.6 + scrollT, 0.05);
+      group.rotation.z = THREE.MathUtils.lerp(group.rotation.z, mx * 0.4, 0.05);
+      group.position.y = Math.sin(t) * 1.2;
+      motes.rotation.y -= 0.0016;
+      motes.rotation.x += 0.0008;
       renderer.render(scene, camera);
     };
-
     animate();
 
+    const onVis = () => { running = !document.hidden; if (running) animate(); };
+    document.addEventListener('visibilitychange', onVis);
+
     return () => {
-      cancelAnimationFrame(animationFrameId);
-      if (mount && mount.contains(renderer.domElement)) {
-        mount.removeChild(renderer.domElement);
-      }
-      geometry.dispose();
-      material.dispose();
-      renderer.dispose();
+      running = false;
+      cancelAnimationFrame(raf);
+      window.removeEventListener('mousemove', onMove);
+      window.removeEventListener('scroll', onScroll);
+      document.removeEventListener('visibilitychange', onVis);
+      if (mount.contains(renderer.domElement)) mount.removeChild(renderer.domElement);
+      geometry.dispose(); material.dispose(); wire.geometry.dispose(); wire.material.dispose();
+      ptsGeo.dispose(); ptsMat.dispose(); renderer.dispose();
     };
   }, []);
 
   return (
-    <div 
-      ref={mountRef} 
-      className="w-[300px] h-[300px] max-w-full opacity-50 absolute -bottom-16 -right-16 pointer-events-none z-0" 
-      style={{ mixBlendMode: 'screen' }} 
+    <div
+      ref={mountRef}
+      aria-hidden="true"
+      className="pointer-events-none absolute -right-10 -top-16 z-0 h-[460px] w-[460px] max-w-full opacity-70 sm:-right-20 lg:-right-24"
+      style={{ mixBlendMode: 'screen' }}
     />
   );
 }

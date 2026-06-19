@@ -2,6 +2,7 @@ import { motion } from "framer-motion";
 import { Sparkles } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useReducedMotion } from "../hooks/useReducedMotion";
+import MagneticButton from "../components/MagneticButton";
 
 const heroWords = "Ready to Transform Your Finances?".split(" ");
 
@@ -157,35 +158,22 @@ export default function CTA() {
                 }}
               />
             )}
-            <motion.button
-              className="relative z-10 bg-gold-gradient px-10 py-4 font-body font-semibold text-[#12100E] rounded-full"
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.97 }}
-              transition={
-                reduced
-                  ? { duration: 0.01 }
-                  : { type: "spring", stiffness: 80, damping: 20 }
-              }
+            <MagneticButton
+              className="relative z-10 bg-gold-gradient px-10 py-4 font-body font-semibold text-[#12100E] rounded-full shadow-[0_8px_40px_-8px_rgba(200,169,110,0.6)]"
               onClick={() => navigate('/register')}
             >
               Start Free Trial
-            </motion.button>
+            </MagneticButton>
           </div>
 
           {/* secondary CTA */}
-          <motion.button
-            className="glass-card border border-[#C8A96E]/30 px-10 py-4 font-body font-semibold text-[#C8A96E] rounded-full"
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.97 }}
-            transition={
-              reduced
-                ? { duration: 0.01 }
-                : { type: "spring", stiffness: 80, damping: 20 }
-            }
-            onClick={() => navigate('/register')}
+          <MagneticButton
+            strength={0.25}
+            className="vf-glass-pro border border-[#C8A96E]/30 px-10 py-4 font-body font-semibold text-[#C8A96E] rounded-full"
+            onClick={() => navigate('/login')}
           >
             Contact Sales
-          </motion.button>
+          </MagneticButton>
         </motion.div>
       </div>
     </section>

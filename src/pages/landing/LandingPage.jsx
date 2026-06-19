@@ -3,6 +3,7 @@ import { motion, useScroll, useSpring } from 'framer-motion'
 import './landing.css'
 import Navigation from './components/Navigation'
 import Hero from './sections/Hero'
+import CustomCursor from './components/CustomCursor'
 import { useReducedMotion } from './hooks/useReducedMotion'
 
 const Features = lazy(() => import('./sections/Features'))
@@ -27,6 +28,12 @@ export default function LandingPage() {
 
   return (
     <div className="vf-landing relative min-h-[100dvh] overflow-x-hidden">
+      {/* Cinematic atmosphere layers */}
+      <div className="vf-aurora" aria-hidden="true" />
+      <div className="vf-vignette" aria-hidden="true" />
+      {!reduced && <div className="vf-grain" aria-hidden="true" />}
+      {!reduced && <CustomCursor />}
+
       {!reduced && (
         <motion.div
           className="bg-gold-gradient fixed left-0 right-0 top-0 z-[60] h-[3px] origin-left"

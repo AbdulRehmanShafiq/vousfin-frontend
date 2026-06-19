@@ -63,3 +63,97 @@
   .vf-landing .animate-pulse-glow,
   .vf-landing .animate-shimmer { animation: none !important; }
 }
+
+/* ════════════════════════════════════════════════════════════════════════════
+   CINEMATIC ATMOSPHERE — grain, vignette, aurora, depth (award-level polish)
+════════════════════════════════════════════════════════════════════════════ */
+
+/* Refined gold scrollbar (scoped to the landing page only) */
+.vf-landing { scrollbar-width: thin; scrollbar-color: rgba(200,169,110,0.35) transparent; }
+.vf-landing ::-webkit-scrollbar { width: 10px; }
+.vf-landing ::-webkit-scrollbar-track { background: #0d0b09; }
+.vf-landing ::-webkit-scrollbar-thumb { background: linear-gradient(#C8A96E, #8a6f42); border-radius: 99px; border: 2px solid #0d0b09; }
+
+/* Film-grain overlay — fixed, screen-blended, ultra-subtle. Adds analog texture. */
+.vf-grain {
+  position: fixed; inset: 0; z-index: 70; pointer-events: none; opacity: 0.05;
+  mix-blend-mode: overlay;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  animation: vfGrain 0.6s steps(2) infinite;
+}
+@keyframes vfGrain {
+  0% { transform: translate(0,0); } 50% { transform: translate(-4%, 3%); } 100% { transform: translate(3%, -2%); }
+}
+
+/* Cinematic vignette — darkens edges for depth/focus */
+.vf-vignette {
+  position: fixed; inset: 0; z-index: 1; pointer-events: none;
+  background: radial-gradient(ellipse 120% 80% at 50% 40%, transparent 55%, rgba(7,6,5,0.55) 100%);
+}
+
+/* Living aurora — slow drifting gold/teal/rose light, far behind content */
+.vf-aurora {
+  position: fixed; inset: -20%; z-index: 0; pointer-events: none; opacity: 0.6;
+  background:
+    radial-gradient(40% 50% at 20% 25%, rgba(200,169,110,0.18), transparent 60%),
+    radial-gradient(35% 45% at 80% 20%, rgba(196,136,106,0.12), transparent 60%),
+    radial-gradient(45% 50% at 70% 80%, rgba(126,181,166,0.10), transparent 60%),
+    radial-gradient(40% 40% at 30% 75%, rgba(200,169,110,0.10), transparent 60%);
+  filter: blur(40px);
+  animation: vfAurora 24s ease-in-out infinite alternate;
+}
+@keyframes vfAurora {
+  0%   { transform: translate3d(0,0,0) scale(1); }
+  50%  { transform: translate3d(-3%, 2%, 0) scale(1.08); }
+  100% { transform: translate3d(2%, -3%, 0) scale(1.04); }
+}
+
+/* Custom luminous cursor (desktop). The component toggles .vf-cursor-on. */
+.vf-landing.vf-cursor-on,
+.vf-landing.vf-cursor-on a,
+.vf-landing.vf-cursor-on button { cursor: none; }
+.vf-cursor-dot {
+  position: fixed; top: 0; left: 0; z-index: 90; pointer-events: none;
+  width: 7px; height: 7px; border-radius: 50%; background: #F5F0E8;
+  transform: translate(-50%, -50%); mix-blend-mode: difference;
+}
+.vf-cursor-ring {
+  position: fixed; top: 0; left: 0; z-index: 90; pointer-events: none;
+  width: 38px; height: 38px; border-radius: 50%;
+  border: 1px solid rgba(200,169,110,0.6); box-shadow: 0 0 24px rgba(200,169,110,0.25);
+  transform: translate(-50%, -50%);
+  transition: width .25s ease, height .25s ease, background-color .25s ease, border-color .25s ease;
+}
+.vf-cursor-ring.is-hot {
+  width: 64px; height: 64px; background: rgba(200,169,110,0.10); border-color: rgba(200,169,110,0.9);
+}
+
+/* Edge-fade marquee track (infinite trust strip) */
+.vf-marquee-mask { -webkit-mask-image: linear-gradient(90deg, transparent, #000 12%, #000 88%, transparent); mask-image: linear-gradient(90deg, transparent, #000 12%, #000 88%, transparent); }
+.vf-marquee-track { display: inline-flex; white-space: nowrap; animation: vfMarquee 28s linear infinite; }
+.vf-landing:hover .vf-marquee-track { animation-play-state: paused; }
+@keyframes vfMarquee { from { transform: translateX(0); } to { transform: translateX(-50%); } }
+
+/* Refined glass with inner top highlight + deeper shadow (premium card) */
+.vf-glass-pro {
+  position: relative;
+  background: linear-gradient(160deg, rgba(36,32,28,0.72), rgba(18,16,14,0.55));
+  backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(200,169,110,0.12);
+  box-shadow: 0 24px 60px -20px rgba(0,0,0,0.6), inset 0 1px 0 rgba(245,240,232,0.06);
+}
+.vf-glass-pro::after {
+  content: ""; position: absolute; inset: 0; border-radius: inherit; pointer-events: none;
+  background: radial-gradient(120% 80% at 50% -10%, rgba(200,169,110,0.10), transparent 60%);
+}
+
+/* Animated gradient hairline divider */
+.vf-hairline { height: 1px; background: linear-gradient(90deg, transparent, rgba(200,169,110,0.5), transparent); }
+
+/* Letter-reveal helper for the hero headline */
+.vf-letter { display: inline-block; will-change: transform, opacity; }
+
+@media (prefers-reduced-motion: reduce) {
+  .vf-grain, .vf-aurora { animation: none !important; }
+  .vf-marquee-track { animation: none !important; }
+}
