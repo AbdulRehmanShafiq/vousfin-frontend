@@ -8,6 +8,7 @@ import DashboardLayout from '@/layouts/DashboardLayout'
 import SkeletonLoader from '@/components/ui/SkeletonLoader'
 import ErrorBoundary from '@/components/common/ErrorBoundary'
 
+const LandingPage = lazy(() => import('@/pages/landing/LandingPage'))
 const Login = lazy(() => import('@/pages/auth/Login'))
 const Register = lazy(() => import('@/pages/auth/Register'))
 const ForgotPassword = lazy(() => import('@/pages/auth/ForgotPassword'))
@@ -88,13 +89,13 @@ const withSuspense = (Component) => (
 
 const hasBusiness = (user) => !!user?.businessId
 
-/** Smart entry: / → login | setup | dashboard */
+/** Smart entry: / → landing | setup | dashboard */
 function RootRedirect() {
   const hydrated = useAuthHydrated()
   const { isAuthenticated, user } = useAuthStore()
 
   if (!hydrated) return <LoadingFallback />
-  if (!isAuthenticated) return <Navigate to="/login" replace />
+  if (!isAuthenticated) return withSuspense(LandingPage)
   if (!hasBusiness(user)) return <Navigate to="/business/setup" replace />
   return <Navigate to="/dashboard" replace />
 }
