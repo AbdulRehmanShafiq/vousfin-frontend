@@ -26,7 +26,7 @@ function AnimatedCounter({ target, prefix = "", suffix = "", decimals = 0 }) {
       val: target,
       duration: 2000,
       ease: 'outExpo',
-      update: () => {
+      onUpdate: () => {
         const rounded = Math.round(obj.val * factor) / factor;
         setDisplayValue(rounded.toLocaleString("en-US", {
           minimumFractionDigits: decimals,

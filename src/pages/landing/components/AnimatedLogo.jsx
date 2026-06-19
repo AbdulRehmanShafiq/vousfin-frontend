@@ -19,7 +19,7 @@ export default function AnimatedLogo({ className = "" }) {
         duration: 2500,
         ease: 'inOutQuart',
         loop: true,
-        direction: 'alternate'
+        alternate: true
       });
     }
 
@@ -33,7 +33,7 @@ export default function AnimatedLogo({ className = "" }) {
         ease: 'inOutQuart',
         delay: 500,
         loop: true,
-        direction: 'alternate'
+        alternate: true
       });
     }
 
