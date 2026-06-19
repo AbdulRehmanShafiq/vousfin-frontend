@@ -1,0 +1,18 @@
+import { useState, useEffect } from 'react'
+
+// Exported BOTH named and default — the ported sections import it both ways.
+export function useReducedMotion() {
+  const [prefersReduced, setPrefersReduced] = useState(false)
+
+  useEffect(() => {
+    const mql = window.matchMedia('(prefers-reduced-motion: reduce)')
+    setPrefersReduced(mql.matches)
+    const handler = (e) => setPrefersReduced(e.matches)
+    mql.addEventListener('change', handler)
+    return () => mql.removeEventListener('change', handler)
+  }, [])
+
+  return prefersReduced
+}
+
+export default useReducedMotion
