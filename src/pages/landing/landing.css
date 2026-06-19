@@ -1,0 +1,63 @@
+/* src/pages/landing/landing.css — scoped luxury-dark landing design system.
+   Everything is scoped under .vf-landing so it neither bleeds into the app nor
+   is affected by the app's 4-theme token system. Fixed hex palette. */
+
+.vf-landing {
+  background-color: #12100E;
+  color: #F5F0E8;
+  font-family: 'Inter', system-ui, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+.vf-landing ::selection { background-color: rgba(200, 169, 110, 0.25); color: #F5F0E8; }
+
+/* Fonts — 2-class specificity beats Tailwind's single-class .font-display (Fraunces) */
+.vf-landing .font-display { font-family: 'Playfair Display', Georgia, serif; }
+.vf-landing .font-body    { font-family: 'Inter', system-ui, sans-serif; }
+.vf-landing .font-mono    { font-family: 'JetBrains Mono', monospace; }
+
+/* Gradient text */
+.vf-landing .text-gold-gradient {
+  background: linear-gradient(135deg, #C8A96E, #D4B87A, #B8935A);
+  -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent;
+}
+.vf-landing .text-rose-gradient {
+  background: linear-gradient(135deg, #C4886A, #C8A96E);
+  -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent;
+}
+
+/* Gradient / glow backgrounds (used as classes) */
+.vf-landing .bg-gold-gradient { background: linear-gradient(135deg, #C8A96E, #D4B87A, #B8935A); }
+.vf-landing .bg-rose-gradient { background: linear-gradient(135deg, #C4886A, #C8A96E); }
+.vf-landing .bg-card-gradient { background: linear-gradient(145deg, rgba(200,169,110,0.05), rgba(196,136,106,0.02)); }
+.vf-landing .bg-hero-glow { background: radial-gradient(ellipse 60% 50% at 50% 30%, rgba(200,169,110,0.12), transparent); }
+.vf-landing .bg-gold-glow { background: radial-gradient(ellipse at center, rgba(200,169,110,0.15) 0%, transparent 70%); }
+
+/* Glass + glow + borders */
+.vf-landing .glass-card { background: rgba(26,23,20,0.6); backdrop-filter: blur(24px); -webkit-backdrop-filter: blur(24px); border: 1px solid rgba(200,169,110,0.08); }
+.vf-landing .glass-nav { background: rgba(18,16,14,0.7); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); border-bottom: 1px solid rgba(200,169,110,0.06); }
+.vf-landing .glow-gold { box-shadow: 0 0 40px rgba(200,169,110,0.12); }
+.vf-landing .glow-gold-strong { box-shadow: 0 0 60px rgba(200,169,110,0.2); }
+.vf-landing .border-gold-subtle { border-color: rgba(200,169,110,0.12); }
+
+/* Layout helpers */
+.vf-landing .content-max { margin-left: auto; margin-right: auto; max-width: 80rem; padding-left: 1rem; padding-right: 1rem; }
+@media (min-width: 640px) { .vf-landing .content-max { padding-left: 1.5rem; padding-right: 1.5rem; } }
+@media (min-width: 1024px) { .vf-landing .content-max { padding-left: 2rem; padding-right: 2rem; } }
+.vf-landing .section-padding { padding-top: 5rem; padding-bottom: 5rem; }
+@media (min-width: 640px) { .vf-landing .section-padding { padding-top: 7rem; padding-bottom: 7rem; } }
+@media (min-width: 1024px) { .vf-landing .section-padding { padding-top: 8rem; padding-bottom: 8rem; } }
+
+/* Keyframe animation classes */
+.vf-landing .animate-float { animation: vfFloat 6s ease-in-out infinite; }
+.vf-landing .animate-pulse-glow { animation: vfPulseGlow 3s ease-in-out infinite; }
+.vf-landing .animate-shimmer { animation: vfShimmer 3s ease-in-out infinite; }
+@keyframes vfFloat { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-20px); } }
+@keyframes vfPulseGlow { 0%, 100% { opacity: 0.3; transform: scale(1); } 50% { opacity: 0.6; transform: scale(1.05); } }
+@keyframes vfShimmer { 0% { background-position: -200% 0; } 100% { background-position: 200% 0; } }
+
+@media (prefers-reduced-motion: reduce) {
+  .vf-landing .animate-float,
+  .vf-landing .animate-pulse-glow,
+  .vf-landing .animate-shimmer { animation: none !important; }
+}
