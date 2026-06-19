@@ -14,7 +14,7 @@ export default function GoldTorusScene() {
       if (!window.WebGLRenderingContext || (!canvas.getContext('webgl') && !canvas.getContext('experimental-webgl'))) {
         return; // Fallback to nothing if WebGL is not supported
       }
-    } catch (e) {
+    } catch {
       return;
     }
 

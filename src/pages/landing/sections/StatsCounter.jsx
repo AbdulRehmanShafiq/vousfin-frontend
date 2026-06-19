@@ -15,19 +15,13 @@ function AnimatedCounter({ target, prefix = "", suffix = "", decimals = 0 }) {
   const [displayValue, setDisplayValue] = useState("0");
 
   useEffect(() => {
-    if (!isInView) return;
-
-    if (reducedMotion) {
-      setDisplayValue(target.toLocaleString("en-US", {
-        minimumFractionDigits: decimals,
-        maximumFractionDigits: decimals,
-      }));
-      return;
-    }
+    // Reduced motion renders the final value directly (see `shown`); only run the
+    // count-up when motion is allowed and the counter is in view.
+    if (!isInView || reducedMotion) return;
 
     const obj = { val: 0 };
     const factor = Math.pow(10, decimals);
-    
+
     const animation = animeAnimate(obj, {
       val: target,
       duration: 2000,
@@ -44,10 +38,14 @@ function AnimatedCounter({ target, prefix = "", suffix = "", decimals = 0 }) {
     return () => animation.pause();
   }, [isInView, target, reducedMotion, decimals]);
 
+  const shown = reducedMotion
+    ? target.toLocaleString("en-US", { minimumFractionDigits: decimals, maximumFractionDigits: decimals })
+    : displayValue;
+
   return (
     <span ref={ref} className="font-display text-5xl md:text-6xl font-bold text-gold-gradient">
       {prefix}
-      {displayValue}
+      {shown}
       {suffix}
     </span>
   );

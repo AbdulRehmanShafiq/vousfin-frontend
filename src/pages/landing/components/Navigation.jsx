@@ -5,7 +5,6 @@ import {
   AnimatePresence,
   useMotionValueEvent,
   useScroll,
-  useTransform,
 } from "framer-motion";
 import { Menu, X } from "lucide-react";
 import { useReducedMotion } from "../hooks/useReducedMotion";
@@ -32,10 +31,6 @@ export default function Navigation() {
   const prefersReducedMotion = useReducedMotion();
   const { scrollY } = useScroll();
   const navigate = useNavigate();
-
-  const bgOpacity = useTransform(scrollY, [0, 50], [0, 1]);
-  const borderOpacity = useTransform(scrollY, [0, 50], [0, 1]);
-  const backdropBlur = useTransform(scrollY, [0, 50], [0, 16]);
 
   useMotionValueEvent(scrollY, "change", (latest) => {
     setScrolled(latest > 50);
