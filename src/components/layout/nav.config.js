@@ -21,7 +21,7 @@ import {
   Landmark, BrainCircuit, ShieldAlert,
   Boxes, Bot, Library, Sparkles, Scale, Inbox,
   ArrowDownCircle, ArrowUpCircle,
-  FileBarChart2, TrendingUp, Lightbulb, Target,
+  FileBarChart2, TrendingUp, Lightbulb, Target, Hammer,
   Settings, DollarSign, Percent, Palette, Building2,
 } from 'lucide-react'
 
@@ -110,6 +110,15 @@ export const NAV_SECTIONS = [
     items: [
       { name: 'Budget Editor',   href: '/budgets/editor',   icon: Target,        desc: 'Set your plan for the year — income and spending per account' },
       { name: 'Budget vs Actual', href: '/budgets/variance', icon: FileBarChart2, desc: 'See how your real numbers compare to the plan' },
+    ],
+  },
+  {
+    label: 'Cost & Profit', key: 'cost', icon: Hammer, accent: GOLD,
+    blurb: 'Know what each job costs, which customers and products actually make money, and how much you must sell to break even.',
+    items: [
+      { name: 'Jobs',          href: '/cost/jobs',          icon: Hammer,        desc: 'Track job costs against budget' },
+      { name: 'Profitability', href: '/cost/profitability', icon: TrendingUp,    desc: 'Who and what makes you money' },
+      { name: 'Break-even',    href: '/cost/break-even',    icon: Target,        desc: 'How much you must sell to cover costs' },
     ],
   },
   {
