@@ -1,5 +1,11 @@
 import { motion } from "framer-motion";
+import { useNavigate } from "react-router-dom";
 import useReducedMotion from "../hooks/useReducedMotion";
+import ParticleCanvas from "../components/ParticleCanvas";
+import InteractiveTilt from "../components/InteractiveTilt";
+import { lazy, Suspense } from "react";
+
+const GoldTorusScene = lazy(() => import("../components/GoldTorusScene"));
 
 // ─── Animation Variants ──────────────────────────────────────
 
@@ -21,14 +27,6 @@ const wordVariants = {
   },
 };
 
-const fadeUpVariants = {
-  hidden: { opacity: 0, y: 20 },
-  visible: {
-    opacity: 1,
-    y: 0,
-    transition: { duration: 0.8, ease: [0.16, 1, 0.3, 1] },
-  },
-};
 
 const imageVariants = {
   hidden: { opacity: 0, x: 60, scale: 0.95 },
@@ -77,6 +75,7 @@ const splitWords = (text) => text.split(" ");
 
 export default function Hero() {
   const prefersReducedMotion = useReducedMotion();
+  const navigate = useNavigate();
 
   const reduced = {
     initial: "visible",
@@ -109,6 +108,9 @@ export default function Hero() {
 
       {/* Radial glow */}
       <div className="bg-hero-glow pointer-events-none absolute inset-0" />
+
+      {/* Particle Canvas */}
+      {!prefersReducedMotion && <ParticleCanvas />}
 
       {/* Gold orb — top-right */}
       <div
@@ -217,6 +219,7 @@ export default function Hero() {
               whileTap={{ scale: prefersReducedMotion ? 1 : 0.97 }}
               transition={{ type: "spring", stiffness: 80, damping: 20 }}
               className="bg-gold-gradient rounded-full px-8 py-4 font-semibold text-[#12100E] shadow-lg"
+              onClick={() => navigate("/register")}
             >
               Start Free Trial
             </motion.button>
@@ -228,6 +231,10 @@ export default function Hero() {
               whileTap={{ scale: prefersReducedMotion ? 1 : 0.97 }}
               transition={{ type: "spring", stiffness: 80, damping: 20 }}
               className="glass-card rounded-full border border-[#C8A96E]/30 px-8 py-4 font-semibold text-[#C8A96E]"
+              onClick={() => {
+                const el = document.getElementById("ai-power");
+                if (el) el.scrollIntoView({ behavior: "smooth", block: "start" });
+              }}
             >
               Watch Demo
             </motion.button>
@@ -262,9 +269,16 @@ export default function Hero() {
         <motion.div
           {...imageAnimProps}
           variants={imageVariants}
-          className="flex items-center justify-center"
+          className="flex items-center justify-center relative"
         >
-          <div className="relative w-full max-w-xl lg:max-w-none">
+          {/* Gold Torus 3D Scene */}
+          {!prefersReducedMotion && (
+            <Suspense fallback={null}>
+              <GoldTorusScene />
+            </Suspense>
+          )}
+
+          <InteractiveTilt className="relative w-full max-w-xl lg:max-w-none">
             {/* Gold glow behind image */}
             <div className="bg-gold-glow pointer-events-none absolute -inset-4 rounded-[2rem]" />
 
@@ -278,7 +292,7 @@ export default function Hero() {
 
             {/* Subtle gold border overlay */}
             <div className="pointer-events-none absolute inset-0 z-20 rounded-2xl border border-[#C8A96E]/20 shadow-[inset_0_0_60px_rgba(200,169,110,0.05)]" />
-          </div>
+          </InteractiveTilt>
         </motion.div>
       </div>
     </section>

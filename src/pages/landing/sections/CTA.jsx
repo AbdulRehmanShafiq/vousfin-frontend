@@ -1,5 +1,6 @@
 import { motion } from "framer-motion";
 import { Sparkles } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 import { useReducedMotion } from "../hooks/useReducedMotion";
 
 const heroWords = "Ready to Transform Your Finances?".split(" ");
@@ -36,6 +37,7 @@ const wordItem = (reduced) => ({
 
 export default function CTA() {
   const reduced = useReducedMotion();
+  const navigate = useNavigate();
 
   return (
     <section
@@ -164,6 +166,7 @@ export default function CTA() {
                   ? { duration: 0.01 }
                   : { type: "spring", stiffness: 80, damping: 20 }
               }
+              onClick={() => navigate('/register')}
             >
               Start Free Trial
             </motion.button>
@@ -179,6 +182,7 @@ export default function CTA() {
                 ? { duration: 0.01 }
                 : { type: "spring", stiffness: 80, damping: 20 }
             }
+            onClick={() => navigate('/register')}
           >
             Contact Sales
           </motion.button>

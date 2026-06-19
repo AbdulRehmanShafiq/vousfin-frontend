@@ -1,11 +1,9 @@
 import { useEffect, useRef, useState } from "react";
 import {
   motion,
-  useMotionValue,
-  useTransform,
-  animate,
   useInView,
 } from "framer-motion";
+import { animate as animeAnimate } from "animejs";
 import useReducedMotion from "../hooks/useReducedMotion";
 
 // ─── Animated Counter Component ──────────────────────────────
@@ -13,43 +11,38 @@ import useReducedMotion from "../hooks/useReducedMotion";
 function AnimatedCounter({ target, prefix = "", suffix = "", decimals = 0 }) {
   const ref = useRef(null);
   const isInView = useInView(ref, { once: true, amount: 0.5 });
-  const motionValue = useMotionValue(0);
   const reducedMotion = useReducedMotion();
   const [displayValue, setDisplayValue] = useState("0");
-
-  const rounded = useTransform(motionValue, (latest) => {
-    const factor = Math.pow(10, decimals);
-    const val = Math.round(latest * factor) / factor;
-    return val.toLocaleString("en-US", {
-      minimumFractionDigits: decimals,
-      maximumFractionDigits: decimals,
-    });
-  });
-
-  useEffect(() => {
-    const unsubscribe = rounded.on("change", (v) => {
-      setDisplayValue(v);
-    });
-    return () => unsubscribe();
-  }, [rounded]);
 
   useEffect(() => {
     if (!isInView) return;
 
     if (reducedMotion) {
-      motionValue.set(target);
+      setDisplayValue(target.toLocaleString("en-US", {
+        minimumFractionDigits: decimals,
+        maximumFractionDigits: decimals,
+      }));
       return;
     }
 
-    const controls = animate(motionValue, target, {
-      type: "spring",
-      stiffness: 50,
-      damping: 30,
-      restDelta: 0.01,
+    const obj = { val: 0 };
+    const factor = Math.pow(10, decimals);
+    
+    const animation = animeAnimate(obj, {
+      val: target,
+      duration: 2000,
+      ease: 'outExpo',
+      update: () => {
+        const rounded = Math.round(obj.val * factor) / factor;
+        setDisplayValue(rounded.toLocaleString("en-US", {
+          minimumFractionDigits: decimals,
+          maximumFractionDigits: decimals,
+        }));
+      }
     });
 
-    return () => controls.stop();
-  }, [isInView, target, motionValue, reducedMotion]);
+    return () => animation.pause();
+  }, [isInView, target, reducedMotion, decimals]);
 
   return (
     <span ref={ref} className="font-display text-5xl md:text-6xl font-bold text-gold-gradient">
@@ -86,7 +79,7 @@ const statVariants = {
 // ─── Stats Data ──────────────────────────────────────────────
 
 const stats = [
-  { target: 2000, prefix: "", suffix: "+", decimals: 0, label: "Businesses Trust nousFin" },
+  { target: 2000, prefix: "", suffix: "+", decimals: 0, label: "Businesses Trust vousFin" },
   { target: 4.2, prefix: "$", suffix: "B+", decimals: 1, label: "Transactions Processed" },
   { target: 99.9, prefix: "", suffix: "%", decimals: 1, label: "Uptime Guarantee" },
   { target: 150, prefix: "", suffix: "+", decimals: 0, label: "Currencies Supported" },

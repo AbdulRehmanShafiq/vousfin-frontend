@@ -1,6 +1,7 @@
 import { motion, useInView } from "framer-motion";
 import { useRef } from "react";
 import { Check } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 import { useReducedMotion } from "../hooks/useReducedMotion";
 
 const features = [
@@ -14,8 +15,9 @@ export default function AIPower() {
   const ref = useRef(null);
   const isInView = useInView(ref, { once: true, amount: 0.15 });
   const prefersReduced = useReducedMotion();
+  const navigate = useNavigate();
 
-  const disabled = prefersReduced || !isInView;
+  const showContent = prefersReduced || isInView;
 
   return (
     <section
@@ -33,7 +35,7 @@ export default function AIPower() {
         <motion.div
           className="flex-1 max-w-xl"
           initial="hidden"
-          animate={disabled ? "visible" : "visible"}
+          animate={showContent ? "visible" : "hidden"}
           variants={{
             hidden: {},
             visible: {
@@ -149,7 +151,10 @@ export default function AIPower() {
             }}
             className="mt-10"
           >
-            <button className="bg-gold-gradient text-[#12100E] px-7 py-3.5 rounded-full font-semibold text-sm transition-transform duration-200 hover:scale-105 active:scale-95">
+            <button 
+              className="bg-gold-gradient text-[#12100E] px-7 py-3.5 rounded-full font-semibold text-sm transition-transform duration-200 hover:scale-105 active:scale-95"
+              onClick={() => navigate('/register')}
+            >
               Explore AI Features
             </button>
           </motion.div>

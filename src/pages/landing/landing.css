@@ -18,8 +18,10 @@
 
 /* Gradient text */
 .vf-landing .text-gold-gradient {
-  background: linear-gradient(135deg, #C8A96E, #D4B87A, #B8935A);
+  background: linear-gradient(135deg, #C8A96E, #D4B87A, #F5F0E8, #D4B87A, #C8A96E);
+  background-size: 200% auto;
   -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent;
+  animation: vfShimmer 6s linear infinite;
 }
 .vf-landing .text-rose-gradient {
   background: linear-gradient(135deg, #C4886A, #C8A96E);

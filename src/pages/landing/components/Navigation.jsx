@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import {
   motion,
   AnimatePresence,
@@ -8,12 +9,12 @@ import {
 } from "framer-motion";
 import { Menu, X } from "lucide-react";
 import { useReducedMotion } from "../hooks/useReducedMotion";
+import AnimatedLogo from "./AnimatedLogo";
 
 const navLinks = [
   { label: "Features", href: "#features" },
   { label: "AI Power", href: "#ai-power" },
   { label: "Modules", href: "#modules" },
-  { label: "Pricing", href: "#pricing" },
 ];
 
 const handleSmoothScroll = (e, href) => {
@@ -30,6 +31,7 @@ export default function Navigation() {
   const [scrolled, setScrolled] = useState(false);
   const prefersReducedMotion = useReducedMotion();
   const { scrollY } = useScroll();
+  const navigate = useNavigate();
 
   const bgOpacity = useTransform(scrollY, [0, 50], [0, 1]);
   const borderOpacity = useTransform(scrollY, [0, 50], [0, 1]);
@@ -166,15 +168,15 @@ export default function Navigation() {
               whileHover={prefersReducedMotion ? {} : { scale: 1.02 }}
               transition={{ type: "spring", stiffness: 400, damping: 17 }}
             >
-              <span className="font-display text-xl font-semibold text-[#F5F0E8]">
-                vous
-              </span>
-              <span className="font-display text-xl font-semibold text-gold-gradient">
-                Fin
-              </span>
-              <span
-                className="ml-0.5 w-1.5 h-1.5 rounded-full bg-gold-gradient inline-block"
-              />
+              <AnimatedLogo className="mr-1" />
+              <div className="flex items-center">
+                <span className="font-display text-xl font-semibold text-[#F5F0E8]">
+                  vous
+                </span>
+                <span className="font-display text-xl font-semibold text-gold-gradient">
+                  Fin
+                </span>
+              </div>
             </motion.a>
 
             {/* Desktop Links */}
@@ -199,20 +201,30 @@ export default function Navigation() {
               ))}
             </motion.div>
 
-            {/* Desktop CTA */}
-            <motion.a
-              href="#pricing"
-              onClick={(e) => handleSmoothScroll(e, "#pricing")}
-              className="hidden lg:inline-flex items-center bg-gold-gradient text-[#12100E] font-body font-semibold text-sm px-5 py-2.5 rounded-full hover:opacity-90 transition-opacity duration-300"
-              variants={ctaVariants}
-              initial="hidden"
-              animate="visible"
-              whileHover={prefersReducedMotion ? {} : { scale: 1.04 }}
-              whileTap={prefersReducedMotion ? {} : { scale: 0.97 }}
-              transition={{ type: "spring", stiffness: 400, damping: 17 }}
-            >
-              Get Started
-            </motion.a>
+            {/* Desktop CTAs */}
+            <div className="hidden lg:flex items-center gap-6">
+              <motion.button
+                onClick={() => navigate("/login")}
+                className="font-body text-sm font-semibold text-[#A89B8C] hover:text-[#C8A96E] transition-colors duration-300"
+                variants={ctaVariants}
+                initial="hidden"
+                animate="visible"
+              >
+                Login
+              </motion.button>
+              <motion.button
+                onClick={() => navigate("/register")}
+                className="inline-flex items-center bg-gold-gradient text-[#12100E] font-body font-semibold text-sm px-5 py-2.5 rounded-full hover:opacity-90 transition-opacity duration-300"
+                variants={ctaVariants}
+                initial="hidden"
+                animate="visible"
+                whileHover={prefersReducedMotion ? {} : { scale: 1.04 }}
+                whileTap={prefersReducedMotion ? {} : { scale: 0.97 }}
+                transition={{ type: "spring", stiffness: 400, damping: 17 }}
+              >
+                Get Started
+              </motion.button>
+            </div>
 
             {/* Mobile Hamburger */}
             <motion.button
@@ -307,24 +319,41 @@ export default function Navigation() {
               {/* Divider */}
               <div className="my-6 border-t border-[rgba(200,169,110,0.08)]" />
 
-              {/* Mobile CTA */}
-              <motion.a
-                href="#pricing"
-                onClick={(e) => {
-                  handleSmoothScroll(e, "#pricing");
-                  setMobileOpen(false);
-                }}
-                className="inline-flex items-center justify-center bg-gold-gradient text-[#12100E] font-body font-semibold text-sm px-5 py-3 rounded-full"
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{
-                  duration: prefersReducedMotion ? 0 : 0.4,
-                  delay: prefersReducedMotion ? 0 : 0.4,
-                  ease: [0.16, 1, 0.3, 1],
-                }}
-              >
-                Get Started
-              </motion.a>
+              {/* Mobile CTAs */}
+              <div className="flex flex-col gap-3 mt-2">
+                <motion.button
+                  onClick={() => {
+                    navigate("/login");
+                    setMobileOpen(false);
+                  }}
+                  className="inline-flex items-center justify-center border border-[#C8A96E]/30 text-[#C8A96E] font-body font-semibold text-sm px-5 py-3 rounded-full"
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{
+                    duration: prefersReducedMotion ? 0 : 0.4,
+                    delay: prefersReducedMotion ? 0 : 0.4,
+                    ease: [0.16, 1, 0.3, 1],
+                  }}
+                >
+                  Login
+                </motion.button>
+                <motion.button
+                  onClick={() => {
+                    navigate("/register");
+                    setMobileOpen(false);
+                  }}
+                  className="inline-flex items-center justify-center bg-gold-gradient text-[#12100E] font-body font-semibold text-sm px-5 py-3 rounded-full"
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{
+                    duration: prefersReducedMotion ? 0 : 0.4,
+                    delay: prefersReducedMotion ? 0 : 0.4,
+                    ease: [0.16, 1, 0.3, 1],
+                  }}
+                >
+                  Get Started
+                </motion.button>
+              </div>
             </motion.div>
           </>
         )}
