@@ -33,7 +33,7 @@ export default function LandingPage() {
   const scaleX = useSpring(scrollYProgress, { stiffness: 120, damping: 30, mass: 0.3 })
 
   return (
-    <div className="vf-landing relative min-h-[100dvh] overflow-x-hidden">
+    <div className="vf-landing relative min-h-[100dvh] [overflow-x:clip]">
       {/* Cinematic atmosphere layers */}
       <div className="vf-aurora" aria-hidden="true" />
       <div className="vf-vignette" aria-hidden="true" />

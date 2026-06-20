@@ -1,13 +1,10 @@
-import { lazy, Suspense, useRef } from "react";
+import { useRef } from "react";
 import { motion, useScroll, useTransform } from "framer-motion";
 import { useNavigate } from "react-router-dom";
 import useReducedMotion from "../hooks/useReducedMotion";
-import ParticleCanvas from "../components/ParticleCanvas";
 import InteractiveTilt from "../components/InteractiveTilt";
 import MagneticButton from "../components/MagneticButton";
 import AppWindow from "../components/AppWindow";
-
-const GoldTorusScene = lazy(() => import("../components/GoldTorusScene"));
 
 const EASE = [0.16, 1, 0.3, 1];
 
@@ -71,12 +68,10 @@ export default function Hero() {
 
   return (
     <section ref={sectionRef} id="hero" className="relative flex min-h-[100dvh] items-center overflow-hidden">
-      {/* Background effects */}
+      {/* Background — cheap baked glow only (no particles, no animated blur) */}
       <div className="bg-hero-glow pointer-events-none absolute inset-0" />
-      {!prefersReducedMotion && <ParticleCanvas />}
-      <div className="pointer-events-none absolute -right-20 -top-20 h-[400px] w-[400px] rounded-full bg-[#C8A96E]/[0.15] blur-[120px] animate-float" style={{ willChange: "transform" }} />
-      <div className="pointer-events-none absolute -bottom-16 -left-16 h-[250px] w-[250px] rounded-full bg-[#7EB5A6]/[0.10] blur-[100px] animate-float" style={{ animationDelay: "3s", willChange: "transform" }} />
-      <div className="pointer-events-none absolute inset-0 opacity-[0.025]" style={{ backgroundImage: "radial-gradient(circle, #F5F0E8 1px, transparent 1px)", backgroundSize: "42px 42px" }} />
+      <div className="pointer-events-none absolute -right-24 -top-24 h-[420px] w-[420px] rounded-full bg-[#C8A96E]/[0.12] blur-[70px] animate-float" style={{ willChange: "transform" }} />
+      <div className="pointer-events-none absolute inset-0 opacity-[0.02]" style={{ backgroundImage: "radial-gradient(circle, #F5F0E8 1px, transparent 1px)", backgroundSize: "44px 44px" }} />
 
       {/* Main content */}
       <motion.div
@@ -157,11 +152,6 @@ export default function Hero() {
           style={{ y: imageY }}
           className="relative flex items-center justify-center"
         >
-          {!prefersReducedMotion && (
-            <Suspense fallback={null}>
-              <GoldTorusScene />
-            </Suspense>
-          )}
           <InteractiveTilt className="relative w-full max-w-xl lg:max-w-none">
             <div className="bg-gold-glow pointer-events-none absolute -inset-6 rounded-[2rem]" />
             <AppWindow

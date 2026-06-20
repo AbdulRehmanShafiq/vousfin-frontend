@@ -21,8 +21,10 @@
   background: linear-gradient(135deg, #C8A96E, #D4B87A, #F5F0E8, #D4B87A, #C8A96E);
   background-size: 200% auto;
   -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent;
-  animation: vfShimmer 6s linear infinite;
 }
+/* Opt-in shimmer — apply to ONE hero word only, never to every heading (repaint cost) */
+.vf-landing .text-gold-shimmer { animation: vfShimmer 8s linear infinite; }
+@media (prefers-reduced-motion: reduce) { .vf-landing .text-gold-shimmer { animation: none !important; } }
 .vf-landing .text-rose-gradient {
   background: linear-gradient(135deg, #C4886A, #C8A96E);
   -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent;
@@ -36,7 +38,8 @@
 .vf-landing .bg-gold-glow { background: radial-gradient(ellipse at center, rgba(200,169,110,0.15) 0%, transparent 70%); }
 
 /* Glass + glow + borders */
-.vf-landing .glass-card { background: rgba(26,23,20,0.6); backdrop-filter: blur(24px); -webkit-backdrop-filter: blur(24px); border: 1px solid rgba(200,169,110,0.08); }
+/* Solid translucent (no backdrop-filter) — backdrop-blur is kept ONLY on the fixed nav */
+.vf-landing .glass-card { background: rgba(26,23,20,0.72); border: 1px solid rgba(200,169,110,0.08); }
 .vf-landing .glass-nav { background: rgba(18,16,14,0.7); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); border-bottom: 1px solid rgba(200,169,110,0.06); }
 .vf-landing .glow-gold { box-shadow: 0 0 40px rgba(200,169,110,0.12); }
 .vf-landing .glow-gold-strong { box-shadow: 0 0 60px rgba(200,169,110,0.2); }
@@ -74,15 +77,11 @@
 .vf-landing ::-webkit-scrollbar-track { background: #0d0b09; }
 .vf-landing ::-webkit-scrollbar-thumb { background: linear-gradient(#C8A96E, #8a6f42); border-radius: 99px; border: 2px solid #0d0b09; }
 
-/* Film-grain overlay — fixed, screen-blended, ultra-subtle. Adds analog texture. */
+/* Film-grain overlay — STATIC noise texture (no animation, no mix-blend; both
+   forced a full-screen recomposite every frame). Pure analog texture, cheap. */
 .vf-grain {
-  position: fixed; inset: 0; z-index: 70; pointer-events: none; opacity: 0.05;
-  mix-blend-mode: overlay;
+  position: fixed; inset: 0; z-index: 70; pointer-events: none; opacity: 0.035;
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
-  animation: vfGrain 0.6s steps(2) infinite;
-}
-@keyframes vfGrain {
-  0% { transform: translate(0,0); } 50% { transform: translate(-4%, 3%); } 100% { transform: translate(3%, -2%); }
 }
 
 /* Cinematic vignette — darkens edges for depth/focus */
@@ -91,21 +90,22 @@
   background: radial-gradient(ellipse 120% 80% at 50% 40%, transparent 55%, rgba(7,6,5,0.55) 100%);
 }
 
-/* Living aurora — slow drifting gold/teal/rose light, far behind content */
+/* Living aurora — soft drifting gold/teal/rose light, far behind content.
+   No filter:blur (radials are already soft) and translate-only motion (no scale
+   re-raster) so the GPU just slides one pre-rendered layer. */
 .vf-aurora {
-  position: fixed; inset: -20%; z-index: 0; pointer-events: none; opacity: 0.6;
+  position: fixed; inset: -10%; z-index: 0; pointer-events: none; opacity: 0.5;
   background:
-    radial-gradient(40% 50% at 20% 25%, rgba(200,169,110,0.18), transparent 60%),
-    radial-gradient(35% 45% at 80% 20%, rgba(196,136,106,0.12), transparent 60%),
-    radial-gradient(45% 50% at 70% 80%, rgba(126,181,166,0.10), transparent 60%),
-    radial-gradient(40% 40% at 30% 75%, rgba(200,169,110,0.10), transparent 60%);
-  filter: blur(40px);
-  animation: vfAurora 24s ease-in-out infinite alternate;
+    radial-gradient(40% 50% at 20% 25%, rgba(200,169,110,0.16), transparent 60%),
+    radial-gradient(35% 45% at 80% 20%, rgba(196,136,106,0.10), transparent 60%),
+    radial-gradient(45% 50% at 70% 80%, rgba(126,181,166,0.09), transparent 60%),
+    radial-gradient(40% 40% at 30% 75%, rgba(200,169,110,0.09), transparent 60%);
+  will-change: transform;
+  animation: vfAurora 30s ease-in-out infinite alternate;
 }
 @keyframes vfAurora {
-  0%   { transform: translate3d(0,0,0) scale(1); }
-  50%  { transform: translate3d(-3%, 2%, 0) scale(1.08); }
-  100% { transform: translate3d(2%, -3%, 0) scale(1.04); }
+  0%   { transform: translate3d(0,0,0); }
+  100% { transform: translate3d(2%, -2%, 0); }
 }
 
 /* Custom luminous cursor (desktop). The component toggles .vf-cursor-on. */
@@ -114,8 +114,8 @@
 .vf-landing.vf-cursor-on button { cursor: none; }
 .vf-cursor-dot {
   position: fixed; top: 0; left: 0; z-index: 90; pointer-events: none;
-  width: 7px; height: 7px; border-radius: 50%; background: #F5F0E8;
-  transform: translate(-50%, -50%); mix-blend-mode: difference;
+  width: 7px; height: 7px; border-radius: 50%; background: #C8A96E;
+  transform: translate(-50%, -50%);
 }
 .vf-cursor-ring {
   position: fixed; top: 0; left: 0; z-index: 90; pointer-events: none;
@@ -137,14 +137,30 @@
 /* Refined glass with inner top highlight + deeper shadow (premium card) */
 .vf-glass-pro {
   position: relative;
-  background: linear-gradient(160deg, rgba(36,32,28,0.72), rgba(18,16,14,0.55));
-  backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+  background: linear-gradient(160deg, rgba(36,32,28,0.94), rgba(18,16,14,0.88));
   border: 1px solid rgba(200,169,110,0.12);
   box-shadow: 0 24px 60px -20px rgba(0,0,0,0.6), inset 0 1px 0 rgba(245,240,232,0.06);
 }
 .vf-glass-pro::after {
   content: ""; position: absolute; inset: 0; border-radius: inherit; pointer-events: none;
   background: radial-gradient(120% 80% at 50% -10%, rgba(200,169,110,0.10), transparent 60%);
+}
+
+/* Showcase "stage" — an intentional lit panel so the pinned section never reads
+   as an empty black void (the old bug). Cheap: static gradients only. */
+.vf-landing .vf-stage {
+  position: relative;
+  background:
+    radial-gradient(60% 50% at 50% 38%, rgba(200,169,110,0.07), transparent 70%),
+    linear-gradient(180deg, #12100E 0%, #17130E 45%, #14110D 100%);
+}
+.vf-landing .vf-stage::before {
+  content: ""; position: absolute; inset: 0; pointer-events: none; opacity: 0.5;
+  background:
+    linear-gradient(90deg, rgba(200,169,110,0.07) 1px, transparent 1px) 0 0 / 64px 64px,
+    linear-gradient(0deg, rgba(200,169,110,0.07) 1px, transparent 1px) 0 0 / 64px 64px;
+  -webkit-mask-image: radial-gradient(70% 60% at 50% 45%, #000 0%, transparent 75%);
+  mask-image: radial-gradient(70% 60% at 50% 45%, #000 0%, transparent 75%);
 }
 
 /* Animated gradient hairline divider */

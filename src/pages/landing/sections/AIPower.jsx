@@ -83,7 +83,7 @@ export default function AIPower() {
       className="relative w-full bg-[#12100E] overflow-hidden"
     >
       {/* Subtle pulsing gold orb behind the image */}
-      <div className="absolute right-[10%] top-1/2 -translate-y-1/2 w-[500px] h-[500px] rounded-full bg-[#C8A96E]/20 blur-3xl animate-pulse-glow pointer-events-none" />
+      <div className="absolute right-[10%] top-1/2 -translate-y-1/2 w-[460px] h-[460px] rounded-full bg-[#C8A96E]/12 blur-[80px] pointer-events-none" />
 
       <div
         ref={ref}
