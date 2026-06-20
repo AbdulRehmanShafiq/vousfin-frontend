@@ -8,11 +8,12 @@ const EASE = [0.16, 1, 0.3, 1];
 // Guided product tour. Drops in an actual <video> if /landing/demo.mp4 exists,
 // otherwise plays an auto-advancing, captioned image walkthrough. Open it from
 // anywhere via: window.dispatchEvent(new CustomEvent('vf:open-demo')).
+// Real product screenshots (browser chrome is cropped via the stage transform).
 const scenes = [
-  { img: "/landing/ai-dashboard.jpg", title: "Your finances, at a glance", body: "One living dashboard — cash, revenue, runway, and what needs your attention today." },
-  { img: "/landing/feature-ai.jpg", title: "AI that reads your numbers", body: "Anomalies flagged, transactions categorised, and a copilot that answers in plain language." },
-  { img: "/landing/feature-reports.jpg", title: "Statements in one click", body: "Income statement, balance sheet and cash flow — always closing-ready, exportable anywhere." },
-  { img: "/landing/feature-invoicing.jpg", title: "Invoicing on autopilot", body: "Send, track and reconcile invoices and bills while the ledger keeps itself balanced." },
+  { img: "/landing/shot-dashboard.png", title: "Your business at a glance", body: "Revenue, expenses, profit, cash and receivables — one live dashboard the moment you sign in." },
+  { img: "/landing/shot-forecast.png", title: "AI forecasting & insights", body: "Project revenue 90 days out, surface risk indicators, and ask the AI Analyst anything about your numbers." },
+  { img: "/landing/shot-reports.png", title: "Statements, instantly", body: "Income statement, balance sheet, cash flow and trial balance — always closing-ready." },
+  { img: "/landing/shot-transactions.png", title: "Every entry, double-entry", body: "A clean ledger with inflows, outflows and net — balanced automatically and audit-ready." },
 ];
 const SCENE_MS = 3200;
 
@@ -88,8 +89,9 @@ export default function DemoModal() {
               <button onClick={close} aria-label="Close demo" className="ml-auto text-[#A89B8C] hover:text-[#F5F0E8]">✕</button>
             </div>
 
-            {/* stage */}
-            <div className="relative aspect-video w-full overflow-hidden bg-[#0d0b09]">
+            {/* stage — slightly wider than 16:9 so object-cover crops the screenshot's
+                browser chrome off the top while preserving full width (sidebar) */}
+            <div className="relative w-full overflow-hidden bg-[#0d0b09]" style={{ aspectRatio: "16 / 8.5" }}>
               {hasVideo ? (
                 <video src="/landing/demo.mp4" className="h-full w-full object-cover" autoPlay muted loop controls playsInline />
               ) : (
@@ -99,10 +101,11 @@ export default function DemoModal() {
                     src={scene.img}
                     alt={scene.title}
                     className="absolute inset-0 h-full w-full object-cover"
-                    initial={reduced ? false : { opacity: 0, scale: 1.06 }}
-                    animate={{ opacity: 1, scale: 1 }}
-                    exit={reduced ? { opacity: 0 } : { opacity: 0, scale: 1.02 }}
-                    transition={{ duration: reduced ? 0 : 0.8, ease: EASE }}
+                    style={{ objectPosition: "50% 100%" }}
+                    initial={reduced ? false : { opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    exit={{ opacity: 0 }}
+                    transition={{ duration: reduced ? 0 : 0.7, ease: EASE }}
                   />
                 </AnimatePresence>
               )}
