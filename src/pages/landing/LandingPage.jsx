@@ -7,9 +7,13 @@ import CustomCursor from './components/CustomCursor'
 import { useReducedMotion } from './hooks/useReducedMotion'
 
 const Features = lazy(() => import('./sections/Features'))
+const HowItWorks = lazy(() => import('./sections/HowItWorks'))
 const AIPower = lazy(() => import('./sections/AIPower'))
 const ModulesBento = lazy(() => import('./sections/ModulesBento'))
 const StatsCounter = lazy(() => import('./sections/StatsCounter'))
+const Pricing = lazy(() => import('./sections/Pricing'))
+const Testimonials = lazy(() => import('./sections/Testimonials'))
+const FAQ = lazy(() => import('./sections/FAQ'))
 const CTA = lazy(() => import('./sections/CTA'))
 const Footer = lazy(() => import('./sections/Footer'))
 
@@ -45,9 +49,13 @@ export default function LandingPage() {
       <main>
         <Hero />
         <Suspense fallback={<SectionFallback />}><Features /></Suspense>
+        <Suspense fallback={<SectionFallback />}><HowItWorks /></Suspense>
         <Suspense fallback={<SectionFallback />}><AIPower /></Suspense>
         <Suspense fallback={<SectionFallback />}><ModulesBento /></Suspense>
         <Suspense fallback={<SectionFallback />}><StatsCounter /></Suspense>
+        <Suspense fallback={<SectionFallback />}><Pricing /></Suspense>
+        <Suspense fallback={<SectionFallback />}><Testimonials /></Suspense>
+        <Suspense fallback={<SectionFallback />}><FAQ /></Suspense>
         <Suspense fallback={<SectionFallback />}><CTA /></Suspense>
         <Suspense fallback={<SectionFallback />}><Footer /></Suspense>
       </main>

@@ -12,8 +12,9 @@ import AnimatedLogo from "./AnimatedLogo";
 
 const navLinks = [
   { label: "Features", href: "#features" },
-  { label: "AI Power", href: "#ai-power" },
+  { label: "How it works", href: "#how-it-works" },
   { label: "Modules", href: "#modules" },
+  { label: "Pricing", href: "#pricing" },
 ];
 
 const handleSmoothScroll = (e, href) => {
