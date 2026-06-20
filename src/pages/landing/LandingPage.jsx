@@ -8,6 +8,7 @@ import DemoModal from './components/DemoModal'
 import { useReducedMotion } from './hooks/useReducedMotion'
 
 const Features = lazy(() => import('./sections/Features'))
+const ShowcaseScroll = lazy(() => import('./sections/ShowcaseScroll'))
 const HowItWorks = lazy(() => import('./sections/HowItWorks'))
 const AIPower = lazy(() => import('./sections/AIPower'))
 const ModulesBento = lazy(() => import('./sections/ModulesBento'))
@@ -51,6 +52,7 @@ export default function LandingPage() {
       <main>
         <Hero />
         <Suspense fallback={<SectionFallback />}><Features /></Suspense>
+        <Suspense fallback={<SectionFallback />}><ShowcaseScroll /></Suspense>
         <Suspense fallback={<SectionFallback />}><HowItWorks /></Suspense>
         <Suspense fallback={<SectionFallback />}><AIPower /></Suspense>
         <Suspense fallback={<SectionFallback />}><ModulesBento /></Suspense>

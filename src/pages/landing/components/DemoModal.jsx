@@ -11,7 +11,11 @@ const EASE = [0.16, 1, 0.3, 1];
 // Real product screenshots (browser chrome is cropped via the stage transform).
 const scenes = [
   { img: "/landing/shot-dashboard.png", title: "Your business at a glance", body: "Revenue, expenses, profit, cash and receivables — one live dashboard the moment you sign in." },
-  { img: "/landing/shot-forecast.png", title: "AI forecasting & insights", body: "Project revenue 90 days out, surface risk indicators, and ask the AI Analyst anything about your numbers." },
+  { img: "/landing/shot-insights.png", title: "A health score that thinks ahead", body: "Liquidity, profit and leverage scored automatically, with a forward outlook that flags risk early." },
+  { img: "/landing/shot-forecast.png", title: "AI forecasting", body: "Project revenue and cash 90 days out with machine-learning models trained on your own numbers." },
+  { img: "/landing/shot-anomaly.png", title: "Fraud & error detection", body: "Every transaction scored for anomalies — duplicates, round-number fraud and spikes surfaced for review." },
+  { img: "/landing/shot-assistant.png", title: "Ask anything", body: "A natural-language AI analyst that reads your statements and answers questions in plain language." },
+  { img: "/landing/shot-tax.png", title: "Tax on autopilot", body: "Live tax position by type, deadline countdowns, and one-click return preparation." },
   { img: "/landing/shot-reports.png", title: "Statements, instantly", body: "Income statement, balance sheet, cash flow and trial balance — always closing-ready." },
   { img: "/landing/shot-transactions.png", title: "Every entry, double-entry", body: "A clean ledger with inflows, outflows and net — balanced automatically and audit-ready." },
 ];
@@ -89,9 +93,9 @@ export default function DemoModal() {
               <button onClick={close} aria-label="Close demo" className="ml-auto text-[#A89B8C] hover:text-[#F5F0E8]">✕</button>
             </div>
 
-            {/* stage — slightly wider than 16:9 so object-cover crops the screenshot's
-                browser chrome off the top while preserving full width (sidebar) */}
-            <div className="relative w-full overflow-hidden bg-[#0d0b09]" style={{ aspectRatio: "16 / 8.5" }}>
+            {/* stage — true 16:9 to match the full-screen product captures; the
+                whole screen is shown (object-contain) so no content is cropped */}
+            <div className="relative w-full overflow-hidden bg-[#0d0b09]" style={{ aspectRatio: "16 / 9" }}>
               {hasVideo ? (
                 <video src="/landing/demo.mp4" className="h-full w-full object-cover" autoPlay muted loop controls playsInline />
               ) : (
@@ -100,8 +104,7 @@ export default function DemoModal() {
                     key={i}
                     src={scene.img}
                     alt={scene.title}
-                    className="absolute inset-0 h-full w-full object-cover"
-                    style={{ objectPosition: "50% 100%" }}
+                    className="absolute inset-0 h-full w-full object-contain"
                     initial={reduced ? false : { opacity: 0 }}
                     animate={{ opacity: 1 }}
                     exit={{ opacity: 0 }}

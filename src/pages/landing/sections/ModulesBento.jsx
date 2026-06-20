@@ -19,6 +19,7 @@ const modules = [
       "Full double-entry bookkeeping with automated journal entries, chart of accounts, and bank reconciliation.",
     span: "md:col-span-2",
     featured: true,
+    img: "/landing/shot-ledger.png",
   },
   {
     icon: Users,
@@ -27,14 +28,16 @@ const modules = [
       "Manage customers, invoices, and collections. Track aging and automate reminders.",
     span: "",
     featured: false,
+    img: "/landing/shot-transactions.png",
   },
   {
     icon: CreditCard,
-    title: "Accounts Payable",
+    title: "Tax Autopilot",
     description:
-      "Vendor management, bill tracking, and payment scheduling.",
+      "Live tax position by type, deadline countdowns, and one-click return preparation.",
     span: "",
     featured: false,
+    img: "/landing/shot-tax.png",
   },
   {
     icon: TrendingUp,
@@ -43,6 +46,7 @@ const modules = [
       "ML-powered cash flow forecasting with LSTM neural networks. Predict revenue, expenses, and liquidity 90 days out.",
     span: "md:col-span-2",
     featured: true,
+    img: "/landing/shot-forecast.png",
   },
   {
     icon: Banknote,
@@ -51,6 +55,7 @@ const modules = [
       "Employee management, salary processing, payslip generation, and compliance reporting.",
     span: "",
     featured: false,
+    img: "/landing/shot-payroll.png",
   },
   {
     icon: Package,
@@ -59,22 +64,25 @@ const modules = [
       "Real-time stock tracking, valuation methods (FIFO/LIFO), and low-stock alerts.",
     span: "",
     featured: false,
+    img: "/landing/shot-inventory.png",
   },
   {
     icon: ShoppingCart,
-    title: "Procurement",
+    title: "Command Center",
     description:
-      "Purchase orders, goods receipts, and three-way matching with vendor portals.",
-    span: "",
-    featured: false,
+      "A policy-governed AI finance team that handles routines, drafts work, and asks before it acts.",
+    span: "md:col-span-2",
+    featured: true,
+    img: "/landing/shot-command.png",
   },
   {
     icon: Receipt,
-    title: "Tax Engine",
+    title: "Multi-Currency",
     description:
-      "Multi-tax support, auto-calculation, return preparation, and deadline management.",
+      "Live FX rates, automatic IAS 21 gain/loss entries, and reporting in any currency.",
     span: "",
     featured: false,
+    img: "/landing/shot-fx.png",
   },
 ];
 
@@ -206,6 +214,26 @@ export default function ModulesBento() {
                     {mod.description}
                   </p>
                 </div>
+
+                {/* Real screenshot preview */}
+                {mod.img && (
+                  <div className="group mt-auto overflow-hidden rounded-xl border border-[#C8A96E]/10 bg-[#0d0b09]">
+                    <div className="flex items-center gap-1.5 border-b border-[#C8A96E]/10 px-3 py-1.5">
+                      <span className="h-1.5 w-1.5 rounded-full bg-[#E0736B]/70" />
+                      <span className="h-1.5 w-1.5 rounded-full bg-[#D4B87A]/70" />
+                      <span className="h-1.5 w-1.5 rounded-full bg-[#7EB5A6]/70" />
+                    </div>
+                    <div className={`overflow-hidden ${mod.featured ? "aspect-[16/7]" : "aspect-[16/9]"}`}>
+                      <img
+                        src={mod.img}
+                        alt={`${mod.title} screen`}
+                        loading="lazy"
+                        draggable={false}
+                        className="h-full w-full object-cover object-top transition-transform duration-700 ease-out group-hover:scale-105"
+                      />
+                    </div>
+                  </div>
+                )}
               </motion.div>
             );
           })}

@@ -5,6 +5,7 @@ import useReducedMotion from "../hooks/useReducedMotion";
 import ParticleCanvas from "../components/ParticleCanvas";
 import InteractiveTilt from "../components/InteractiveTilt";
 import MagneticButton from "../components/MagneticButton";
+import AppWindow from "../components/AppWindow";
 
 const GoldTorusScene = lazy(() => import("../components/GoldTorusScene"));
 
@@ -163,13 +164,12 @@ export default function Hero() {
           )}
           <InteractiveTilt className="relative w-full max-w-xl lg:max-w-none">
             <div className="bg-gold-glow pointer-events-none absolute -inset-6 rounded-[2rem]" />
-            <img
-              src="/landing/hero-visual.jpg"
-              alt="vousFin AI-powered financial dashboard visualization showing neural network analytics and automated bookkeeping insights"
-              className="relative z-10 h-auto w-full rounded-2xl object-cover shadow-2xl"
-              loading="eager"
+            <AppWindow
+              src="/landing/shot-dashboard.png"
+              alt="vousFin live financial dashboard showing revenue, expenses, profit, cash balance and AI business-intelligence alerts"
+              label="app.vousfin.com / dashboard"
+              className="relative z-10"
             />
-            <div className="pointer-events-none absolute inset-0 z-20 rounded-2xl border border-[#C8A96E]/20 shadow-[inset_0_0_60px_rgba(200,169,110,0.06)]" />
           </InteractiveTilt>
         </motion.div>
       </motion.div>

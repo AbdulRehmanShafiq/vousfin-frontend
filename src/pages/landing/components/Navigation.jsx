@@ -12,6 +12,7 @@ import AnimatedLogo from "./AnimatedLogo";
 
 const navLinks = [
   { label: "Features", href: "#features" },
+  { label: "Tour", href: "#showcase" },
   { label: "How it works", href: "#how-it-works" },
   { label: "Modules", href: "#modules" },
   { label: "Pricing", href: "#pricing" },

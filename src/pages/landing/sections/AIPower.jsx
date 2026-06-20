@@ -1,8 +1,9 @@
-import { motion, useInView } from "framer-motion";
-import { useRef } from "react";
+import { motion, AnimatePresence, useInView } from "framer-motion";
+import { useRef, useState, useEffect } from "react";
 import { Check } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useReducedMotion } from "../hooks/useReducedMotion";
+import AppWindow from "../components/AppWindow";
 
 const features = [
   "Anomaly detection with 99.2% accuracy",
@@ -10,6 +11,63 @@ const features = [
   "Natural language financial queries",
   "Automated transaction categorization",
 ];
+
+const aiShots = [
+  { img: "/landing/shot-assistant.png", tab: "AI Assistant", label: "app.vousfin.com / assistant" },
+  { img: "/landing/shot-forecast.png", tab: "Forecasting", label: "app.vousfin.com / forecast" },
+  { img: "/landing/shot-anomaly.png", tab: "Anomaly Detection", label: "app.vousfin.com / anomalies" },
+];
+
+const EASE = [0.16, 1, 0.3, 1];
+
+function AIShowcase({ reduced }) {
+  const [i, setI] = useState(0);
+
+  useEffect(() => {
+    if (reduced) return;
+    const t = setInterval(() => setI((p) => (p + 1) % aiShots.length), 3800);
+    return () => clearInterval(t);
+  }, [reduced]);
+
+  return (
+    <div className="w-full">
+      {/* tabs */}
+      <div className="mb-4 flex flex-wrap gap-2">
+        {aiShots.map((s, idx) => (
+          <button
+            key={s.tab}
+            onClick={() => setI(idx)}
+            className={`rounded-full px-4 py-1.5 font-mono text-[0.7rem] uppercase tracking-wider transition-colors ${
+              i === idx ? "bg-gold-gradient text-[#12100E]" : "border border-[#C8A96E]/20 text-[#A89B8C] hover:text-[#C8A96E]"
+            }`}
+          >
+            {s.tab}
+          </button>
+        ))}
+      </div>
+      <div className="relative">
+        <div className="bg-gold-glow pointer-events-none absolute -inset-6 rounded-[2rem]" />
+        <AppWindow label={aiShots[i].label} className="relative">
+          <div className="relative aspect-[16/9.4] w-full overflow-hidden">
+            <AnimatePresence>
+              <motion.img
+                key={i}
+                src={aiShots[i].img}
+                alt={aiShots[i].tab}
+                className="absolute inset-0 h-full w-full object-cover object-top"
+                initial={reduced ? false : { opacity: 0, scale: 1.04 }}
+                animate={{ opacity: 1, scale: 1 }}
+                exit={{ opacity: 0 }}
+                transition={{ duration: reduced ? 0 : 0.6, ease: EASE }}
+                draggable={false}
+              />
+            </AnimatePresence>
+          </div>
+        </AppWindow>
+      </div>
+    </div>
+  );
+}
 
 export default function AIPower() {
   const ref = useRef(null);
@@ -175,14 +233,7 @@ export default function AIPower() {
           }}
           className="flex-1 w-full max-w-2xl relative"
         >
-          <div className="glass-card rounded-2xl p-2 border-gold-subtle">
-            <img
-              src="/landing/ai-dashboard.jpg"
-              alt="vousFin AI Dashboard"
-              className="w-full h-auto rounded-xl object-cover"
-              loading="lazy"
-            />
-          </div>
+          <AIShowcase reduced={prefersReduced} />
         </motion.div>
       </div>
     </section>
