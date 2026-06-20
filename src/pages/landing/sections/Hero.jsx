@@ -123,7 +123,7 @@ export default function Hero() {
             <motion.div variants={ctaVariants}>
               <MagneticButton
                 strength={0.25}
-                onClick={() => { const el = document.getElementById("ai-power"); if (el) el.scrollIntoView({ behavior: "smooth", block: "start" }); }}
+                onClick={() => window.dispatchEvent(new CustomEvent("vf:open-demo"))}
                 className="vf-glass-pro inline-flex items-center gap-2 rounded-full border border-[#C8A96E]/30 px-8 py-4 font-semibold text-[#C8A96E]"
               >
                 <span className="text-base">▷</span> Watch Demo

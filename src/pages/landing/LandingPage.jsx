@@ -4,6 +4,7 @@ import './landing.css'
 import Navigation from './components/Navigation'
 import Hero from './sections/Hero'
 import CustomCursor from './components/CustomCursor'
+import DemoModal from './components/DemoModal'
 import { useReducedMotion } from './hooks/useReducedMotion'
 
 const Features = lazy(() => import('./sections/Features'))
@@ -46,6 +47,7 @@ export default function LandingPage() {
         />
       )}
       <Navigation />
+      <DemoModal />
       <main>
         <Hero />
         <Suspense fallback={<SectionFallback />}><Features /></Suspense>
