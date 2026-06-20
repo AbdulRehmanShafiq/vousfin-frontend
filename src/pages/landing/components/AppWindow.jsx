@@ -10,7 +10,7 @@ const AppWindow = forwardRef(function AppWindow(
   return (
     <div
       ref={ref}
-      className={`vf-glass-pro relative overflow-hidden rounded-2xl border border-[#C8A96E]/15 shadow-[0_40px_120px_-30px_rgba(0,0,0,0.8)] ${className}`}
+      className={`vf-glass-pro vf-liquidglass relative overflow-hidden rounded-2xl border border-[#C8A96E]/15 shadow-[0_40px_120px_-30px_rgba(0,0,0,0.8)] ${className}`}
       {...rest}
     >
       {/* window chrome */}

@@ -18,6 +18,7 @@
     "date-fns": "^4.2.1",
     "framer-motion": "^12.40.0",
     "lucide-react": "^1.16.0",
+    "ogl": "^1.0.11",
     "react": "^19.2.6",
     "react-dom": "^19.2.6",
     "react-hook-form": "^7.76.0",

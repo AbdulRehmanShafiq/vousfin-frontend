@@ -1,10 +1,12 @@
-import { useRef } from "react";
+import { lazy, Suspense, useRef } from "react";
 import { motion, useScroll, useTransform } from "framer-motion";
 import { useNavigate } from "react-router-dom";
 import useReducedMotion from "../hooks/useReducedMotion";
 import InteractiveTilt from "../components/InteractiveTilt";
 import MagneticButton from "../components/MagneticButton";
 import AppWindow from "../components/AppWindow";
+
+const LiquidGoldCanvas = lazy(() => import("../components/LiquidGoldCanvas"));
 
 const EASE = [0.16, 1, 0.3, 1];
 
@@ -68,9 +70,14 @@ export default function Hero() {
 
   return (
     <section ref={sectionRef} id="hero" className="relative flex min-h-[100dvh] items-center overflow-hidden">
-      {/* Background — cheap baked glow only (no particles, no animated blur) */}
+      {/* Background — static gold glow is the base + reduced-motion fallback */}
       <div className="bg-hero-glow pointer-events-none absolute inset-0" />
-      <div className="pointer-events-none absolute -right-24 -top-24 h-[420px] w-[420px] rounded-full bg-[#C8A96E]/[0.12] blur-[70px] animate-float" style={{ willChange: "transform" }} />
+      {/* The ONE cinematic centerpiece: budgeted liquid-gold WebGL field */}
+      {!prefersReducedMotion && (
+        <Suspense fallback={null}>
+          <LiquidGoldCanvas className="pointer-events-none absolute inset-0 opacity-60 [mask-image:radial-gradient(125%_100%_at_62%_28%,#000_28%,transparent_82%)] [-webkit-mask-image:radial-gradient(125%_100%_at_62%_28%,#000_28%,transparent_82%)]" />
+        </Suspense>
+      )}
       <div className="pointer-events-none absolute inset-0 opacity-[0.02]" style={{ backgroundImage: "radial-gradient(circle, #F5F0E8 1px, transparent 1px)", backgroundSize: "44px 44px" }} />
 
       {/* Main content */}

@@ -10,10 +10,34 @@ const quotes = [
   { q: "Tax season went from dread to a single click. The FBR filing flow is genuinely magic.", name: "Bilal Ahmed", role: "Owner, Crescent Retail", initials: "BA" },
   { q: "Finally a finance tool my non-accountant team actually understands. Plain language everywhere.", name: "Hana Osei", role: "COO, Lumen Studios", initials: "HO" },
   { q: "Audit-ready at all times. The immutable ledger and approval trail saved us during diligence.", name: "Marcus Lee", role: "VP Finance, Apex Foods", initials: "ML" },
+  { q: "Onboarding took an afternoon. By evening we had our first AI forecast on screen.", name: "Imran Sheikh", role: "Director, Vertex Pharma", initials: "IS" },
+  { q: "The anomaly alerts flagged a duplicate vendor payment before it ever cleared.", name: "Grace Tan", role: "Finance Lead, Orbit Mobility", initials: "GT" },
+  { q: "Our board reports build themselves now — clean, current and defensible every time.", name: "Omar Farooq", role: "CEO, Saffron Hospitality", initials: "OF" },
 ];
+
+// three columns, round-robin distribution
+const columns = [0, 1, 2].map((c) => quotes.filter((_, i) => i % 3 === c));
+const durations = ["38s", "48s", "43s"];
+
+function Card({ t }) {
+  return (
+    <figure className="vf-glass-pro rounded-2xl p-6">
+      <div className="font-display mb-3 text-3xl leading-none text-[#C8A96E]/40">“</div>
+      <blockquote className="text-[14.5px] leading-relaxed text-[#E9E2D5]">{t.q}</blockquote>
+      <figcaption className="mt-5 flex items-center gap-3">
+        <span className="bg-gold-gradient flex h-9 w-9 items-center justify-center rounded-full text-xs font-bold text-[#12100E]">{t.initials}</span>
+        <span>
+          <span className="block text-sm font-semibold text-[#F5F0E8]">{t.name}</span>
+          <span className="block text-xs text-[#6B6259]">{t.role}</span>
+        </span>
+      </figcaption>
+    </figure>
+  );
+}
 
 export default function Testimonials() {
   const reduced = useReducedMotion();
+
   return (
     <section id="testimonials" className="relative w-full overflow-hidden bg-[#15120F]">
       <div className="content-max section-padding">
@@ -30,28 +54,25 @@ export default function Testimonials() {
           </h2>
         </motion.div>
 
-        <div className="columns-1 gap-6 md:columns-2 lg:columns-3 [&>*]:mb-6">
-          {quotes.map((t, i) => (
-            <motion.figure
-              key={t.name}
-              initial={reduced ? false : { opacity: 0, y: 30 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true, amount: 0.3 }}
-              transition={{ duration: 0.6, ease: EASE, delay: reduced ? 0 : (i % 3) * 0.08 }}
-              className="vf-glass-pro break-inside-avoid rounded-2xl p-7"
-            >
-              <div className="mb-4 text-3xl leading-none text-[#C8A96E]/40 font-display">“</div>
-              <blockquote className="text-[15px] leading-relaxed text-[#E9E2D5]">{t.q}</blockquote>
-              <figcaption className="mt-6 flex items-center gap-3">
-                <span className="bg-gold-gradient flex h-10 w-10 items-center justify-center rounded-full text-sm font-bold text-[#12100E]">{t.initials}</span>
-                <span>
-                  <span className="block text-sm font-semibold text-[#F5F0E8]">{t.name}</span>
-                  <span className="block text-xs text-[#6B6259]">{t.role}</span>
-                </span>
-              </figcaption>
-            </motion.figure>
-          ))}
-        </div>
+        {reduced ? (
+          // Static grid fallback (no motion)
+          <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+            {quotes.map((t) => <Card key={t.name} t={t} />)}
+          </div>
+        ) : (
+          <div className="vf-twall vf-twall-mask grid h-[640px] grid-cols-1 gap-6 overflow-hidden md:grid-cols-2 lg:grid-cols-3">
+            {columns.map((col, ci) => (
+              <div
+                key={ci}
+                className={`vf-twall-col flex flex-col gap-6 ${ci === 1 ? "is-reverse" : ""} ${ci === 2 ? "hidden lg:flex" : ci === 1 ? "hidden md:flex" : "flex"}`}
+                style={{ "--vf-dur": durations[ci] }}
+              >
+                {/* duplicated set for a seamless -50% loop */}
+                {[...col, ...col].map((t, i) => <Card key={`${t.name}-${i}`} t={t} />)}
+              </div>
+            ))}
+          </div>
+        )}
       </div>
     </section>
   );
