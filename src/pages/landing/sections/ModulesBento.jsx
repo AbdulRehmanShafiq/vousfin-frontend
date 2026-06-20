@@ -159,7 +159,7 @@ export default function ModulesBento() {
               <motion.div
                 key={mod.title}
                 className={`
-                  glass-card rounded-2xl p-6 flex flex-col gap-4
+                  glass-card vf-liquidglass rounded-2xl p-6 flex flex-col gap-4
                   ${mod.span}
                   ${
                     mod.featured

@@ -52,14 +52,19 @@ export default function LandingPage() {
       <main>
         <Hero />
         <Suspense fallback={<SectionFallback />}><Features /></Suspense>
+        <div className="vf-seam" aria-hidden="true" />
         <Suspense fallback={<SectionFallback />}><ShowcaseScroll /></Suspense>
         <Suspense fallback={<SectionFallback />}><HowItWorks /></Suspense>
+        <div className="vf-seam" aria-hidden="true" />
         <Suspense fallback={<SectionFallback />}><AIPower /></Suspense>
         <Suspense fallback={<SectionFallback />}><ModulesBento /></Suspense>
+        <div className="vf-seam" aria-hidden="true" />
         <Suspense fallback={<SectionFallback />}><StatsCounter /></Suspense>
         <Suspense fallback={<SectionFallback />}><Pricing /></Suspense>
+        <div className="vf-seam" aria-hidden="true" />
         <Suspense fallback={<SectionFallback />}><Testimonials /></Suspense>
         <Suspense fallback={<SectionFallback />}><FAQ /></Suspense>
+        <div className="vf-seam" aria-hidden="true" />
         <Suspense fallback={<SectionFallback />}><CTA /></Suspense>
         <Suspense fallback={<SectionFallback />}><Footer /></Suspense>
       </main>

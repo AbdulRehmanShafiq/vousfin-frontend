@@ -140,7 +140,7 @@ function FeatureCard({ feature }) {
         scale: 1.02,
         transition: { type: "spring", stiffness: 80, damping: 20 },
       }}
-      className="glass-card group overflow-hidden rounded-2xl border border-transparent transition-colors duration-300 hover:border-[#C8A96E]/20 hover:shadow-[0_0_30px_rgba(200,169,110,0.12)]"
+      className="glass-card vf-liquidglass group overflow-hidden rounded-2xl border border-transparent transition-colors duration-300 hover:border-[#C8A96E]/20 hover:shadow-[0_0_30px_rgba(200,169,110,0.12)]"
     >
       {/* Image */}
       <div className="relative h-40 w-full overflow-hidden border-b border-[#C8A96E]/10">
