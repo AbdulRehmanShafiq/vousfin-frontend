@@ -76,7 +76,7 @@ export default function Pricing() {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true, amount: 0.2 }}
               transition={{ duration: 0.7, ease: EASE, delay: reduced ? 0 : i * 0.1 }}
-              className={`relative flex flex-col rounded-3xl p-8 ${t.featured ? "vf-glass-pro glow-gold-strong border border-[#C8A96E]/40" : "vf-glass-pro"}`}
+              className={`vf-liquidglass relative flex flex-col rounded-3xl p-8 ${t.featured ? "vf-glass-pro glow-gold-strong border border-[#C8A96E]/40" : "vf-glass-pro"}`}
             >
               {t.featured && (
                 <span className="bg-gold-gradient absolute -top-3 left-1/2 -translate-x-1/2 rounded-full px-4 py-1 text-xs font-bold uppercase tracking-wider text-[#12100E]">

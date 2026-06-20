@@ -30,7 +30,7 @@ const features = [
   {
     title: "AI-Powered Insights",
     icon: Brain,
-    image: "/landing/feature-ai.jpg",
+    image: "/landing/feature-ai.png",
     description:
       "Get intelligent anomaly detection, cash flow forecasting, and predictive analytics trained on your data.",
   },

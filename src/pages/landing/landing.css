@@ -11,6 +11,16 @@
 }
 .vf-landing ::selection { background-color: rgba(200, 169, 110, 0.25); color: #F5F0E8; }
 
+/* A11y: every interactive element is clearly clickable + keyboard-focusable (scoped) */
+.vf-landing a, .vf-landing button, .vf-landing [role="button"] { cursor: pointer; }
+.vf-landing a:focus-visible,
+.vf-landing button:focus-visible,
+.vf-landing [role="button"]:focus-visible {
+  outline: 2px solid rgba(200, 169, 110, 0.75);
+  outline-offset: 2px;
+  border-radius: 8px;
+}
+
 /* Fonts — 2-class specificity beats Tailwind's single-class .font-display (Fraunces) */
 .vf-landing .font-display { font-family: 'Playfair Display', Georgia, serif; }
 .vf-landing .font-body    { font-family: 'Inter', system-ui, sans-serif; }
