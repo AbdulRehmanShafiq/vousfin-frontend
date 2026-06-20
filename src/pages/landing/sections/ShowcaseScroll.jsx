@@ -51,11 +51,22 @@ export default function ShowcaseScroll() {
   const frameRef = useRef(null);
   const activeRef = useRef(0);
   const [active, setActive] = useState(0);
+  // Pin/scrollytell only on desktop; narrow screens get the natural stacked
+  // gallery (a pinned 100svh panel can't fit heading+image+copy+rail on mobile).
+  const [isDesktop, setIsDesktop] = useState(
+    () => typeof window !== "undefined" && window.matchMedia("(min-width: 1024px)").matches
+  );
+  useEffect(() => {
+    const mq = window.matchMedia("(min-width: 1024px)");
+    const on = () => setIsDesktop(mq.matches);
+    mq.addEventListener("change", on);
+    return () => mq.removeEventListener("change", on);
+  }, []);
 
   // rAF scroll tracking. Transform is written DIRECTLY to the DOM (no React
   // re-render per frame); React state only flips on the 5 discrete step changes.
   useEffect(() => {
-    if (reduced) return;
+    if (reduced || !isDesktop) return;
     let raf = 0;
     const compute = () => {
       raf = 0;
@@ -84,7 +95,7 @@ export default function ShowcaseScroll() {
       window.removeEventListener("resize", onScroll);
       if (raf) cancelAnimationFrame(raf);
     };
-  }, [reduced]);
+  }, [reduced, isDesktop]);
 
   const jumpTo = useCallback((i) => {
     const el = containerRef.current;
@@ -94,18 +105,18 @@ export default function ShowcaseScroll() {
     smoothScrollTo(docTop + travel * ((i + 0.5) / steps.length));
   }, []);
 
-  // Reduced motion: simple stacked gallery (no pinning).
-  if (reduced) {
+  // Narrow screens / reduced motion: natural stacked gallery (no pinning).
+  if (reduced || !isDesktop) {
     return (
-      <section id="showcase" className="vf-stage section-padding content-max py-24">
+      <section id="showcase" className="vf-stage section-padding content-max py-20 sm:py-24">
         <Heading />
-        <div className="mt-16 space-y-16">
+        <div className="mt-12 space-y-14 sm:mt-16 sm:space-y-16">
           {steps.map((s) => (
-            <div key={s.tag} className="grid gap-8 lg:grid-cols-2 lg:items-center">
+            <div key={s.tag} className="grid gap-6 md:grid-cols-2 md:items-center md:gap-10">
               <div>
                 <Tag>{s.tag}</Tag>
-                <h3 className="mt-4 font-display text-2xl font-semibold text-[#F5F0E8]">{s.title}</h3>
-                <p className="mt-3 max-w-md text-[#C8B9A2]">{s.body}</p>
+                <h3 className="mt-4 font-display text-2xl font-semibold text-[#F5F0E8] sm:text-3xl">{s.title}</h3>
+                <p className="mt-3 max-w-md leading-relaxed text-[#C8B9A2]">{s.body}</p>
               </div>
               <AppWindow src={s.img} alt={s.title} label={s.label} />
             </div>
