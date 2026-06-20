@@ -9,18 +9,21 @@ const steps = [
     title: "Connect your business",
     body: "Import your chart of accounts or start from our IFRS-ready template. Link banks, customers, and vendors in minutes — no spreadsheets, no migration headaches.",
     points: ["Guided setup wizard", "78 pre-built accounts", "Bank-statement import"],
+    img: "/landing/step-1.png",
   },
   {
     no: "02",
     title: "Let the AI do the books",
     body: "Every transaction is categorised, matched, and posted with double-entry precision. Our engine flags anomalies and reconciles as you go, so the ledger is always closing-ready.",
     points: ["Auto-categorisation", "Anomaly detection", "Real-time reconciliation"],
+    img: "/landing/step-2.png",
   },
   {
     no: "03",
     title: "Decide with foresight",
     body: "Forecasts, variance alerts, and a plain-language AI copilot turn your numbers into decisions — cash 90 days out, budget breaches the moment they happen.",
     points: ["90-day cash forecast", "Budget vs actual", "Ask-anything copilot"],
+    img: "/landing/step-3.png",
   },
 ];
 
@@ -55,27 +58,38 @@ export default function HowItWorks() {
           viewport={{ once: true, amount: 0.2 }}
           className="relative grid gap-6 md:grid-cols-3"
         >
-          {/* connecting hairline */}
-          <div className="vf-hairline pointer-events-none absolute left-0 right-0 top-[3.25rem] hidden md:block" />
           {steps.map((s) => (
             <motion.div
               key={s.no}
               variants={reduced ? undefined : item}
-              className="vf-glass-pro relative rounded-2xl p-8"
+              className="vf-glass-pro vf-liquidglass group relative overflow-hidden rounded-2xl"
             >
-              <div className="bg-gold-gradient mb-6 flex h-14 w-14 items-center justify-center rounded-2xl font-display text-xl font-bold text-[#12100E] shadow-[0_8px_30px_-8px_rgba(200,169,110,0.6)]">
-                {s.no}
+              {/* generated gold visual */}
+              <div className="relative h-40 overflow-hidden border-b border-[#C8A96E]/10">
+                <img
+                  src={s.img}
+                  alt=""
+                  aria-hidden="true"
+                  loading="lazy"
+                  className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-105"
+                />
+                <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-[#161310] via-transparent to-transparent" />
+                <div className="bg-gold-gradient absolute bottom-3 left-3 flex h-12 w-12 items-center justify-center rounded-xl font-display text-lg font-bold text-[#12100E] shadow-[0_8px_30px_-8px_rgba(200,169,110,0.6)]">
+                  {s.no}
+                </div>
               </div>
-              <h3 className="font-display mb-3 text-2xl font-semibold text-[#F5F0E8]">{s.title}</h3>
-              <p className="mb-6 text-[15px] leading-relaxed text-[#A89B8C]">{s.body}</p>
-              <ul className="space-y-2.5">
-                {s.points.map((p) => (
-                  <li key={p} className="flex items-center gap-2.5 text-sm text-[#C8A96E]">
-                    <span className="inline-block h-1.5 w-1.5 rounded-full bg-[#C8A96E]" />
-                    {p}
-                  </li>
-                ))}
-              </ul>
+              <div className="p-8 pt-6">
+                <h3 className="font-display mb-3 text-2xl font-semibold text-[#F5F0E8]">{s.title}</h3>
+                <p className="mb-6 text-[15px] leading-relaxed text-[#A89B8C]">{s.body}</p>
+                <ul className="space-y-2.5">
+                  {s.points.map((p) => (
+                    <li key={p} className="flex items-center gap-2.5 text-sm text-[#C8A96E]">
+                      <span className="inline-block h-1.5 w-1.5 rounded-full bg-[#C8A96E]" />
+                      {p}
+                    </li>
+                  ))}
+                </ul>
+              </div>
             </motion.div>
           ))}
         </motion.div>

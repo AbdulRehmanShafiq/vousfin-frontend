@@ -11,14 +11,6 @@ import {
 } from "lucide-react";
 
 /* ─── Data ─── */
-const trustStats = [
-  { number: "2,000+", label: "Businesses" },
-  { number: "$4.2B+", label: "Transactions" },
-  { number: "99.9%", label: "Uptime" },
-  { number: "150+", label: "Currencies" },
-  { number: "50+", label: "Countries" },
-];
-
 const features = [
   {
     title: "Double-Entry Bookkeeping",
@@ -67,22 +59,6 @@ const features = [
 /* ─── Animation presets ─── */
 const easeOut = [0.16, 1, 0.3, 1];
 
-const trustContainer = {
-  hidden: {},
-  visible: {
-    transition: { staggerChildren: 0.1 },
-  },
-};
-
-const trustItem = {
-  hidden: { opacity: 0, y: 20 },
-  visible: {
-    opacity: 1,
-    y: 0,
-    transition: { duration: 0.6, ease: easeOut },
-  },
-};
-
 const headingVariants = {
   hidden: { opacity: 0, y: 30 },
   visible: {
@@ -110,25 +86,6 @@ const cardVariants = {
 };
 
 /* ─── Components ─── */
-function TrustStat({ stat, index }) {
-  const isLast = index === trustStats.length - 1;
-  return (
-    <motion.div
-      variants={trustItem}
-      className={`flex flex-col items-center justify-center px-6 py-2 ${
-        !isLast ? "border-r border-[#C8A96E]/10" : ""
-      }`}
-    >
-      <span className="font-display text-3xl font-bold text-gold-gradient">
-        {stat.number}
-      </span>
-      <span className="mt-1 font-body text-xs uppercase tracking-wider text-[#6B6259]">
-        {stat.label}
-      </span>
-    </motion.div>
-  );
-}
-
 function FeatureCard({ feature }) {
   const Icon = feature.icon;
 
@@ -180,31 +137,14 @@ function FeatureCard({ feature }) {
 /* ─── Main Section ─── */
 export default function Features() {
   const prefersReducedMotion = useReducedMotion();
-  const trustRef = useRef(null);
   const headingRef = useRef(null);
   const cardsRef = useRef(null);
 
-  const trustInView = useInView(trustRef, { once: true, amount: 0.3 });
   const headingInView = useInView(headingRef, { once: true, amount: 0.3 });
   const cardsInView = useInView(cardsRef, { once: true, amount: 0.15 });
 
   return (
     <section id="features" className="relative">
-      {/* ── Trust Bar ── */}
-      <div className="bg-[#24201C] py-10">
-        <motion.div
-          ref={trustRef}
-          initial="hidden"
-          animate={prefersReducedMotion ? "visible" : trustInView ? "visible" : "hidden"}
-          variants={trustContainer}
-          className="content-max mx-auto flex flex-wrap items-center justify-center gap-y-4"
-        >
-          {trustStats.map((stat, i) => (
-            <TrustStat key={stat.label} stat={stat} index={i} />
-          ))}
-        </motion.div>
-      </div>
-
       {/* ── Features ── */}
       <div className="section-padding bg-[#12100E]">
         <div className="content-max mx-auto">

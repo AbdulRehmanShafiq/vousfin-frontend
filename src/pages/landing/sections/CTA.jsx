@@ -45,17 +45,23 @@ export default function CTA() {
       id="cta"
       className="relative w-full overflow-hidden bg-[#12100E] py-32"
     >
-      {/* ---- background glow ---- */}
-      <div
-        className="pointer-events-none absolute inset-0 bg-gold-glow"
+      {/* ---- generated liquid-gold visual (visible) + readability overlay ---- */}
+      <img
+        src="/og-vousfin.png"
+        alt=""
         aria-hidden="true"
+        className="pointer-events-none absolute inset-0 h-full w-full object-cover opacity-40"
       />
       <div
         className="pointer-events-none absolute inset-0"
         style={{
           background:
-            "radial-gradient(ellipse 50% 40% at 50% 50%, rgba(107,29,43,0.18) 0%, transparent 70%)",
+            "radial-gradient(ellipse 62% 58% at 50% 50%, rgba(18,16,14,0.88) 0%, rgba(18,16,14,0.55) 68%, rgba(18,16,14,0.15) 100%)",
         }}
+        aria-hidden="true"
+      />
+      <div
+        className="pointer-events-none absolute inset-0 bg-gold-glow"
         aria-hidden="true"
       />
 

@@ -90,7 +90,7 @@ export default function StatsCounter() {
   return (
     <section
       id="stats"
-      className="relative w-full overflow-hidden border-y border-[#C8A96E]/10 bg-gradient-to-b from-[#1A1612] to-[#12100E] py-20"
+      className="relative w-full overflow-hidden bg-gradient-to-b from-[#1A1612] to-[#12100E] py-20"
     >
       {/* Warm gold light wash (on-brand, replaces the off-theme maroon) */}
       <div
@@ -100,8 +100,6 @@ export default function StatsCounter() {
             "radial-gradient(ellipse 75% 70% at 50% 50%, rgba(200, 169, 110, 0.10) 0%, transparent 72%)",
         }}
       />
-      <div className="vf-hairline absolute inset-x-0 top-0" />
-      <div className="vf-hairline absolute inset-x-0 bottom-0" />
 
       <div className="content-max relative z-10">
         <motion.div
