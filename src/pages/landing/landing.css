@@ -9,6 +9,12 @@
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
+
+/* Lenis smooth scroll (active only while the landing mounts Lenis on <html>) */
+html.lenis, html.lenis body { height: auto; }
+.lenis.lenis-smooth { scroll-behavior: auto !important; }
+.lenis.lenis-smooth [data-lenis-prevent] { overscroll-behavior: contain; }
+.lenis.lenis-stopped { overflow: hidden; }
 .vf-landing ::selection { background-color: rgba(200, 169, 110, 0.25); color: #F5F0E8; }
 
 /* A11y: every interactive element is clearly clickable + keyboard-focusable (scoped) */

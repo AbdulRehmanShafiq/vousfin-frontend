@@ -6,6 +6,7 @@ import Hero from './sections/Hero'
 import CustomCursor from './components/CustomCursor'
 import DemoModal from './components/DemoModal'
 import { useReducedMotion } from './hooks/useReducedMotion'
+import useLenis from './hooks/useLenis'
 
 const Features = lazy(() => import('./sections/Features'))
 const ShowcaseScroll = lazy(() => import('./sections/ShowcaseScroll'))
@@ -28,6 +29,7 @@ function SectionFallback() {
 }
 
 export default function LandingPage() {
+  useLenis()
   const reduced = useReducedMotion()
   const { scrollYProgress } = useScroll()
   const scaleX = useSpring(scrollYProgress, { stiffness: 120, damping: 30, mass: 0.3 })

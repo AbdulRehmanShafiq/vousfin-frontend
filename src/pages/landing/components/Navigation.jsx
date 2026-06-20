@@ -8,6 +8,7 @@ import {
 } from "framer-motion";
 import { Menu, X } from "lucide-react";
 import { useReducedMotion } from "../hooks/useReducedMotion";
+import { smoothScrollTo } from "../hooks/useLenis";
 import AnimatedLogo from "./AnimatedLogo";
 
 const navLinks = [
@@ -20,11 +21,8 @@ const navLinks = [
 
 const handleSmoothScroll = (e, href) => {
   e.preventDefault();
-  const id = href.replace("#", "");
-  const el = document.getElementById(id);
-  if (el) {
-    el.scrollIntoView({ behavior: "smooth", block: "start" });
-  }
+  const el = document.getElementById(href.replace("#", ""));
+  if (el) smoothScrollTo(el, { offset: -64 }); // routes through Lenis when active
 };
 
 export default function Navigation() {

@@ -1,6 +1,7 @@
 import { useRef, useState, useEffect, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import useReducedMotion from "../hooks/useReducedMotion";
+import { smoothScrollTo } from "../hooks/useLenis";
 import AppWindow from "../components/AppWindow";
 
 const EASE = [0.16, 1, 0.3, 1];
@@ -88,8 +89,9 @@ export default function ShowcaseScroll() {
   const jumpTo = useCallback((i) => {
     const el = containerRef.current;
     if (!el) return;
+    const docTop = el.getBoundingClientRect().top + window.scrollY; // absolute, position-context safe
     const travel = el.offsetHeight - window.innerHeight;
-    window.scrollTo({ top: el.offsetTop + travel * ((i + 0.5) / steps.length), behavior: "smooth" });
+    smoothScrollTo(docTop + travel * ((i + 0.5) / steps.length));
   }, []);
 
   // Reduced motion: simple stacked gallery (no pinning).
@@ -117,8 +119,8 @@ export default function ShowcaseScroll() {
 
   return (
     <section id="showcase" className="vf-stage relative">
-      {/* Tall driver: each step gets ~78vh of scroll travel */}
-      <div ref={containerRef} style={{ height: `${steps.length * 78}vh` }} className="relative">
+      {/* Tall driver: each step gets ~58vh of scroll travel (snappier, less "stuck") */}
+      <div ref={containerRef} style={{ height: `${steps.length * 58}vh` }} className="relative">
         <div className="sticky top-0 flex h-[100svh] flex-col overflow-hidden">
           {/* heading rides along at the top of the pinned panel */}
           <div className="content-max section-padding shrink-0 pb-0 pt-24 lg:pt-28">
@@ -128,25 +130,31 @@ export default function ShowcaseScroll() {
           {/* the stage */}
           <div className="content-max flex flex-1 items-center px-4 pb-10 sm:px-6 lg:px-8">
             <div className="grid w-full grid-cols-1 items-center gap-8 lg:grid-cols-[0.85fr_1.15fr] lg:gap-14">
-              {/* LEFT: copy that crossfades */}
-              <div className="relative order-2 lg:order-1">
-                <AnimatePresence mode="wait">
-                  <motion.div
-                    key={active}
-                    initial={{ opacity: 0, y: 22 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    exit={{ opacity: 0, y: -14 }}
-                    transition={{ duration: 0.45, ease: EASE }}
-                  >
-                    <Tag>{cur.tag}</Tag>
-                    <h3 className="mt-4 font-display font-bold leading-[1.05] text-[#F5F0E8]" style={{ fontSize: "clamp(1.6rem, 3.2vw, 2.85rem)" }}>
-                      {cur.title}
-                    </h3>
-                    <p className="mt-4 max-w-md text-base leading-relaxed text-[#C8B9A2] sm:text-lg">
-                      {cur.body}
-                    </p>
-                  </motion.div>
-                </AnimatePresence>
+              {/* LEFT: copy crossfades IN SYNC with the image (absolute-stacked in a
+                  fixed-height box so old/new overlap without layout shift) */}
+              <div className="order-2 lg:order-1">
+                {/* grid-stack: old+new copy share one auto-sizing cell, so they
+                    overlap-crossfade (in sync with the image) without overflow */}
+                <div className="grid">
+                  <AnimatePresence>
+                    <motion.div
+                      key={active}
+                      style={{ gridArea: "1 / 1" }}
+                      initial={{ opacity: 0, y: 18 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      exit={{ opacity: 0, y: -12 }}
+                      transition={{ duration: 0.5, ease: EASE }}
+                    >
+                      <Tag>{cur.tag}</Tag>
+                      <h3 className="mt-4 font-display font-bold leading-[1.05] text-[#F5F0E8]" style={{ fontSize: "clamp(1.6rem, 3.2vw, 2.85rem)" }}>
+                        {cur.title}
+                      </h3>
+                      <p className="mt-4 max-w-md text-base leading-relaxed text-[#C8B9A2] sm:text-lg">
+                        {cur.body}
+                      </p>
+                    </motion.div>
+                  </AnimatePresence>
+                </div>
 
                 {/* clickable step rail */}
                 <div className="mt-8 flex flex-col gap-2.5">
@@ -187,7 +195,7 @@ export default function ShowcaseScroll() {
                           initial={{ opacity: 0, scale: 1.03 }}
                           animate={{ opacity: 1, scale: 1 }}
                           exit={{ opacity: 0 }}
-                          transition={{ duration: 0.55, ease: EASE }}
+                          transition={{ duration: 0.5, ease: EASE }}
                           draggable={false}
                         />
                       </AnimatePresence>

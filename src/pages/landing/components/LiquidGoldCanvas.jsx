@@ -27,7 +27,7 @@ const fragment = `
     vec2 u = f * f * (3.0 - 2.0 * f);
     return mix(a,b,u.x) + (c-a)*u.y*(1.0-u.x) + (d-b)*u.x*u.y;
   }
-  float fbm(vec2 p){ float v=0.0, a=0.5; for(int i=0;i<4;i++){ v += a*noise(p); p = p*2.0 + 1.3; a *= 0.5; } return v; }
+  float fbm(vec2 p){ float v=0.0, a=0.5; for(int i=0;i<3;i++){ v += a*noise(p); p = p*2.0 + 1.3; a *= 0.5; } return v; }
 
   void main(){
     float aspect = uResolution.x / max(uResolution.y, 1.0);
@@ -65,7 +65,7 @@ export default function LiquidGoldCanvas({ className = "" }) {
     let disposed = false;
 
     try {
-      renderer = new Renderer({ alpha: true, antialias: false, dpr: Math.min(1.5, window.devicePixelRatio || 1) });
+      renderer = new Renderer({ alpha: true, antialias: false, dpr: 1 });
       const gl = renderer.gl;
       gl.clearColor(0, 0, 0, 0);
       el.appendChild(gl.canvas);
@@ -88,7 +88,12 @@ export default function LiquidGoldCanvas({ className = "" }) {
       onResize = () => {
         const w = el.clientWidth || 1;
         const h = el.clientHeight || 1;
-        renderer.setSize(w, h);
+        // Render at low internal resolution (<=640px long edge) and CSS-stretch to
+        // full — the soft gold field looks identical for a fraction of the GPU cost.
+        const scale = Math.min(1, 640 / Math.max(w, h));
+        renderer.setSize(Math.round(w * scale), Math.round(h * scale));
+        gl.canvas.style.width = "100%";
+        gl.canvas.style.height = "100%";
         program.uniforms.uResolution.value.set(gl.canvas.width, gl.canvas.height);
       };
       onResize();
@@ -103,10 +108,13 @@ export default function LiquidGoldCanvas({ className = "" }) {
       };
       window.addEventListener("pointermove", onPointer, { passive: true });
 
+      let last = 0;
       const loop = (t) => {
         if (disposed) return;
         raf = requestAnimationFrame(loop);
         if (!visible) return;
+        if (t - last < 33) return; // cap ~30fps — ambient field needs no more
+        last = t;
         program.uniforms.uTime.value = t * 0.001;
         renderer.render({ scene: mesh });
       };
