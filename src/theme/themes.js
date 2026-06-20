@@ -9,6 +9,7 @@
  *   daybreak (light)         — Stripe/Apple spacious · vivid purple
  */
 export const THEMES = [
+  { key: 'atelier',  name: 'Atelier',  group: 'dark',  tagline: 'Signature',  sw: { bg: '#12100E', c: '#1A1714', a: '#C8A96E', p: '#7EB5A6', n: '#E0736B', h: '#D4B87A' } },
   { key: 'eclipse',  name: 'Eclipse',  group: 'dark',  tagline: 'Minimal',    sw: { bg: '#0C0D11', c: '#14161C', a: '#7C72FF', p: '#46D18A', n: '#FF6B6B', h: '#C9A6FF' } },
   { key: 'terminal', name: 'Terminal', group: 'dark',  tagline: 'Data desk',  sw: { bg: '#07080A', c: '#0E1013', a: '#2DE0E0', p: '#2DE07A', n: '#FF5C5C', h: '#FFB020' } },
   { key: 'maison',   name: 'Maison',   group: 'dark',  tagline: 'Editorial',  sw: { bg: '#0B0A08', c: '#16130F', a: '#E8B341', p: '#6FD8A0', n: '#E8736B', h: '#E8B341' } },
@@ -16,12 +17,13 @@ export const THEMES = [
 ]
 
 export const THEME_KEYS = THEMES.map((t) => t.key)
-export const DEFAULT_THEME = 'eclipse'
+// Default matches the public landing page (luxury gold) so auth + dashboard share
+// the brand identity until the user picks another theme in Settings.
+export const DEFAULT_THEME = 'atelier'
 
-/** Apply a theme by setting (or clearing, for the default) the data-theme attr. */
+/** Apply a theme by writing the data-theme attr. 'eclipse' has no [data-theme]
+ *  block — it intentionally falls through to the :root tokens. */
 export function applyTheme(key) {
   const k = THEME_KEYS.includes(key) ? key : DEFAULT_THEME
-  const el = document.documentElement
-  if (k === DEFAULT_THEME) el.removeAttribute('data-theme')
-  else el.dataset.theme = k
+  document.documentElement.dataset.theme = k
 }

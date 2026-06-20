@@ -68,6 +68,44 @@
     --emerald: rgb(var(--c-positive)); --emerald2: rgb(var(--c-accent2)); --emerald3: rgb(var(--chart-profit));
   }
 
+  /* ░░ Atelier — landing-matched luxury gold (DEFAULT) · Playfair ░░ */
+  [data-theme="atelier"] {
+    color-scheme: dark;
+    --c-bg: 18 16 14;          /* #12100E warm black */
+    --c-bg2: 26 23 20;         /* #1A1714 card */
+    --c-bg3: 36 32 28;         /* #24201C surface */
+    --c-text: 245 240 232;     /* #F5F0E8 cream */
+    --c-text2: 168 155 140;    /* #A89B8C */
+    --c-text3: 107 98 89;      /* #6B6259 */
+    --c-accent: 200 169 110;   /* #C8A96E gold */
+    --c-accent2: 184 147 90;   /* #B8935A gold dark */
+    --c-on-accent: 18 16 14;   /* ink on gold */
+    --c-positive: 126 181 166; /* #7EB5A6 teal */
+    --c-negative: 224 115 107; /* warm red */
+    --c-highlight: 212 184 122;/* #D4B87A gold light */
+    --sec-money-in: 126 181 166;
+    --sec-money-out: 196 136 106;
+    --sec-ledger: 200 169 110;
+    --sec-autopilot: 212 184 122;
+    --sec-intelligence: 184 147 90;
+    --sec-settings: 168 155 140;
+    --chart-revenue: 126 181 166;
+    --chart-expenses: 196 136 106;
+    --chart-profit: 200 169 110;
+    --chart-cash: 212 184 122;
+    --chart-neutral: 107 98 89;
+    --c-border: rgba(245, 240, 232, 0.09);
+    --c-border2: rgba(245, 240, 232, 0.16);
+    --glass-panel: rgba(245, 240, 232, 0.04);
+    --glass-hover: rgba(245, 240, 232, 0.07);
+    --atmos-1: rgba(200, 169, 110, 0.12);
+    --atmos-2: rgba(196, 136, 106, 0.06);
+    --atmos-3: rgba(60, 45, 25, 0.22);
+    --grain-opacity: 0.5;
+    --radius-card: 16px;
+    --font-display: 'Playfair Display', Georgia, serif;
+  }
+
   /* ░░ Terminal — Bloomberg data desk ░░ */
   [data-theme="terminal"] {
     color-scheme: dark;
