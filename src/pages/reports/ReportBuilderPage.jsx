@@ -129,19 +129,26 @@ function ScheduleDialog({ onClose, onSave, existing }) {
 
           {frequency === 'weekly' && (
             <div>
-              <label className="block text-xs text-text-secondary mb-1">Day of week (0=Sun)</label>
-              <input
-                type="number" min={0} max={6}
+              <label className="block text-xs text-text-secondary mb-1">Day of week</label>
+              <select
                 value={dayOfWeek}
                 onChange={e => setDayOfWeek(Number(e.target.value))}
                 className="input-base w-full"
-              />
+              >
+                <option value={0}>Sunday</option>
+                <option value={1}>Monday</option>
+                <option value={2}>Tuesday</option>
+                <option value={3}>Wednesday</option>
+                <option value={4}>Thursday</option>
+                <option value={5}>Friday</option>
+                <option value={6}>Saturday</option>
+              </select>
             </div>
           )}
 
           {frequency === 'monthly' && (
             <div>
-              <label className="block text-xs text-text-secondary mb-1">Day of month</label>
+              <label className="block text-xs text-text-secondary mb-1">Day of month (1–28)</label>
               <input
                 type="number" min={1} max={28}
                 value={dayOfMonth}
@@ -225,22 +232,28 @@ function PreviewTable({ result, currency }) {
                 {comparative ? (
                   <>
                     <td className="px-4 py-2 text-right text-text-primary tabular-nums">
-                      {formatCurrency(row.current, currency)}
+                      {row.current != null && Number.isFinite(row.current)
+                        ? formatCurrency(row.current, currency)
+                        : '—'}
                     </td>
                     <td className="px-4 py-2 text-right text-text-secondary tabular-nums">
-                      {formatCurrency(row.prior, currency)}
+                      {row.prior != null && Number.isFinite(row.prior)
+                        ? formatCurrency(row.prior, currency)
+                        : '—'}
                     </td>
                     <td className="px-4 py-2 text-right tabular-nums">
-                      <span className={cn(row.change >= 0 ? 'text-positive' : 'text-negative')}>
-                        {row.change >= 0 ? '+' : ''}{formatCurrency(row.change, currency)}
-                      </span>
+                      {row.change != null && Number.isFinite(row.change)
+                        ? <span className={cn(row.change >= 0 ? 'text-positive' : 'text-negative')}>
+                            {row.change >= 0 ? '+' : ''}{formatCurrency(row.change, currency)}
+                          </span>
+                        : '—'}
                     </td>
                     <td className="px-4 py-2 text-right tabular-nums">
-                      {row.changePct != null ? (
-                        <span className={cn(row.changePct >= 0 ? 'text-positive' : 'text-negative')}>
-                          {row.changePct >= 0 ? '+' : ''}{Number(row.changePct).toFixed(1)}%
-                        </span>
-                      ) : '—'}
+                      {row.changePct != null && Number.isFinite(row.changePct)
+                        ? <span className={cn(row.changePct >= 0 ? 'text-positive' : 'text-negative')}>
+                            {row.changePct >= 0 ? '+' : ''}{Number(row.changePct).toFixed(1)}%
+                          </span>
+                        : '—'}
                     </td>
                   </>
                 ) : (
@@ -408,6 +421,7 @@ export default function ReportBuilderPage() {
   const [saving, setSaving]               = useState(false)
   const [exporting, setExporting]         = useState(null) // 'pdf' | 'csv' | null
   const [showSchedule, setShowSchedule]   = useState(false)
+  const [scheduleExisting, setScheduleExisting] = useState(null)
 
   const idCounter = useRef(100)
 
@@ -474,6 +488,7 @@ export default function ReportBuilderPage() {
     setStartDate(firstOfYear())
     setEndDate(today())
     setPreviewResult(null)
+    setScheduleExisting(tpl.schedule ?? null)
     setView('builder')
   }, [])
 
@@ -636,7 +651,7 @@ export default function ReportBuilderPage() {
     <>
       {showSchedule && (
         <ScheduleDialog
-          existing={null}
+          existing={scheduleExisting}
           onClose={() => setShowSchedule(false)}
           onSave={handleScheduleSave}
         />
