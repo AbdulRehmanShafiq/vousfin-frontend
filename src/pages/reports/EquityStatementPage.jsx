@@ -1,17 +1,22 @@
 import { useState } from 'react'
-import { CheckCircle, XCircle, Layers } from 'lucide-react'
+import { CheckCircle, XCircle, Layers, FileDown } from 'lucide-react'
+import toast from 'react-hot-toast'
 import { useEquityStatement } from '@/hooks/useReports'
 import { useBusinessStore } from '@/stores/useBusinessStore'
 import { formatCurrency } from '@/utils/formatters'
+import { getErrorMessage } from '@/utils/errorHandler'
+import reportService from '@/services/report.service'
 import ExportButton from '@/components/ui/ExportButton'
+import Button from '@/components/ui/Button'
 import Input from '@/components/ui/Input'
 import SkeletonLoader from '@/components/ui/SkeletonLoader'
 
-const YEAR_START = new Date(new Date().getFullYear(), 0, 1).toISOString().split('T')[0]
-const TODAY      = new Date().toISOString().split('T')[0]
-
 export default function EquityStatementPage() {
-  const [dateRange, setDateRange] = useState({ startDate: YEAR_START, endDate: TODAY })
+  const [dateRange, setDateRange] = useState(() => ({
+    startDate: new Date(new Date().getFullYear(), 0, 1).toISOString().split('T')[0],
+    endDate:   new Date().toISOString().split('T')[0],
+  }))
+  const [pdfLoading, setPdfLoading] = useState(false)
   const { data, isLoading } = useEquityStatement(dateRange)
   const currency = useBusinessStore(s => s.currency)
 
@@ -19,6 +24,32 @@ export default function EquityStatementPage() {
   const rows        = data?.rows        || []
   const recon       = data?.reconciliation
   const reconciles  = recon?.reconciles ?? false
+
+  const handleDownloadPdf = async () => {
+    setPdfLoading(true)
+    try {
+      const response = await reportService.exportReport({
+        type: 'equity',
+        format: 'pdf',
+        startDate: dateRange.startDate,
+        endDate: dateRange.endDate,
+      })
+      const blob = new Blob([response.data], { type: 'application/pdf' })
+      const url  = window.URL.createObjectURL(blob)
+      const a    = document.createElement('a')
+      a.href     = url
+      a.download = `equity-statement-${dateRange.endDate}.pdf`
+      document.body.appendChild(a)
+      a.click()
+      document.body.removeChild(a)
+      window.URL.revokeObjectURL(url)
+      toast.success('Equity Statement downloaded as PDF')
+    } catch (err) {
+      toast.error(getErrorMessage(err) || 'Failed to download PDF')
+    } finally {
+      setPdfLoading(false)
+    }
+  }
 
   // Build flat CSV: one row per report-row, one column per component + Total
   const exportHeaders = [
@@ -62,6 +93,14 @@ export default function EquityStatementPage() {
             filename={`equity-statement-${dateRange.endDate}.csv`}
             headers={exportHeaders}
           />
+          <Button
+            variant="secondary"
+            icon={FileDown}
+            loading={pdfLoading}
+            onClick={handleDownloadPdf}
+          >
+            PDF
+          </Button>
         </div>
       </div>
 
