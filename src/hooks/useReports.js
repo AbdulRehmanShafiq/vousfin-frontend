@@ -1,5 +1,6 @@
-import { useQuery } from '@tanstack/react-query'
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import api from '@/services/api'
+import reportService from '@/services/report.service'
 import { useAuthStore } from '@/stores/useAuthStore'
 
 const STALE  = 5  * 60 * 1000
@@ -160,5 +161,74 @@ export function useDashboardAll(dateRange, options = {}) {
       return data.data
     },
     staleTime: STALE, gcTime: GC, enabled: !!businessId && enabledOpt,
+  })
+}
+
+// ── Report Builder hooks ──────────────────────────────────────────────────────
+
+export function useReportTemplates() {
+  const businessId = useAuthStore(s => s.user?.businessId)
+  return useQuery({
+    queryKey: ['reports', 'templates', businessId],
+    queryFn: async () => {
+      const { data } = await reportService.listTemplates()
+      return data.data
+    },
+    staleTime: STALE, gcTime: GC, enabled: !!businessId,
+  })
+}
+
+export function useReportTemplate(id) {
+  const businessId = useAuthStore(s => s.user?.businessId)
+  return useQuery({
+    queryKey: ['reports', 'templates', businessId, id],
+    queryFn: async () => {
+      const { data } = await reportService.getTemplate(id)
+      return data.data
+    },
+    staleTime: STALE, gcTime: GC, enabled: !!businessId && !!id,
+  })
+}
+
+export function useSaveTemplate() {
+  const queryClient = useQueryClient()
+  return useMutation({
+    mutationFn: async ({ id, body }) => {
+      if (id) {
+        const { data } = await reportService.updateTemplate(id, body)
+        return data.data
+      }
+      const { data } = await reportService.createTemplate(body)
+      return data.data
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['reports', 'templates'] })
+    },
+  })
+}
+
+export function useDeleteTemplate() {
+  const queryClient = useQueryClient()
+  return useMutation({
+    mutationFn: async (id) => {
+      const { data } = await reportService.deleteTemplate(id)
+      return data.data
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['reports', 'templates'] })
+    },
+  })
+}
+
+export function useScheduleTemplate() {
+  const queryClient = useQueryClient()
+  return useMutation({
+    mutationFn: async ({ id, body }) => {
+      const { data } = await reportService.scheduleTemplate(id, body)
+      return data.data
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['reports', 'templates'] })
+    },
   })
 }

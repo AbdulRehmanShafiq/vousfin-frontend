@@ -70,6 +70,7 @@ const ReconciliationExceptionQueuePage= lazy(() => import('@/pages/reconciliatio
 const TemplatesPage        = lazy(() => import('@/pages/transactions/TemplatesPage'))
 const ApprovalsQueuePage   = lazy(() => import('@/pages/approvals/ApprovalsQueuePage'))
 const BankReconciliationPage = lazy(() => import('@/pages/reconciliation/BankReconciliationPage'))
+const ReportBuilderPage      = lazy(() => import('@/pages/reports/ReportBuilderPage'))        // FR-02.5
 
 const LoadingFallback = () => (
   <div className="flex h-screen w-full items-center justify-center bg-navy">
@@ -215,8 +216,9 @@ export const routes = [
 
           /* ── Financial Reports hub ─────────────────────────────────────── */
           /* /financial-reports  → default tab */
-          { path: 'financial-reports',      element: <Navigate to="/financial-reports/income-statement" replace /> },
-          { path: 'financial-reports/:tab', element: withSuspense(FinancialReportsPage) },
+          { path: 'financial-reports',         element: <Navigate to="/financial-reports/income-statement" replace /> },
+          { path: 'financial-reports/builder', element: withSuspense(ReportBuilderPage) },  // FR-02.5
+          { path: 'financial-reports/:tab',    element: withSuspense(FinancialReportsPage) },
 
           /* Backward-compat redirects for old /reports/* bookmarks */
           { path: 'reports/income-statement', element: <Navigate to="/financial-reports/income-statement" replace /> },
@@ -225,7 +227,7 @@ export const routes = [
           { path: 'reports/trial-balance',    element: <Navigate to="/financial-reports/trial-balance"    replace /> },
           { path: 'reports/export',           element: <Navigate to="/financial-reports/export"           replace /> },
           { path: 'reports/equity',           element: <Navigate to="/financial-reports/equity"           replace /> },
-          // TODO Task 11: add /reports/builder and /reports/builder/:id routes once ReportBuilderPage is created
+          { path: 'reports/builder',          element: <Navigate to="/financial-reports/builder"          replace /> },
 
           /* ── AI Analyst hub ────────────────────────────────────────────── */
           /* /ai-analyst  → default tab */
