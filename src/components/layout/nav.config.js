@@ -21,7 +21,7 @@ import {
   Landmark, BrainCircuit, ShieldAlert,
   Boxes, Bot, Library, Sparkles, Scale, Inbox,
   ArrowDownCircle, ArrowUpCircle,
-  FileBarChart2, TrendingUp, Lightbulb, Target, Hammer,
+  FileBarChart2, TrendingUp, Lightbulb, Target, Hammer, Layers,
   Settings, DollarSign, Percent, Palette, Building2,
 } from 'lucide-react'
 
@@ -98,6 +98,7 @@ export const NAV_SECTIONS = [
     blurb: 'Make sense of the numbers — statements, forecasts, what-if scenarios, and an assistant that explains it all.',
     items: [
       { name: 'Financial Reports', href: '/financial-reports/income-statement', activePrefix: '/financial-reports', icon: FileBarChart2, desc: 'Income statement, balance sheet, cash flow' },
+      { name: 'Equity Statement',  href: '/financial-reports/equity',           activePrefix: '/financial-reports/equity', icon: Layers, desc: 'How owner equity changed over the period' },
       { name: 'Forecast',          href: '/ai-analyst/forecast',  icon: TrendingUp, desc: 'Where your numbers are heading' },
       { name: 'Scenarios',         href: '/ai-analyst/scenarios', icon: Lightbulb,  desc: "Test 'what if' situations safely" },
       { name: 'Anomalies',         href: '/ai-analyst/anomalies', icon: ShieldAlert, desc: 'Unusual activity we flagged for you' },

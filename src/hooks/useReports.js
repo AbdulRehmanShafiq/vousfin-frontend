@@ -126,6 +126,30 @@ export function useComparativeIncome(params) {
   })
 }
 
+export function useEquityStatement(dateRange) {
+  const businessId = useAuthStore(s => s.user?.businessId)
+  return useQuery({
+    queryKey: ['reports', 'equity', businessId, dateRange],
+    queryFn: async () => {
+      const { data } = await api.get(`/reports/equity?${buildParams(dateRange)}`)
+      return data.data
+    },
+    staleTime: STALE, gcTime: GC, enabled: !!businessId,
+  })
+}
+
+export function useRevenueNotes(dateRange) {
+  const businessId = useAuthStore(s => s.user?.businessId)
+  return useQuery({
+    queryKey: ['reports', 'revenue-notes', businessId, dateRange],
+    queryFn: async () => {
+      const { data } = await api.get(`/reports/notes/revenue?${buildParams(dateRange)}`)
+      return data.data
+    },
+    staleTime: STALE, gcTime: GC, enabled: !!businessId,
+  })
+}
+
 export function useDashboardAll(dateRange, options = {}) {
   const businessId = useAuthStore(s => s.user?.businessId)
   const { enabled: enabledOpt = true } = options

@@ -1,6 +1,6 @@
 import { useState } from 'react'
-import { TrendingUp, TrendingDown, LineChart } from 'lucide-react'
-import { useIncomeStatement } from '@/hooks/useReports'
+import { TrendingUp, TrendingDown, LineChart, ChevronDown, ChevronRight } from 'lucide-react'
+import { useIncomeStatement, useRevenueNotes } from '@/hooks/useReports'
 import { useBusinessStore } from '@/stores/useBusinessStore'
 import { formatCurrency } from '@/utils/formatters'
 import ExportButton from '@/components/ui/ExportButton'
@@ -13,7 +13,9 @@ export default function IncomeStatementPage() {
     endDate:   new Date().toISOString().split('T')[0],
   })
 
+  const [revenueNotesOpen, setRevenueNotesOpen] = useState(false)
   const { data, isLoading } = useIncomeStatement(dateRange)
+  const { data: revenueNotes, isLoading: notesLoading } = useRevenueNotes(dateRange)
   const currency = useBusinessStore(s => s.currency)
 
   // Build export — section totals and subtotals always appear; zero-balance
@@ -80,6 +82,68 @@ export default function IncomeStatementPage() {
           ))}
         </div>
       )}
+
+      {/* Revenue notes (IFRS 15) — collapsible panel */}
+      <div className="premium-card overflow-hidden">
+        <button
+          onClick={() => setRevenueNotesOpen(o => !o)}
+          className="w-full flex items-center justify-between px-6 py-4 hover:bg-glass-hover transition-colors"
+        >
+          <span className="font-bold text-text-primary text-sm">Revenue notes (IFRS 15)</span>
+          {revenueNotesOpen
+            ? <ChevronDown  className="h-4 w-4 text-text-muted" />
+            : <ChevronRight className="h-4 w-4 text-text-muted" />}
+        </button>
+        {revenueNotesOpen && (
+          <div className="border-t border-glass px-6 py-5 space-y-4">
+            {notesLoading ? (
+              <SkeletonLoader count={4} />
+            ) : !revenueNotes ? (
+              <p className="text-sm text-text-muted">No revenue notes available for this period.</p>
+            ) : (
+              <>
+                {revenueNotes.policyText && (
+                  <p className="text-sm text-text-secondary leading-relaxed">{revenueNotes.policyText}</p>
+                )}
+                {revenueNotes.disaggregation && revenueNotes.disaggregation.length > 0 && (
+                  <div>
+                    <h4 className="text-xs font-bold text-text-secondary uppercase tracking-wider mb-2">Revenue by Stream</h4>
+                    <table className="w-full text-sm">
+                      <thead>
+                        <tr className="border-b border-glass">
+                          <th className="text-left py-1.5 font-semibold text-text-secondary">Stream</th>
+                          <th className="text-right py-1.5 font-semibold text-text-secondary">Amount</th>
+                          <th className="text-right py-1.5 font-semibold text-text-secondary">Share</th>
+                        </tr>
+                      </thead>
+                      <tbody className="divide-y divide-glass">
+                        {revenueNotes.disaggregation.map((row, i) => (
+                          <tr key={row.stream || i} className="hover:bg-glass-hover transition-colors">
+                            <td className="py-1.5 text-text-primary">{row.stream}</td>
+                            <td className="py-1.5 text-right tabular-nums text-text-primary">
+                              {formatCurrency(row.amount, currency)}
+                            </td>
+                            <td className="py-1.5 text-right tabular-nums text-text-secondary">
+                              {typeof row.pct === 'number' ? `${row.pct.toFixed(1)}%` : row.pct}
+                            </td>
+                          </tr>
+                        ))}
+                        <tr className="border-t border-glass">
+                          <td className="py-2 font-bold text-text-primary">Total Revenue</td>
+                          <td className="py-2 text-right tabular-nums font-bold text-text-primary">
+                            {formatCurrency(revenueNotes.totalRevenue, currency)}
+                          </td>
+                          <td className="py-2 text-right tabular-nums text-text-secondary">100%</td>
+                        </tr>
+                      </tbody>
+                    </table>
+                  </div>
+                )}
+              </>
+            )}
+          </div>
+        )}
+      </div>
 
       {/* Main report */}
       <div className="premium-card p-6 sm:p-8">

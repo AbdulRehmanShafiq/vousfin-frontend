@@ -10,7 +10,7 @@ import { lazy, Suspense, useState, useCallback } from 'react'
 import { useParams, useNavigate, Navigate } from 'react-router-dom'
 import {
   LineChart, Scale, PieChart, BookOpen, Download,
-  Clock, Receipt, BarChart2, Building2,
+  Clock, Receipt, BarChart2, Building2, Layers,
 } from 'lucide-react'
 import { cn } from '@/utils/cn'
 import SkeletonLoader from '@/components/ui/SkeletonLoader'
@@ -25,6 +25,7 @@ const AgingReportPage       = lazy(() => import('./AgingReportPage'))
 const TaxReportPage         = lazy(() => import('./TaxReportPage'))
 const ComparativeReportPage = lazy(() => import('./ComparativeReportPage'))
 const ExportPage            = lazy(() => import('./ExportPage'))
+const EquityStatementPage   = lazy(() => import('./EquityStatementPage'))
 
 const TABS = [
   { key: 'income-statement',  label: 'Income Statement',  short: 'P&L',        icon: LineChart,  Component: IncomeStatementPage   },
@@ -35,6 +36,7 @@ const TABS = [
   { key: 'aging',             label: 'Aging',             short: 'Aging',      icon: Clock,      Component: AgingReportPage       },
   { key: 'tax',               label: 'Tax Report',        short: 'Tax',        icon: Receipt,    Component: TaxReportPage         },
   { key: 'comparative',       label: 'Comparative',       short: 'Compare',    icon: BarChart2,  Component: ComparativeReportPage },
+  { key: 'equity',            label: 'Equity Statement',  short: 'Equity',     icon: Layers,     Component: EquityStatementPage   },
   { key: 'export',            label: 'Export',            short: 'Export',     icon: Download,   Component: ExportPage            },
 ]
 

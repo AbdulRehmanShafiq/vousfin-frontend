@@ -224,6 +224,8 @@ export const routes = [
           { path: 'reports/cash-flow',        element: <Navigate to="/financial-reports/cash-flow"        replace /> },
           { path: 'reports/trial-balance',    element: <Navigate to="/financial-reports/trial-balance"    replace /> },
           { path: 'reports/export',           element: <Navigate to="/financial-reports/export"           replace /> },
+          { path: 'reports/equity',           element: <Navigate to="/financial-reports/equity"           replace /> },
+          // TODO Task 11: add /reports/builder and /reports/builder/:id routes once ReportBuilderPage is created
 
           /* ── AI Analyst hub ────────────────────────────────────────────── */
           /* /ai-analyst  → default tab */
