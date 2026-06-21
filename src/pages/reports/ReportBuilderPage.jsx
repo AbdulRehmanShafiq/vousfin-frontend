@@ -32,7 +32,7 @@ const today = () => new Date().toISOString().split('T')[0]
 const firstOfYear = () => `${new Date().getFullYear()}-01-01`
 
 function defaultLayoutFor(baseType) {
-  if (baseType === 'profit-loss') {
+  if (baseType === 'pl') {
     return [
       { id: 'r1', kind: 'section',       label: 'Revenue',          visible: true },
       { id: 'r2', kind: 'account-group', label: 'Revenue',          accountType: 'Revenue',  metric: 'flow', visible: true },
@@ -41,7 +41,7 @@ function defaultLayoutFor(baseType) {
       { id: 'r5', kind: 'subtotal',      label: 'Net Income',       visible: true },
     ]
   }
-  if (baseType === 'balance-sheet') {
+  if (baseType === 'bs') {
     return [
       { id: 'r1', kind: 'section',       label: 'Assets',           visible: true },
       { id: 'r2', kind: 'account-group', label: 'Assets',           accountType: 'Asset',    metric: 'balance', visible: true },
@@ -52,16 +52,16 @@ function defaultLayoutFor(baseType) {
       { id: 'r7', kind: 'subtotal',      label: 'Total L + E',      visible: true },
     ]
   }
-  // blank
+  // custom (blank)
   return [
     { id: 'r1', kind: 'section', label: 'Section 1', visible: true },
   ]
 }
 
 const BASE_LABELS = {
-  'profit-loss':   'P&L',
-  'balance-sheet': 'Balance Sheet',
-  'blank':         'Custom',
+  pl:     'Profit & Loss',
+  bs:     'Balance Sheet',
+  custom: 'Custom',
 }
 
 const FREQ_OPTIONS = [
@@ -309,9 +309,9 @@ function TemplateCard({ tpl, onEdit, onDelete }) {
 
 function BasePickerPanel({ onSelect }) {
   const bases = [
-    { key: 'profit-loss',   label: 'P&L',           desc: 'Revenue minus expenses — your bottom line' },
-    { key: 'balance-sheet', label: 'Balance Sheet',  desc: 'What you own, owe, and what\'s left for owners' },
-    { key: 'blank',         label: 'Custom',         desc: 'Start from scratch — add any rows you need' },
+    { key: 'pl',     label: 'Profit & Loss',  desc: 'Revenue minus expenses — your bottom line' },
+    { key: 'bs',     label: 'Balance Sheet',  desc: 'What you own, owe, and what\'s left for owners' },
+    { key: 'custom', label: 'Custom',         desc: 'Start from scratch — add any rows you need' },
   ]
   return (
     <div className="premium-card p-6 space-y-4">
@@ -410,7 +410,7 @@ export default function ReportBuilderPage() {
   // Builder state
   const [templateId, setTemplateId]       = useState(null)
   const [name, setName]                   = useState('')
-  const [baseType, setBaseType]           = useState('profit-loss')
+  const [baseType, setBaseType]           = useState('pl')
   const [layout, setLayout]               = useState([])
   const [comparative, setComparative]     = useState({ enabled: false, mode: 'prior-period' })
   const [startDate, setStartDate]         = useState(firstOfYear)
@@ -482,8 +482,8 @@ export default function ReportBuilderPage() {
   const openEdit = useCallback((tpl) => {
     setTemplateId(tpl._id)
     setName(tpl.name || '')
-    setBaseType(tpl.baseType || 'blank')
-    setLayout(tpl.layout || defaultLayoutFor(tpl.baseType || 'blank'))
+    setBaseType(tpl.baseType || 'custom')
+    setLayout(tpl.layout || defaultLayoutFor(tpl.baseType || 'custom'))
     setComparative(tpl.comparative || { enabled: false, mode: 'prior-period' })
     setStartDate(firstOfYear())
     setEndDate(today())
