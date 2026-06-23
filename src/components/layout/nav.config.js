@@ -23,7 +23,7 @@ import {
   ArrowDownCircle, ArrowUpCircle,
   FileBarChart2, TrendingUp, Lightbulb, Target, Hammer, Layers,
   Settings, DollarSign, Percent, Palette, Building2, UsersRound, ShieldCheck,
-  LayoutTemplate,
+  LayoutTemplate, Search,
 } from 'lucide-react'
 
 /* Section accents — theme variables (recolor per theme), meaning not decoration */
@@ -81,6 +81,7 @@ export const NAV_SECTIONS = [
       { name: 'Inventory',         href: '/inventory',               icon: Boxes,          desc: 'Stock you hold and its value' },
       { name: 'Fiscal Years',      href: '/accounting/fiscal-years', icon: CalendarDays,   desc: 'Open and close accounting periods' },
       { name: 'Activity',          href: '/activity',                icon: Activity,       desc: 'Full audit trail of every change' },
+      { name: 'Internal Audit',    href: '/audit/internal',          icon: Search,         activePrefix: '/audit/internal', desc: 'Plan reviews and track findings' },
     ],
   },
   {

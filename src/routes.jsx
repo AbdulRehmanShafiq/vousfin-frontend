@@ -66,6 +66,8 @@ const APWorkflowBoard      = lazy(() => import('@/pages/ap/APWorkflowBoard'))
 const ProcurementDashboard = lazy(() => import('@/pages/ap/ProcurementDashboard'))
 /* ERP Step 9 — Unified cross-module audit / activity trail */
 const ActivityTimelinePage = lazy(() => import('@/pages/audit/ActivityTimelinePage'))
+/* Phase 6C — Internal audit workspace */
+const InternalAuditPage = lazy(() => import('@/pages/audit/InternalAuditPage'))
 /* FR-01 — Autonomous Transaction Engine */
 const TransactionReviewQueuePage      = lazy(() => import('@/pages/ai/TransactionReviewQueuePage'))
 const ReconciliationExceptionQueuePage= lazy(() => import('@/pages/reconciliation/ReconciliationExceptionQueuePage'))
@@ -214,6 +216,7 @@ export const routes = [
           { path: 'cost/break-even',            element: withSuspense(BreakEvenPage)      }, // SRS FR-07.4
           { path: 'inventory',                  element: withSuspense(InventoryPage)      }, // Phase 5.5 Step 4
           { path: 'activity',                   element: withSuspense(ActivityTimelinePage) }, // ERP Step 9
+          { path: 'audit/internal',             element: withSuspense(InternalAuditPage)    }, // Phase 6C
           { path: 'ai/review-queue',            element: withSuspense(TransactionReviewQueuePage) }, // FR-01.2
           { path: 'reconciliation/exceptions',  element: withSuspense(ReconciliationExceptionQueuePage) }, // FR-01.3
           { path: 'reconciliation/bank',        element: withSuspense(BankReconciliationPage) }, // #7
