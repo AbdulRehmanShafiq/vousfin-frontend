@@ -43,6 +43,8 @@ const TaxAutopilotPage     = lazy(() => import('@/pages/tax/TaxAutopilotPage')) 
 const CommandCenterPage    = lazy(() => import('@/pages/autonomy/CommandCenterPage')) // Autonomy Phase 0
 const AppearancePage       = lazy(() => import('@/pages/settings/AppearancePage'))
 const CostCentersPage      = lazy(() => import('@/pages/settings/CostCentersPage'))   // SRS FR-07.1
+const TeamPage             = lazy(() => import('@/pages/settings/TeamPage'))           // Phase 6A — team & RBAC
+const AcceptInvitePage     = lazy(() => import('@/pages/AcceptInvitePage'))            // Phase 6A — accept invite
 const EmployeesPage        = lazy(() => import('@/pages/payroll/EmployeesPage'))      // SRS FR-08
 const PayrollRunPage       = lazy(() => import('@/pages/payroll/PayrollRunPage'))     // SRS FR-08
 const PayslipsPage         = lazy(() => import('@/pages/payroll/PayslipsPage'))       // SRS FR-08
@@ -135,6 +137,7 @@ export const routes = [
       { path: 'forgot-password', element: withSuspense(ForgotPassword) },
       { path: 'reset-password', element: withSuspense(ResetPassword) },
       { path: 'verify-email', element: withSuspense(VerifyEmail) },
+      { path: 'accept-invite', element: withSuspense(AcceptInvitePage) }, // Phase 6A — reachable with or without a business
     ],
   },
 
@@ -198,6 +201,7 @@ export const routes = [
           { path: 'settings/tax',               element: withSuspense(TaxConfigPage)      }, // Phase 5.4.8
           { path: 'settings/appearance',        element: withSuspense(AppearancePage)     },
           { path: 'settings/cost-centers',      element: withSuspense(CostCentersPage)    }, // SRS FR-07.1
+          { path: 'settings/team',              element: withSuspense(TeamPage)           }, // Phase 6A — team & RBAC
           { path: 'payroll/employees',          element: withSuspense(EmployeesPage)      }, // SRS FR-08
           { path: 'payroll/run',                element: withSuspense(PayrollRunPage)     }, // SRS FR-08
           { path: 'payroll/payslips',           element: withSuspense(PayslipsPage)       }, // SRS FR-08

@@ -22,7 +22,7 @@ import {
   Boxes, Bot, Library, Sparkles, Scale, Inbox,
   ArrowDownCircle, ArrowUpCircle,
   FileBarChart2, TrendingUp, Lightbulb, Target, Hammer, Layers,
-  Settings, DollarSign, Percent, Palette, Building2,
+  Settings, DollarSign, Percent, Palette, Building2, UsersRound,
   LayoutTemplate,
 } from 'lucide-react'
 
@@ -133,6 +133,7 @@ export const NAV_SECTIONS = [
       { name: 'Tax Engine',     href: '/settings/tax',            icon: Percent,    activePrefix: '/settings/tax', desc: 'Tax rates and how tax is applied' },
       { name: 'Exchange Rates', href: '/settings/exchange-rates', icon: DollarSign, activePrefix: '/settings/exchange-rates', desc: 'Currency conversion rates' },
       { name: 'Cost Centres',   href: '/settings/cost-centers',   icon: Building2,   activePrefix: '/settings/cost-centers', desc: 'Departments, branches and projects' },
+      { name: 'Team',           href: '/settings/team',           icon: UsersRound,  activePrefix: '/settings/team', desc: 'Invite people and set what they can do' },
     ],
   },
 ]
