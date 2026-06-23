@@ -9,8 +9,10 @@ import TransactionFormModal from '@/components/forms/TransactionFormModal'
 import { useAuthStore } from '@/stores/useAuthStore'
 import { useBusinessStore } from '@/stores/useBusinessStore'
 import { useUIStore } from '@/stores/useUIStore'
+import { useIdleLogout } from '@/hooks/useIdleLogout'
 
 export default function DashboardLayout() {
+  useIdleLogout()
   const { user } = useAuthStore()
   const { activeBusiness, fetchBusiness } = useBusinessStore()
   const queryClient = useQueryClient()

@@ -147,6 +147,7 @@ export const NAV_SECTIONS = [
       { name: 'Cost Centres',   href: '/settings/cost-centers',   icon: Building2,   activePrefix: '/settings/cost-centers', desc: 'Departments, branches and projects' },
       { name: 'Team',           href: '/settings/team',           icon: UsersRound,  activePrefix: '/settings/team', desc: 'Invite people and set what they can do' },
       { name: 'Duties (SoD)',   href: '/settings/duties',         icon: ShieldCheck, activePrefix: '/settings/duties', desc: 'Roles that one person may not hold together' },
+      { name: 'Security',       href: '/settings/security',       icon: ShieldCheck, activePrefix: '/settings/security', desc: 'Two-factor authentication and session security' },
     ],
   },
 ]

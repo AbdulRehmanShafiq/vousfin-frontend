@@ -42,6 +42,7 @@ const TaxConfigPage        = lazy(() => import('@/pages/settings/TaxConfigPage')
 const TaxAutopilotPage     = lazy(() => import('@/pages/tax/TaxAutopilotPage'))      // FR-04.1
 const CommandCenterPage    = lazy(() => import('@/pages/autonomy/CommandCenterPage')) // Autonomy Phase 0
 const AppearancePage       = lazy(() => import('@/pages/settings/AppearancePage'))
+const SecurityPage         = lazy(() => import('@/pages/settings/SecurityPage'))       // Phase 9 NFR-SEC-01
 const CostCentersPage      = lazy(() => import('@/pages/settings/CostCentersPage'))   // SRS FR-07.1
 const TeamPage             = lazy(() => import('@/pages/settings/TeamPage'))           // Phase 6A — team & RBAC
 const SodMatrixPage        = lazy(() => import('@/pages/settings/SodMatrixPage'))      // Phase 6B — segregation of duties
@@ -210,6 +211,7 @@ export const routes = [
           { path: 'settings/exchange-rates',    element: withSuspense(CurrencyRatesPage)  },
           { path: 'settings/tax',               element: withSuspense(TaxConfigPage)      }, // Phase 5.4.8
           { path: 'settings/appearance',        element: withSuspense(AppearancePage)     },
+          { path: 'settings/security',          element: withSuspense(SecurityPage)       }, // Phase 9 NFR-SEC-01
           { path: 'settings/cost-centers',      element: withSuspense(CostCentersPage)    }, // SRS FR-07.1
           { path: 'settings/team',              element: withSuspense(TeamPage)           }, // Phase 6A — team & RBAC
           { path: 'settings/duties',            element: withSuspense(SodMatrixPage)      }, // Phase 6B — segregation of duties

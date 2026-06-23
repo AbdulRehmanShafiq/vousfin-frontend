@@ -51,7 +51,14 @@ export const useAuthStore = create(
 
       login: async (email, password) => {
         const res = await api.post('/auth/login', { email, password })
-        const { user, token } = res.data.data
+        const data = res.data.data
+
+        // MFA challenge — return the flag so Login.jsx can show the TOTP prompt
+        if (data.mfaRequired) {
+          return { mfaRequired: true, mfaToken: data.mfaToken }
+        }
+
+        const { user, token } = data
         const businessId = normalizeBusinessId(user)
         set({
           user: { ...user, businessId },
