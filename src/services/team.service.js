@@ -2,6 +2,7 @@
 import api from './api'
 
 const teamService = {
+  me:          ()                 => api.get('/team/me'), // current user's roles + permissions
   list:        ()                 => api.get('/team'),
   invite:      (email, roles)     => api.post('/team/invite', { email, roles }),
   accept:      (token)            => api.post('/team/accept', { token }),

@@ -14,6 +14,7 @@ import { LayoutDashboard, BarChart3, Plus, Sparkles, Menu } from 'lucide-react'
 import { cn } from '@/utils/cn'
 import { useUIStore } from '@/stores/useUIStore'
 import { useAIStore } from '@/stores/useAIStore'
+import { usePermissions } from '@/hooks/usePermissions'
 import MobileMenuSheet from './MobileMenuSheet'
 
 function Tab({ icon: Icon, label, to, onClick, active }) {
@@ -52,6 +53,8 @@ export default function MobileNav() {
   const [menuOpen, setMenuOpen] = useState(false)
   const openTxModal = useUIStore((s) => s.openTxModal)
   const openChat = useAIStore((s) => s.openChat)
+  const { can } = usePermissions()
+  const canCreate = can('transaction:create')
 
   return (
     <>
@@ -59,18 +62,22 @@ export default function MobileNav() {
         <Tab icon={LayoutDashboard} label="Home" to="/dashboard" />
         <Tab icon={BarChart3} label="Reports" to="/financial-reports/income-statement" />
 
-        {/* Center raised Create — the universal primary action */}
-        <div className="relative flex flex-1 flex-col items-center justify-end pb-1.5">
-          <button
-            type="button"
-            onClick={openTxModal}
-            aria-label="Record a transaction"
-            className="-mt-6 flex h-14 w-14 items-center justify-center rounded-full btn-gradient border-[3px] border-charcoal active:scale-95 transition-transform"
-          >
-            <Plus className="h-6 w-6" />
-          </button>
-          <span className="text-[11px] font-semibold text-text-muted">Create</span>
-        </div>
+        {/* Center raised Create — the universal primary action (hidden for read-only members) */}
+        {canCreate ? (
+          <div className="relative flex flex-1 flex-col items-center justify-end pb-1.5">
+            <button
+              type="button"
+              onClick={openTxModal}
+              aria-label="Record a transaction"
+              className="-mt-6 flex h-14 w-14 items-center justify-center rounded-full btn-gradient border-[3px] border-charcoal active:scale-95 transition-transform"
+            >
+              <Plus className="h-6 w-6" />
+            </button>
+            <span className="text-[11px] font-semibold text-text-muted">Create</span>
+          </div>
+        ) : (
+          <div className="flex-1" aria-hidden="true" />
+        )}
 
         <Tab icon={Sparkles} label="AI" onClick={openChat} />
         <Tab icon={Menu} label="Menu" onClick={() => setMenuOpen(true)} active={menuOpen} />
