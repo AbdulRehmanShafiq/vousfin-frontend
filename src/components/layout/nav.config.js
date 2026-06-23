@@ -104,8 +104,10 @@ export const NAV_SECTIONS = [
       { name: 'Report Builder',    href: '/financial-reports/builder',          activePrefix: '/financial-reports/builder', icon: LayoutTemplate, desc: 'Build custom report layouts with scheduling' },
       { name: 'Forecast',          href: '/ai-analyst/forecast',  icon: TrendingUp, desc: 'Where your numbers are heading' },
       { name: 'Scenarios',         href: '/ai-analyst/scenarios', icon: Lightbulb,  desc: "Test 'what if' situations safely" },
-      { name: 'Anomalies',         href: '/ai-analyst/anomalies', icon: ShieldAlert, desc: 'Unusual activity we flagged for you' },
-      { name: 'AI Assistant',      href: '/ai/assistant',         icon: Sparkles,   desc: 'Ask questions about your finances' },
+      { name: 'Anomalies',         href: '/ai-analyst/anomalies',        icon: ShieldAlert, desc: 'Unusual activity we flagged for you' },
+      { name: 'AI Assistant',      href: '/ai/assistant',                icon: Sparkles,   desc: 'Ask questions about your finances' },
+      { name: 'Benchmarking',      href: '/analysis/benchmarking',       icon: Target,     desc: 'How your ratios compare to your industry' },
+      { name: '13-Week Cash',      href: '/cash/thirteen-week',          icon: TrendingUp, desc: '13-week rolling cash projection' },
     ],
   },
   {

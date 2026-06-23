@@ -68,6 +68,9 @@ const ProcurementDashboard = lazy(() => import('@/pages/ap/ProcurementDashboard'
 const ActivityTimelinePage = lazy(() => import('@/pages/audit/ActivityTimelinePage'))
 /* Phase 6C — Internal audit workspace */
 const InternalAuditPage = lazy(() => import('@/pages/audit/InternalAuditPage'))
+/* Phase 8 — Benchmarking (FR-09.3) + 13-Week Cash (FR-06.3) */
+const BenchmarkingPage    = lazy(() => import('@/pages/analysis/BenchmarkingPage'))
+const ThirteenWeekPage    = lazy(() => import('@/pages/cash/ThirteenWeekPage'))
 /* Phase 7 — Compliance (FR-10) */
 const ComplianceCalendarPage = lazy(() => import('@/pages/compliance/CalendarPage'))
 const LeasesPage             = lazy(() => import('@/pages/compliance/LeasesPage'))
@@ -221,6 +224,8 @@ export const routes = [
           { path: 'inventory',                  element: withSuspense(InventoryPage)      }, // Phase 5.5 Step 4
           { path: 'activity',                   element: withSuspense(ActivityTimelinePage) }, // ERP Step 9
           { path: 'audit/internal',             element: withSuspense(InternalAuditPage)    }, // Phase 6C
+          { path: 'analysis/benchmarking',      element: withSuspense(BenchmarkingPage)      }, // Phase 8 FR-09.3
+          { path: 'cash/thirteen-week',         element: withSuspense(ThirteenWeekPage)      }, // Phase 8 FR-06.3
           { path: 'compliance/calendar',        element: withSuspense(ComplianceCalendarPage) }, // FR-10.1
           { path: 'compliance/leases',          element: withSuspense(LeasesPage)             }, // FR-10.2
           { path: 'compliance/aml',             element: withSuspense(AmlPage)                }, // FR-10.3
