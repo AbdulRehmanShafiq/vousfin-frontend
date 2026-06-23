@@ -44,6 +44,7 @@ const CommandCenterPage    = lazy(() => import('@/pages/autonomy/CommandCenterPa
 const AppearancePage       = lazy(() => import('@/pages/settings/AppearancePage'))
 const CostCentersPage      = lazy(() => import('@/pages/settings/CostCentersPage'))   // SRS FR-07.1
 const TeamPage             = lazy(() => import('@/pages/settings/TeamPage'))           // Phase 6A — team & RBAC
+const SodMatrixPage        = lazy(() => import('@/pages/settings/SodMatrixPage'))      // Phase 6B — segregation of duties
 const AcceptInvitePage     = lazy(() => import('@/pages/AcceptInvitePage'))            // Phase 6A — accept invite
 const EmployeesPage        = lazy(() => import('@/pages/payroll/EmployeesPage'))      // SRS FR-08
 const PayrollRunPage       = lazy(() => import('@/pages/payroll/PayrollRunPage'))     // SRS FR-08
@@ -202,6 +203,7 @@ export const routes = [
           { path: 'settings/appearance',        element: withSuspense(AppearancePage)     },
           { path: 'settings/cost-centers',      element: withSuspense(CostCentersPage)    }, // SRS FR-07.1
           { path: 'settings/team',              element: withSuspense(TeamPage)           }, // Phase 6A — team & RBAC
+          { path: 'settings/duties',            element: withSuspense(SodMatrixPage)      }, // Phase 6B — segregation of duties
           { path: 'payroll/employees',          element: withSuspense(EmployeesPage)      }, // SRS FR-08
           { path: 'payroll/run',                element: withSuspense(PayrollRunPage)     }, // SRS FR-08
           { path: 'payroll/payslips',           element: withSuspense(PayslipsPage)       }, // SRS FR-08
