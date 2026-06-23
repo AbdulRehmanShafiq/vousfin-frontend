@@ -126,6 +126,15 @@ export const NAV_SECTIONS = [
     ],
   },
   {
+    label: 'Compliance', key: 'compliance', icon: ShieldCheck, accent: MUTE,
+    blurb: 'Stay on top of your regulatory obligations — filing deadlines, lease accounting, and counterparty screening.',
+    items: [
+      { name: 'Compliance Calendar', href: '/compliance/calendar', icon: CalendarDays, desc: 'Your filing deadlines and obligations' },
+      { name: 'Leases & Impairment',  href: '/compliance/leases',   icon: Building2,    desc: 'IFRS-16 leases and IAS-36 impairment checks' },
+      { name: 'AML Screening',        href: '/compliance/aml',      icon: ShieldAlert,  desc: 'Counterparty risk flags and STR drafts' },
+    ],
+  },
+  {
     label: 'Settings', key: 'settings', icon: Settings, accent: MUTE, pinBottom: true,
     blurb: 'Tune VousFin to your business — company profile, tax rules, and currency rates.',
     items: [
@@ -207,6 +216,7 @@ export function activeSectionKey(pathname) {
   if (pathname.startsWith('/hub/')) return pathname.slice('/hub/'.length).split('/')[0]
   if (pathname === '/' || pathname.startsWith('/dashboard')) return 'home'
   if (pathname.startsWith('/procurement')) return 'money-out'
+  if (pathname.startsWith('/compliance')) return 'compliance'
   for (const section of NAV_SECTIONS) {
     if (section.items.some((i) => isItemActive(i, pathname))) return section.key
   }

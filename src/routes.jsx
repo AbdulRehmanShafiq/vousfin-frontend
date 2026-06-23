@@ -68,6 +68,10 @@ const ProcurementDashboard = lazy(() => import('@/pages/ap/ProcurementDashboard'
 const ActivityTimelinePage = lazy(() => import('@/pages/audit/ActivityTimelinePage'))
 /* Phase 6C — Internal audit workspace */
 const InternalAuditPage = lazy(() => import('@/pages/audit/InternalAuditPage'))
+/* Phase 7 — Compliance (FR-10) */
+const ComplianceCalendarPage = lazy(() => import('@/pages/compliance/CalendarPage'))
+const LeasesPage             = lazy(() => import('@/pages/compliance/LeasesPage'))
+const AmlPage                = lazy(() => import('@/pages/compliance/AmlPage'))
 /* FR-01 — Autonomous Transaction Engine */
 const TransactionReviewQueuePage      = lazy(() => import('@/pages/ai/TransactionReviewQueuePage'))
 const ReconciliationExceptionQueuePage= lazy(() => import('@/pages/reconciliation/ReconciliationExceptionQueuePage'))
@@ -217,6 +221,9 @@ export const routes = [
           { path: 'inventory',                  element: withSuspense(InventoryPage)      }, // Phase 5.5 Step 4
           { path: 'activity',                   element: withSuspense(ActivityTimelinePage) }, // ERP Step 9
           { path: 'audit/internal',             element: withSuspense(InternalAuditPage)    }, // Phase 6C
+          { path: 'compliance/calendar',        element: withSuspense(ComplianceCalendarPage) }, // FR-10.1
+          { path: 'compliance/leases',          element: withSuspense(LeasesPage)             }, // FR-10.2
+          { path: 'compliance/aml',             element: withSuspense(AmlPage)                }, // FR-10.3
           { path: 'ai/review-queue',            element: withSuspense(TransactionReviewQueuePage) }, // FR-01.2
           { path: 'reconciliation/exceptions',  element: withSuspense(ReconciliationExceptionQueuePage) }, // FR-01.3
           { path: 'reconciliation/bank',        element: withSuspense(BankReconciliationPage) }, // #7
