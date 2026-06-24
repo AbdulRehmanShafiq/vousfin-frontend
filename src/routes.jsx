@@ -44,7 +44,7 @@ const GoogleSuccess = lazy(() => import('@/pages/auth/GoogleSuccess'))
 const BusinessSetup = lazy(() => import('@/pages/business/BusinessSetup'))
 const BusinessSettings = lazy(() => import('@/pages/business/BusinessSettings'))
 const Dashboard = lazy(() => import('@/pages/dashboard/Dashboard'))
-const SectionHubPage = lazy(() => import('@/pages/hub/SectionHubPage'))
+const ModuleCommandCenter = lazy(() => import('@/pages/hub/ModuleCommandCenter'))
 const AccountsPage = lazy(() => import('@/pages/accounts/AccountsPage'))
 const TransactionsList = lazy(() => import('@/pages/transactions/TransactionsList'))
 const CustomersList   = lazy(() => import('@/pages/parties/CustomersList'))
@@ -212,8 +212,18 @@ export const routes = [
         element: <DashboardLayout />,
         children: [
           { path: 'dashboard',         element: withSuspense(Dashboard)         },
-          /* ── Vault section hubs (launcher → related modules) ── */
-          { path: 'hub/:sectionKey',   element: withSuspense(SectionHubPage)    },
+          /* ── Module command centers (rail module → its dashboard) ── */
+          { path: 'sales',           element: withSuspense(ModuleCommandCenter) },
+          { path: 'purchases',       element: withSuspense(ModuleCommandCenter) },
+          { path: 'banking',         element: withSuspense(ModuleCommandCenter) },
+          { path: 'accounting',      element: withSuspense(ModuleCommandCenter) },
+          { path: 'reports',         element: withSuspense(ModuleCommandCenter) },
+          { path: 'planning',        element: withSuspense(ModuleCommandCenter) },
+          { path: 'payroll',         element: withSuspense(ModuleCommandCenter) },
+          { path: 'tax-compliance',  element: withSuspense(ModuleCommandCenter) },
+          { path: 'settings',        element: withSuspense(ModuleCommandCenter) },
+          /* Legacy hub URLs → render the same command center (module derived from path) */
+          { path: 'hub/:sectionKey', element: withSuspense(ModuleCommandCenter) },
           { path: 'accounts',          element: withSuspense(AccountsPage)      },
           { path: 'transactions',      element: withSuspense(TransactionsList)  },
           { path: 'transactions/templates', element: withSuspense(TemplatesPage)      }, // #5
@@ -226,7 +236,6 @@ export const routes = [
           { path: 'sales/invoices',          element: withSuspense(InvoicesListPage)  },
           { path: 'sales/invoices/new',      element: withSuspense(InvoiceEditorPage) },
           { path: 'sales/invoices/:id/edit', element: withSuspense(InvoiceEditorPage) },
-          { path: 'sales',                  element: <Navigate to="/customers" replace /> },
           { path: 'sales/customers',        element: <Navigate to="/customers" replace /> },
 
           /* ── Purchases (Vendors + AP) ─────────────────────────────────── */
@@ -237,7 +246,6 @@ export const routes = [
           { path: 'purchases/bills',          element: withSuspense(BillsListPage)   },
           { path: 'purchases/bills/new',      element: withSuspense(BillEditorPage)  },
           { path: 'purchases/bills/:id/edit', element: withSuspense(BillEditorPage)  },
-          { path: 'purchases',              element: <Navigate to="/vendors" replace /> },
           { path: 'purchases/vendors',      element: <Navigate to="/vendors" replace /> },
           /* Phase 3.1 — Procurement */
           { path: 'procurement/purchase-orders',          element: withSuspense(PurchaseOrdersPage)      },

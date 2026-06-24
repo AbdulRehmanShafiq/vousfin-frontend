@@ -1,175 +1,189 @@
 /**
  * nav.config.js — single source of truth for app navigation.
  *
- * Consumed by SectionRail (slim launcher rail), SectionHub (landing pages),
- * the mobile drawer Sidebar, and the Header (page title). Routes here are
- * PRESENTATION only — they must match routes.jsx but never define new ones.
+ * NEW IA (2026-06 redesign): "the accountant's OS".
+ *   6 always-on modules  → Home · Sales · Purchases · Banking · Accounting · Reports
+ *   3 enableable modules → Payroll · Planning · Tax & Compliance
+ *   1 pinned             → Settings
  *
- * Section model:
- *   { label, key, icon, accent, blurb, items: [{ name, href, icon, desc, exact?, activePrefix?, badgeKey? }] }
- * label:null renders the pinned top section (Home) with no header.
+ * Navigation model = Hybrid Rail + Contextual Panel:
+ *   - A 64px icon rail lists every (enabled) module → 1 click to anywhere.
+ *   - A 216px contextual panel shows the active module's sub-items.
+ *   - Clicking a rail module lands on its command center (/sales, /banking, …).
  *
- * The "Vault" IA: the rail shows one jeweled button per section; clicking it
- * opens that section's hub page (/hub/<key>) whose cards link to the modules
- * below. accent is a Nocturne hex used for the rail glow + card hairlines.
+ * Routes here are PRESENTATION only — they must match routes.jsx, never define
+ * new ones. `accent` is a theme variable (recolors per theme), meaning not
+ * decoration. Dual-label: top-level uses a plain word; `tag` carries the
+ * accounting term; sub-items can use accounting vocabulary.
  */
 import {
   LayoutDashboard, Activity,
   Receipt, BookOpen, Repeat, ClipboardCheck, CalendarDays,
-  Users, FileText, Wallet,
+  Users, FileText, Wallet, Plus,
   Briefcase, CreditCard, ShoppingBag, Truck,
   Landmark, BrainCircuit, ShieldAlert,
-  Boxes, Bot, Library, Sparkles, Scale, Inbox,
-  ArrowDownCircle, ArrowUpCircle,
+  Boxes, Library, Sparkles, Scale,
+  ArrowDownCircle, ArrowUpCircle, Banknote,
   FileBarChart2, TrendingUp, Lightbulb, Target, Hammer, Layers,
   Settings, DollarSign, Percent, Palette, Building2, UsersRound, ShieldCheck,
-  LayoutTemplate, Search,
+  LayoutTemplate, Search, Clock, ListChecks,
 } from 'lucide-react'
 
 /* Section accents — theme variables (recolor per theme), meaning not decoration */
-const JADE = 'var(--sec-money-in)'      // money in
+const JADE = 'var(--sec-money-in)'      // money in / overview
 const CORAL = 'var(--sec-money-out)'    // money out
-const GOLD = 'var(--sec-ledger)'        // the record / the book
-const MINT = 'var(--sec-autopilot)'     // automation / AI
-const CHAMP = 'var(--sec-intelligence)' // insight
+const GOLD = 'var(--sec-ledger)'        // the record / the books
+const MINT = 'var(--sec-autopilot)'     // banking / automation
+const CHAMP = 'var(--sec-intelligence)' // insight / planning
 const MUTE = 'var(--sec-settings)'      // neutral / config
 
-export const NAV_SECTIONS = [
+/*
+ * MODULES — the new top-level model.
+ *   { key, name, icon, accent, href, subtitle, tag?, alwaysOn?, pinBottom?,
+ *     items: [{ name, href, icon, exact?, activePrefix?, badgeKey?, statKey?, primary? }] }
+ * `href` is the module command center. `items` populate the contextual panel
+ * AND the command center "Go to" grid. `primary:true` marks the headline
+ * destinations shown as quick links.
+ */
+export const MODULES = [
   {
-    label: null, key: 'home',
+    key: 'home', name: 'Home', icon: LayoutDashboard, accent: JADE, href: '/dashboard',
+    subtitle: 'Your business at a glance', alwaysOn: true,
+    items: [], // Home has no panel list — the rail goes straight to the dashboard.
+  },
+  {
+    key: 'sales', name: 'Sales', icon: ArrowDownCircle, accent: JADE, href: '/sales',
+    subtitle: 'Money coming in', tag: 'Accounts Receivable', alwaysOn: true,
     items: [
-      { name: 'Home',     href: '/dashboard', icon: LayoutDashboard, desc: 'Your business at a glance' },
+      { name: 'Customers',   href: '/customers',         icon: Users,    exact: true, primary: true, desc: 'Who buys from you and their balances' },
+      { name: 'Invoices',    href: '/sales/invoices',    icon: FileText, activePrefix: '/sales/invoices', primary: true, desc: 'Bills you send to customers' },
+      { name: 'New Invoice', href: '/sales/invoices/new', icon: Plus,    desc: 'Create and send a new invoice' },
+      { name: 'Receivables', href: '/sales/receivables', icon: Wallet,   primary: true, statKey: 'receivable', desc: 'Money customers still owe you' },
+      { name: 'AR Aging',    href: '/financial-reports/aging', icon: Clock, desc: 'How overdue each balance is' },
     ],
   },
   {
-    label: 'Money In', key: 'money-in', icon: ArrowDownCircle, accent: JADE,
-    blurb: 'Everything that brings money toward you — who buys from you, what you bill, and what you are still owed.',
+    key: 'purchases', name: 'Purchases', icon: ArrowUpCircle, accent: CORAL, href: '/purchases',
+    subtitle: 'Money going out', tag: 'Accounts Payable & Procurement', alwaysOn: true,
     items: [
-      { name: 'Customers',   href: '/customers',         icon: Users,    desc: 'Who buys from you and their balances' },
-      { name: 'Invoices',    href: '/sales/invoices',    icon: FileText, desc: 'Bills you send to customers' },
-      { name: 'Receivables', href: '/sales/receivables', icon: Wallet,   desc: 'Money customers still owe you', statKey: 'receivable' },
+      { name: 'Vendors',         href: '/vendors',                     icon: Briefcase,   exact: true, primary: true, desc: 'Who you buy from' },
+      { name: 'Bills',           href: '/purchases/bills',             icon: FileText,    activePrefix: '/purchases/bills', primary: true, desc: 'What suppliers charge you' },
+      { name: 'New Bill',        href: '/purchases/bills/new',         icon: Plus,        desc: 'Record a new supplier bill' },
+      { name: 'Payables',        href: '/purchases/payables',          icon: CreditCard,  primary: true, statKey: 'payable', desc: 'Money you still owe suppliers' },
+      { name: 'Purchase Orders', href: '/procurement/purchase-orders', icon: ShoppingBag, activePrefix: '/procurement/purchase-orders', desc: 'Orders you place with suppliers' },
+      { name: 'Goods Receipts',  href: '/procurement/goods-receipts',  icon: Truck,       desc: 'Confirm what actually arrived' },
+      { name: 'AP Workflow',     href: '/purchases/ap-workflow',       icon: ListChecks,  desc: 'Approve and schedule bill payments' },
     ],
   },
   {
-    label: 'Money Out', key: 'money-out', icon: ArrowUpCircle, accent: CORAL,
-    blurb: 'Everything that sends money away — your suppliers, what they charge, and the orders behind it.',
+    key: 'banking', name: 'Banking', icon: Banknote, accent: MINT, href: '/banking',
+    subtitle: 'Cash, bank feeds & matching', alwaysOn: true,
     items: [
-      { name: 'Vendors',         href: '/vendors',                     icon: Briefcase,  desc: 'Who you buy from' },
-      { name: 'Bills',           href: '/purchases/bills',             icon: FileText,   desc: 'What suppliers charge you' },
-      { name: 'Payables',        href: '/purchases/payables',          icon: CreditCard, desc: 'Money you still owe suppliers', statKey: 'payable' },
-      { name: 'Purchase Orders', href: '/procurement/purchase-orders', icon: ShoppingBag, desc: 'Orders you place with suppliers' },
-      { name: 'Goods Receipts',  href: '/procurement/goods-receipts',  icon: Truck,      desc: 'Confirm what actually arrived' },
+      { name: 'Bank Reconciliation', href: '/reconciliation/bank',       icon: Landmark,     primary: true, desc: 'Match your books against the bank' },
+      { name: 'AI Review Queue',     href: '/ai/review-queue',           icon: BrainCircuit, primary: true, desc: 'AI-suggested entries to confirm' },
+      { name: 'Exceptions',          href: '/reconciliation/exceptions', icon: ShieldAlert,  desc: 'Mismatches that need a closer look' },
+      { name: 'Transactions',        href: '/transactions',              icon: Receipt,      exact: true, primary: true, desc: 'Every cash and bank entry' },
+      { name: 'Recurring',           href: '/transactions/templates',    icon: Repeat,       desc: 'Saved templates and repeating entries' },
     ],
   },
   {
-    label: 'Payroll', key: 'payroll', icon: Wallet, accent: CORAL,
-    blurb: 'Pay your team — set up employees, run payroll each month, and hand out payslips and tax certificates.',
+    key: 'accounting', name: 'Accounting', icon: Library, accent: GOLD, href: '/accounting',
+    subtitle: 'The books', tag: 'General Ledger', alwaysOn: true,
     items: [
-      { name: 'Employees',   href: '/payroll/employees', icon: Users,    desc: 'The people you pay and their salary setup' },
-      { name: 'Run Payroll', href: '/payroll/run',       icon: Wallet,   desc: 'Calculate take-home pay and post it to the books' },
-      { name: 'Payslips',    href: '/payroll/payslips',  icon: FileText, desc: 'Download payslips, bank file and tax certificates' },
-    ],
-  },
-  {
-    label: 'Ledger', key: 'ledger', icon: Library, accent: GOLD,
-    blurb: 'The books themselves — every entry, the accounts behind them, and the controls that keep them honest.',
-    items: [
-      { name: 'Transactions',      href: '/transactions',            icon: Receipt, exact: true, desc: 'Every entry in your books' },
-      { name: 'Chart of Accounts', href: '/accounts',                icon: BookOpen,       desc: 'The account structure of your business' },
-      { name: 'Recurring',         href: '/transactions/templates',  icon: Repeat,         desc: 'Saved templates and repeating entries' },
-      { name: 'Approvals',         href: '/approvals',               icon: ClipboardCheck, desc: 'Items waiting for sign-off', badgeKey: 'approvals', statKey: 'approvals' },
+      { name: 'Chart of Accounts', href: '/accounts',                icon: BookOpen,       primary: true, desc: 'The account structure of your business' },
+      { name: 'Journal Entries',   href: '/transactions',            icon: Receipt,        exact: true, primary: true, desc: 'Every entry in your books' },
+      { name: 'Approvals',         href: '/approvals',               icon: ClipboardCheck, primary: true, badgeKey: 'approvals', statKey: 'approvals', desc: 'Items waiting for sign-off' },
+      { name: 'Fixed Assets',      href: '/assets',                  icon: Building2,      activePrefix: '/assets', desc: 'Equipment and vehicles with depreciation' },
       { name: 'Inventory',         href: '/inventory',               icon: Boxes,          desc: 'Stock you hold and its value' },
       { name: 'Fiscal Years',      href: '/accounting/fiscal-years', icon: CalendarDays,   desc: 'Open and close accounting periods' },
       { name: 'Activity',          href: '/activity',                icon: Activity,       desc: 'Full audit trail of every change' },
       { name: 'Internal Audit',    href: '/audit/internal',          icon: Search,         activePrefix: '/audit/internal', desc: 'Plan reviews and track findings' },
-      { name: 'Fixed Assets',      href: '/assets',                  icon: Building2,      activePrefix: '/assets', desc: 'Equipment and vehicles with depreciation' },
     ],
   },
   {
-    label: 'Autopilot', key: 'autopilot', icon: Bot, accent: MINT,
-    blurb: 'Let VousFin do the heavy lifting — AI-drafted entries, bank matching and live tax, with you in the approval seat.',
+    key: 'reports', name: 'Reports', icon: FileBarChart2, accent: CHAMP, href: '/reports',
+    subtitle: 'Statements & filings', alwaysOn: true,
     items: [
-      { name: 'Command Center',      href: '/command-center',            icon: Inbox,        desc: 'Your one inbox — what needs you, and what VousFin is doing' },
-      { name: 'Tax Autopilot',       href: '/tax',                       icon: Scale,        desc: 'Live tax position, deadlines and trends' },
-      { name: 'AI Review Queue',     href: '/ai/review-queue',           icon: BrainCircuit, desc: 'AI-suggested entries to confirm' },
-      { name: 'Bank Reconciliation', href: '/reconciliation/bank',       icon: Landmark,     desc: 'Match your books against the bank' },
-      { name: 'Exceptions',          href: '/reconciliation/exceptions', icon: ShieldAlert,  desc: 'Mismatches that need a closer look' },
+      { name: 'Financial Statements', href: '/financial-reports/income-statement', activePrefix: '/financial-reports', icon: FileBarChart2, primary: true, desc: 'Income statement, balance sheet, cash flow' },
+      { name: 'Equity Statement',     href: '/financial-reports/equity',           activePrefix: '/financial-reports/equity', icon: Layers, desc: 'How owner equity changed over the period' },
+      { name: 'Report Builder',       href: '/financial-reports/builder',          activePrefix: '/financial-reports/builder', icon: LayoutTemplate, primary: true, desc: 'Build custom report layouts with scheduling' },
+      { name: 'Tax Reports',          href: '/financial-reports/tax',              activePrefix: '/financial-reports/tax', icon: Percent, desc: 'Tax summaries for filing' },
     ],
   },
   {
-    label: 'Intelligence', key: 'intelligence', icon: Sparkles, accent: CHAMP,
-    blurb: 'Make sense of the numbers — statements, forecasts, what-if scenarios, and an assistant that explains it all.',
+    key: 'payroll', name: 'Payroll', icon: Wallet, accent: CORAL, href: '/payroll',
+    subtitle: 'Pay your team', alwaysOn: false,
     items: [
-      { name: 'Financial Reports', href: '/financial-reports/income-statement', activePrefix: '/financial-reports', icon: FileBarChart2,   desc: 'Income statement, balance sheet, cash flow' },
-      { name: 'Equity Statement',  href: '/financial-reports/equity',           activePrefix: '/financial-reports/equity', icon: Layers, desc: 'How owner equity changed over the period' },
-      { name: 'Report Builder',    href: '/financial-reports/builder',          activePrefix: '/financial-reports/builder', icon: LayoutTemplate, desc: 'Build custom report layouts with scheduling' },
-      { name: 'Forecast',          href: '/ai-analyst/forecast',  icon: TrendingUp, desc: 'Where your numbers are heading' },
-      { name: 'Scenarios',         href: '/ai-analyst/scenarios', icon: Lightbulb,  desc: "Test 'what if' situations safely" },
-      { name: 'Anomalies',         href: '/ai-analyst/anomalies',        icon: ShieldAlert, desc: 'Unusual activity we flagged for you' },
-      { name: 'AI Assistant',      href: '/ai/assistant',                icon: Sparkles,   desc: 'Ask questions about your finances' },
-      { name: 'Benchmarking',      href: '/analysis/benchmarking',       icon: Target,     desc: 'How your ratios compare to your industry' },
-      { name: '13-Week Cash',      href: '/cash/thirteen-week',          icon: TrendingUp, desc: '13-week rolling cash projection' },
+      { name: 'Employees',   href: '/payroll/employees', icon: Users,    primary: true, desc: 'The people you pay and their salary setup' },
+      { name: 'Run Payroll', href: '/payroll/run',       icon: Wallet,   primary: true, desc: 'Calculate take-home pay and post it to the books' },
+      { name: 'Payslips',    href: '/payroll/payslips',  icon: FileText, desc: 'Download payslips, bank file and tax certificates' },
     ],
   },
   {
-    label: 'Budgets', key: 'budgets', icon: Target, accent: CHAMP,
-    blurb: 'Plan what you expect to earn and spend, then watch your real numbers against the plan — with alerts when something drifts off track.',
+    key: 'planning', name: 'Planning', icon: TrendingUp, accent: CHAMP, href: '/planning',
+    subtitle: 'Look ahead & dig in', tag: 'Management Accounting', alwaysOn: false,
     items: [
-      { name: 'Budget Editor',   href: '/budgets/editor',   icon: Target,        desc: 'Set your plan for the year — income and spending per account' },
-      { name: 'Budget vs Actual', href: '/budgets/variance', icon: FileBarChart2, desc: 'See how your real numbers compare to the plan' },
+      { name: 'Forecast',         href: '/ai-analyst/forecast',   activePrefix: '/ai-analyst/forecast', icon: TrendingUp,  primary: true, desc: 'Where your numbers are heading' },
+      { name: 'Scenarios',        href: '/ai-analyst/scenarios',  activePrefix: '/ai-analyst/scenarios', icon: Lightbulb,   desc: "Test 'what if' situations safely" },
+      { name: '13-Week Cash',     href: '/cash/thirteen-week',    icon: TrendingUp,  primary: true, desc: '13-week rolling cash projection' },
+      { name: 'Budgets',          href: '/budgets/editor',        icon: Target,      primary: true, desc: 'Set your plan for the year' },
+      { name: 'Budget vs Actual', href: '/budgets/variance',      icon: FileBarChart2, desc: 'See how your real numbers compare to the plan' },
+      { name: 'Job Costing',      href: '/cost/jobs',             icon: Hammer,      desc: 'Track job costs against budget' },
+      { name: 'Profitability',    href: '/cost/profitability',    icon: TrendingUp,  desc: 'Who and what makes you money' },
+      { name: 'Break-even',       href: '/cost/break-even',       icon: Target,      desc: 'How much you must sell to cover costs' },
+      { name: 'Benchmarking',     href: '/analysis/benchmarking', icon: Target,      desc: 'How your ratios compare to your industry' },
+      { name: 'Anomalies',        href: '/ai-analyst/anomalies',  activePrefix: '/ai-analyst/anomalies', icon: ShieldAlert, desc: 'Unusual activity we flagged for you' },
+      { name: 'AI Assistant',     href: '/ai/assistant',          icon: Sparkles,    desc: 'Ask questions about your finances' },
     ],
   },
   {
-    label: 'Cost & Profit', key: 'cost', icon: Hammer, accent: GOLD,
-    blurb: 'Know what each job costs, which customers and products actually make money, and how much you must sell to break even.',
+    key: 'compliance', name: 'Tax & Compliance', icon: Scale, accent: MUTE, href: '/tax-compliance',
+    subtitle: 'Stay compliant', alwaysOn: false,
     items: [
-      { name: 'Jobs',          href: '/cost/jobs',          icon: Hammer,        desc: 'Track job costs against budget' },
-      { name: 'Profitability', href: '/cost/profitability', icon: TrendingUp,    desc: 'Who and what makes you money' },
-      { name: 'Break-even',    href: '/cost/break-even',    icon: Target,        desc: 'How much you must sell to cover costs' },
+      { name: 'Tax Autopilot',       href: '/tax',                 icon: Scale,        primary: true, desc: 'Live tax position, deadlines and trends' },
+      { name: 'Compliance Calendar', href: '/compliance/calendar', icon: CalendarDays, primary: true, desc: 'Your filing deadlines and obligations' },
+      { name: 'Leases & Impairment', href: '/compliance/leases',   icon: Building2,    desc: 'IFRS-16 leases and IAS-36 impairment checks' },
+      { name: 'AML Screening',       href: '/compliance/aml',      icon: ShieldAlert,  desc: 'Counterparty risk flags and STR drafts' },
     ],
   },
   {
-    label: 'Compliance', key: 'compliance', icon: ShieldCheck, accent: MUTE,
-    blurb: 'Stay on top of your regulatory obligations — filing deadlines, lease accounting, and counterparty screening.',
+    key: 'settings', name: 'Settings', icon: Settings, accent: MUTE, href: '/settings', alwaysOn: true, pinBottom: true,
+    subtitle: 'Configure VousFin',
     items: [
-      { name: 'Compliance Calendar', href: '/compliance/calendar', icon: CalendarDays, desc: 'Your filing deadlines and obligations' },
-      { name: 'Leases & Impairment',  href: '/compliance/leases',   icon: Building2,    desc: 'IFRS-16 leases and IAS-36 impairment checks' },
-      { name: 'AML Screening',        href: '/compliance/aml',      icon: ShieldAlert,  desc: 'Counterparty risk flags and STR drafts' },
-    ],
-  },
-  {
-    label: 'Settings', key: 'settings', icon: Settings, accent: MUTE, pinBottom: true,
-    blurb: 'Tune VousFin to your business — company profile, tax rules, and currency rates.',
-    items: [
-      { name: 'Business',       href: '/business/settings',       icon: Settings,   desc: 'Company profile and preferences' },
-      { name: 'Appearance',     href: '/settings/appearance',     icon: Palette,    activePrefix: '/settings/appearance', desc: 'Theme and look of the app' },
-      { name: 'Tax Engine',     href: '/settings/tax',            icon: Percent,    activePrefix: '/settings/tax', desc: 'Tax rates and how tax is applied' },
-      { name: 'Exchange Rates', href: '/settings/exchange-rates', icon: DollarSign, activePrefix: '/settings/exchange-rates', desc: 'Currency conversion rates' },
-      { name: 'Cost Centres',   href: '/settings/cost-centers',   icon: Building2,   activePrefix: '/settings/cost-centers', desc: 'Departments, branches and projects' },
-      { name: 'Team',           href: '/settings/team',           icon: UsersRound,  activePrefix: '/settings/team', desc: 'Invite people and set what they can do' },
-      { name: 'Duties (SoD)',   href: '/settings/duties',         icon: ShieldCheck, activePrefix: '/settings/duties', desc: 'Roles that one person may not hold together' },
+      { name: 'Business',       href: '/business/settings',       icon: Settings,    primary: true, desc: 'Company profile and preferences' },
+      { name: 'Team',           href: '/settings/team',           icon: UsersRound,  activePrefix: '/settings/team', primary: true, desc: 'Invite people and set what they can do' },
+      { name: 'Roles & Duties', href: '/settings/duties',         icon: ShieldCheck, activePrefix: '/settings/duties', desc: 'Roles that one person may not hold together' },
       { name: 'Security',       href: '/settings/security',       icon: ShieldCheck, activePrefix: '/settings/security', desc: 'Two-factor authentication and session security' },
+      { name: 'Tax Engine',     href: '/settings/tax',            icon: Percent,     activePrefix: '/settings/tax', desc: 'Tax rates and how tax is applied' },
+      { name: 'Exchange Rates', href: '/settings/exchange-rates', icon: DollarSign,  activePrefix: '/settings/exchange-rates', desc: 'Currency conversion rates' },
+      { name: 'Cost Centres',   href: '/settings/cost-centers',   icon: Building2,   activePrefix: '/settings/cost-centers', desc: 'Departments, branches and projects' },
+      { name: 'Appearance',     href: '/settings/appearance',     icon: Palette,     activePrefix: '/settings/appearance', desc: 'Theme and look of the app' },
     ],
   },
 ]
 
-/* The labeled sections that get a rail button + hub page (Home is direct). */
-export const HUB_SECTIONS = NAV_SECTIONS.filter((s) => s.label)
+/* Optional (enableable) module keys — businesses can hide these. */
+export const OPTIONAL_MODULE_KEYS = MODULES.filter((m) => !m.alwaysOn && !m.pinBottom).map((m) => m.key)
 
-/** Look up a hub section by its key (for the SectionHub page). */
-export function hubByKey(key) {
-  return HUB_SECTIONS.find((s) => s.key === key) || null
+/** Look up a module by key. */
+export function moduleByKey(key) {
+  return MODULES.find((m) => m.key === key) || null
 }
 
-/**
- * Rail model: Home (direct to dashboard) + one launcher per hub section.
- * Settings is flagged pinBottom so the rail can float it to the foot.
- */
-export const RAIL_ITEMS = [
-  { key: 'home', name: 'Home', icon: LayoutDashboard, href: '/dashboard', accent: JADE },
-  ...HUB_SECTIONS.map((s) => ({
-    key: s.key, name: s.label, icon: s.icon, href: `/hub/${s.key}`, accent: s.accent, pinBottom: s.pinBottom,
-  })),
+/* ── Module-ownership prefixes — map a pathname to its owning module ──
+   Longest-match wins via the item scan; these handle landing pages and
+   sub-trees that don't appear verbatim in `items`. */
+const MODULE_PREFIXES = [
+  ['home', ['/dashboard', '/command-center', '/hub/home']],
+  ['sales', ['/sales', '/customers', '/hub/sales', '/hub/money-in']],
+  ['purchases', ['/purchases', '/vendors', '/procurement', '/hub/purchases', '/hub/money-out']],
+  ['banking', ['/banking', '/reconciliation', '/ai/review-queue', '/transactions', '/hub/banking', '/hub/autopilot']],
+  ['accounting', ['/accounting', '/accounts', '/approvals', '/assets', '/inventory', '/activity', '/audit', '/hub/accounting', '/hub/ledger']],
+  ['reports', ['/reports', '/financial-reports', '/hub/reports', '/hub/intelligence']],
+  ['payroll', ['/payroll', '/hub/payroll']],
+  ['planning', ['/planning', '/ai-analyst', '/budgets', '/cost', '/cash', '/analysis', '/ai/assistant', '/hub/planning', '/hub/budgets', '/hub/cost']],
+  ['compliance', ['/tax-compliance', '/tax', '/compliance', '/hub/compliance']],
+  ['settings', ['/settings', '/business/settings', '/hub/settings']],
 ]
 
 /* Detail/editor routes that need a nicer title than their list page */
@@ -187,13 +201,44 @@ const TITLE_OVERRIDES = [
   [/^\/purchases\/procurement-dashboard/, 'Procurement Dashboard'],
 ]
 
-const FLAT_ITEMS = NAV_SECTIONS.flatMap((s) => s.items)
+const FLAT_ITEMS = MODULES.flatMap((m) => m.items)
+
+/** True when `item` should render as active for the given pathname. */
+export function isItemActive(item, pathname) {
+  if (item.exact) return pathname === item.href
+  if (item.activePrefix) return pathname.startsWith(item.activePrefix)
+  return pathname === item.href || pathname.startsWith(item.href + '/')
+}
+
+/** Which module owns the current route (rail highlight + which panel shows). */
+export function activeModuleKey(pathname) {
+  // Module landing pages first
+  for (const m of MODULES) {
+    if (pathname === m.href) return m.key
+  }
+  // Item match — longest matching href wins
+  let best = null
+  for (const m of MODULES) {
+    for (const item of m.items) {
+      const prefix = item.activePrefix || item.href
+      if (pathname === item.href || pathname.startsWith(prefix)) {
+        if (!best || prefix.length > best.len) best = { key: m.key, len: prefix.length }
+      }
+    }
+  }
+  if (best) return best.key
+  // Prefix fallback for sub-trees / legacy hub URLs
+  for (const [key, prefixes] of MODULE_PREFIXES) {
+    if (prefixes.some((p) => pathname === p || pathname.startsWith(p + '/') || pathname.startsWith(p))) return key
+  }
+  return null
+}
 
 /** Resolve the page title for a pathname — longest matching nav href wins. */
 export function pageTitleFor(pathname) {
-  if (pathname.startsWith('/hub/')) {
-    const key = pathname.slice('/hub/'.length).split('/')[0]
-    return hubByKey(key)?.label || 'vousFin'
+  // Module landing pages → module name
+  for (const m of MODULES) {
+    if (pathname === m.href) return m.name
   }
   for (const [re, title] of TITLE_OVERRIDES) {
     if (re.test(pathname)) return title
@@ -205,33 +250,29 @@ export function pageTitleFor(pathname) {
       if (!best || prefix.length > (best.activePrefix || best.href).length) best = item
     }
   }
-  return best?.name || 'vousFin'
+  if (best) return best.name
+  const mk = activeModuleKey(pathname)
+  return moduleByKey(mk)?.name || 'vousFin'
 }
 
 /**
  * Derive a stable i18n key segment from an href.
  * e.g. '/sales/invoices' → 'sales_invoices'
- *      '/dashboard'      → 'dashboard'
  */
 export function navKey(href) {
   return href.replace(/^\//, '').replace(/\//g, '_')
 }
 
-/** True when `item` should render as active for the given pathname. */
-export function isItemActive(item, pathname) {
-  if (item.exact) return pathname === item.href
-  if (item.activePrefix) return pathname.startsWith(item.activePrefix)
-  return pathname.startsWith(item.href)
+/* ── Backward-compat aliases (kept so any not-yet-migrated consumer compiles) ──
+   RAIL_ITEMS / HUB_SECTIONS / hubByKey / activeSectionKey map onto MODULES. */
+export const RAIL_ITEMS = MODULES.map((m) => ({
+  key: m.key, name: m.name, icon: m.icon, href: m.href, accent: m.accent, pinBottom: m.pinBottom,
+}))
+export const HUB_SECTIONS = MODULES.filter((m) => m.key !== 'home')
+export function hubByKey(key) {
+  // Accept both new module keys and legacy hub keys
+  const legacy = { 'money-in': 'sales', 'money-out': 'purchases', ledger: 'accounting', autopilot: 'banking', intelligence: 'reports', budgets: 'planning', cost: 'planning' }
+  return moduleByKey(legacy[key] || key)
 }
-
-/** Section key containing the active route (for rail highlight + hub defaults). */
-export function activeSectionKey(pathname) {
-  if (pathname.startsWith('/hub/')) return pathname.slice('/hub/'.length).split('/')[0]
-  if (pathname === '/' || pathname.startsWith('/dashboard')) return 'home'
-  if (pathname.startsWith('/procurement')) return 'money-out'
-  if (pathname.startsWith('/compliance')) return 'compliance'
-  for (const section of NAV_SECTIONS) {
-    if (section.items.some((i) => isItemActive(i, pathname))) return section.key
-  }
-  return null
-}
+export const activeSectionKey = activeModuleKey
+export const NAV_SECTIONS = MODULES // legacy export (Sidebar.jsx removed)

@@ -10,7 +10,7 @@ import { lazy, Suspense, useState, useCallback } from 'react'
 import { useParams, useNavigate, Navigate } from 'react-router-dom'
 import {
   LineChart, Scale, PieChart, BookOpen, Download,
-  Clock, Receipt, BarChart2, Building2, Layers,
+  Clock, Receipt, BarChart2, Building2, Layers, Printer,
 } from 'lucide-react'
 import { cn } from '@/utils/cn'
 import SkeletonLoader from '@/components/ui/SkeletonLoader'
@@ -66,28 +66,41 @@ export default function FinancialReportsPage() {
 
   return (
     <div className="space-y-5 animate-fade-in">
-      {/* Tab bar */}
-      <div className="flex flex-wrap gap-1 p-1 rounded-xl bg-glass-panel border border-glass overflow-x-auto">
-        {TABS.map(t => {
-          const isActive = t.key === tab
-          return (
-            <button
-              key={t.key}
-              onClick={() => handleTabChange(t.key)}
-              className={cn(
-                'flex items-center gap-2 px-3 py-2 rounded-lg text-sm font-medium',
-                'transition-all whitespace-nowrap',
-                isActive
-                  ? 'bg-cyan text-ink-on-accent font-bold shadow-sm'
-                  : 'text-text-secondary hover:text-text-primary hover:bg-glass-hover'
-              )}
-            >
-              <t.icon className="h-4 w-4 flex-shrink-0" />
-              <span className="hidden lg:inline">{t.label}</span>
-              <span className="lg:hidden">{t.short}</span>
-            </button>
-          )
-        })}
+      {/* Toolbar — sticky so the tabs + print stay reachable while scrolling.
+          vf-no-print: the toolbar itself is excluded from the printed report. */}
+      <div className="vf-no-print sticky top-0 z-20 -mx-1 px-1 pt-1 pb-2 bg-navy/85 backdrop-blur-md">
+        <div className="flex items-center gap-2">
+          <div className="flex flex-1 flex-wrap gap-1 p-1 rounded-xl bg-glass-panel border border-glass overflow-x-auto">
+            {TABS.map(t => {
+              const isActive = t.key === tab
+              return (
+                <button
+                  key={t.key}
+                  onClick={() => handleTabChange(t.key)}
+                  className={cn(
+                    'flex items-center gap-2 px-3 py-2 rounded-lg text-sm font-medium',
+                    'transition-all whitespace-nowrap',
+                    isActive
+                      ? 'bg-cyan text-ink-on-accent font-bold shadow-sm'
+                      : 'text-text-secondary hover:text-text-primary hover:bg-glass-hover'
+                  )}
+                >
+                  <t.icon className="h-4 w-4 flex-shrink-0" />
+                  <span className="hidden lg:inline">{t.label}</span>
+                  <span className="lg:hidden">{t.short}</span>
+                </button>
+              )
+            })}
+          </div>
+          <button
+            onClick={() => window.print()}
+            aria-label="Print or save as PDF"
+            className="shrink-0 inline-flex items-center gap-2 rounded-lg border border-glass px-3 py-2 text-sm font-medium text-text-secondary hover:bg-glass-hover hover:text-text-primary transition-colors"
+          >
+            <Printer className="h-4 w-4" />
+            <span className="hidden sm:inline">Print</span>
+          </button>
+        </div>
       </div>
 
       {/* FR-02.2 — CFO briefing (English/Urdu), grounded in the live GL */}

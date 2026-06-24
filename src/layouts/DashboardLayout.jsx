@@ -1,7 +1,7 @@
 import { useEffect } from 'react'
 import { Outlet } from 'react-router-dom'
 import { useQueryClient } from '@tanstack/react-query'
-import SectionRail from '@/components/layout/SectionRail'
+import RailPanel from '@/components/layout/RailPanel'
 import Header from '@/components/layout/Header'
 import MobileNav from '@/components/layout/MobileNav'
 import GlobalAIWidget from '@/components/ai/GlobalAIWidget'
@@ -37,8 +37,8 @@ export default function DashboardLayout() {
 
   return (
     <div className="flex h-screen bg-navy overflow-hidden">
-      {/* Desktop section rail — the "Vault" launcher (hidden < lg) */}
-      <SectionRail />
+      {/* Desktop hybrid navigation — icon rail + contextual module panel (hidden < lg) */}
+      <RailPanel />
 
       {/* Main Container */}
       <div className="flex flex-1 flex-col overflow-hidden">

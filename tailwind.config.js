@@ -60,6 +60,14 @@ export default {
         positive: { DEFAULT: withAlpha('--c-positive'), muted: 'rgb(var(--c-positive) / 0.10)' },
         negative: { DEFAULT: withAlpha('--c-negative'), muted: 'rgb(var(--c-negative) / 0.10)' },
 
+        /* ── Semantic status (role-based; theme-agnostic) ── */
+        status: {
+          success: withAlpha('--c-status-success'),
+          danger: withAlpha('--c-status-danger'),
+          warning: withAlpha('--c-status-warning'),
+          info: withAlpha('--c-status-info'),
+        },
+
         /* ── Text hierarchy ── */
         text: {
           primary: withAlpha('--c-text'),
@@ -87,6 +95,14 @@ export default {
         sans: ['Schibsted Grotesk', 'IBM Plex Sans', 'system-ui', 'Segoe UI', 'sans-serif'],
         display: ['var(--font-display)', 'Fraunces', 'Georgia', 'serif'],
         mono: ['Spline Sans Mono', 'IBM Plex Mono', 'ui-monospace', 'monospace'],
+      },
+
+      /* ── New named sizes only (no override of Tailwind's core scale, to avoid
+         global regressions). Prefer these over arbitrary text-[Npx]. ── */
+      fontSize: {
+        label: ['11px', { lineHeight: '1.3', letterSpacing: '0.04em' }],
+        md: ['15px', { lineHeight: '1.55' }],
+        display: ['32px', { lineHeight: '1.1', letterSpacing: '-0.02em' }],
       },
 
       /* ── Elevation — deep night shadows + jade/gold bloom ── */

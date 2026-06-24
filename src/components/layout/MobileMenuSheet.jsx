@@ -3,7 +3,8 @@ import { LogOut, Shield, MessageSquare } from 'lucide-react'
 import { createPortal } from 'react-dom'
 import { useAuthStore } from '@/stores/useAuthStore'
 import { useFeedbackStore } from '@/stores/useFeedbackStore'
-import { RAIL_ITEMS, activeSectionKey } from './nav.config'
+import { useModulesStore } from '@/stores/useModulesStore'
+import { MODULES, activeModuleKey } from './nav.config'
 import { cn } from '@/utils/cn'
 
 /*
@@ -18,7 +19,9 @@ export default function MobileMenuSheet({ open, onClose }) {
   const logout = useAuthStore((s) => s.logout)
   const user = useAuthStore((s) => s.user)
   const setFeedbackOpen = useFeedbackStore((s) => s.setIsOpen)
-  const activeKey = activeSectionKey(location.pathname)
+  const disabledModules = useModulesStore((s) => s.disabled)
+  const activeKey = activeModuleKey(location.pathname)
+  const items = MODULES.filter((m) => m.alwaysOn || m.pinBottom || !disabledModules.includes(m.key))
 
   if (!open) return null
 
@@ -31,7 +34,7 @@ export default function MobileMenuSheet({ open, onClose }) {
         <div className="mx-auto mb-4 h-1 w-10 rounded-full bg-glass-panel" />
 
         <div className="grid grid-cols-3 gap-2.5">
-          {RAIL_ITEMS.map((item) => {
+          {items.map((item) => {
             const active = activeKey === item.key
             return (
               <button

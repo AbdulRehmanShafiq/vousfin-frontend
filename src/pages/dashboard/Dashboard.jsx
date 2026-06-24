@@ -24,7 +24,7 @@ import { useAuthStore }     from '@/stores/useAuthStore'
 import { useUIStore }       from '@/stores/useUIStore'
 import { useTransactions }  from '@/hooks/useTransactions'
 import { useDashboardAll }  from '@/hooks/useReports'
-import { formatCurrency, formatDate } from '@/utils/formatters'
+import { formatCompactCurrency, formatDate } from '@/utils/formatters'
 import { cn } from '@/utils/cn'
 
 import SmartKPIStrip           from '@/components/dashboard/SmartKPIStrip'
@@ -44,14 +44,8 @@ const INFLOW_TYPES = new Set([
 ])
 const isInflow = tx => INFLOW_TYPES.has((tx.transactionType || '').toLowerCase())
 
-function fmtAmt(val, currency = 'PKR') {
-  const sym  = currency === 'PKR' ? 'Rs' : currency === 'USD' ? '$' : currency
-  const abs  = Math.abs(val)
-  const sign = val < 0 ? '−' : ''
-  if (abs >= 1_000_000) return `${sign}${sym} ${(abs / 1_000_000).toFixed(1)}M`
-  if (abs >= 1_000)     return `${sign}${sym} ${(abs / 1_000).toFixed(0)}K`
-  return formatCurrency(val, currency)
-}
+/* Thin alias → the single shared compact money formatter (utils/formatters). */
+const fmtAmt = formatCompactCurrency
 
 /* ── Collapsible Section divider ──────────────────────────────────── */
 function Section({ label, to, children, collapsible = false, defaultOpen = true }) {
@@ -279,6 +273,37 @@ function FinancialSnapshot({ ar, ap, currency, loading }) {
   )
 }
 
+/* ── Cash Hero — the one number that answers "am I OK?" ───────────── */
+function CashHero({ cash, currency, loading }) {
+  const positive = cash >= 0
+  return (
+    <div className="premium-card gold-hairline relative overflow-hidden p-5 sm:p-6">
+      <div className="flex flex-wrap items-center justify-between gap-4">
+        <div>
+          <p className="text-label font-bold uppercase tracking-widest text-text-muted">Cash on hand</p>
+          {loading ? (
+            <div className="mt-2 h-10 w-48 animate-pulse rounded-lg bg-glass-panel" />
+          ) : (
+            <p className="num mt-1 font-display text-display font-semibold tracking-tight text-text-primary leading-none">
+              {fmtAmt(cash, currency)}
+            </p>
+          )}
+          <p className="mt-2 text-sm text-text-secondary">Money available across your accounts right now</p>
+        </div>
+        {!loading && (
+          <span className={cn(
+            'inline-flex items-center gap-1.5 rounded-full px-3 py-1.5 text-xs font-semibold',
+            positive ? 'bg-positive-muted text-positive' : 'bg-negative-muted text-negative',
+          )}>
+            <span className={cn('h-1.5 w-1.5 rounded-full', positive ? 'bg-positive' : 'bg-negative')} />
+            {positive ? 'Healthy balance' : 'Low balance'}
+          </span>
+        )}
+      </div>
+    </div>
+  )
+}
+
 /* ══════════════════════════════════════════════════════════════════ */
 export default function Dashboard() {
   const { t }                        = useTranslation()
@@ -337,8 +362,16 @@ export default function Dashboard() {
 
       <div className="space-y-7">
 
-        {/* ── 2. KPI STRIP ────────────────────────────────────────── */}
-        <Section label={t('dashboard.keyMetrics', 'Key Metrics')}>
+        {/* ── 1. CASH HERO — the glance answer ────────────────────── */}
+        <CashHero cash={kpis.cashBalance ?? 0} currency={currency} loading={loadDash} />
+
+        {/* ── 2. NEEDS YOUR ATTENTION — surfaced first, above the metrics ── */}
+        <Section label={t('dashboard.needsAttention', 'Needs your attention')}>
+          <NeedsAttentionFeed />
+        </Section>
+
+        {/* ── 3. KPI STRIP ────────────────────────────────────────── */}
+        <Section label={t('dashboard.keyMetrics', 'Key Metrics')} collapsible defaultOpen>
           <SmartKPIStrip
             kpis={kpis}
             revenueVsExpenses={revenueVsExpenses}
@@ -347,13 +380,11 @@ export default function Dashboard() {
           />
         </Section>
 
-        {/* ── 3. BUSINESS INTELLIGENCE (unified) ──────────────────── */}
-        {/* One place for the AI read on the business: what needs you now
-            (merged feed), then where you stand (health) and where you're
-            headed (outlook). */}
+        {/* ── 4. BUSINESS INTELLIGENCE (unified) ──────────────────── */}
+        {/* Where you stand (health) and where you're headed (outlook). The
+            "needs you now" feed now leads the page above. */}
         <Section label={t('dashboard.businessIntelligence', 'Business Intelligence')} collapsible defaultOpen>
           <div className="space-y-4">
-            <NeedsAttentionFeed />
             <TaxPositionWidget />
             <div className="grid grid-cols-1 xl:grid-cols-2 gap-4">
               <BusinessHealthWidget kpis={kpis} loading={loadDash} />

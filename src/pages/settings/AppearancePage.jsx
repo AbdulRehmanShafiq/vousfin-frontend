@@ -1,5 +1,6 @@
 import { useTranslation } from 'react-i18next'
 import AppearanceCard from '@/components/settings/AppearanceCard'
+import ModulesCard from '@/components/settings/ModulesCard'
 import { cn } from '@/utils/cn'
 
 /*
@@ -26,6 +27,9 @@ export default function AppearancePage() {
       </div>
 
       <AppearanceCard />
+
+      {/* Navigation modules — show only what this business uses */}
+      <ModulesCard />
 
       {/* Language switcher — NFR-USE-01 */}
       <div className="premium-card p-5 sm:p-6 space-y-4">
