@@ -9,11 +9,11 @@
  * Phase 6: memo() on all sub-components, single query key per limit
  */
 import { useState, useMemo, memo, Fragment, useCallback, useRef, useEffect } from 'react'
+import { useTranslation } from 'react-i18next'
 import {
   Plus, ArrowUpRight, ArrowDownRight, Receipt,
   RotateCcw, History, ChevronUp, Loader2, Lock, Pencil, Eye,
 } from 'lucide-react'
-import toast from 'react-hot-toast'
 
 import { useInfiniteTransactions } from '@/hooks/useTransactions'
 import { useBusinessStore } from '@/stores/useBusinessStore'
@@ -193,6 +193,7 @@ const MobileCard = memo(function MobileCard({
 // ─── main page ────────────────────────────────────────────────────────────────
 
 export default function TransactionsList() {
+  const { t } = useTranslation()
   const [activeFilter,   setActiveFilter]   = useState('All')
   const [isFormOpen,     setIsFormOpen]     = useState(false)
   const [reversalTarget, setReversalTarget] = useState(null)
@@ -298,21 +299,21 @@ export default function TransactionsList() {
         <div>
           <h1 className="flex items-center gap-2 text-xl font-black text-text-primary tracking-tight sm:text-2xl">
             <Receipt className="h-5 w-5 text-cyan sm:h-6 sm:w-6" />
-            Transactions Ledger
+            {t('tx.ledger', 'Transactions Ledger')}
           </h1>
-          <p className="hidden sm:block text-text-secondary text-sm mt-0.5">Double-entry accounting journal</p>
+          <p className="hidden sm:block text-text-secondary text-sm mt-0.5">{t('tx.journal', 'Double-entry accounting journal')}</p>
         </div>
         <Button onClick={() => setIsFormOpen(true)} icon={Plus} size="sm">
-          Record
+          {t('tx.record', 'Record')}
         </Button>
       </div>
 
       {/* ── KPIs ──────────────────────────────────────────────────── */}
       <div className="grid grid-cols-3 gap-2 sm:gap-4">
-        <KPICard title="Inflows"  value={totals.inflow}  loading={isLoading} currency={currency} icon={ArrowDownRight} />
-        <KPICard title="Outflows" value={totals.outflow} loading={isLoading} currency={currency} icon={ArrowUpRight} />
+        <KPICard title={t('label.inflows', 'Inflows')}  value={totals.inflow}  loading={isLoading} currency={currency} icon={ArrowDownRight} />
+        <KPICard title={t('label.outflows', 'Outflows')} value={totals.outflow} loading={isLoading} currency={currency} icon={ArrowUpRight} />
         <KPICard
-          title="Net"
+          title={t('label.net', 'Net')}
           value={totals.inflow - totals.outflow}
           loading={isLoading}
           currency={currency}
@@ -348,9 +349,9 @@ export default function TransactionsList() {
 
         {/* Content */}
         {isLoading && !docs.length ? (
-          <div className="py-12 text-center text-sm text-text-muted">Loading transactions…</div>
+          <div className="py-12 text-center text-sm text-text-muted">{t('msg.loadingTransactions', 'Loading transactions…')}</div>
         ) : filtered.length === 0 ? (
-          <div className="py-12 text-center text-sm text-text-muted">No transactions found.</div>
+          <div className="py-12 text-center text-sm text-text-muted">{t('msg.noTransactions', 'No transactions found.')}</div>
         ) : (
           <>
             {/* ── Desktop table (hidden on mobile) ────────────────── */}
@@ -358,11 +359,11 @@ export default function TransactionsList() {
               <table className="w-full text-left text-sm">
                 <thead className="bg-glass-panel text-[12px] uppercase text-text-muted tracking-wider">
                   <tr>
-                    <th className="px-4 py-2.5 font-semibold w-24">Date</th>
-                    <th className="px-4 py-2.5 font-semibold">Description</th>
-                    <th className="px-4 py-2.5 font-semibold w-28 hidden lg:table-cell">Type</th>
-                    <th className="px-4 py-2.5 font-semibold w-20">Status</th>
-                    <th className="px-4 py-2.5 font-semibold text-right w-28">Amount</th>
+                    <th className="px-4 py-2.5 font-semibold w-24">{t('tx.col.date', 'Date')}</th>
+                    <th className="px-4 py-2.5 font-semibold">{t('tx.col.description', 'Description')}</th>
+                    <th className="px-4 py-2.5 font-semibold w-28 hidden lg:table-cell">{t('tx.col.type', 'Type')}</th>
+                    <th className="px-4 py-2.5 font-semibold w-20">{t('tx.col.status', 'Status')}</th>
+                    <th className="px-4 py-2.5 font-semibold text-right w-28">{t('tx.col.amount', 'Amount')}</th>
                     <th className="px-4 py-2.5 w-24"></th>
                   </tr>
                 </thead>

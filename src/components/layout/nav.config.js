@@ -207,6 +207,15 @@ export function pageTitleFor(pathname) {
   return best?.name || 'vousFin'
 }
 
+/**
+ * Derive a stable i18n key segment from an href.
+ * e.g. '/sales/invoices' → 'sales_invoices'
+ *      '/dashboard'      → 'dashboard'
+ */
+export function navKey(href) {
+  return href.replace(/^\//, '').replace(/\//g, '_')
+}
+
 /** True when `item` should render as active for the given pathname. */
 export function isItemActive(item, pathname) {
   if (item.exact) return pathname === item.href

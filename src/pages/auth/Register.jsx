@@ -4,6 +4,7 @@ import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
 import toast from 'react-hot-toast'
+import { useTranslation } from 'react-i18next'
 import { passwordZodRule, PASSWORD_HINT } from '@/utils/passwordRules'
 import { getErrorMessage } from '@/utils/errorHandler'
 import { Mail, Lock, User, MailCheck } from 'lucide-react'
@@ -18,6 +19,7 @@ const registerSchema = z.object({
 })
 
 export default function Register() {
+  const { t } = useTranslation()
   const [registeredEmail, setRegisteredEmail] = useState(null)
   const [resendLoading, setResendLoading] = useState(false)
 
@@ -62,7 +64,7 @@ export default function Register() {
       <div className="w-full">
         <div className="mb-8 text-center">
           <MailCheck className="mx-auto h-12 w-12 text-cyan mb-4" aria-hidden="true" />
-          <h1 className="text-2xl font-semibold text-text-primary tracking-tight">Check your email</h1>
+          <h1 className="text-2xl font-semibold text-text-primary tracking-tight">{t('auth.register.checkEmail', 'Check your email')}</h1>
           <p className="mt-2 text-text-secondary text-sm">
             We&apos;ve sent a verification link to{' '}
             <span className="font-semibold text-text-primary">{registeredEmail}</span>.
@@ -72,13 +74,13 @@ export default function Register() {
 
         <div className="space-y-3">
           <Button fullWidth loading={resendLoading} onClick={handleResend} variant="outline">
-            Resend verification email
+            {t('action.resendEmail', 'Resend verification email')}
           </Button>
           <Link
             to="/login"
             className="block w-full text-center rounded-md border border-transparent px-4 py-2.5 text-sm font-semibold text-cyan hover:text-cyan-2 transition-colors"
           >
-            Back to Sign In
+            {t('action.backToLogin', 'Back to Sign In')}
           </Link>
         </div>
       </div>
@@ -88,13 +90,13 @@ export default function Register() {
   return (
     <div className="w-full">
       <div className="mb-8 text-center">
-        <h1 className="text-3xl font-black text-text-primary tracking-tight">Create Account</h1>
-        <p className="mt-2 text-text-secondary">Join vousFin and automate your accounting</p>
+        <h1 className="text-3xl font-black text-text-primary tracking-tight">{t('auth.register.title', 'Create Account')}</h1>
+        <p className="mt-2 text-text-secondary">{t('auth.register.subtitle', 'Join vousFin and automate your accounting')}</p>
       </div>
 
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
         <Input
-          label="Full Name"
+          label={t('label.fullName', 'Full Name')}
           icon={User}
           placeholder="John Doe"
           error={errors.fullName?.message}
@@ -102,7 +104,7 @@ export default function Register() {
         />
 
         <Input
-          label="Work Email"
+          label={t('label.workEmail', 'Work Email')}
           type="email"
           icon={Mail}
           placeholder="john@company.com"
@@ -111,7 +113,7 @@ export default function Register() {
         />
 
         <Input
-          label="Password"
+          label={t('label.password', 'Password')}
           type="password"
           icon={Lock}
           placeholder="e.g. Uzair123@"
@@ -121,7 +123,7 @@ export default function Register() {
         <p className="-mt-3 text-xs text-text-muted">{PASSWORD_HINT}</p>
 
         <Button type="submit" fullWidth loading={isSubmitting} className="mt-4">
-          Create Account
+          {t('action.createAccount', 'Create Account')}
         </Button>
       </form>
 
@@ -136,7 +138,7 @@ export default function Register() {
         type="button"
         onClick={handleGoogleLogin}
         className="mt-4 w-full inline-flex items-center justify-center gap-3 rounded-md border border-glass bg-glass-panel px-4 py-2.5 text-sm font-semibold text-text-primary transition-premium hover:bg-glass-hover focus:outline-none focus-visible:ring-2 focus-visible:ring-accent/50"
-        aria-label="Continue with Google"
+        aria-label={t('action.continueWithGoogle', 'Continue with Google')}
       >
         {/* Google G SVG */}
         <svg width="18" height="18" viewBox="0 0 18 18" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
@@ -145,13 +147,13 @@ export default function Register() {
           <path d="M3.964 10.71A5.41 5.41 0 0 1 3.682 9c0-.593.102-1.17.282-1.71V4.958H.957A8.996 8.996 0 0 0 0 9c0 1.452.348 2.827.957 4.042l3.007-2.332z" fill="#FBBC05"/>
           <path d="M9 3.58c1.321 0 2.508.454 3.44 1.345l2.582-2.58C13.463.891 11.426 0 9 0A8.997 8.997 0 0 0 .957 4.958L3.964 7.29C4.672 5.163 6.656 3.58 9 3.58z" fill="#EA4335"/>
         </svg>
-        Continue with Google
+        {t('action.continueWithGoogle', 'Continue with Google')}
       </button>
 
       <p className="mt-8 text-center text-sm text-text-muted">
-        Already have an account?{' '}
+        {t('auth.register.hasAccount', 'Already have an account?')}{' '}
         <Link to="/login" className="font-bold text-cyan hover:underline">
-          Sign In
+          {t('action.signIn', 'Sign In')}
         </Link>
       </p>
     </div>

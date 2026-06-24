@@ -1,8 +1,9 @@
 import { useMemo } from 'react'
 import { Link, Navigate, useParams } from 'react-router-dom'
 import { useQuery } from '@tanstack/react-query'
+import { useTranslation } from 'react-i18next'
 import { ArrowRight } from 'lucide-react'
-import { hubByKey } from '@/components/layout/nav.config'
+import { hubByKey, navKey } from '@/components/layout/nav.config'
 import { useDashboardAll } from '@/hooks/useReports'
 import { useBusinessStore } from '@/stores/useBusinessStore'
 import approvalService from '@/services/approval.service'
@@ -28,6 +29,7 @@ function compactMoney(val, currency = 'PKR') {
 }
 
 function ModuleCard({ item, accent, stat, index }) {
+  const { t } = useTranslation()
   return (
     <Link
       to={item.href}
@@ -58,8 +60,8 @@ function ModuleCard({ item, accent, stat, index }) {
         </span>
       </div>
 
-      <h3 className="relative text-[15px] font-semibold text-text-primary leading-tight">{item.name}</h3>
-      <p className="relative mt-1 text-[12.5px] leading-snug text-text-muted">{item.desc}</p>
+      <h3 className="relative text-[15px] font-semibold text-text-primary leading-tight">{t(`nav.item.${navKey(item.href)}`, item.name)}</h3>
+      <p className="relative mt-1 text-[12.5px] leading-snug text-text-muted">{t(`nav.item.desc.${navKey(item.href)}`, item.desc)}</p>
 
       {stat && (
         <div className="relative mt-4 flex items-baseline gap-1.5 border-t border-glass pt-3">
@@ -74,6 +76,7 @@ function ModuleCard({ item, accent, stat, index }) {
 }
 
 export default function SectionHubPage() {
+  const { t } = useTranslation()
   const { sectionKey } = useParams()
   const section = hubByKey(sectionKey)
   const currency = useBusinessStore((s) => s.currency)
@@ -130,7 +133,7 @@ export default function SectionHubPage() {
         <div className="mb-3 flex items-center gap-2.5">
           <span className="h-px w-7" style={{ background: `rgb(${accent} / 0.60)` }} aria-hidden="true" />
           <span className="text-[12.5px] font-semibold uppercase tracking-[0.18em]" style={{ color: accentColor }}>
-            {section.label}
+            {t(`nav.section.${section.key}`, section.label)}
           </span>
         </div>
         <div className="flex items-center gap-3.5">
@@ -141,10 +144,10 @@ export default function SectionHubPage() {
             <section.icon className="h-6 w-6" style={{ color: accentColor }} />
           </span>
           <h1 className="font-display text-[2rem] font-semibold tracking-tight text-text-primary leading-none">
-            {section.label}
+            {t(`nav.section.${section.key}`, section.label)}
           </h1>
         </div>
-        <p className="mt-4 text-[15px] leading-relaxed text-text-secondary">{section.blurb}</p>
+        <p className="mt-4 text-[15px] leading-relaxed text-text-secondary">{t(`nav.section.blurb.${section.key}`, section.blurb)}</p>
       </div>
 
       {/* ── Module grid ── */}

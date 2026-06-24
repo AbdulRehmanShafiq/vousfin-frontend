@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { NavLink, useLocation } from 'react-router-dom'
+import { useTranslation } from 'react-i18next'
 import { cn } from '@/utils/cn'
 import vousFinLogo from '@/assets/vousfin-logo.png'
 import { LogOut, ChevronLeft, ChevronRight, ChevronDown, Briefcase } from 'lucide-react'
@@ -7,7 +8,7 @@ import { useQuery } from '@tanstack/react-query'
 import { useAuthStore } from '@/stores/useAuthStore'
 import { useBusinessStore } from '@/stores/useBusinessStore'
 import approvalService from '@/services/approval.service'
-import { NAV_SECTIONS, isItemActive, activeSectionKey } from './nav.config'
+import { NAV_SECTIONS, isItemActive, activeSectionKey, navKey } from './nav.config'
 
 /*
  * Sidebar — sectioned navigation ("professional accounting OS" IA).
@@ -19,6 +20,7 @@ import { NAV_SECTIONS, isItemActive, activeSectionKey } from './nav.config'
  */
 
 export default function Sidebar({ isCollapsed, toggleCollapse, isMobile = false, closeMobile }) {
+  const { t } = useTranslation()
   const logout = useAuthStore((s) => s.logout)
   const activeBusiness = useBusinessStore((s) => s.activeBusiness)
   const location = useLocation()
@@ -70,7 +72,7 @@ export default function Sidebar({ isCollapsed, toggleCollapse, isMobile = false,
             : 'text-text-secondary hover:bg-glass-hover hover:text-text-primary',
           compact && 'justify-center px-0 py-2.5',
         )}
-        title={compact ? item.name : undefined}
+        title={compact ? t(`nav.item.${navKey(item.href)}`, item.name) : undefined}
       >
         {/* Active accent bar — jade, softly luminous */}
         <span
@@ -91,7 +93,7 @@ export default function Sidebar({ isCollapsed, toggleCollapse, isMobile = false,
             </span>
           )}
         </span>
-        {!compact && <span className="flex-1 truncate">{item.name}</span>}
+        {!compact && <span className="flex-1 truncate">{t(`nav.item.${navKey(item.href)}`, item.name)}</span>}
         {!compact && badge > 0 && (
           <span className="ml-auto min-w-[18px] h-[18px] px-1.5 rounded-full bg-amber text-[12.5px] font-bold text-ink-on-accent flex items-center justify-center">
             {badge > 99 ? '99+' : badge}
@@ -130,7 +132,7 @@ export default function Sidebar({ isCollapsed, toggleCollapse, isMobile = false,
         >
           <span className="flex items-center gap-2">
             <span className="h-px w-2.5 bg-gold/50" aria-hidden="true" />
-            {section.label}
+            {t(`nav.section.${section.key}`, section.label)}
           </span>
           <ChevronDown
             className={cn(
@@ -204,7 +206,7 @@ export default function Sidebar({ isCollapsed, toggleCollapse, isMobile = false,
           >
             {isCollapsed ? <ChevronRight className="h-4 w-4" /> : (
               <>
-                <ChevronLeft className="mr-3 h-4 w-4" /> Collapse
+                <ChevronLeft className="mr-3 h-4 w-4" /> {t('action.collapse', 'Collapse')}
               </>
             )}
           </button>
@@ -215,10 +217,10 @@ export default function Sidebar({ isCollapsed, toggleCollapse, isMobile = false,
             'flex w-full items-center rounded-md px-3 py-2 text-[13px] font-medium text-negative/80 hover:bg-negative-muted hover:text-negative transition-premium',
             compact && 'justify-center',
           )}
-          title={compact ? 'Log out' : undefined}
+          title={compact ? t('action.logout', 'Log out') : undefined}
         >
           <LogOut className={cn('h-4 w-4 flex-shrink-0', !compact && 'mr-3')} />
-          {!compact && 'Log out'}
+          {!compact && t('action.logout', 'Log out')}
         </button>
       </div>
     </div>

@@ -1,11 +1,12 @@
 import { NavLink, useLocation } from 'react-router-dom'
 import { useQuery } from '@tanstack/react-query'
+import { useTranslation } from 'react-i18next'
 import { cn } from '@/utils/cn'
 import { LogOut } from 'lucide-react'
 import vousFinLogo from '@/assets/vousfin-logo.png'
 import { useAuthStore } from '@/stores/useAuthStore'
 import approvalService from '@/services/approval.service'
-import { RAIL_ITEMS, activeSectionKey } from './nav.config'
+import { RAIL_ITEMS, activeSectionKey, navKey } from './nav.config'
 
 /*
  * SectionRail — the "Vault" desktop navigation.
@@ -17,7 +18,10 @@ import { RAIL_ITEMS, activeSectionKey } from './nav.config'
  */
 
 function RailButton({ item, active, badge, isMobile, onNavigate }) {
+  const { t } = useTranslation()
   const accent = item.accent
+  // Rail items use section keys for hub items; home/dashboard uses navKey
+  const translatedName = t(`nav.item.${navKey(item.href)}`, item.name)
   return (
     <NavLink
       to={item.href}
@@ -27,7 +31,7 @@ function RailButton({ item, active, badge, isMobile, onNavigate }) {
         isMobile ? 'w-full gap-3 rounded-xl px-3 py-2.5' : 'h-11 w-11 justify-center rounded-xl',
         'transition-premium',
       )}
-      aria-label={item.name}
+      aria-label={translatedName}
     >
       {/* Active accent bar (desktop only) — luminous, section-tinted */}
       {!isMobile && (
@@ -72,14 +76,14 @@ function RailButton({ item, active, badge, isMobile, onNavigate }) {
       {/* Label: inline on mobile, floating tooltip on desktop */}
       {isMobile ? (
         <span className={cn('text-[13px] font-medium', active ? 'text-text-primary' : 'text-text-secondary')}>
-          {item.name}
+          {translatedName}
         </span>
       ) : (
         <span
           role="tooltip"
           className="pointer-events-none absolute left-[52px] z-50 whitespace-nowrap rounded-lg border border-glass-2 bg-charcoal/95 px-2.5 py-1 text-[12px] font-medium text-text-primary opacity-0 -translate-x-1 shadow-elevated backdrop-blur-md transition-all duration-150 group-hover:opacity-100 group-hover:translate-x-0"
         >
-          {item.name}
+          {translatedName}
         </span>
       )}
     </NavLink>
@@ -87,6 +91,7 @@ function RailButton({ item, active, badge, isMobile, onNavigate }) {
 }
 
 export default function SectionRail({ isMobile = false, closeMobile }) {
+  const { t } = useTranslation()
   const location = useLocation()
   const logout = useAuthStore((s) => s.logout)
   const activeKey = activeSectionKey(location.pathname)
@@ -148,7 +153,7 @@ export default function SectionRail({ isMobile = false, closeMobile }) {
         ))}
         <button
           onClick={logout}
-          aria-label="Log out"
+          aria-label={t('action.logout', 'Log out')}
           className={cn(
             'group relative flex items-center text-text-muted transition-premium',
             isMobile ? 'w-full gap-3 rounded-xl px-3 py-2.5 hover:text-negative' : 'h-11 w-11 justify-center rounded-xl hover:text-negative',
@@ -158,13 +163,13 @@ export default function SectionRail({ isMobile = false, closeMobile }) {
             <LogOut className="h-[18px] w-[18px]" />
           </span>
           {isMobile ? (
-            <span className="text-[13px] font-medium">Log out</span>
+            <span className="text-[13px] font-medium">{t('action.logout', 'Log out')}</span>
           ) : (
             <span
               role="tooltip"
               className="pointer-events-none absolute left-[52px] z-50 whitespace-nowrap rounded-lg border border-glass-2 bg-charcoal/95 px-2.5 py-1 text-[12px] font-medium text-text-primary opacity-0 -translate-x-1 shadow-elevated backdrop-blur-md transition-all duration-150 group-hover:opacity-100 group-hover:translate-x-0"
             >
-              Log out
+              {t('action.logout', 'Log out')}
             </span>
           )}
         </button>

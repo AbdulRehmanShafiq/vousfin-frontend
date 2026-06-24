@@ -13,4 +13,14 @@ i18n.use(initReactI18next).init({
   interpolation: { escapeValue: false },
 })
 
+// Apply RTL direction and lang attribute on initial load based on saved language
+const savedLang = localStorage.getItem('vf_lang')
+if (savedLang === 'ur') {
+  document.documentElement.dir = 'rtl'
+  document.documentElement.lang = 'ur'
+} else {
+  document.documentElement.dir = 'ltr'
+  document.documentElement.lang = 'en'
+}
+
 export default i18n

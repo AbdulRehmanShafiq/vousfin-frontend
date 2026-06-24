@@ -10,6 +10,7 @@
  */
 import { useMemo, useState } from 'react'
 import { Link } from 'react-router-dom'
+import { useTranslation } from 'react-i18next'
 import {
   LayoutDashboard, Plus, Clock,
   TrendingUp, TrendingDown,
@@ -280,6 +281,7 @@ function FinancialSnapshot({ ar, ap, currency, loading }) {
 
 /* ══════════════════════════════════════════════════════════════════ */
 export default function Dashboard() {
+  const { t }                        = useTranslation()
   const { user }                     = useAuthStore()
   const { currency, activeBusiness } = useBusinessStore()
   const openTxModal                  = useUIStore((s) => s.openTxModal)
@@ -336,7 +338,7 @@ export default function Dashboard() {
       <div className="space-y-7">
 
         {/* ── 2. KPI STRIP ────────────────────────────────────────── */}
-        <Section label="Key Metrics">
+        <Section label={t('dashboard.keyMetrics', 'Key Metrics')}>
           <SmartKPIStrip
             kpis={kpis}
             revenueVsExpenses={revenueVsExpenses}
@@ -349,7 +351,7 @@ export default function Dashboard() {
         {/* One place for the AI read on the business: what needs you now
             (merged feed), then where you stand (health) and where you're
             headed (outlook). */}
-        <Section label="Business Intelligence" collapsible defaultOpen>
+        <Section label={t('dashboard.businessIntelligence', 'Business Intelligence')} collapsible defaultOpen>
           <div className="space-y-4">
             <NeedsAttentionFeed />
             <TaxPositionWidget />
@@ -361,7 +363,7 @@ export default function Dashboard() {
         </Section>
 
         {/* ── 4. ANALYTICS ────────────────────────────────────────── */}
-        <Section label="Business Analytics" collapsible defaultOpen>
+        <Section label={t('dashboard.businessAnalytics', 'Business Analytics')} collapsible defaultOpen>
           {/* Mobile: horizontal swipe carousel — one chart at a time */}
           <div className="md:hidden -mx-4 px-4">
             <div className="flex overflow-x-auto snap-x snap-mandatory scrollbar-none gap-4 pb-2">
@@ -389,7 +391,7 @@ export default function Dashboard() {
         </Section>
 
         {/* ── 5. FORECASTING & CASH POSITION ──────────────────────── */}
-        <Section label="Forecasting & Cash Position" collapsible defaultOpen>
+        <Section label={t('dashboard.forecastingCash', 'Forecasting & Cash Position')} collapsible defaultOpen>
           <div className="grid grid-cols-1 lg:grid-cols-5 gap-4">
             {/* Left: what you're owed / owe */}
             <div className="lg:col-span-2">
@@ -408,7 +410,7 @@ export default function Dashboard() {
         </Section>
 
         {/* ── 6. RECENT ACTIVITY ──────────────────────────────────── */}
-        <Section label="Recent Activity" to="/transactions">
+        <Section label={t('dashboard.recentActivity', 'Recent Activity')} to="/transactions">
           <div className="grid grid-cols-1 gap-4 items-start">
 
             {/* Transactions card — full width now that snapshot moved up */}
