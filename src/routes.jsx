@@ -1,6 +1,31 @@
 /* eslint-disable react-refresh/only-export-components */
-import { lazy, Suspense } from 'react'
+import { lazy as reactLazy, Suspense } from 'react'
 import { Navigate, Outlet } from 'react-router-dom'
+
+/**
+ * lazy() with stale-chunk recovery. After a new deploy, Vite gives chunk files
+ * fresh content hashes, so a tab still running the old build requests a chunk
+ * filename that no longer exists → "Failed to fetch dynamically imported module".
+ * On that failure we force ONE reload (which pulls the new index.html + chunk map);
+ * if it still fails after reloading, it's a real error and we surface it.
+ */
+const CHUNK_RELOAD_KEY = 'vf-chunk-reloaded'
+function lazy(importFn) {
+  return reactLazy(async () => {
+    try {
+      const mod = await importFn()
+      sessionStorage.removeItem(CHUNK_RELOAD_KEY) // success → reset the one-shot guard
+      return mod
+    } catch (err) {
+      if (!sessionStorage.getItem(CHUNK_RELOAD_KEY)) {
+        sessionStorage.setItem(CHUNK_RELOAD_KEY, '1')
+        window.location.reload()
+        return new Promise(() => {}) // halt rendering; the page is reloading
+      }
+      throw err
+    }
+  })
+}
 import { useAuthStore } from '@/stores/useAuthStore'
 import { useAuthHydrated } from '@/hooks/useAuthHydrated'
 import AuthLayout from '@/layouts/AuthLayout'
@@ -87,6 +112,7 @@ const TemplatesPage        = lazy(() => import('@/pages/transactions/TemplatesPa
 const ApprovalsQueuePage   = lazy(() => import('@/pages/approvals/ApprovalsQueuePage'))
 const BankReconciliationPage = lazy(() => import('@/pages/reconciliation/BankReconciliationPage'))
 const ReportBuilderPage      = lazy(() => import('@/pages/reports/ReportBuilderPage'))        // FR-02.5
+const SupportPage            = lazy(() => import('@/pages/support/SupportPage'))
 const AdminPage              = lazy(() => import('@/pages/admin/AdminPage'))                  // Admin panel
 
 const LoadingFallback = () => (
@@ -282,6 +308,7 @@ export const routes = [
 
           /* ai/assistant stays accessible directly (also exposed in AI Analyst → Insights tab) */
           { path: 'ai/assistant', element: withSuspense(AIAssistantPage) },
+          { path: 'support', element: withSuspense(SupportPage) },
         ],
       },
     ],

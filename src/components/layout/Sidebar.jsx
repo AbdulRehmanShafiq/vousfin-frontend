@@ -3,10 +3,11 @@ import { NavLink, Link, useLocation } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
 import { cn } from '@/utils/cn'
 import vousFinLogo from '@/assets/vousfin-logo.png'
-import { LogOut, ChevronLeft, ChevronRight, ChevronDown, Briefcase, Shield } from 'lucide-react'
+import { LogOut, ChevronLeft, ChevronRight, ChevronDown, Briefcase, Shield, MessageSquare } from 'lucide-react'
 import { useQuery } from '@tanstack/react-query'
 import { useAuthStore } from '@/stores/useAuthStore'
 import { useBusinessStore } from '@/stores/useBusinessStore'
+import { useFeedbackStore } from '@/stores/useFeedbackStore'
 import approvalService from '@/services/approval.service'
 import { NAV_SECTIONS, isItemActive, activeSectionKey, navKey } from './nav.config'
 
@@ -46,6 +47,7 @@ export default function Sidebar({ isCollapsed, toggleCollapse, isMobile = false,
   const [overrides, setOverrides] = useState({})
 
   const user = useAuthStore((s) => s.user)
+  const { setIsOpen } = useFeedbackStore()
   const compact = isCollapsed && !isMobile // icon-only mode
 
   const isSectionOpen = (key) =>
@@ -226,6 +228,35 @@ export default function Sidebar({ isCollapsed, toggleCollapse, isMobile = false,
             {!compact && 'Admin Panel'}
           </Link>
         )}
+        {/* User menu items */}
+        <div className="space-y-2">
+          <button
+            onClick={() => {
+              setIsOpen(true);
+              if (isMobile) closeMobile();
+            }}
+            className={cn(
+              'flex w-full items-center rounded-md px-3 py-2 text-[13px] font-medium text-text-secondary hover:bg-glass-hover hover:text-text-primary transition-premium',
+              compact && 'justify-center',
+            )}
+            title={compact ? 'Send feedback' : undefined}
+          >
+            <MessageSquare className={cn('h-4 w-4 flex-shrink-0', !compact && 'mr-3')} />
+            {!compact && 'Send feedback'}
+          </button>
+          <Link
+            to="/support"
+            onClick={isMobile ? closeMobile : undefined}
+            className={cn(
+              'flex w-full items-center rounded-md px-3 py-2 text-[13px] font-medium text-text-secondary hover:bg-glass-hover hover:text-text-primary transition-premium',
+              compact && 'justify-center',
+            )}
+            title={compact ? 'Support' : undefined}
+          >
+            <MessageSquare className={cn('h-4 w-4 flex-shrink-0', !compact && 'mr-3')} />
+            {!compact && 'Support'}
+          </Link>
+        </div>
         <button
           onClick={logout}
           className={cn(

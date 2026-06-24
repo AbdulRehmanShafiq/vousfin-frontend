@@ -6,6 +6,8 @@ import Header from '@/components/layout/Header'
 import MobileNav from '@/components/layout/MobileNav'
 import GlobalAIWidget from '@/components/ai/GlobalAIWidget'
 import TransactionFormModal from '@/components/forms/TransactionFormModal'
+import AnnouncementBanner from '@/components/AnnouncementBanner'
+import FeedbackModal from '@/components/FeedbackModal'
 import { useAuthStore } from '@/stores/useAuthStore'
 import { useBusinessStore } from '@/stores/useBusinessStore'
 import { useUIStore } from '@/stores/useUIStore'
@@ -41,6 +43,8 @@ export default function DashboardLayout() {
       {/* Main Container */}
       <div className="flex flex-1 flex-col overflow-hidden">
         <Header />
+        {/* Announcement Banner */}
+        <AnnouncementBanner />
 
         <main className="flex-1 overflow-y-auto overflow-x-hidden bg-navy scrollbar-thin">
           {/* pb-24 on small screens leaves room for the fixed MobileNav bottom bar */}
@@ -63,6 +67,9 @@ export default function DashboardLayout() {
         onSuccess={handleTxSuccess}
         transaction={null}
       />
+
+      {/* Global feedback modal — opened from the user menu (useFeedbackStore) */}
+      <FeedbackModal />
     </div>
   )
 }
