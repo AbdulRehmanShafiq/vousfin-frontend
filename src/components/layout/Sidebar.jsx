@@ -1,9 +1,9 @@
 import { useState } from 'react'
-import { NavLink, useLocation } from 'react-router-dom'
+import { NavLink, Link, useLocation } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
 import { cn } from '@/utils/cn'
 import vousFinLogo from '@/assets/vousfin-logo.png'
-import { LogOut, ChevronLeft, ChevronRight, ChevronDown, Briefcase } from 'lucide-react'
+import { LogOut, ChevronLeft, ChevronRight, ChevronDown, Briefcase, Shield } from 'lucide-react'
 import { useQuery } from '@tanstack/react-query'
 import { useAuthStore } from '@/stores/useAuthStore'
 import { useBusinessStore } from '@/stores/useBusinessStore'
@@ -45,6 +45,7 @@ export default function Sidebar({ isCollapsed, toggleCollapse, isMobile = false,
   const activeKey = activeSectionKey(location.pathname)
   const [overrides, setOverrides] = useState({})
 
+  const user = useAuthStore((s) => s.user)
   const compact = isCollapsed && !isMobile // icon-only mode
 
   const isSectionOpen = (key) =>
@@ -210,6 +211,20 @@ export default function Sidebar({ isCollapsed, toggleCollapse, isMobile = false,
               </>
             )}
           </button>
+        )}
+        {user?.role === 'admin' && (
+          <Link
+            to="/admin"
+            onClick={isMobile ? closeMobile : undefined}
+            className={cn(
+              'flex w-full items-center rounded-md px-3 py-2 text-[13px] font-medium text-accent hover:bg-accent/10 transition-premium',
+              compact && 'justify-center',
+            )}
+            title={compact ? 'Admin Panel' : undefined}
+          >
+            <Shield className={cn('h-4 w-4 flex-shrink-0', !compact && 'mr-3')} />
+            {!compact && 'Admin Panel'}
+          </Link>
         )}
         <button
           onClick={logout}

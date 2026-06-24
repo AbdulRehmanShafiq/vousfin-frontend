@@ -4,6 +4,7 @@ import { Navigate, Outlet } from 'react-router-dom'
 import { useAuthStore } from '@/stores/useAuthStore'
 import { useAuthHydrated } from '@/hooks/useAuthHydrated'
 import AuthLayout from '@/layouts/AuthLayout'
+import AdminLayout from '@/layouts/AdminLayout'
 import DashboardLayout from '@/layouts/DashboardLayout'
 import SkeletonLoader from '@/components/ui/SkeletonLoader'
 import ErrorBoundary from '@/components/common/ErrorBoundary'
@@ -86,6 +87,7 @@ const TemplatesPage        = lazy(() => import('@/pages/transactions/TemplatesPa
 const ApprovalsQueuePage   = lazy(() => import('@/pages/approvals/ApprovalsQueuePage'))
 const BankReconciliationPage = lazy(() => import('@/pages/reconciliation/BankReconciliationPage'))
 const ReportBuilderPage      = lazy(() => import('@/pages/reports/ReportBuilderPage'))        // FR-02.5
+const AdminPage              = lazy(() => import('@/pages/admin/AdminPage'))                  // Admin panel
 
 const LoadingFallback = () => (
   <div className="flex h-screen w-full items-center justify-center bg-navy">
@@ -104,16 +106,29 @@ const withSuspense = (Component) => (
 )
 
 const hasBusiness = (user) => !!user?.businessId
+const isAdmin = (user) => user?.role === 'admin'
 
-/** Smart entry: / → landing | setup | dashboard */
+/** Smart entry: / → landing | /admin | setup | dashboard */
 function RootRedirect() {
   const hydrated = useAuthHydrated()
   const { isAuthenticated, user } = useAuthStore()
 
   if (!hydrated) return <LoadingFallback />
   if (!isAuthenticated) return withSuspense(LandingPage)
+  if (isAdmin(user)) return <Navigate to="/admin" replace />
   if (!hasBusiness(user)) return <Navigate to="/business/setup" replace />
   return <Navigate to="/dashboard" replace />
+}
+
+/** Logged in with role=admin — admin panel area */
+function RequireAdmin() {
+  const hydrated = useAuthHydrated()
+  const { isAuthenticated, user } = useAuthStore()
+
+  if (!hydrated) return <LoadingFallback />
+  if (!isAuthenticated) return <Navigate to="/login" replace />
+  if (!isAdmin(user)) return <Navigate to="/dashboard" replace />
+  return <Outlet />
 }
 
 /** Logged in but no business yet */
@@ -267,6 +282,19 @@ export const routes = [
 
           /* ai/assistant stays accessible directly (also exposed in AI Analyst → Insights tab) */
           { path: 'ai/assistant', element: withSuspense(AIAssistantPage) },
+        ],
+      },
+    ],
+  },
+
+  /* Admin panel — role=admin only, no business required */
+  {
+    element: <RequireAdmin />,
+    children: [
+      {
+        element: <AdminLayout />,
+        children: [
+          { path: 'admin', element: withSuspense(AdminPage) },
         ],
       },
     ],
