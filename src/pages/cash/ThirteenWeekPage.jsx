@@ -88,7 +88,7 @@ export default function ThirteenWeekPage() {
   })
 
   const handleRefresh = () => {
-    const f = Number(floorInput) || 0
+    const f = Math.max(0, Number(floorInput) || 0)
     setActiveFloor(f)
     refetch()
   }

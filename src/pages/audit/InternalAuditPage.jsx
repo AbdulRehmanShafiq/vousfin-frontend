@@ -95,6 +95,7 @@ function CreatePlanForm({ onCreated }) {
         <div>
           <label className="block text-[11.5px] text-text-muted mb-1">Period end *</label>
           <input type="date" value={form.periodEnd} onChange={e => set('periodEnd', e.target.value)} required
+            min={form.periodStart || undefined}
             className="w-full px-3 py-2 rounded-lg border border-glass bg-glass-panel/40 text-[13px] text-text-primary focus:outline-none focus:border-cyan/40" />
         </div>
         <div>
@@ -107,12 +108,14 @@ function CreatePlanForm({ onCreated }) {
         </div>
         <div>
           <label className="block text-[11.5px] text-text-muted mb-1">Sample size (1–100)</label>
-          <input type="number" min={1} max={100} value={form.sampleSize} onChange={e => set('sampleSize', e.target.value)}
+          <input type="number" min={1} max={100} step={1} value={form.sampleSize}
+            onChange={e => set('sampleSize', Math.min(100, Math.max(1, parseInt(e.target.value) || 1)))}
             className="w-full px-3 py-2 rounded-lg border border-glass bg-glass-panel/40 text-[13px] text-text-primary focus:outline-none focus:border-cyan/40" />
         </div>
       </div>
       <div className="flex gap-2">
-        <button type="submit" disabled={mut.isPending}
+        <button type="submit"
+          disabled={mut.isPending || !form.name.trim() || !form.periodStart || !form.periodEnd || form.periodEnd < form.periodStart}
           className="btn-gradient inline-flex items-center gap-1.5 px-4 py-2 rounded-lg text-[12.5px] font-semibold disabled:opacity-50">
           {mut.isPending ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <Plus className="h-3.5 w-3.5" />} Create
         </button>

@@ -8,6 +8,7 @@ import toast from 'react-hot-toast'
 import { CalendarDays, RefreshCw, CheckCircle2, Loader2, ChevronDown, ChevronUp, ShieldCheck } from 'lucide-react'
 import complianceService from '@/services/compliance.service'
 import { getErrorMessage } from '@/utils/errorHandler'
+import SelectField from '@/components/ui/SelectField'
 
 const STATUS_BADGE = {
   pending:   'bg-amber-500/15 text-amber-400 border border-amber-500/20',
@@ -103,27 +104,21 @@ export default function CalendarPage() {
       {/* Controls */}
       <div className="premium-card p-4 flex flex-wrap gap-3 items-end">
         <div className="flex flex-col gap-1">
-          <label className="text-[11px] text-text-muted uppercase tracking-wider">Year</label>
-          <select value={year} onChange={e => setYear(Number(e.target.value))}
-            className="px-3 py-2 rounded-lg border border-glass bg-glass-panel/40 text-[13px] text-text-primary focus:outline-none">
+          <SelectField label="Year" value={year} onChange={e => setYear(Number(e.target.value))} className="w-auto">
             {YEARS.map(y => <option key={y} value={y} className="bg-charcoal">{y}</option>)}
-          </select>
+          </SelectField>
         </div>
         <div className="flex flex-col gap-1">
-          <label className="text-[11px] text-text-muted uppercase tracking-wider">Month</label>
-          <select value={monthFilter} onChange={e => setMonthFilter(e.target.value)}
-            className="px-3 py-2 rounded-lg border border-glass bg-glass-panel/40 text-[13px] text-text-primary focus:outline-none">
+          <SelectField label="Month" value={monthFilter} onChange={e => setMonthFilter(e.target.value)} className="w-auto">
             <option value="" className="bg-charcoal">All months</option>
             {MONTHS.slice(1).map((m, i) => <option key={i+1} value={i+1} className="bg-charcoal">{m}</option>)}
-          </select>
+          </SelectField>
         </div>
         <div className="flex flex-col gap-1">
-          <label className="text-[11px] text-text-muted uppercase tracking-wider">Status</label>
-          <select value={statusFilter} onChange={e => setStatusFilter(e.target.value)}
-            className="px-3 py-2 rounded-lg border border-glass bg-glass-panel/40 text-[13px] text-text-primary focus:outline-none">
+          <SelectField label="Status" value={statusFilter} onChange={e => setStatusFilter(e.target.value)} className="w-auto">
             <option value="" className="bg-charcoal">All statuses</option>
             {['pending','completed','overdue','waived'].map(s => <option key={s} value={s} className="bg-charcoal capitalize">{s}</option>)}
-          </select>
+          </SelectField>
         </div>
         <div className="flex gap-2 ml-auto">
           <button onClick={() => checkOverdue.mutate()} disabled={checkOverdue.isPending}

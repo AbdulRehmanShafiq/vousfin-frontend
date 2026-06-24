@@ -8,6 +8,7 @@ import toast from 'react-hot-toast'
 import { ShieldAlert, Loader2, FileText, X } from 'lucide-react'
 import complianceService from '@/services/compliance.service'
 import { getErrorMessage } from '@/utils/errorHandler'
+import SelectField from '@/components/ui/SelectField'
 
 const RESULT_BADGE = {
   clear:          'bg-emerald-500/15 text-emerald-400 border border-emerald-500/20',
@@ -73,13 +74,12 @@ export default function AmlPage() {
 
       {/* Filters */}
       <div className="flex gap-3 items-center">
-        <select value={resultFilter} onChange={e => setResultFilter(e.target.value)}
-          className="px-3 py-2 rounded-lg border border-glass bg-glass-panel/40 text-[13px] text-text-primary focus:outline-none">
+        <SelectField value={resultFilter} onChange={e => setResultFilter(e.target.value)} className="w-auto">
           <option value="" className="bg-charcoal">All results</option>
           {['clear', 'flagged', 'pending_review'].map(r => (
             <option key={r} value={r} className="bg-charcoal capitalize">{r.replace('_', ' ')}</option>
           ))}
-        </select>
+        </SelectField>
         <span className="text-[12px] text-text-muted">{screenings.length} record{screenings.length !== 1 ? 's' : ''}</span>
       </div>
 
@@ -92,11 +92,14 @@ export default function AmlPage() {
               <button onClick={() => setJustifyTarget(null)}><X className="h-4 w-4 text-text-muted" /></button>
             </div>
             <textarea value={justifyText} onChange={e => setJustifyText(e.target.value)} rows={4}
+              maxLength={1000}
               placeholder="Explain why this counterparty has been reviewed and cleared..."
               className="w-full px-3 py-2 rounded-lg border border-glass bg-glass-panel/40 text-[13px] text-text-primary focus:outline-none focus:border-cyan/40 resize-none" />
+            <p className="text-[10.5px] text-text-muted text-right">{justifyText.length}/1000</p>
             <div className="flex gap-2 justify-end">
               <button onClick={() => setJustifyTarget(null)} className="px-3 py-1.5 rounded-lg text-[12.5px] text-text-muted border border-glass hover:bg-glass-hover">Cancel</button>
-              <button onClick={() => addJustification.mutate({ id: justifyTarget._id })} disabled={addJustification.isPending}
+              <button onClick={() => addJustification.mutate({ id: justifyTarget._id })}
+                disabled={addJustification.isPending || !justifyText.trim()}
                 className="btn-gradient inline-flex items-center gap-1.5 px-4 py-1.5 rounded-lg text-[12.5px] font-semibold disabled:opacity-50">
                 {addJustification.isPending ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : null} Save
               </button>

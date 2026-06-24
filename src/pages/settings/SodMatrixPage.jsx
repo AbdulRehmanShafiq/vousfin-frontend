@@ -11,6 +11,7 @@ import toast from 'react-hot-toast'
 import { ShieldCheck, Plus, Trash2, Loader2 } from 'lucide-react'
 import sodService from '@/services/sod.service'
 import { getErrorMessage } from '@/utils/errorHandler'
+import SelectField from '@/components/ui/SelectField'
 
 const ROLES = [
   { v: 'owner', l: 'Owner' }, { v: 'accountant', l: 'Accountant' },
@@ -54,13 +55,13 @@ export default function SodMatrixPage() {
 
       <form onSubmit={(e) => { e.preventDefault(); if (roleA !== roleB) add.mutate() }} className="premium-card p-4 flex flex-wrap items-end gap-3">
         <div className="flex items-center gap-2">
-          <select value={roleA} onChange={(e) => setRoleA(e.target.value)} className="px-3 py-2 rounded-lg border border-glass bg-glass-panel/40 text-[13px] text-text-primary focus:outline-none">
+          <SelectField value={roleA} onChange={(e) => setRoleA(e.target.value)} className="w-auto">
             {ROLES.map(r => <option key={r.v} value={r.v} className="bg-charcoal">{r.l}</option>)}
-          </select>
+          </SelectField>
           <span className="text-text-muted text-[13px]">+</span>
-          <select value={roleB} onChange={(e) => setRoleB(e.target.value)} className="px-3 py-2 rounded-lg border border-glass bg-glass-panel/40 text-[13px] text-text-primary focus:outline-none">
+          <SelectField value={roleB} onChange={(e) => setRoleB(e.target.value)} className="w-auto">
             {ROLES.map(r => <option key={r.v} value={r.v} className="bg-charcoal">{r.l}</option>)}
-          </select>
+          </SelectField>
         </div>
         <input value={reason} onChange={(e) => setReason(e.target.value)} placeholder="Why (optional)"
           className="flex-1 min-w-[160px] px-3 py-2 rounded-lg border border-glass bg-glass-panel/40 text-[13px] text-text-primary focus:outline-none focus:border-cyan/40" />
