@@ -14,6 +14,7 @@ const Register = lazy(() => import('@/pages/auth/Register'))
 const ForgotPassword = lazy(() => import('@/pages/auth/ForgotPassword'))
 const ResetPassword = lazy(() => import('@/pages/auth/ResetPassword'))
 const VerifyEmail = lazy(() => import('@/pages/auth/VerifyEmail'))
+const GoogleSuccess = lazy(() => import('@/pages/auth/GoogleSuccess'))
 const BusinessSetup = lazy(() => import('@/pages/business/BusinessSetup'))
 const BusinessSettings = lazy(() => import('@/pages/business/BusinessSettings'))
 const Dashboard = lazy(() => import('@/pages/dashboard/Dashboard'))
@@ -148,6 +149,7 @@ export const routes = [
       { path: 'forgot-password', element: withSuspense(ForgotPassword) },
       { path: 'reset-password', element: withSuspense(ResetPassword) },
       { path: 'verify-email', element: withSuspense(VerifyEmail) },
+      { path: 'auth/google/success', element: withSuspense(GoogleSuccess) }, // Google OAuth callback
       { path: 'accept-invite', element: withSuspense(AcceptInvitePage) }, // Phase 6A — reachable with or without a business
     ],
   },

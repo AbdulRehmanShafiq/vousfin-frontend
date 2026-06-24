@@ -8,6 +8,7 @@ const authService = {
   resendVerification: (email) => api.post('/auth/resend-verification', { email }),
   forgotPassword: (email) => api.post('/auth/forgot-password', { email }),
   resetPassword: (data) => api.post('/auth/reset-password', data),
+  me: () => api.get('/auth/me'),
   googleOAuthUrl: () => {
     if (API_BASE_URL.startsWith('http')) {
       return `${API_BASE_URL.replace(/\/api\/v1\/?$/, '')}/api/v1/auth/google`
