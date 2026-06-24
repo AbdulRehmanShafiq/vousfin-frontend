@@ -82,6 +82,7 @@ export const NAV_SECTIONS = [
       { name: 'Fiscal Years',      href: '/accounting/fiscal-years', icon: CalendarDays,   desc: 'Open and close accounting periods' },
       { name: 'Activity',          href: '/activity',                icon: Activity,       desc: 'Full audit trail of every change' },
       { name: 'Internal Audit',    href: '/audit/internal',          icon: Search,         activePrefix: '/audit/internal', desc: 'Plan reviews and track findings' },
+      { name: 'Fixed Assets',      href: '/assets',                  icon: Building2,      activePrefix: '/assets', desc: 'Equipment and vehicles with depreciation' },
     ],
   },
   {
