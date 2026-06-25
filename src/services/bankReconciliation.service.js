@@ -14,6 +14,10 @@ const bankReconciliationService = {
   remove: (id) => api.delete(`/bank-reconciliation/${id}`),
   finish: (id) => api.post(`/bank-reconciliation/${id}/finish`),
 
+  // Phase 4 — Reconciliation Depth
+  autoMatch:   (id) => api.post(`/bank-reconciliation/${id}/auto-match`),
+  acceptBatch: (id, lineRefs) => api.post(`/bank-reconciliation/${id}/accept-batch`, { lineRefs }),
+
   // Per-line actions
   match:   (id, lineRef, journalEntryId) => api.post(`/bank-reconciliation/${id}/lines/${lineRef}/match`, { journalEntryId }),
   unmatch: (id, lineRef) => api.post(`/bank-reconciliation/${id}/lines/${lineRef}/unmatch`),
