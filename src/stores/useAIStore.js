@@ -1,6 +1,18 @@
 import { create } from 'zustand'
 import aiService from '@/services/ai.service'
 
+function metaFromPayload(payload = {}) {
+  const mode = payload.mode || 'unknown'
+  return {
+    fallback: mode === 'fallback' || mode === 'rag-model-fallback',
+    mode,
+    sources: Array.isArray(payload.sources) ? payload.sources : [],
+    confident: payload.confident !== false,
+    retrievalStats: payload.retrievalStats,
+    provider: payload.provider,
+  }
+}
+
 export const useAIStore = create((set, get) => ({
   messages: [],
   recommendations: [],
@@ -25,27 +37,75 @@ export const useAIStore = create((set, get) => ({
 
   sendMessage: async (question) => {
     const history = get().messages.map((m) => ({ role: m.role, content: m.content }))
+    const userId = Date.now()
+    const assistantId = userId + 1
+    const updateAssistant = (updater) => {
+      set((s) => ({
+        messages: s.messages.map((m) => (
+          m.id === assistantId ? { ...m, ...updater(m) } : m
+        )),
+      }))
+    }
+
     set((s) => ({
-      messages: [...s.messages, { role: 'user', content: question, id: Date.now() }],
+      messages: [
+        ...s.messages,
+        { role: 'user', content: question, id: userId },
+        {
+          role: 'assistant',
+          content: '',
+          id: assistantId,
+          meta: { mode: 'streaming', sources: [], confident: true },
+        },
+      ],
       loading: true,
     }))
+
     try {
-      const { data } = await aiService.assistantChat(question, history)
-      const answer = data.data?.answer || data.data?.response || data.message
-      set((s) => ({
-        messages: [
-          ...s.messages,
-          { role: 'assistant', content: answer, id: Date.now() + 1 },
-        ],
-        loading: false,
-      }))
-    } catch (e) {
+      const finalPayload = await aiService.assistantChatStream(question, history, {
+        onMeta: (payload) => {
+          updateAssistant((m) => ({ meta: { ...(m.meta || {}), ...metaFromPayload(payload) } }))
+        },
+        onToken: (delta) => {
+          updateAssistant((m) => ({ content: `${m.content || ''}${delta}` }))
+        },
+        onDone: (payload) => {
+          const answer = payload.answer || payload.response
+          updateAssistant((m) => ({
+            content: m.content || answer || '',
+            meta: { ...(m.meta || {}), ...metaFromPayload(payload) },
+          }))
+        },
+      })
+
+      if (finalPayload?.answer || finalPayload?.response) {
+        updateAssistant((m) => ({
+          content: m.content || finalPayload.answer || finalPayload.response,
+          meta: { ...(m.meta || {}), ...metaFromPayload(finalPayload) },
+        }))
+      }
       set({ loading: false })
-      throw e
+    } catch {
+      try {
+        const { data } = await aiService.assistantChat(question, history)
+        const payload = data?.data || data || {}
+        const answer = payload.answer || payload.response || payload.message || 'I could not generate an answer right now.'
+        updateAssistant(() => ({
+          content: answer,
+          meta: metaFromPayload(payload),
+        }))
+        set({ loading: false })
+      } catch (fallbackError) {
+        set((s) => ({
+          messages: s.messages.filter((m) => m.id !== assistantId),
+          loading: false,
+        }))
+        throw fallbackError
+      }
     }
   },
 
-  // ─── Recommendations ─────────────────────────────────────────────────────────
+  // Recommendations
 
   fetchRecommendations: async () => {
     const { data } = await aiService.recommendations()

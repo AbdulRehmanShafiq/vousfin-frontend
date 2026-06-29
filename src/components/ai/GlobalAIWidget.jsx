@@ -19,6 +19,7 @@ import {
   Trash2, Bot, User, ChevronDown,
 } from 'lucide-react'
 import toast from 'react-hot-toast'
+import AssistantMessageMeta from '@/components/ai/AssistantMessageMeta'
 import { useAIStore } from '@/stores/useAIStore'
 import { cn } from '@/utils/cn'
 import { getErrorMessage } from '@/utils/errorHandler'
@@ -90,17 +91,24 @@ function Bubble({ m }) {
           : 'bg-glass-panel border border-glass text-text-primary rounded-tl-sm',
       )}>
         {isUser ? m.content : (
-          <ReactMarkdown
-            components={{
-              p:      ({ children }) => <p className="mb-1 last:mb-0">{children}</p>,
-              strong: ({ children }) => <strong className="font-bold text-cyan">{children}</strong>,
-              ul:     ({ children }) => <ul className="list-disc list-inside space-y-0.5 mt-0.5">{children}</ul>,
-              li:     ({ children }) => <li className="text-text-secondary">{children}</li>,
-              code:   ({ children }) => <code className="bg-glass rounded px-1 font-mono text-cyan">{children}</code>,
-            }}
-          >
-            {m.content}
-          </ReactMarkdown>
+          <>
+            {m.content ? (
+              <ReactMarkdown
+                components={{
+                  p:      ({ children }) => <p className="mb-1 last:mb-0">{children}</p>,
+                  strong: ({ children }) => <strong className="font-bold text-cyan">{children}</strong>,
+                  ul:     ({ children }) => <ul className="list-disc list-inside space-y-0.5 mt-0.5">{children}</ul>,
+                  li:     ({ children }) => <li className="text-text-secondary">{children}</li>,
+                  code:   ({ children }) => <code className="bg-glass rounded px-1 font-mono text-cyan">{children}</code>,
+                }}
+              >
+                {m.content}
+              </ReactMarkdown>
+            ) : (
+              <span className="text-text-muted">Thinking...</span>
+            )}
+            <AssistantMessageMeta meta={m.meta} compact />
+          </>
         )}
       </div>
       {isUser && (
@@ -203,7 +211,7 @@ export default function GlobalAIWidget() {
           </div>
           <div>
             <p className="text-sm font-bold text-text-primary leading-tight">vousFin AI</p>
-            <p className="text-[12px] text-text-muted leading-tight">Gemini Flash · Live data</p>
+            <p className="text-[12px] text-text-muted leading-tight">Grounded financial assistant</p>
           </div>
         </div>
 

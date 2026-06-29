@@ -36,7 +36,7 @@ export default function AIAssistantPage() {
           AI Financial Assistant
         </h1>
         <p className="text-text-secondary mt-1">
-          Gemini Flash AI with live access to your income statement, balance sheet, cash flow, and more.
+          Ask grounded financial questions with cited accounting context across periods.
         </p>
       </div>
 

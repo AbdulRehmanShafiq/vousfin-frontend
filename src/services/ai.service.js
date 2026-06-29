@@ -1,8 +1,95 @@
-import api from './api'
+import api, { API_BASE_URL } from './api'
+
+function authHeaders() {
+  try {
+    const authStorage = localStorage.getItem('auth-storage')
+    if (!authStorage) return {}
+    const token = JSON.parse(authStorage)?.state?.token
+    return token ? { Authorization: `Bearer ${token}` } : {}
+  } catch {
+    return {}
+  }
+}
+
+function parseSseBlock(block) {
+  let event = 'message'
+  const dataLines = []
+
+  block.split(/\r?\n/).forEach((line) => {
+    if (line.startsWith('event:')) event = line.slice(6).trim()
+    if (line.startsWith('data:')) dataLines.push(line.slice(5).trim())
+  })
+
+  const rawData = dataLines.join('\n')
+  let data
+  try {
+    data = rawData ? JSON.parse(rawData) : {}
+  } catch {
+    data = rawData
+  }
+
+  return { event, data }
+}
+
+async function assistantChatStream(question, chatHistory = [], handlers = {}) {
+  const response = await fetch(`${API_BASE_URL}/ai/rag-query/stream`, {
+    method: 'POST',
+    credentials: 'include',
+    headers: {
+      'Content-Type': 'application/json',
+      ...authHeaders(),
+    },
+    body: JSON.stringify({ question, chatHistory }),
+  })
+
+  if (response.status === 401) {
+    window.dispatchEvent(new Event('auth:unauthorized'))
+  }
+
+  if (!response.ok) {
+    const text = await response.text().catch(() => '')
+    throw new Error(text || `AI stream failed with status ${response.status}`)
+  }
+
+  const reader = response.body?.getReader?.()
+  if (!reader) throw new Error('AI stream is not readable in this browser')
+
+  const decoder = new TextDecoder()
+  let buffer = ''
+  let finalPayload = null
+
+  const processBlock = (block) => {
+    if (!block.trim()) return
+    const { event, data } = parseSseBlock(block)
+    if (event === 'meta') handlers.onMeta?.(data)
+    if (event === 'token') handlers.onToken?.(data?.delta || '')
+    if (event === 'done') {
+      finalPayload = data
+      handlers.onDone?.(data)
+    }
+    if (event === 'error') {
+      throw new Error(data?.message || 'AI stream failed')
+    }
+  }
+
+  while (true) {
+    const { value, done } = await reader.read()
+    if (done) break
+    buffer += decoder.decode(value, { stream: true })
+    const blocks = buffer.split(/\r?\n\r?\n/)
+    buffer = blocks.pop() || ''
+    blocks.forEach(processBlock)
+  }
+
+  if (buffer.trim()) processBlock(buffer)
+  return finalPayload || {}
+}
 
 const aiService = {
   assistantChat: (question, chatHistory = []) =>
     api.post('/ai/rag-query', { question, chatHistory }),
+
+  assistantChatStream,
 
   recommendations: () =>
     api.post('/ai/cashflow-recommendations'),

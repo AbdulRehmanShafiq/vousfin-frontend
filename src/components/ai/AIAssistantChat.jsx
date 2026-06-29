@@ -1,7 +1,8 @@
 import { useState, useRef, useEffect } from 'react'
 import ReactMarkdown from 'react-markdown'
-import { Send, Bot, User, Trash2 } from 'lucide-react'
+import { Send, Bot, User, Trash2, Database } from 'lucide-react'
 import toast from 'react-hot-toast'
+import AssistantMessageMeta from '@/components/ai/AssistantMessageMeta'
 import Button from '@/components/ui/Button'
 import { useAIStore } from '@/stores/useAIStore'
 import { getErrorMessage } from '@/utils/errorHandler'
@@ -45,7 +46,7 @@ export default function AIAssistantChat() {
           </div>
           <div>
             <h3 className="font-bold text-text-primary text-sm">vousFin AI Assistant</h3>
-            <p className="text-xs text-text-muted">Powered by Gemini Flash · Live Financial Data</p>
+            <p className="text-xs text-text-muted">Grounded financial assistant</p>
           </div>
         </div>
         <button
@@ -94,16 +95,24 @@ export default function AIAssistantChat() {
                 : 'bg-glass-panel border border-glass text-text-primary rounded-tl-sm'
             }`}>
               {m.role === 'assistant' ? (
-                <ReactMarkdown
-                  components={{
-                    p: ({ children }) => <p className="mb-1 last:mb-0">{children}</p>,
-                    strong: ({ children }) => <strong className="font-bold text-cyan">{children}</strong>,
-                    ul: ({ children }) => <ul className="list-disc list-inside space-y-1 mt-1">{children}</ul>,
-                    li: ({ children }) => <li className="text-text-secondary">{children}</li>,
-                  }}
-                >
-                  {m.content}
-                </ReactMarkdown>
+                <>
+                  {m.content ? (
+                    <ReactMarkdown
+                      components={{
+                        p: ({ children }) => <p className="mb-1 last:mb-0">{children}</p>,
+                        strong: ({ children }) => <strong className="font-bold text-cyan">{children}</strong>,
+                        ul: ({ children }) => <ul className="list-disc list-inside space-y-1 mt-1">{children}</ul>,
+                        li: ({ children }) => <li className="text-text-secondary">{children}</li>,
+                      }}
+                    >
+                      {m.content}
+                    </ReactMarkdown>
+                  ) : (
+                    <span className="text-text-muted">Thinking...</span>
+                  )}
+
+                  <AssistantMessageMeta meta={m.meta} />
+                </>
               ) : (
                 m.content
               )}
@@ -132,9 +141,15 @@ export default function AIAssistantChat() {
         <div ref={bottomRef} />
       </div>
 
+      <div className="border-t border-glass px-4 pt-3">
+        <div className="inline-flex items-center gap-1.5 rounded-full border border-glass bg-glass-panel px-2.5 py-1 text-[11px] text-text-muted">
+          <Database className="h-3 w-3 text-cyan" />
+          <span>Financial data - All periods</span>
+        </div>
+      </div>
       {/* Input */}
       <form
-        className="flex gap-3 border-t border-glass p-4 flex-shrink-0"
+        className="flex gap-3 p-4 flex-shrink-0"
         onSubmit={(e) => { e.preventDefault(); submit() }}
       >
         <input
