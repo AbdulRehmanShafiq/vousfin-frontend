@@ -71,6 +71,7 @@ export function useCreateTransaction() {
       queryClient.invalidateQueries({ queryKey: ['customers'] })
       queryClient.invalidateQueries({ queryKey: ['vendors'] })
       queryClient.invalidateQueries({ queryKey: ['dashboard'] })
+      queryClient.invalidateQueries({ queryKey: ['outstanding'] })
       // #6 — when approvals are on and the amount is over the limit, the backend
       // parks the transaction (status 'pending') instead of posting it.
       if (result?.status === 'pending') {
@@ -106,6 +107,7 @@ export function useCreateInstallmentTransaction() {
       queryClient.invalidateQueries({ queryKey: ['customers'] })
       queryClient.invalidateQueries({ queryKey: ['vendors'] })
       queryClient.invalidateQueries({ queryKey: ['dashboard'] })
+      queryClient.invalidateQueries({ queryKey: ['outstanding'] })
       toast.success('Installment plan created successfully')
     },
     onError: (error) => {
@@ -144,6 +146,7 @@ export function useNLConfirm() {
       queryClient.invalidateQueries({ queryKey: ['customers'] })
       queryClient.invalidateQueries({ queryKey: ['vendors'] })
       queryClient.invalidateQueries({ queryKey: ['dashboard'] })
+      queryClient.invalidateQueries({ queryKey: ['outstanding'] })
       if (result?.status === 'pending') {
         queryClient.invalidateQueries({ queryKey: ['approvals'] })
         queryClient.invalidateQueries({ queryKey: ['approvals-count'] })
@@ -189,6 +192,7 @@ export function useExcelConfirm() {
       queryClient.invalidateQueries({ queryKey: ['customers'] })
       queryClient.invalidateQueries({ queryKey: ['vendors'] })
       queryClient.invalidateQueries({ queryKey: ['dashboard'] })
+      queryClient.invalidateQueries({ queryKey: ['outstanding'] })
       if (result?.pending > 0) {
         queryClient.invalidateQueries({ queryKey: ['approvals'] })
         queryClient.invalidateQueries({ queryKey: ['approvals-count'] })
@@ -248,6 +252,7 @@ export function useUpdateTransaction() {
       queryClient.invalidateQueries({ queryKey: ['customers'] })
       queryClient.invalidateQueries({ queryKey: ['vendors'] })
       queryClient.invalidateQueries({ queryKey: ['dashboard'] })
+      queryClient.invalidateQueries({ queryKey: ['outstanding'] })
       toast.success('Transaction updated successfully')
     },
     onError: (error) => {
@@ -294,6 +299,7 @@ export function useReverseTransaction() {
       queryClient.invalidateQueries({ queryKey: ['vendors'] })
       queryClient.invalidateQueries({ queryKey: ['dashboard'] })
       queryClient.invalidateQueries({ queryKey: ['inventory'] })
+      queryClient.invalidateQueries({ queryKey: ['outstanding'] })
       toast.success('Transaction reversed successfully')
     },
     onError: (error) => {

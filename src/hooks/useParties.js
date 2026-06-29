@@ -289,13 +289,20 @@ export function useRepairARAPTransactions() {
       return data.data
     },
     onSuccess: (result) => {
-      // Invalidate all AR/AP-dependent queries so the UI refreshes immediately
+      // Invalidate all AR/AP-dependent queries so the UI refreshes immediately.
+      // Repair touches both receivables (AR) and payables (AP) so both sides need clearing.
       queryClient.invalidateQueries({ queryKey: ['outstanding'] })
+      queryClient.invalidateQueries({ queryKey: ['outstanding-balances'] })
       queryClient.invalidateQueries({ queryKey: ['customer-balance'] })
       queryClient.invalidateQueries({ queryKey: ['customer-stats'] })
       queryClient.invalidateQueries({ queryKey: ['customer-transactions'] })
       queryClient.invalidateQueries({ queryKey: ['customers'] })
+      queryClient.invalidateQueries({ queryKey: ['vendor-balance'] })
+      queryClient.invalidateQueries({ queryKey: ['vendor-transactions'] })
+      queryClient.invalidateQueries({ queryKey: ['vendors'] })
       queryClient.invalidateQueries({ queryKey: ['transactions'] })
+      queryClient.invalidateQueries({ queryKey: ['reports'] })
+      queryClient.invalidateQueries({ queryKey: ['dashboard'] })
       const fixed = (result?.arFixed || 0) + (result?.apFixed || 0)
       if (fixed === 0) {
         toast.success('Books are consistent — no repairs needed.')

@@ -68,6 +68,14 @@ export function useEarlyPaymentDiscount() {
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: ['invoices'] })
       qc.invalidateQueries({ queryKey: ['ar-ap-report'] })
+      // Discount reduces the remaining AR balance → outstanding and accounts must refresh.
+      qc.invalidateQueries({ queryKey: ['outstanding'] })
+      qc.invalidateQueries({ queryKey: ['outstanding-balances'] })
+      qc.invalidateQueries({ queryKey: ['accounts'] })
+      qc.invalidateQueries({ queryKey: ['transactions'] })
+      qc.invalidateQueries({ queryKey: ['customer-balance'] })
+      qc.invalidateQueries({ queryKey: ['reports'] })
+      qc.invalidateQueries({ queryKey: ['dashboard'] })
       toast.success('Early-payment discount applied')
     },
     onError: (e) => toast.error(getErrorMessage(e)),
@@ -77,6 +85,14 @@ export function useEarlyPaymentDiscount() {
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: ['bills'] })
       qc.invalidateQueries({ queryKey: ['ar-ap-report'] })
+      // Discount reduces the remaining AP balance → outstanding and accounts must refresh.
+      qc.invalidateQueries({ queryKey: ['outstanding'] })
+      qc.invalidateQueries({ queryKey: ['outstanding-balances'] })
+      qc.invalidateQueries({ queryKey: ['accounts'] })
+      qc.invalidateQueries({ queryKey: ['transactions'] })
+      qc.invalidateQueries({ queryKey: ['vendor-balance'] })
+      qc.invalidateQueries({ queryKey: ['reports'] })
+      qc.invalidateQueries({ queryKey: ['dashboard'] })
       toast.success('Early-payment discount applied')
     },
     onError: (e) => toast.error(getErrorMessage(e)),

@@ -277,6 +277,15 @@ function makeCreditNoteMutation(call, { successMessage, invalidateId } = {}) {
         if (invalidateId && vars?.id) {
           qc.invalidateQueries({ queryKey: ['credit-note', vars.id] })
         }
+        // Applying or approving a credit note reduces the AR remaining balance;
+        // outstanding, balances, and reports must all refresh immediately.
+        qc.invalidateQueries({ queryKey: ['outstanding'] })
+        qc.invalidateQueries({ queryKey: ['outstanding-balances'] })
+        qc.invalidateQueries({ queryKey: ['accounts'] })
+        qc.invalidateQueries({ queryKey: ['customer-balance'] })
+        qc.invalidateQueries({ queryKey: ['customer-stats'] })
+        qc.invalidateQueries({ queryKey: ['reports'] })
+        qc.invalidateQueries({ queryKey: ['dashboard'] })
       },
       onError: (err) => toast.error(getErrorMessage(err)),
     })

@@ -35,10 +35,18 @@ function Queue() {
   })
   const items = data?.data || []
 
-  const refresh = () => {
+  const refresh = (wasApproved = false) => {
     qc.invalidateQueries({ queryKey: ['approvals'] })
     qc.invalidateQueries({ queryKey: ['approvals-count'] })
     qc.invalidateQueries({ queryKey: ['transactions'] })
+    if (wasApproved) {
+      // Approving a pending transaction posts it through createTransaction, which may
+      // set AR/AP lifecycle fields. Immediately refresh all AR/AP-dependent views.
+      qc.invalidateQueries({ queryKey: ['outstanding'] })
+      qc.invalidateQueries({ queryKey: ['accounts'] })
+      qc.invalidateQueries({ queryKey: ['reports'] })
+      qc.invalidateQueries({ queryKey: ['dashboard'] })
+    }
   }
 
   const decide = async (id, action) => {
@@ -50,9 +58,8 @@ function Queue() {
     }
     setBusyId(id)
     try {
-      if (action === 'approve') { await approvalService.approve(id); toast.success('Approved & posted to your ledger') }
-      else { await approvalService.reject(id, reason || undefined); toast('Rejected', { icon: '🚫' }) }
-      refresh()
+      if (action === 'approve') { await approvalService.approve(id); toast.success('Approved & posted to your ledger'); refresh(true) }
+      else { await approvalService.reject(id, reason || undefined); toast('Rejected', { icon: '🚫' }); refresh(false) }
     } catch (e) { toast.error(getErrorMessage(e)) }
     finally { setBusyId(null) }
   }

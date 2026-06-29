@@ -73,7 +73,17 @@ export function useApproveAction() {
   const qc = useQueryClient()
   return useMutation({
     mutationFn: (id) => autonomyService.approveAction(id).then(r => r.data),
-    onSuccess:  () => { qc.invalidateQueries({ queryKey: [...KEY, 'inbox'] }); toast.success('Approved') },
+    onSuccess:  () => {
+      qc.invalidateQueries({ queryKey: [...KEY, 'inbox'] })
+      // An approved autonomy action may post a payment or booking transaction,
+      // which can change AR/AP outstanding balances and account totals.
+      qc.invalidateQueries({ queryKey: ['outstanding'] })
+      qc.invalidateQueries({ queryKey: ['transactions'] })
+      qc.invalidateQueries({ queryKey: ['accounts'] })
+      qc.invalidateQueries({ queryKey: ['reports'] })
+      qc.invalidateQueries({ queryKey: ['dashboard'] })
+      toast.success('Approved')
+    },
     onError:    (err) => handleActionError(qc, err, 'Could not approve'),
   })
 }

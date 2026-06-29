@@ -31,6 +31,16 @@ export function useProjectionRebuild() {
     onSuccess: (res) => {
       qc.invalidateQueries({ queryKey: ['ar-ap-report'] })
       qc.invalidateQueries({ queryKey: ['ar-ap-integrity'] })
+      // Rebuild rewrites remaining-balance projections for all AR/AP entries —
+      // every AR/AP-dependent view must refresh.
+      qc.invalidateQueries({ queryKey: ['outstanding'] })
+      qc.invalidateQueries({ queryKey: ['outstanding-balances'] })
+      qc.invalidateQueries({ queryKey: ['transactions'] })
+      qc.invalidateQueries({ queryKey: ['customer-balance'] })
+      qc.invalidateQueries({ queryKey: ['vendor-balance'] })
+      qc.invalidateQueries({ queryKey: ['customer-stats'] })
+      qc.invalidateQueries({ queryKey: ['reports'] })
+      qc.invalidateQueries({ queryKey: ['dashboard'] })
       const s = res?.data?.data
       toast.success(s ? `Rebuilt ${s.rebuilt} · in-sync ${s.alreadyInSync}` : 'Projections rebuilt')
     },
