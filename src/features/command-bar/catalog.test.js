@@ -33,6 +33,11 @@ describe('deriveCatalog', () => {
     expect(byId('sales').enablementKey).toBeNull()
   })
 
+  it('carries a readable desc for help generation', () => {
+    expect(byId('sales.invoices').desc).toMatch(/customers/i)
+    expect(byId('sales').desc).toBeTruthy()
+  })
+
   it('produces globally-unique ids', () => {
     const ids = catalog.map((e) => e.id)
     expect(new Set(ids).size).toBe(ids.length)
