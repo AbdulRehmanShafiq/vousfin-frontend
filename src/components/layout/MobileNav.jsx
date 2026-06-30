@@ -13,7 +13,7 @@ import { NavLink } from 'react-router-dom'
 import { LayoutDashboard, BarChart3, Plus, Sparkles, Menu } from 'lucide-react'
 import { cn } from '@/utils/cn'
 import { useUIStore } from '@/stores/useUIStore'
-import { useAIStore } from '@/stores/useAIStore'
+import { useCommandBar } from '@/features/command-bar/useCommandBar'
 import { usePermissions } from '@/hooks/usePermissions'
 import MobileMenuSheet from './MobileMenuSheet'
 
@@ -52,7 +52,7 @@ function Tab({ icon: Icon, label, to, onClick, active }) {
 export default function MobileNav() {
   const [menuOpen, setMenuOpen] = useState(false)
   const openTxModal = useUIStore((s) => s.openTxModal)
-  const openChat = useAIStore((s) => s.openChat)
+  const openAssistant = useCommandBar((s) => s.openAssistant)
   const { can } = usePermissions()
   const canCreate = can('transaction:create')
 
@@ -79,7 +79,7 @@ export default function MobileNav() {
           <div className="flex-1" aria-hidden="true" />
         )}
 
-        <Tab icon={Sparkles} label="AI" onClick={openChat} />
+        <Tab icon={Sparkles} label="AI" onClick={openAssistant} />
         <Tab icon={Menu} label="Menu" onClick={() => setMenuOpen(true)} active={menuOpen} />
       </nav>
 

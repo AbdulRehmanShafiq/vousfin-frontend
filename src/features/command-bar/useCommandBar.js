@@ -28,7 +28,12 @@ export function getResults(query, disabledModuleKeys = [], limit = 8) {
 export const useCommandBar = create((set) => ({
   open: false,
   query: '',
-  openBar: () => set({ open: true }),
-  closeBar: () => set({ open: false, query: '' }),
+  // 'search' = find modules/pages/actions; 'chat' = talk to the AI assistant
+  // inline (the floating assistant is merged into this one panel).
+  view: 'search',
+  openBar: () => set({ open: true, view: 'search' }),
+  openAssistant: () => set({ open: true, view: 'chat' }),
+  setView: (view) => set({ view }),
+  closeBar: () => set({ open: false, query: '', view: 'search' }),
   setQuery: (query) => set({ query }),
 }))

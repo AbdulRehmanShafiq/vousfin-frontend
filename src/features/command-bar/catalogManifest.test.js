@@ -1,6 +1,7 @@
 import { describe, it, expect } from 'vitest'
 import { readFileSync, existsSync } from 'node:fs'
 import path from 'node:path'
+import process from 'node:process'
 import { MODULES } from '@/components/layout/nav.config.js'
 import { deriveCatalog } from './catalog'
 import { withActions } from './actions'
@@ -17,7 +18,11 @@ describe('catalog manifest drift guard', () => {
       expect(true).toBe(true)
       return
     }
-    const live = withActions(deriveCatalog(MODULES)).map(({ icon, ...rest }) => rest)
+    const live = withActions(deriveCatalog(MODULES)).map((e) => {
+      const rest = { ...e }
+      delete rest.icon // the committed manifest strips React component icons
+      return rest
+    })
     const committed = JSON.parse(readFileSync(manifestPath, 'utf8')).entries
     expect(committed).toEqual(live)
   })

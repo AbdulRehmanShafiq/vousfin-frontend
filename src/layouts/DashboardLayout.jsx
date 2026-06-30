@@ -4,7 +4,6 @@ import { useQueryClient } from '@tanstack/react-query'
 import RailPanel from '@/components/layout/RailPanel'
 import Header from '@/components/layout/Header'
 import MobileNav from '@/components/layout/MobileNav'
-import GlobalAIWidget from '@/components/ai/GlobalAIWidget'
 import TransactionFormModal from '@/components/forms/TransactionFormModal'
 import AnnouncementBanner from '@/components/AnnouncementBanner'
 import FeedbackModal from '@/components/FeedbackModal'
@@ -60,11 +59,10 @@ export default function DashboardLayout() {
       {/* Mobile bottom nav — the only mobile nav surface (< lg) */}
       <MobileNav />
 
-      {/* Global command bar — open with Cmd/Ctrl+K or "/" from anywhere */}
+      {/* Global command bar — search + inline AI assistant. Open with
+          Cmd/Ctrl+K, "/", the header button, or the mobile "AI" tab. The old
+          floating AI widget is merged into this one panel. */}
       <CommandBar />
-
-      {/* Global AI Assistant widget — persists across all route changes */}
-      <GlobalAIWidget />
 
       {/* Universal Create modal — openable from the bottom bar on any page */}
       <TransactionFormModal

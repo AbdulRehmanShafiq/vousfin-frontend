@@ -9,6 +9,9 @@ if (!globalThis.IntersectionObserver) {
     takeRecords() { return [] }
   }
 }
+if (typeof Element !== 'undefined' && !Element.prototype.scrollIntoView) {
+  Element.prototype.scrollIntoView = () => {}
+}
 if (!globalThis.matchMedia) {
   globalThis.matchMedia = (query) => ({
     matches: false,

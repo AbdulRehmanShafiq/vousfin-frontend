@@ -35,16 +35,16 @@ export default function Header() {
         <h1 className="font-display text-lg font-semibold text-text-primary tracking-tight">{title}</h1>
 
         <div className="flex items-center gap-x-3 lg:gap-x-4">
-          {/* Search → global command bar (also Cmd/Ctrl+K or "/") */}
+          {/* Search + AI assistant → the one unified command bar (also Cmd/Ctrl+K or "/") */}
           <button
             type="button"
             onClick={openCommandBar}
             aria-keyshortcuts="Control+K"
-            aria-label="Search VousFin"
+            aria-label="Search or ask the AI assistant"
             className="inline-flex items-center gap-2 rounded-lg border border-glass bg-glass px-2.5 py-1.5 text-sm text-text-muted hover:text-text-primary hover:bg-glass-hover transition-colors"
           >
             <Search className="h-[18px] w-[18px]" aria-hidden="true" />
-            <span className="hidden sm:inline">Search</span>
+            <span className="hidden sm:inline">Search or ask AI</span>
             <kbd className="hidden rounded bg-navy px-1.5 text-[10px] leading-5 lg:inline">⌘K</kbd>
           </button>
 
