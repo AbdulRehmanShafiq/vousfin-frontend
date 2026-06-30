@@ -8,6 +8,7 @@ vi.mock('react-router-dom', async (orig) => ({ ...(await orig()), useNavigate: (
 vi.mock('@/stores/useModulesStore', () => ({ useModulesStore: (sel) => sel({ disabled: [] }) }))
 vi.mock('./catalogApi', () => ({ searchCatalogSemantic: vi.fn().mockResolvedValue([]) }))
 vi.mock('./howToApi', () => ({ askHowTo: vi.fn() }))
+vi.mock('./logApi', () => ({ logSearchEvent: vi.fn() }))
 
 import { askHowTo } from './howToApi'
 import { CommandBar } from './CommandBar'

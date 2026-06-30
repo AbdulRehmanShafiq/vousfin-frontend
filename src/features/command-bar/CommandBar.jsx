@@ -7,6 +7,7 @@ import { shouldEscalate, mergeResults } from './escalation'
 import { searchCatalogSemantic } from './catalogApi'
 import { isHowToQuery } from './intent'
 import { askHowTo } from './howToApi'
+import { logSearchEvent } from './logApi'
 
 const GROUP_LABEL = { module: 'Modules', page: 'Pages', action: 'Actions', help: 'Help' }
 const EMPTY = [] // stable empty-results reference (avoids needless re-renders)
@@ -89,15 +90,33 @@ export function CommandBar() {
     }
   }, [open])
 
+  // Log a "no result" event once a query settles with nothing to show — this is
+  // the signal that drives the Admin content-gap backlog. Debounced; skipped for
+  // how-to queries (those get an AI answer instead of navigation results).
+  const resultCount = results.length
+  useEffect(() => {
+    if (!open) return undefined
+    const q = query.trim()
+    if (q.length < 3 || resultCount > 0 || isHowToQuery(q)) return undefined
+    const timer = setTimeout(() => logSearchEvent({ kind: 'catalog', query: q, noResult: true }), 700)
+    return () => clearTimeout(timer)
+  }, [open, query, resultCount])
+
   if (!open) return null
 
-  const go = (entry) => { if (!entry) return; closeBar(); navigate(entry.href) }
+  const go = (entry) => {
+    if (!entry) return
+    logSearchEvent({ kind: 'catalog', query, resultClickedId: entry.id })
+    closeBar()
+    navigate(entry.href)
+  }
 
   const triggerAskAi = async () => {
     setHowto({ loading: true, data: null })
     try {
       const data = await askHowTo(query)
       setHowto({ loading: false, data })
+      logSearchEvent({ kind: 'howto', query, noResult: !data.grounded })
     } catch {
       setHowto({ loading: false, data: { grounded: false, answer: 'Sorry, I could not load an answer. Please try again.', href: null, sources: [] } })
     }

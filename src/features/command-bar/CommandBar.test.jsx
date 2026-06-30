@@ -11,6 +11,7 @@ vi.mock('react-router-dom', async (orig) => ({
 vi.mock('@/stores/useModulesStore', () => ({
   useModulesStore: (sel) => sel({ disabled: [] }),
 }))
+vi.mock('./logApi', () => ({ logSearchEvent: vi.fn() }))
 
 import { CommandBar } from './CommandBar'
 

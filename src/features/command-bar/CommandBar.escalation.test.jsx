@@ -11,6 +11,7 @@ vi.mock('@/stores/useModulesStore', () => ({
   useModulesStore: (sel) => sel({ disabled: [] }),
 }))
 vi.mock('./catalogApi', () => ({ searchCatalogSemantic: vi.fn() }))
+vi.mock('./logApi', () => ({ logSearchEvent: vi.fn() }))
 
 import { searchCatalogSemantic } from './catalogApi'
 import { CommandBar } from './CommandBar'
