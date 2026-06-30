@@ -12,6 +12,7 @@ const Features = lazy(() => import('./sections/Features'))
 const ShowcaseScroll = lazy(() => import('./sections/ShowcaseScroll'))
 const HowItWorks = lazy(() => import('./sections/HowItWorks'))
 const AIPower = lazy(() => import('./sections/AIPower'))
+const CommandBarShowcase = lazy(() => import('./sections/CommandBarShowcase'))
 const ModulesBento = lazy(() => import('./sections/ModulesBento'))
 const StatsCounter = lazy(() => import('./sections/StatsCounter'))
 const Pricing = lazy(() => import('./sections/Pricing'))
@@ -59,6 +60,7 @@ export default function LandingPage() {
         <Suspense fallback={<SectionFallback />}><HowItWorks /></Suspense>
         <div className="vf-seam" aria-hidden="true" />
         <Suspense fallback={<SectionFallback />}><AIPower /></Suspense>
+        <Suspense fallback={<SectionFallback />}><CommandBarShowcase /></Suspense>
         <Suspense fallback={<SectionFallback />}><ModulesBento /></Suspense>
         <div className="vf-seam" aria-hidden="true" />
         <Suspense fallback={<SectionFallback />}><StatsCounter /></Suspense>

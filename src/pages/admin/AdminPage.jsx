@@ -12,6 +12,7 @@ import SelectField from '@/components/ui/SelectField'
 import { cn } from '@/utils/cn'
 import { Star, Activity, Zap } from 'lucide-react'
 import AppearanceCard from '@/components/settings/AppearanceCard'
+import SearchInsightsTab from './SearchInsightsTab'
 
 // ── Stat card ─────────────────────────────────────────────────────────────────
 function StatCard({ label, value, icon: Icon, accent = 'text-accent' }) {
@@ -1380,6 +1381,7 @@ const TABS = [
   { key: 'support', label: 'Support' },
   { key: 'announcements', label: 'Announcements' },
   { key: 'activity', label: 'Activity' },
+  { key: 'search', label: 'Search Insights' },
   { key: 'appearance', label: 'Appearance' },
 ]
 
@@ -1421,6 +1423,7 @@ export default function AdminPage() {
         {activeTab === 'support' && <SupportTab />}
         {activeTab === 'announcements' && <AnnouncementsTab />}
         {activeTab === 'activity' && <ActivityTab />}
+        {activeTab === 'search' && <SearchInsightsTab />}
         {activeTab === 'appearance' && <AppearanceTab />}
       </div>
     </div>
