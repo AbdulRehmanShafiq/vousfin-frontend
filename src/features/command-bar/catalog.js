@@ -42,6 +42,7 @@ export function deriveCatalog(modules) {
       path: [m.name],
       href: m.href,
       icon: m.icon,
+      desc: m.subtitle || '',
       synonyms: [...tokens(m.subtitle), ...tokens(m.tag), ...(SYNONYMS[m.key] || [])],
       moduleKey: m.key,
       enablementKey,
@@ -56,6 +57,7 @@ export function deriveCatalog(modules) {
         path: [m.name, item.name],
         href: item.href,
         icon: item.icon,
+        desc: item.desc || '',
         synonyms: [
           ...tokens(item.desc), ...tokens(m.tag), ...tokens(m.name),
           ...(SYNONYMS[id] || []),
