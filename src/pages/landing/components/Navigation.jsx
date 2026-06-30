@@ -199,6 +199,15 @@ export default function Navigation() {
             {/* Desktop CTAs */}
             <div className="hidden lg:flex items-center gap-6">
               <motion.button
+                onClick={() => navigate("/docs")}
+                className="font-body text-sm font-semibold text-[#A89B8C] hover:text-[#C8A96E] transition-colors duration-300"
+                variants={ctaVariants}
+                initial="hidden"
+                animate="visible"
+              >
+                Docs
+              </motion.button>
+              <motion.button
                 onClick={() => navigate("/login")}
                 className="font-body text-sm font-semibold text-[#A89B8C] hover:text-[#C8A96E] transition-colors duration-300"
                 variants={ctaVariants}

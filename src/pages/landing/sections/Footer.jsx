@@ -1,4 +1,5 @@
 import { motion } from "framer-motion";
+import { Link } from "react-router-dom";
 import { useReducedMotion } from "../hooks/useReducedMotion";
 
 const Github = ({ size, className }) => (
@@ -14,14 +15,25 @@ const Linkedin = ({ size, className }) => (
 );
 
 const productLinks = [
-  "Dashboard",
-  "Transactions",
-  "Reports",
-  "AI Assistant",
-  "Forecasting",
+  { label: "Dashboard", to: "/dashboard" },
+  { label: "Transactions", to: "/transactions" },
+  { label: "Reports", to: "/financial-reports" },
+  { label: "AI Assistant", to: "/ai/assistant" },
+  { label: "Forecasting", to: "/ai-analyst/forecast" },
+  { label: "Documentation", to: "/docs" },
 ];
-const companyLinks = ["About", "Blog", "Careers", "Contact"];
-const legalLinks = ["Privacy", "Terms", "Security", "GDPR"];
+const companyLinks = [
+  { label: "About", to: "/about" },
+  { label: "Blog", to: "/blog" },
+  { label: "Careers", to: "/careers" },
+  { label: "Contact", to: "/contact" },
+];
+const legalLinks = [
+  { label: "Privacy", to: "/privacy" },
+  { label: "Terms", to: "/terms" },
+  { label: "Security", to: "/security" },
+  { label: "GDPR", to: "/gdpr" },
+];
 
 const linkContainer = {
   hidden: {},
@@ -94,30 +106,18 @@ export default function Footer() {
               Product
             </h3>
             <ul className="space-y-3">
-              {productLinks.map((label) => {
-                const targetId = label === "Dashboard" ? "hero" :
-                                 label === "Transactions" ? "modules" :
-                                 label === "Reports" ? "features" :
-                                 label === "AI Assistant" ? "ai-power" :
-                                 label === "Forecasting" ? "modules" : "hero";
-                return (
-                  <motion.li key={label} variants={linkItem(reduced)}>
-                    <a
-                      href={`#${targetId}`}
-                      onClick={(e) => {
-                        e.preventDefault();
-                        const el = document.getElementById(targetId);
-                        if (el) el.scrollIntoView({ behavior: "smooth", block: "start" });
-                      }}
-                      className="group inline-flex items-center text-sm text-[#A89B8C] transition-colors hover:text-[#C8A96E]"
-                    >
-                      <span className="transition-transform duration-200 group-hover:translate-x-1">
-                        {label}
-                      </span>
-                    </a>
-                  </motion.li>
-                );
-              })}
+              {productLinks.map((item) => (
+                <motion.li key={item.label} variants={linkItem(reduced)}>
+                  <Link
+                    to={item.to}
+                    className="group inline-flex items-center text-sm text-[#A89B8C] transition-colors hover:text-[#C8A96E]"
+                  >
+                    <span className="transition-transform duration-200 group-hover:translate-x-1">
+                      {item.label}
+                    </span>
+                  </Link>
+                </motion.li>
+              ))}
             </ul>
           </motion.div>
 
@@ -132,16 +132,16 @@ export default function Footer() {
               Company
             </h3>
             <ul className="space-y-3">
-              {companyLinks.map((label) => (
-                <motion.li key={label} variants={linkItem(reduced)}>
-                  <a
-                    href="#" onClick={(e) => e.preventDefault()}
+              {companyLinks.map((item) => (
+                <motion.li key={item.label} variants={linkItem(reduced)}>
+                  <Link
+                    to={item.to}
                     className="group inline-flex items-center text-sm text-[#A89B8C] transition-colors hover:text-[#C8A96E]"
                   >
                     <span className="transition-transform duration-200 group-hover:translate-x-1">
-                      {label}
+                      {item.label}
                     </span>
-                  </a>
+                  </Link>
                 </motion.li>
               ))}
             </ul>
@@ -158,16 +158,16 @@ export default function Footer() {
               Legal
             </h3>
             <ul className="space-y-3">
-              {legalLinks.map((label) => (
-                <motion.li key={label} variants={linkItem(reduced)}>
-                  <a
-                    href="#" onClick={(e) => e.preventDefault()}
+              {legalLinks.map((item) => (
+                <motion.li key={item.label} variants={linkItem(reduced)}>
+                  <Link
+                    to={item.to}
                     className="group inline-flex items-center text-sm text-[#A89B8C] transition-colors hover:text-[#C8A96E]"
                   >
                     <span className="transition-transform duration-200 group-hover:translate-x-1">
-                      {label}
+                      {item.label}
                     </span>
-                  </a>
+                  </Link>
                 </motion.li>
               ))}
             </ul>

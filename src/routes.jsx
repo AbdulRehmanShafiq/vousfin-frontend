@@ -35,6 +35,8 @@ import SkeletonLoader from '@/components/ui/SkeletonLoader'
 import ErrorBoundary from '@/components/common/ErrorBoundary'
 
 const LandingPage = lazy(() => import('@/pages/landing/LandingPage'))
+const DocsPage = lazy(() => import('@/pages/public/DocsPage'))
+const PublicContentPage = lazy(() => import('@/pages/public/PublicContentPage'))
 const Login = lazy(() => import('@/pages/auth/Login'))
 const Register = lazy(() => import('@/pages/auth/Register'))
 const ForgotPassword = lazy(() => import('@/pages/auth/ForgotPassword'))
@@ -181,6 +183,17 @@ function RequireBusiness() {
 
 export const routes = [
   { path: '/', element: <RootRedirect /> },
+
+  /* Public marketing / legal / docs pages — reachable without auth */
+  { path: 'docs', element: withSuspense(DocsPage) },
+  { path: 'about', element: withSuspense(() => <PublicContentPage doc="about" />) },
+  { path: 'contact', element: withSuspense(() => <PublicContentPage doc="contact" />) },
+  { path: 'careers', element: withSuspense(() => <PublicContentPage doc="careers" />) },
+  { path: 'blog', element: withSuspense(() => <PublicContentPage doc="blog" />) },
+  { path: 'privacy', element: withSuspense(() => <PublicContentPage doc="privacy" />) },
+  { path: 'terms', element: withSuspense(() => <PublicContentPage doc="terms" />) },
+  { path: 'security', element: withSuspense(() => <PublicContentPage doc="security" />) },
+  { path: 'gdpr', element: withSuspense(() => <PublicContentPage doc="gdpr" />) },
 
   /* Public auth pages — always reachable (no auto-redirect away) */
   {
