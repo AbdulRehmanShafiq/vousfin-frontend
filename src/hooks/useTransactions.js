@@ -1,8 +1,8 @@
-import { useQuery, useInfiniteQuery, useMutation, useQueryClient } from '@tanstack/react-query'
+import { useQuery, useInfiniteQuery, useMutation, useQueryClient, keepPreviousData } from '@tanstack/react-query'
 import toast from 'react-hot-toast'
 import api from '@/services/api'
 
-const INFINITE_PAGE_SIZE = 50
+const INFINITE_PAGE_SIZE = 999
 
 function parseTransactionPage(data, pageParam) {
   const inner = data.data || {}
@@ -52,6 +52,9 @@ export function useTransactions(filters = {}) {
       return parseTransactionPage(data, 1)
     },
     staleTime: 60 * 1000,
+    // Keep the current rows on screen while a new page/filter loads, instead of
+    // flashing an empty spinner — makes paging and filtering feel instant.
+    placeholderData: keepPreviousData,
   })
 }
 

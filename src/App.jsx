@@ -12,6 +12,10 @@ const queryClient = new QueryClient({
       refetchOnWindowFocus: false,
       retry: 1,
       staleTime: 5 * 60 * 1000,
+      // Keep fetched data in cache for 30 min after a page unmounts, so going
+      // back to a screen renders instantly from cache (then revalidates if
+      // stale) instead of showing a spinner and re-hitting the slow API.
+      gcTime: 30 * 60 * 1000,
     },
   },
 })

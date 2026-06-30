@@ -1,4 +1,4 @@
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
+import { useQuery, useMutation, useQueryClient, keepPreviousData } from '@tanstack/react-query'
 import toast from 'react-hot-toast'
 import customerService from '@/services/customer.service'
 import vendorService from '@/services/vendor.service'
@@ -17,6 +17,7 @@ export function useCustomers(params = { limit: 100 }) {
       return data.data
     },
     staleTime: 2 * 60 * 1000,
+    placeholderData: keepPreviousData,
   })
 }
 
@@ -128,6 +129,7 @@ export function useVendors(params = { limit: 100 }) {
       return data.data
     },
     staleTime: 2 * 60 * 1000,
+    placeholderData: keepPreviousData,
   })
 }
 

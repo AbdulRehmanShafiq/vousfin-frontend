@@ -1,6 +1,6 @@
 // src/hooks/useInvoices.js
 // Phase 1 + Phase 2 — React Query hooks for Invoice, Bill, and Credit Note domains.
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
+import { useQuery, useMutation, useQueryClient, keepPreviousData } from '@tanstack/react-query'
 import toast from 'react-hot-toast'
 import invoiceService from '@/services/invoice.service'
 import billService    from '@/services/bill.service'
@@ -17,6 +17,7 @@ export function useInvoices(params = {}) {
       return data.data
     },
     staleTime: 60 * 1000,
+    placeholderData: keepPreviousData,
   })
 }
 
@@ -126,6 +127,7 @@ export function useBills(params = {}) {
       return data.data
     },
     staleTime: 60 * 1000,
+    placeholderData: keepPreviousData,
   })
 }
 
