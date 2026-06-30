@@ -8,6 +8,8 @@ import GlobalAIWidget from '@/components/ai/GlobalAIWidget'
 import TransactionFormModal from '@/components/forms/TransactionFormModal'
 import AnnouncementBanner from '@/components/AnnouncementBanner'
 import FeedbackModal from '@/components/FeedbackModal'
+import { CommandBar } from '@/features/command-bar/CommandBar'
+import { useCommandBarHotkey } from '@/features/command-bar/useCommandBarHotkey'
 import { useAuthStore } from '@/stores/useAuthStore'
 import { useBusinessStore } from '@/stores/useBusinessStore'
 import { useUIStore } from '@/stores/useUIStore'
@@ -15,6 +17,7 @@ import { useIdleLogout } from '@/hooks/useIdleLogout'
 
 export default function DashboardLayout() {
   useIdleLogout()
+  useCommandBarHotkey()
   const { user } = useAuthStore()
   const { activeBusiness, fetchBusiness } = useBusinessStore()
   const queryClient = useQueryClient()
@@ -56,6 +59,9 @@ export default function DashboardLayout() {
 
       {/* Mobile bottom nav — the only mobile nav surface (< lg) */}
       <MobileNav />
+
+      {/* Global command bar — open with Cmd/Ctrl+K or "/" from anywhere */}
+      <CommandBar />
 
       {/* Global AI Assistant widget — persists across all route changes */}
       <GlobalAIWidget />
