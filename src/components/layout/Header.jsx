@@ -1,6 +1,7 @@
 import { useRef, useState } from 'react'
-import { Bell, LogOut, Palette, ShieldCheck, MessageSquare, ChevronDown } from 'lucide-react'
+import { Bell, LogOut, Palette, ShieldCheck, MessageSquare, ChevronDown, Search } from 'lucide-react'
 import { Link, useLocation, useNavigate } from 'react-router-dom'
+import { useCommandBar } from '@/features/command-bar/useCommandBar'
 import { useAuthStore } from '@/stores/useAuthStore'
 import { useFeedbackStore } from '@/stores/useFeedbackStore'
 import { useOnClickOutside } from '@/hooks/useOnClickOutside'
@@ -12,6 +13,7 @@ export default function Header() {
   const user = useAuthStore((s) => s.user)
   const logout = useAuthStore((s) => s.logout)
   const setFeedbackOpen = useFeedbackStore((s) => s.setIsOpen)
+  const openCommandBar = useCommandBar((s) => s.openBar)
   const location = useLocation()
   const navigate = useNavigate()
   const [menuOpen, setMenuOpen] = useState(false)
@@ -33,6 +35,19 @@ export default function Header() {
         <h1 className="font-display text-lg font-semibold text-text-primary tracking-tight">{title}</h1>
 
         <div className="flex items-center gap-x-3 lg:gap-x-4">
+          {/* Search → global command bar (also Cmd/Ctrl+K or "/") */}
+          <button
+            type="button"
+            onClick={openCommandBar}
+            aria-keyshortcuts="Control+K"
+            aria-label="Search VousFin"
+            className="inline-flex items-center gap-2 rounded-lg border border-glass bg-glass px-2.5 py-1.5 text-sm text-text-muted hover:text-text-primary hover:bg-glass-hover transition-colors"
+          >
+            <Search className="h-[18px] w-[18px]" aria-hidden="true" />
+            <span className="hidden sm:inline">Search</span>
+            <kbd className="hidden rounded bg-navy px-1.5 text-[10px] leading-5 lg:inline">⌘K</kbd>
+          </button>
+
           {/* Bell → recent activity / audit trail ("what changed") */}
           <Link
             to="/activity"

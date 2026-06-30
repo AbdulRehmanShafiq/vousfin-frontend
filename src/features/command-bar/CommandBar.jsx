@@ -19,10 +19,17 @@ export function CommandBar() {
   const inputRef = useRef(null)
   const restoreRef = useRef(null)
   const [active, setActive] = useState(0)
+  const [activeForQuery, setActiveForQuery] = useState(query)
 
   const results = useMemo(() => getResults(query, disabled, 8), [query, disabled])
 
-  useEffect(() => { setActive(0) }, [query])
+  // Reset the highlighted row when the query changes — done during render
+  // (React's "adjust state when a value changes" pattern), not in an effect.
+  if (query !== activeForQuery) {
+    setActiveForQuery(query)
+    setActive(0)
+  }
+
   useEffect(() => {
     if (open) {
       restoreRef.current = document.activeElement
