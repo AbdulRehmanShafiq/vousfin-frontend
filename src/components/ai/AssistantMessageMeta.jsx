@@ -38,12 +38,18 @@ export default function AssistantMessageMeta({ meta, compact = false }) {
             Sources
           </div>
           <div className="flex flex-wrap gap-1.5">
-            {sources.map((source, idx) => (
+            {Object.values(
+              sources.reduce((acc, source) => {
+                const key = `${source.dataType || 'context'}|${source.period || ''}`
+                if (acc[key]) { acc[key].count += 1 } else { acc[key] = { ...source, count: 1 } }
+                return acc
+              }, {})
+            ).map((source) => (
               <span
-                key={`${source.sourceRef || source.sourceId || idx}-${source.dataType || 'context'}-${source.period || 'period'}`}
+                key={`${source.dataType || 'context'}-${source.period || 'period'}`}
                 className={chipClass}
               >
-                {sourceLabel(source)}
+                {sourceLabel(source)}{source.count > 1 ? ` ×${source.count}` : ''}
               </span>
             ))}
           </div>
