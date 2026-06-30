@@ -1,9 +1,12 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useModulesStore } from '@/stores/useModulesStore'
-import { useCommandBar, getResults } from './useCommandBar'
+import { useCommandBar, getResults, getCatalogEntryById } from './useCommandBar'
+import { shouldEscalate, mergeResults } from './escalation'
+import { searchCatalogSemantic } from './catalogApi'
 
 const GROUP_LABEL = { module: 'Modules', page: 'Pages', action: 'Actions', help: 'Help' }
+const EMPTY = [] // stable empty-results reference (avoids needless re-renders)
 
 /**
  * Accessible command bar (WAI-ARIA combobox + listbox). Tier 1 of the
@@ -21,7 +24,21 @@ export function CommandBar() {
   const [active, setActive] = useState(0)
   const [activeForQuery, setActiveForQuery] = useState(query)
 
-  const results = useMemo(() => getResults(query, disabled, 8), [query, disabled])
+  // Key off a STABLE string of the disabled modules, not the array identity —
+  // some stores hand back a fresh array each render, which would otherwise make
+  // every memo/effect below re-run on every render (an escalation loop).
+  const disabledKey = (disabled || []).join(',')
+  const disabledList = useMemo(() => (disabledKey ? disabledKey.split(',') : []), [disabledKey])
+  const localResults = useMemo(() => getResults(query, disabledList, 8), [query, disabledList])
+  // Semantic hits are tagged with the query they belong to; a stale result from a
+  // previous keystroke is simply ignored at render, so the effect never has to
+  // synchronously reset state (which would trigger cascading re-renders).
+  const [semantic, setSemantic] = useState({ forQuery: '', entries: [] })
+  const semanticEntries = useMemo(
+    () => (semantic.forQuery === query ? semantic.entries : EMPTY),
+    [semantic, query]
+  )
+  const results = useMemo(() => mergeResults(localResults, semanticEntries, 8), [localResults, semanticEntries])
 
   // Reset the highlighted row when the query changes — done during render
   // (React's "adjust state when a value changes" pattern), not in an effect.
@@ -29,6 +46,30 @@ export function CommandBar() {
     setActiveForQuery(query)
     setActive(0)
   }
+
+  // Tier 2 — when the instant local matcher is weak/empty or the query reads
+  // like a natural-language question, consult the semantic backend (debounced)
+  // and merge its hits below the local ones. Resolve ids → local entries so the
+  // rendering (icons, breadcrumb) stays uniform.
+  const localCount = localResults.length
+  useEffect(() => {
+    if (!shouldEscalate(query, localResults)) return undefined // stale semantic ignored at render
+    let cancelled = false
+    const timer = setTimeout(async () => {
+      try {
+        const hits = await searchCatalogSemantic(query, { disabledModules: disabledList, limit: 8 })
+        if (cancelled) return
+        const entries = hits.map((h) => getCatalogEntryById(h.id) || { ...h, icon: undefined })
+        setSemantic({ forQuery: query, entries })
+      } catch {
+        if (!cancelled) setSemantic({ forQuery: query, entries: [] })
+      }
+    }, 250)
+    return () => { cancelled = true; clearTimeout(timer) }
+    // localResults recomputes only when query/disabledList change; localCount is
+    // the only property shouldEscalate reads, keeping the deps value-stable.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [query, disabledKey, localCount])
 
   useEffect(() => {
     if (open) {
