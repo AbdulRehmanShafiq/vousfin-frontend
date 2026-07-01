@@ -642,7 +642,7 @@ export default function TransactionFormModal({ isOpen, onClose, onSuccess, trans
       )}
 
       {/* Create mode (Manual engine): full tab routing */}
-      {!isEditMode && engineMode === 'manual' && activeTab === 'nl'    && <NLTab    currency={currency} onParsed={handleNlParsed} />}
+      {!isEditMode && engineMode === 'manual' && activeTab === 'nl'    && <NLTab    currency={currency} onParsed={handleNlParsed} onAutoPosted={handleSuccess} />}
       {!isEditMode && engineMode === 'manual' && activeTab === 'form'  && <StructuredFormTab currency={currency} onSuccess={handleSuccess} onCancel={handleClose} initialValues={nlPrefill} />}
       {!isEditMode && engineMode === 'manual' && activeTab === 'excel' && <ExcelTab onSuccess={handleSuccess} onCancel={handleClose} />}
     </Modal>
@@ -686,13 +686,16 @@ function nlResultToFormValues(result, rawText) {
   }
 }
 
-function NLTab({ onParsed }) {
+function NLTab({ currency, onParsed, onAutoPosted }) {
   const [text, setText] = useState('')
   // Clarification loop state: the AI can ask ONE follow-up question at a time
   // when a critical detail is unclear, then we re-parse with greater confidence.
   const [clarification, setClarification] = useState(null) // { field, question, options? }
   const [answers, setAnswers] = useState([])               // [{ question, answer }]
   const [answerText, setAnswerText] = useState('')
+  // Set when a >=98%-confidence parse auto-posted (opt-in, see Command Center) —
+  // shows a confirmation instead of the structured form, since it already saved.
+  const [autoPosted, setAutoPosted] = useState(null)
   const nlPreview = useNLPreview()
 
   // Re-parse the original description PLUS any answers gathered so far.
@@ -702,6 +705,11 @@ function NLTab({ onParsed }) {
       : text
     const result = await nlPreview.mutateAsync({ text: combined, attempt })
     if (!result) return
+    if (result.autoPosted) {
+      setClarification(null)
+      setAutoPosted(result)
+      return
+    }
     if (result.needsClarification && result.clarification) {
       setClarification(result.clarification)
       setAnswerText('')
@@ -735,6 +743,32 @@ function NLTab({ onParsed }) {
       : text
     const result = await nlPreview.mutateAsync({ text: combined, attempt: 5 })
     if (result) onParsed(nlResultToFormValues(result, text))
+  }
+
+  // ── Auto-posted confirmation ─────────────────────────────────────────────────
+  if (autoPosted) {
+    const pct = Math.round((autoPosted.confidence ?? 0) * 100)
+    return (
+      <div className="space-y-5 animate-fade-in text-center py-4">
+        <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-positive/12">
+          <CheckCircle className="h-6 w-6 text-positive" />
+        </div>
+        <div>
+          <p className="text-sm font-semibold text-text-primary">Recorded automatically</p>
+          <p className="text-[12.5px] text-text-muted mt-1">
+            VousFin was {pct}% sure and recorded this transaction with no review needed.
+            You can undo it from the transaction list at any time.
+          </p>
+        </div>
+        <div className="rounded-lg border border-glass bg-glass-panel px-4 py-3 text-left text-sm">
+          <p className="text-text-primary font-medium">{autoPosted.description || text}</p>
+          <p className="text-text-muted text-xs mt-0.5">
+            {autoPosted.amount ? formatCurrency(autoPosted.amount, currency) : ''} · {autoPosted.transactionType || ''}
+          </p>
+        </div>
+        <Button onClick={onAutoPosted}>Done</Button>
+      </div>
+    )
   }
 
   // ── Clarifying-question view ────────────────────────────────────────────────
@@ -2211,7 +2245,3 @@ function ExcelTab({ onSuccess, onCancel }) {
     </div>
   )
 }
-
-// Suppress unused-import lint (CheckCircle is kept available for future banner states)
-// eslint-disable-next-line no-unused-vars
-const _keepImports = { CheckCircle }

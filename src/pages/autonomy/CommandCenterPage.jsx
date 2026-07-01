@@ -17,6 +17,7 @@ import {
   useApproveAction, useRejectAction, useIngestDocument, useAutonomyScan,
   usePlans, useRunPlan, useAutonomyControl,
 } from '@/hooks/useAutonomy'
+import { useBusinessStore } from '@/stores/useBusinessStore'
 import { cn } from '@/utils/cn'
 
 /* ── Autonomy dials ─────────────────────────────────────────────────────── */
@@ -99,6 +100,58 @@ function AutonomyDials() {
           ))}
         </div>
       )}
+    </div>
+  )
+}
+
+/* ── NL auto-post toggle ────────────────────────────────────────────────────
+ * Distinct from the autonomy dials above: this is scoped ONLY to the
+ * Natural-Language transaction entry form. When on, a parse the AI is >=98%
+ * sure about — with an exact account match — posts immediately with zero
+ * clicks (still reversible, still shows in "Waiting for you" if anything is
+ * off, and large amounts still need your approval regardless).
+ */
+function NLAutoPostToggle() {
+  const { activeBusiness, updateBusiness } = useBusinessStore()
+  const [saving, setSaving] = useState(false)
+  const checked = !!activeBusiness?.aiSettings?.autoPostEnabled
+
+  const toggle = async (next) => {
+    setSaving(true)
+    try {
+      await updateBusiness({ aiSettings: { autoPostEnabled: next } })
+      toast.success(next ? 'High-confidence transactions will now auto-post' : 'Auto-post turned off')
+    } catch {
+      toast.error('Could not update this setting')
+    } finally {
+      setSaving(false)
+    }
+  }
+
+  return (
+    <div className="premium-card p-4">
+      <label className="flex items-center justify-between gap-4 cursor-pointer">
+        <div>
+          <p className="text-sm font-medium text-text-primary">Auto-post high-confidence AI transactions</p>
+          <p className="text-[12.5px] text-text-muted mt-0.5">
+            Natural-language entry only. When VousFin is ≥98% sure and the accounts match exactly, it records the
+            transaction with no click — still reversible, and large amounts still wait for your approval.
+          </p>
+        </div>
+        <button
+          type="button"
+          role="switch"
+          aria-checked={checked}
+          disabled={saving}
+          onClick={() => toggle(!checked)}
+          className={cn(
+            'relative inline-flex h-5 w-9 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 focus:outline-none disabled:opacity-50',
+            checked ? 'bg-cyan' : 'bg-glass'
+          )}
+        >
+          <span className={cn('inline-block h-4 w-4 transform rounded-full bg-navy-2 shadow-sm transition duration-200', checked ? 'translate-x-4' : 'translate-x-0')} />
+        </button>
+      </label>
     </div>
   )
 }
@@ -365,6 +418,8 @@ export default function CommandCenterPage() {
       <ControlLine />
 
       <AutonomyDials />
+
+      <NLAutoPostToggle />
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
         <BookkeeperIntake />

@@ -123,6 +123,7 @@ export function useCreateInstallmentTransaction() {
 }
 
 export function useNLPreview() {
+  const queryClient = useQueryClient()
   return useMutation({
     // Accepts a plain string (first parse) or { text, attempt } when re-parsing
     // after the user answers a clarifying question.
@@ -130,6 +131,21 @@ export function useNLPreview() {
       const payload = typeof arg === 'string' ? { text: arg } : { text: arg.text, attempt: arg.attempt }
       const { data } = await api.post('/transactions/nl', payload)
       return data.data
+    },
+    onSuccess: (result) => {
+      // A high-confidence parse may have auto-posted (zero-click AI auto-post,
+      // opt-in) instead of returning a plain preview — a REAL transaction now
+      // exists, so refresh everything a normal confirm would.
+      if (result?.autoPosted) {
+        queryClient.invalidateQueries({ queryKey: ['transactions'] })
+        queryClient.invalidateQueries({ queryKey: ['accounts'] })
+        queryClient.invalidateQueries({ queryKey: ['reports'] })
+        queryClient.invalidateQueries({ queryKey: ['tax'] })
+        queryClient.invalidateQueries({ queryKey: ['customers'] })
+        queryClient.invalidateQueries({ queryKey: ['vendors'] })
+        queryClient.invalidateQueries({ queryKey: ['dashboard'] })
+        queryClient.invalidateQueries({ queryKey: ['outstanding'] })
+      }
     },
     onError: (error) => {
       toast.error(error.response?.data?.message || 'Could not parse transaction')
