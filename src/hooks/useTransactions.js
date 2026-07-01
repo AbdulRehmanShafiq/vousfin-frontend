@@ -2,7 +2,7 @@ import { useQuery, useInfiniteQuery, useMutation, useQueryClient, keepPreviousDa
 import toast from 'react-hot-toast'
 import api from '@/services/api'
 
-const INFINITE_PAGE_SIZE = 999
+const INFINITE_PAGE_SIZE = 99
 
 function parseTransactionPage(data, pageParam) {
   const inner = data.data || {}
@@ -196,12 +196,21 @@ export function useExcelConfirm() {
       queryClient.invalidateQueries({ queryKey: ['vendors'] })
       queryClient.invalidateQueries({ queryKey: ['dashboard'] })
       queryClient.invalidateQueries({ queryKey: ['outstanding'] })
-      if (result?.pending > 0) {
+      const posted = result?.successful ?? 0
+      const failed = result?.failed?.length ?? 0
+      const pending = result?.pending ?? 0
+      if (pending > 0) {
         queryClient.invalidateQueries({ queryKey: ['approvals'] })
         queryClient.invalidateQueries({ queryKey: ['approvals-count'] })
-        toast.success(`${result.successful} imported · ${result.pending} sent for approval`)
+      }
+      // Never hide failures behind a success message — a silent skip is data
+      // loss the user must know about.
+      if (failed > 0) {
+        toast.error(`${posted} imported · ${failed} could not be recorded — review the errors and re-import them.`)
+      } else if (pending > 0) {
+        toast.success(`${posted} imported · ${pending} sent for approval`)
       } else {
-        toast.success(`${result?.successful ?? 'All'} transactions imported`)
+        toast.success(`${posted} transactions imported`)
       }
     },
     onError: (error) => {

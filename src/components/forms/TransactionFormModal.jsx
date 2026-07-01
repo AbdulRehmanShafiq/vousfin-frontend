@@ -1836,6 +1836,7 @@ function ExcelTab({ onSuccess, onCancel }) {
   const [rows, setRows]         = useState([])
   const [editingIdx, setEditingIdx] = useState(null)
   const [showErrors, setShowErrors] = useState(false)
+  const [importResult, setImportResult] = useState(null) // { successful, pending, failed[] }
   const fileInputRef            = useRef(null)
   const [dragOver, setDragOver] = useState(false)
 
@@ -1863,7 +1864,14 @@ function ExcelTab({ onSuccess, onCancel }) {
 
   const handleConfirm = async () => {
     if (!rows.length) return
-    await excelConfirm.mutateAsync(rows)
+    const result = await excelConfirm.mutateAsync(rows)
+    // If any rows couldn't be recorded, keep the modal open and SHOW them —
+    // never close on a partial import as if everything succeeded.
+    if (result?.failed?.length) {
+      setImportResult(result)
+      setStep('result')
+      return
+    }
     onSuccess()
   }
 
@@ -1876,6 +1884,48 @@ function ExcelTab({ onSuccess, onCancel }) {
     return s.split('T')[0]
   }
   const fmtAmt = (n) => Number(n || 0).toLocaleString('en-PK')
+
+  // Partial-import result: some rows recorded, some could not be. Surface exactly
+  // which rows failed and why, so nothing is silently lost.
+  if (step === 'result' && importResult) {
+    const posted  = importResult.successful ?? 0
+    const pending = importResult.pending ?? 0
+    const failed  = importResult.failed ?? []
+    return (
+      <div className="space-y-4 animate-fade-in">
+        <div className="rounded-lg border border-glass bg-glass-panel px-4 py-3">
+          <p className="text-sm font-semibold text-text-primary">Import finished</p>
+          <div className="mt-1 flex flex-wrap gap-3 text-xs">
+            <span className="text-positive">✓ {posted} recorded</span>
+            {pending > 0 && <span className="text-amber">🕓 {pending} sent for approval</span>}
+            <span className="text-negative">✕ {failed.length} could not be recorded</span>
+          </div>
+        </div>
+
+        <div className="rounded-lg border border-negative/20 bg-negative/5">
+          <div className="px-3 py-2 text-xs font-semibold text-negative">
+            <AlertTriangle className="inline h-3 w-3 mr-1" />
+            These rows were NOT recorded — fix them in your file and import again:
+          </div>
+          <ul className="max-h-56 overflow-auto border-t border-negative/20 divide-y divide-negative/10">
+            {failed.map((f, i) => (
+              <li key={i} className="flex items-start gap-2 px-3 py-2 text-xs">
+                <span className="font-mono text-text-muted shrink-0">{f.row != null ? `Row ${f.row}` : `#${(f.index ?? i) + 1}`}</span>
+                <span className="text-text-secondary">{f.error || 'Unknown error'}</span>
+              </li>
+            ))}
+          </ul>
+        </div>
+
+        <div className="flex justify-end gap-2">
+          <Button variant="ghost" onClick={() => { setImportResult(null); setStep('upload'); setPreview(null); setRows([]) }}>
+            Import another file
+          </Button>
+          <Button onClick={onSuccess}>Done</Button>
+        </div>
+      </div>
+    )
+  }
 
   if (step === 'preview' && preview) {
     const stats = preview.confidenceStats || {}

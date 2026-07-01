@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { Sparkles, Send, Trash2, ArrowLeft, Bot, User } from 'lucide-react'
+import { Sparkles, Send, Trash2, ArrowLeft, Bot, User, Maximize2 } from 'lucide-react'
 import ReactMarkdown from 'react-markdown'
 import { useModulesStore } from '@/stores/useModulesStore'
 import AssistantMessageMeta from '@/components/ai/AssistantMessageMeta'
@@ -200,6 +200,11 @@ export function CommandBar() {
               </button>
               <Sparkles className="h-4 w-4 text-cyan" aria-hidden="true" />
               <span className="flex-1 text-sm font-medium text-text-primary">AI Assistant</span>
+              <button type="button" onClick={() => { closeBar(); navigate('/ai/assistant') }}
+                aria-label="Open the full AI assistant page"
+                className="rounded-md p-1 text-text-muted hover:bg-glass hover:text-text-primary">
+                <Maximize2 className="h-4 w-4" aria-hidden="true" />
+              </button>
               {messages.length > 0 && (
                 <button type="button" onClick={clearChat} aria-label="Clear conversation"
                   className="rounded-md p-1 text-text-muted hover:bg-glass hover:text-text-primary">
