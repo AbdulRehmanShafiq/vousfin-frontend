@@ -3,7 +3,7 @@ import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
 import {
-  MessageSquare, LayoutList, Upload, CheckCircle, AlertTriangle,
+  MessageSquare, LayoutList, Upload, CheckCircle, AlertTriangle, Download,
   Loader2, X, ChevronUp, ChevronDown, Sparkles,
 } from 'lucide-react'
 import Modal from '@/components/modals/Modal'
@@ -32,6 +32,8 @@ import { buildGroupedAccountOptions } from '@/utils/accountOptions'
 import { matchesFilter } from '@/utils/transactionPresets'
 import { getTxTypeFilter } from '@/utils/accountFilterRules'
 import { resolveDebitCreditPair } from '@/utils/accountResolver'
+import { buildFailedImportCsv } from '@/utils/failedImportCsv'
+import { downloadBlob } from '@/utils/exportHelpers'
 import { cn } from '@/utils/cn'
 
 /* ──────────────────────────────────────────────────────────────────────────────
@@ -648,46 +650,141 @@ export default function TransactionFormModal({ isOpen, onClose, onSuccess, trans
 }
 
 // ─── Tab 1: Natural Language (Step 5: input-only, autofills form) ─────────────
+// Maps a parser preview result → the structured form's initialValues shape.
+function nlResultToFormValues(result, rawText) {
+  return {
+    transactionDate:         result.transactionDate || new Date().toISOString().split('T')[0],
+    description:             result.description || rawText,
+    amount:                  result.amount || 0,
+    transactionType:         result.transactionType || '',
+    debitAccountId:          result.debitAccountId  || '',
+    creditAccountId:         result.creditAccountId || '',
+    debitAccount:            result.debitAccount    || '',
+    creditAccount:           result.creditAccount   || '',
+    confidence:              result.confidence      ?? null,
+    requiresReview:          result.requiresReview  ?? false,
+    reviewReasons:           result.reviewReasons   ?? [],
+    isInstallment:           result.isInstallment   || false,
+    installmentPeriodMonths: result.installmentPeriodMonths || null,
+    totalInstallmentAmount:  result.totalInstallmentAmount  || null,
+    downPayment:             result.downPayment            || 0,
+    installmentFrequency:    result.installmentFrequency   || 'monthly',
+    installmentCount:        result.installmentCount       || result.installmentPeriodMonths || null,
+    interestRate:            result.interestRate           || 0,
+    firstPaymentDate:        result.firstPaymentDate       || '',
+    interestMethod:          result.interestMethod         || 'reducing_balance',
+    taxAmount:               result.taxAmount              || 0,
+    taxRate:                 result.taxRate                || 0,
+    currency:                result.currency               || null,
+    vendorName:              result.vendorName             || result.counterpartyName || '',
+    customerName:            result.customerName           || result.counterpartyName || '',
+    invoiceNumber:           result.invoiceNumber          || '',
+    paymentMethod:           result.paymentMethod          || '',
+    notes:                   result.notes                  || '',
+    resolvedJournalLines:    result.resolvedJournalLines   || [],
+    _rawText:                rawText,
+  }
+}
+
 function NLTab({ onParsed }) {
   const [text, setText] = useState('')
+  // Clarification loop state: the AI can ask ONE follow-up question at a time
+  // when a critical detail is unclear, then we re-parse with greater confidence.
+  const [clarification, setClarification] = useState(null) // { field, question, options? }
+  const [answers, setAnswers] = useState([])               // [{ question, answer }]
+  const [answerText, setAnswerText] = useState('')
   const nlPreview = useNLPreview()
+
+  // Re-parse the original description PLUS any answers gathered so far.
+  const runParse = async (collectedAnswers, attempt) => {
+    const combined = collectedAnswers.length
+      ? `${text}\n\nAdditional details:\n${collectedAnswers.map(a => `- ${a.question} ${a.answer}`).join('\n')}`
+      : text
+    const result = await nlPreview.mutateAsync({ text: combined, attempt })
+    if (!result) return
+    if (result.needsClarification && result.clarification) {
+      setClarification(result.clarification)
+      setAnswerText('')
+    } else {
+      // Enough confidence (or the round cap was hit) — autofill the form.
+      setClarification(null)
+      onParsed(nlResultToFormValues(result, text))
+    }
+  }
 
   const handleParse = async () => {
     if (text.trim().length < 5) return
-    const result = await nlPreview.mutateAsync(text)
-    if (!result) return
-    onParsed({
-      transactionDate:         result.transactionDate || new Date().toISOString().split('T')[0],
-      description:             result.description || text,
-      amount:                  result.amount || 0,
-      transactionType:         result.transactionType || '',
-      debitAccountId:          result.debitAccountId  || '',
-      creditAccountId:         result.creditAccountId || '',
-      debitAccount:            result.debitAccount    || '',
-      creditAccount:           result.creditAccount   || '',
-      confidence:              result.confidence      ?? null,
-      requiresReview:          result.requiresReview  ?? false,
-      reviewReasons:           result.reviewReasons   ?? [],
-      isInstallment:           result.isInstallment   || false,
-      installmentPeriodMonths: result.installmentPeriodMonths || null,
-      totalInstallmentAmount:  result.totalInstallmentAmount  || null,
-      downPayment:             result.downPayment            || 0,
-      installmentFrequency:    result.installmentFrequency   || 'monthly',
-      installmentCount:        result.installmentCount       || result.installmentPeriodMonths || null,
-      interestRate:            result.interestRate           || 0,
-      firstPaymentDate:        result.firstPaymentDate       || '',
-      interestMethod:          result.interestMethod         || 'reducing_balance',
-      taxAmount:               result.taxAmount              || 0,
-      taxRate:                 result.taxRate                || 0,
-      currency:                result.currency               || null,
-      vendorName:              result.vendorName             || result.counterpartyName || '',
-      customerName:            result.customerName           || result.counterpartyName || '',
-      invoiceNumber:           result.invoiceNumber          || '',
-      paymentMethod:           result.paymentMethod          || '',
-      notes:                   result.notes                  || '',
-      resolvedJournalLines:    result.resolvedJournalLines   || [],
-      _rawText:                text,
-    })
+    setAnswers([])
+    await runParse([], 0)
+  }
+
+  const submitAnswer = async (value) => {
+    const answer = String(value ?? answerText).trim()
+    if (!answer) return
+    const next = [...answers, { question: clarification.question, answer }]
+    setAnswers(next)
+    await runParse(next, next.length)
+  }
+
+  // Give up on refining and fill the form with whatever we have so far.
+  const skipClarify = async () => {
+    setClarification(null)
+    // Re-parse once at the round cap so the server returns a final (non-asking) result.
+    const combined = answers.length
+      ? `${text}\n\nAdditional details:\n${answers.map(a => `- ${a.question} ${a.answer}`).join('\n')}`
+      : text
+    const result = await nlPreview.mutateAsync({ text: combined, attempt: 5 })
+    if (result) onParsed(nlResultToFormValues(result, text))
+  }
+
+  // ── Clarifying-question view ────────────────────────────────────────────────
+  if (clarification) {
+    return (
+      <div className="space-y-5 animate-fade-in">
+        <div className="rounded-xl border border-cyan/30 bg-cyan/5 p-4">
+          <div className="flex items-start gap-2">
+            <Sparkles className="h-4 w-4 text-cyan mt-0.5 shrink-0" />
+            <div className="space-y-1">
+              <p className="text-xs font-semibold text-cyan uppercase tracking-wide">One quick question</p>
+              <p className="text-sm text-text-primary">{clarification.question}</p>
+            </div>
+          </div>
+        </div>
+
+        {Array.isArray(clarification.options) && clarification.options.length > 0 ? (
+          <div className="flex flex-wrap gap-2">
+            {clarification.options.map(opt => (
+              <button key={opt} type="button" onClick={() => submitAnswer(opt)} disabled={nlPreview.isPending}
+                className="rounded-lg border border-glass bg-glass-panel px-3 py-2 text-sm text-text-primary hover:border-cyan hover:bg-cyan/5 transition-colors disabled:opacity-50">
+                {opt}
+              </button>
+            ))}
+          </div>
+        ) : (
+          <div className="space-y-1">
+            <input
+              autoFocus
+              className="w-full px-4 py-3 rounded-xl bg-glass-panel border border-glass text-text-primary text-sm placeholder:text-text-muted focus:border-cyan focus:outline-none transition-colors"
+              placeholder="Type your answer…"
+              value={answerText}
+              onChange={e => setAnswerText(e.target.value)}
+              onKeyDown={e => { if (e.key === 'Enter') { e.preventDefault(); submitAnswer() } }}
+            />
+          </div>
+        )}
+
+        <div className="flex justify-between gap-3 pt-2 border-t border-glass">
+          <Button variant="ghost" onClick={skipClarify} disabled={nlPreview.isPending}>
+            Skip &amp; fill form anyway
+          </Button>
+          {!(Array.isArray(clarification.options) && clarification.options.length) && (
+            <Button onClick={() => submitAnswer()} loading={nlPreview.isPending} disabled={!answerText.trim()}>
+              Continue →
+            </Button>
+          )}
+        </div>
+      </div>
+    )
   }
 
   return (
@@ -706,7 +803,7 @@ function NLTab({ onParsed }) {
           onChange={e => setText(e.target.value)}
         />
         <p className="text-[12.5px] text-text-muted">
-          AI detects amount, accounts, taxes, installments, and parties — then opens the structured form for confirmation.
+          AI detects amount, accounts, taxes, installments, and parties — and asks a quick question if anything is unclear, then opens the structured form for confirmation.
         </p>
       </div>
       <div className="flex justify-end gap-3 pt-2 border-t border-glass">
@@ -1875,6 +1972,14 @@ function ExcelTab({ onSuccess, onCancel }) {
     onSuccess()
   }
 
+  // Export the rows that couldn't be recorded (full source data + reason) so the
+  // user can fix and re-import them — nothing is silently lost.
+  const handleDownloadFailed = () => {
+    const csv = buildFailedImportCsv(importResult?.failed || [], rows)
+    const stamp = new Date().toISOString().split('T')[0]
+    downloadBlob(new Blob([csv], { type: 'text/csv;charset=utf-8;' }), `vousfin-unrecorded-rows-${stamp}.csv`)
+  }
+
   const updateRow = (idx, field, value) =>
     setRows(prev => prev.map((r, i) => i === idx ? { ...r, [field]: value } : r))
 
@@ -1903,9 +2008,15 @@ function ExcelTab({ onSuccess, onCancel }) {
         </div>
 
         <div className="rounded-lg border border-negative/20 bg-negative/5">
-          <div className="px-3 py-2 text-xs font-semibold text-negative">
-            <AlertTriangle className="inline h-3 w-3 mr-1" />
-            These rows were NOT recorded — fix them in your file and import again:
+          <div className="flex items-center justify-between gap-2 px-3 py-2">
+            <span className="text-xs font-semibold text-negative">
+              <AlertTriangle className="inline h-3 w-3 mr-1" />
+              These rows were NOT recorded — fix them and import again:
+            </span>
+            <button type="button" onClick={handleDownloadFailed}
+              className="inline-flex items-center gap-1 rounded-md border border-negative/30 px-2 py-1 text-[11px] font-medium text-negative hover:bg-negative/10 transition-colors shrink-0">
+              <Download className="h-3 w-3" /> Download these rows (CSV)
+            </button>
           </div>
           <ul className="max-h-56 overflow-auto border-t border-negative/20 divide-y divide-negative/10">
             {failed.map((f, i) => (

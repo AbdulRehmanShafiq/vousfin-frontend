@@ -124,8 +124,11 @@ export function useCreateInstallmentTransaction() {
 
 export function useNLPreview() {
   return useMutation({
-    mutationFn: async (text) => {
-      const { data } = await api.post('/transactions/nl', { text })
+    // Accepts a plain string (first parse) or { text, attempt } when re-parsing
+    // after the user answers a clarifying question.
+    mutationFn: async (arg) => {
+      const payload = typeof arg === 'string' ? { text: arg } : { text: arg.text, attempt: arg.attempt }
+      const { data } = await api.post('/transactions/nl', payload)
       return data.data
     },
     onError: (error) => {
