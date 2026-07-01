@@ -1996,9 +1996,10 @@ function ExcelTab({ onSuccess, onCancel }) {
   const handleConfirm = async () => {
     if (!rows.length) return
     const result = await excelConfirm.mutateAsync(rows)
-    // If any rows couldn't be recorded, keep the modal open and SHOW them —
-    // never close on a partial import as if everything succeeded.
-    if (result?.failed?.length) {
+    // If any rows couldn't be recorded, or were imported at only medium
+    // confidence, keep the modal open and SHOW them — never close on a partial
+    // or spot-check-worthy import as if everything succeeded cleanly.
+    if (result?.failed?.length || result?.flagged > 0) {
       setImportResult(result)
       setStep('result')
       return
@@ -2030,6 +2031,7 @@ function ExcelTab({ onSuccess, onCancel }) {
     const posted  = importResult.successful ?? 0
     const pending = importResult.pending ?? 0
     const failed  = importResult.failed ?? []
+    const flagged = importResult.flagged ?? 0
     return (
       <div className="space-y-4 animate-fade-in">
         <div className="rounded-lg border border-glass bg-glass-panel px-4 py-3">
@@ -2037,10 +2039,18 @@ function ExcelTab({ onSuccess, onCancel }) {
           <div className="mt-1 flex flex-wrap gap-3 text-xs">
             <span className="text-positive">✓ {posted} recorded</span>
             {pending > 0 && <span className="text-amber">🕓 {pending} sent for approval</span>}
-            <span className="text-negative">✕ {failed.length} could not be recorded</span>
+            {failed.length > 0 && <span className="text-negative">✕ {failed.length} could not be recorded</span>}
           </div>
         </div>
 
+        {flagged > 0 && (
+          <div className="rounded-lg border border-amber/20 bg-amber/5 px-3 py-2 text-xs text-amber">
+            <AlertTriangle className="inline h-3 w-3 mr-1" />
+            {flagged} row{flagged !== 1 ? 's were' : ' was'} imported at medium confidence — worth a quick spot-check in the transaction list.
+          </div>
+        )}
+
+        {failed.length > 0 && (
         <div className="rounded-lg border border-negative/20 bg-negative/5">
           <div className="flex items-center justify-between gap-2 px-3 py-2">
             <span className="text-xs font-semibold text-negative">
@@ -2061,6 +2071,7 @@ function ExcelTab({ onSuccess, onCancel }) {
             ))}
           </ul>
         </div>
+        )}
 
         <div className="flex justify-end gap-2">
           <Button variant="ghost" onClick={() => { setImportResult(null); setStep('upload'); setPreview(null); setRows([]) }}>
