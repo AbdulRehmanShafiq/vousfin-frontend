@@ -53,6 +53,14 @@ export default function AccountsPage() {
 
   const columns = [
     {
+      key: 'accountCode',
+      header: 'Code',
+      className: 'w-20',
+      render: (row) => (
+        <span className="font-mono text-sm text-text-muted">{row.accountCode || '—'}</span>
+      ),
+    },
+    {
       key: 'accountName',
       header: 'Account Name',
       className: 'w-1/3',
@@ -60,6 +68,7 @@ export default function AccountsPage() {
         <div>
           <p className="font-bold text-text-primary">{row.accountName}</p>
           {row.isDefault && <span className="text-xs text-text-muted">System Default</span>}
+          {row.autoCreated && <span className="text-xs text-amber-500">Added automatically during import — review name & type</span>}
         </div>
       ),
     },
