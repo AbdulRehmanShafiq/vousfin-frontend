@@ -87,11 +87,11 @@
   }
 
   /* ░░ CALM density — radical-minimal surface treatment ░░
-     One attribute on <html> flattens the whole app: cards go borderless + flat
-     at rest and only reveal a hairline + faint lift on hover/focus, whitespace
-     opens up, and the film grain quiets down. Reversible by removing the
-     attribute (→ the richer "Cozy" look). Higher specificity than [data-theme]
-     so it wins across every colour theme. */
+     One attribute on <html> flattens the whole app: cards go flat with a
+     single visible hairline at rest and only firm up on hover/focus,
+     whitespace opens up, and the film grain quiets down. Reversible by
+     switching to "cozy" (Settings → Appearance). Higher specificity than
+     [data-theme] so it wins across every colour theme. */
   html[data-density="calm"] {
     --grain-opacity: 0.16;
     --shadow-card: none;
@@ -360,15 +360,17 @@
     box-shadow: var(--shadow-card-hover);
   }
 
-  /* CALM: cards are quiet — flat fill, whisper-thin border, no gradient/shadow
-     at rest; a hairline + faint lift appears only on hover/focus-within. */
+  /* CALM: cards are quiet — flat fill + a single whisper-thin hairline, no
+     gradient/shadow at rest; the border firms up + a faint lift appears on
+     hover/focus. Keeps cards clearly readable (they must not vanish into the
+     background on low-contrast dark themes) while removing all heavy chrome. */
   html[data-density="calm"] .premium-card {
     background: rgb(var(--c-bg2));
-    border-color: transparent;
+    border-color: var(--c-border);
   }
   html[data-density="calm"] .premium-card:hover,
   html[data-density="calm"] .premium-card:focus-within {
-    border-color: var(--c-border);
+    border-color: var(--c-border2);
   }
 
   /* Highlight hairline along a card's top edge */

@@ -12,7 +12,8 @@ import { formatCurrency } from '@/utils/formatters'
 
 import Button from '@/components/ui/Button'
 import Input from '@/components/ui/Input'
-import DataTable from '@/components/tables/DataTable'
+import PageHeader from '@/components/ui/PageHeader'
+import QuietTable from '@/components/ui/QuietTable'
 import PartyFormModal from '@/components/forms/PartyFormModal'
 import Badge from '@/components/ui/Badge'
 import { cn } from '@/utils/cn'
@@ -116,8 +117,8 @@ export default function VendorsList() {
     {
       key: 'balance',
       header: 'Outstanding Payable',
-      className: 'text-right',
-      cellClassName: 'text-right font-bold text-text-primary',
+      align: 'right',
+      className: 'font-bold text-text-primary',
       render: (row) => {
         const bal = Number(row.currentPayableBalance || 0)
         return bal > 0 ? (
@@ -130,21 +131,12 @@ export default function VendorsList() {
   ]
 
   return (
-    <div className="space-y-5 animate-fade-in">
-      <div className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
-        <div>
-          <h1 className="flex items-center gap-2 text-2xl font-black text-text-primary tracking-tight">
-            <Briefcase className="h-6 w-6 text-amber-2" />
-            Vendors
-          </h1>
-          <p className="text-text-secondary mt-1 text-sm">
-            Manage your suppliers and track accounts payable.
-          </p>
-        </div>
-        <Button onClick={() => setIsModalOpen(true)} icon={Plus}>
-          Add Vendor
-        </Button>
-      </div>
+    <div className="space-y-5">
+      <PageHeader
+        title="Vendors"
+        subtitle="Manage your suppliers and track accounts payable."
+        action={<Button onClick={() => setIsModalOpen(true)} icon={Plus}>Add Vendor</Button>}
+      />
 
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
         <KpiTile
@@ -195,19 +187,19 @@ export default function VendorsList() {
         </div>
       </div>
 
-      <div className="premium-card">
-        <DataTable
-          columns={columns}
-          data={filtered}
-          isLoading={isLoading}
-          onRowClick={(row) => navigate(`/vendors/${row._id || row.id}`)}
-          emptyMessage={
-            query || filter !== 'all'
-              ? 'No vendors match your filter. Try clearing it.'
-              : "No vendors yet. Click 'Add Vendor' to create one."
-          }
-        />
-      </div>
+      <QuietTable
+        columns={columns}
+        rows={filtered}
+        loading={isLoading}
+        onRowClick={(row) => navigate(`/vendors/${row._id || row.id}`)}
+        emptyTitle={query || filter !== 'all' ? 'No matches' : 'No vendors yet'}
+        emptyDescription={
+          query || filter !== 'all'
+            ? 'No vendors match your filter. Try clearing it.'
+            : "Click 'Add Vendor' to create one."
+        }
+        emptyIcon={Briefcase}
+      />
 
       <PartyFormModal
         isOpen={isModalOpen}

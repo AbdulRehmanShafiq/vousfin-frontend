@@ -24,6 +24,7 @@ import {
 import { useBusinessStore } from '@/stores/useBusinessStore'
 import { useAuthStore }     from '@/stores/useAuthStore'
 import { useUIStore }       from '@/stores/useUIStore'
+import PageHeader from '@/components/ui/PageHeader'
 import { useTransactions }  from '@/hooks/useTransactions'
 import { useDashboardAll }  from '@/hooks/useReports'
 import { formatCompactCurrency, formatDate } from '@/utils/formatters'
@@ -365,21 +366,21 @@ export default function Dashboard() {
     <div className="animate-fade-in pb-10">
 
       {/* ── 1. HEADER ───────────────────────────────────────────── */}
-      <div className="mb-4">
-        <h1 className="text-2xl sm:text-[1.75rem] font-semibold text-text-primary tracking-tight">
-          {greeting}, <span className="text-gradient">{firstName}</span>
-        </h1>
-        <p className="text-sm text-text-secondary mt-1 flex items-center gap-2 flex-wrap">
-          <span className="font-semibold text-text-primary">
-            {activeBusiness?.businessName || 'Your Business'}
+      <PageHeader
+        title={<>{greeting}, <span className="text-gradient">{firstName}</span></>}
+        subtitle={
+          <span className="flex items-center gap-2 flex-wrap">
+            <span className="font-semibold text-text-primary">
+              {activeBusiness?.businessName || 'Your Business'}
+            </span>
+            <span className="text-text-muted">·</span>
+            <span className="flex items-center gap-1.5 text-text-muted">
+              <Clock className="h-3 w-3" />
+              YTD {new Date().getFullYear()}
+            </span>
           </span>
-          <span className="text-text-muted">·</span>
-          <span className="flex items-center gap-1.5 text-text-muted">
-            <Clock className="h-3 w-3" />
-            YTD {new Date().getFullYear()}
-          </span>
-        </p>
-      </div>
+        }
+      />
 
       {/* ── QUICK ACTIONS — fixed position in page, no sticky drift ── */}
       <div className="mb-6">
