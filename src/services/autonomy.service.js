@@ -24,6 +24,11 @@ const autonomyService = {
 
   // NL control line (Phase 7) — plain-language commands → policy changes
   control:        (text)            => api.post('/autonomy/control', { text }),
+
+  // Intelligence roadmap surfaces (Phases 3 & 6)
+  getStpScorecard:   (days = 90)    => api.get('/autonomy/stp-scorecard', { params: { days } }),
+  getCloseReadiness: ()             => api.get('/autonomy/close/readiness'),
+  getBrainContext:   ()             => api.get('/autonomy/brain-context'),
 }
 
 export default autonomyService

@@ -134,6 +134,7 @@ export const MODULES = [
       { name: 'Benchmarking',     href: '/analysis/benchmarking', icon: Target,      desc: 'How your ratios compare to your industry' },
       { name: 'Anomalies',        href: '/ai-analyst/anomalies',  activePrefix: '/ai-analyst/anomalies', icon: ShieldAlert, desc: 'Unusual activity we flagged for you' },
       { name: 'AI Assistant',     href: '/ai/assistant',          icon: Sparkles,    desc: 'Ask questions about your finances' },
+      { name: 'Intelligence',     href: '/ai/intelligence',       activePrefix: '/ai/intelligence', icon: BrainCircuit, primary: true, desc: 'Advice, automation depth, close readiness and the AI decision log' },
     ],
   },
   {

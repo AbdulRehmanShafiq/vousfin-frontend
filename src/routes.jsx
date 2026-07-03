@@ -61,6 +61,7 @@ const InvoiceEditorPage = lazy(() => import('@/pages/parties/InvoiceEditorPage')
 const BillsListPage     = lazy(() => import('@/pages/parties/BillsListPage'))
 const BillEditorPage    = lazy(() => import('@/pages/parties/BillEditorPage'))
 const AIAssistantPage = lazy(() => import('@/pages/ai/AIAssistantPage'))
+const IntelligencePage = lazy(() => import('@/pages/ai/IntelligencePage')) // Intelligence Roadmap — AI brain surfaces
 
 /* ── New unified hub pages ── */
 const FinancialReportsPage = lazy(() => import('@/pages/reports/FinancialReportsPage'))
@@ -329,6 +330,8 @@ export const routes = [
 
           /* ai/assistant stays accessible directly (also exposed in AI Analyst → Insights tab) */
           { path: 'ai/assistant', element: withSuspense(AIAssistantPage) },
+          { path: 'ai/intelligence', element: withSuspense(IntelligencePage) }, // Intelligence Roadmap
+
           { path: 'support', element: withSuspense(SupportPage) },
         ],
       },
