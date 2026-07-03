@@ -3,7 +3,32 @@ import { formatCurrency, formatPercent } from '@/utils/formatters'
 import { cn } from '@/utils/cn'
 import Card from './Card'
 
-export default function KPICard({ title, value, format = 'currency', trend, loading, currency, icon: Icon }) {
+export default function KPICard({ title, value, format = 'currency', trend, loading, currency, icon: Icon, bare = false }) {
+  const display =
+    format === 'percent'
+      ? formatPercent(value)
+      : format === 'currency'
+        ? formatCurrency(value, currency)
+        : value
+
+  // Calm "bare" metric — no box, just number + label over a hairline baseline.
+  if (bare) {
+    if (loading) {
+      return (
+        <div className="border-t border-glass pt-3">
+          <div className="h-7 w-28 animate-pulse rounded bg-glass-panel" />
+          <div className="mt-2 h-3 w-20 animate-pulse rounded bg-glass-panel" />
+        </div>
+      )
+    }
+    return (
+      <div className="border-t border-glass pt-3">
+        <p className="num text-2xl font-semibold tracking-tight text-text-primary">{display}</p>
+        <p className="mt-1 text-[12px] text-text-muted">{title}</p>
+      </div>
+    )
+  }
+
   if (loading) {
     return (
       <Card>
@@ -12,13 +37,6 @@ export default function KPICard({ title, value, format = 'currency', trend, load
       </Card>
     )
   }
-
-  const display =
-    format === 'percent'
-      ? formatPercent(value)
-      : format === 'currency'
-        ? formatCurrency(value, currency)
-        : value
 
   return (
     <Card className="hover-scale">

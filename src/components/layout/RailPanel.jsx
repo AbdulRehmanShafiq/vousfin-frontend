@@ -34,14 +34,14 @@ function RailIcon({ module, active, badge }) {
       aria-label={label}
       aria-current={active ? 'page' : undefined}
     >
-      {/* Active accent bar — luminous, section-tinted */}
+      {/* Active accent bar — a quiet section-tinted hairline (Calm: no glow) */}
       <span
         className="absolute left-[-9px] top-1/2 -translate-y-1/2 w-[2px] rounded-full transition-all duration-300"
-        style={{ height: active ? 18 : 0, background: `rgb(${accent})`, boxShadow: active ? `0 0 10px rgb(${accent})` : 'none' }}
+        style={{ height: active ? 18 : 0, background: `rgb(${accent})` }}
       />
       <span
-        className="relative flex h-11 w-11 items-center justify-center rounded-xl transition-all duration-200"
-        style={active ? { background: `rgb(${accent} / 0.12)`, boxShadow: `inset 0 0 0 1px rgb(${accent} / 0.35)` } : undefined}
+        className="relative flex h-11 w-11 items-center justify-center rounded-xl transition-colors duration-200 group-hover:bg-glass-hover"
+        style={active ? { background: `rgb(${accent} / 0.10)` } : undefined}
       >
         <module.icon
           className={cn('h-[19px] w-[19px] transition-colors duration-200', !active && 'text-text-muted group-hover:text-text-secondary')}

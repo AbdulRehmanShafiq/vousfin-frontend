@@ -21,9 +21,17 @@ const variants = {
   danger: 'bg-negative-muted text-negative border border-negative/20 hover:bg-negative/20 hover:border-negative/40',
 }
 
+// Real size scale — retires ad-hoc `!px !py !text` overrides scattered across pages.
+const sizes = {
+  sm: 'px-3 py-1.5 text-xs gap-1.5',
+  md: 'px-4 py-2.5 text-sm gap-2',
+  lg: 'px-5 py-3 text-base gap-2',
+}
+
 export const Button = forwardRef(({
   children,
   variant = 'gradient',
+  size = 'md',
   loading = false,
   disabled = false,
   icon: Icon,
@@ -41,7 +49,8 @@ export const Button = forwardRef(({
       type={type}
       disabled={isDisabled}
       className={cn(
-        'inline-flex items-center justify-center gap-2 rounded-md px-4 py-2.5 text-sm font-semibold transition-premium focus:outline-none focus-visible:ring-2 focus-visible:ring-accent/50 focus-visible:ring-offset-2 focus-visible:ring-offset-navy disabled:cursor-not-allowed disabled:opacity-50',
+        'inline-flex items-center justify-center rounded-md font-semibold transition-premium focus:outline-none focus-visible:ring-2 focus-visible:ring-accent/50 focus-visible:ring-offset-2 focus-visible:ring-offset-navy disabled:cursor-not-allowed disabled:opacity-50 active:scale-[0.98]',
+        sizes[size] || sizes.md,
         variants[variant] || variants.gradient,
         fullWidth && 'w-full',
         className

@@ -42,7 +42,13 @@
             'data-theme',
             (key && valid.indexOf(key) !== -1) ? key : 'atelier'
           );
-        } catch (e) {}
+          // Calm density (radical-minimal surfaces) — default ON, reversible.
+          var draw = localStorage.getItem('vf-density');
+          var dkey = draw ? (JSON.parse(draw).state || {}).density : null;
+          document.documentElement.setAttribute('data-density', dkey === 'cozy' ? 'cozy' : 'calm');
+        } catch (e) {
+          document.documentElement.setAttribute('data-density', 'calm');
+        }
       })();
     </script>
     <link rel="icon" type="image/png" href="/favicon.png" />

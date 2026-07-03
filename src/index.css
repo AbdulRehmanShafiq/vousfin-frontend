@@ -78,6 +78,27 @@
     /* ── Type scale tokens — single source for font sizes ── */
     --text-label: 11px; --text-xs: 12px; --text-sm: 13px; --text-base: 14px;
     --text-md: 15px; --text-lg: 17px; --text-xl: 20px; --text-2xl: 24px; --text-display: 32px;
+
+    /* ── Density / whitespace scale (Calm redesign) ── */
+    --space-page: 2rem;        /* page gutter rhythm */
+    --space-section: 1.75rem;  /* between page sections */
+    --space-card: 1.25rem;     /* inside a card */
+    --hairline: var(--c-border);
+  }
+
+  /* ░░ CALM density — radical-minimal surface treatment ░░
+     One attribute on <html> flattens the whole app: cards go borderless + flat
+     at rest and only reveal a hairline + faint lift on hover/focus, whitespace
+     opens up, and the film grain quiets down. Reversible by removing the
+     attribute (→ the richer "Cozy" look). Higher specificity than [data-theme]
+     so it wins across every colour theme. */
+  html[data-density="calm"] {
+    --grain-opacity: 0.16;
+    --shadow-card: none;
+    --shadow-card-hover: 0 1px 0 var(--c-border), 0 12px 28px -20px rgba(0, 0, 0, 0.45);
+    --space-page: 2.5rem;
+    --space-section: 2.25rem;
+    --space-card: 1.4rem;
   }
 
   /* ░░ Atelier — landing-matched luxury gold (DEFAULT) · Playfair ░░ */
@@ -337,6 +358,17 @@
   .premium-card:hover {
     border-color: var(--c-border2);
     box-shadow: var(--shadow-card-hover);
+  }
+
+  /* CALM: cards are quiet — flat fill, whisper-thin border, no gradient/shadow
+     at rest; a hairline + faint lift appears only on hover/focus-within. */
+  html[data-density="calm"] .premium-card {
+    background: rgb(var(--c-bg2));
+    border-color: transparent;
+  }
+  html[data-density="calm"] .premium-card:hover,
+  html[data-density="calm"] .premium-card:focus-within {
+    border-color: var(--c-border);
   }
 
   /* Highlight hairline along a card's top edge */

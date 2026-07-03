@@ -14,6 +14,7 @@ import { useBusinessStore } from '@/stores/useBusinessStore'
 import { useUIStore } from '@/stores/useUIStore'
 import { useIdleLogout } from '@/hooks/useIdleLogout'
 import { useModuleTracker } from '@/hooks/useModuleTracker'
+import PageTransition from '@/components/layout/PageTransition'
 
 export default function DashboardLayout() {
   useIdleLogout()
@@ -52,8 +53,10 @@ export default function DashboardLayout() {
 
         <main className="flex-1 overflow-y-auto overflow-x-hidden bg-navy scrollbar-thin">
           {/* pb-24 on small screens leaves room for the fixed MobileNav bottom bar */}
-          <div className="mx-auto max-w-7xl px-4 py-8 pb-28 sm:px-6 lg:px-8 lg:pb-8 animate-fade-in">
-            <Outlet />
+          <div className="mx-auto max-w-7xl px-4 py-8 pb-28 sm:px-6 lg:px-8 lg:pb-8">
+            <PageTransition>
+              <Outlet />
+            </PageTransition>
           </div>
         </main>
       </div>
