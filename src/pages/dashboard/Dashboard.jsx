@@ -394,12 +394,7 @@ export default function Dashboard() {
         {/* ── 1. CASH HERO — the glance answer ────────────────────── */}
         <CashHero cash={kpis.cashBalance ?? 0} currency={currency} loading={loadDash} />
 
-        {/* ── 2. NEEDS YOUR ATTENTION — surfaced first, above the metrics ── */}
-        <Section label={t('dashboard.needsAttention', 'Needs your attention')}>
-          <NeedsAttentionFeed />
-        </Section>
-
-        {/* ── 3. KPI STRIP ────────────────────────────────────────── */}
+        {/* ── 2. KPI STRIP — key metrics, right below the cash glance ── */}
         <Section label={t('dashboard.keyMetrics', 'Key Metrics')} collapsible defaultOpen>
           <SmartKPIStrip
             kpis={kpis}
@@ -407,6 +402,11 @@ export default function Dashboard() {
             loading={loadDash}
             currency={currency}
           />
+        </Section>
+
+        {/* ── 3. NEEDS YOUR ATTENTION ─────────────────────────────── */}
+        <Section label={t('dashboard.needsAttention', 'Needs your attention')}>
+          <NeedsAttentionFeed />
         </Section>
 
         {/* ── 4. BUSINESS INTELLIGENCE (unified) ──────────────────── */}
