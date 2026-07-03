@@ -73,6 +73,35 @@ function AdvisorFeed() {
   )
 }
 
+function WhatIfBox() {
+  const [q, setQ] = useState('')
+  const [answer, setAnswer] = useState(null)
+  const [busy, setBusy] = useState(false)
+  const ask = async () => {
+    if (!q.trim()) return
+    setBusy(true)
+    try { setAnswer((await aiDecisionService.whatIf(q)).data.data) }
+    catch (e) { toast.error(getErrorMessage(e)) }
+    finally { setBusy(false) }
+  }
+  return (
+    <div>
+      <SectionTitle icon={TrendingUp} title="Ask a what-if" hint="grounded in your real numbers" />
+      <Card>
+        <div className="flex gap-2">
+          <input value={q} onChange={(e) => setQ(e.target.value)} onKeyDown={(e) => e.key === 'Enter' && ask()}
+            placeholder="Can I afford to hire 2 people at Rs 60,000 each?"
+            className="flex-1 rounded-lg border border-glass bg-glass-panel px-3 py-2 text-sm text-text-primary placeholder:text-text-muted focus:outline-none focus:ring-2 focus:ring-accent/40" />
+          <Button className="!px-4 !py-2" disabled={busy} onClick={ask}>Ask</Button>
+        </div>
+        {answer && (
+          <p className={`mt-3 text-sm ${answer.understood ? 'text-text-secondary' : 'text-text-muted'}`}>{answer.answer}</p>
+        )}
+      </Card>
+    </div>
+  )
+}
+
 function ScorecardStrip() {
   const { data: stp } = useQuery({ queryKey: ['stp-scorecard'], queryFn: () => autonomyService.getStpScorecard(90).then((r) => r.data.data) })
   const { data: readiness } = useQuery({ queryKey: ['close-readiness'], queryFn: () => autonomyService.getCloseReadiness().then((r) => r.data.data) })
@@ -241,6 +270,7 @@ export default function IntelligencePage() {
       </div>
       <CalibrationStat />
       <AdvisorFeed />
+      <WhatIfBox />
       <ScorecardStrip />
       <DecisionLedger />
     </div>

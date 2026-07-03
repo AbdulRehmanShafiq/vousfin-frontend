@@ -15,6 +15,7 @@ const aiDecisionService = {
 
   // Proactive AI CFO (Phase 4)
   recommendations: ()                   => api.get('/advisor/recommendations'),
+  whatIf:      (question)               => api.post('/advisor/what-if', { question }),
 }
 
 export default aiDecisionService

@@ -264,6 +264,26 @@ export function navKey(href) {
   return href.replace(/^\//, '').replace(/\//g, '_')
 }
 
+/**
+ * Resolve a trackable shortcut for a pathname — the specific nav item the user
+ * landed on (longest matching href), so dashboard shortcuts point at real pages
+ * (e.g. "Invoices" → /sales/invoices), not just the module. Returns null for
+ * paths that aren't a real destination (dashboard itself, unknown routes).
+ * @returns {{moduleKey, label, path}|null}
+ */
+export function shortcutForPath(pathname) {
+  if (!pathname || pathname === '/' || pathname.startsWith('/dashboard')) return null
+  let best = null
+  for (const item of FLAT_ITEMS) {
+    const prefix = item.activePrefix || item.href
+    if (pathname === item.href || pathname.startsWith(prefix)) {
+      if (!best || prefix.length > (best.activePrefix || best.href).length) best = item
+    }
+  }
+  if (best) return { moduleKey: navKey(best.href), label: best.name, path: best.href }
+  return null
+}
+
 /* ── Backward-compat aliases (kept so any not-yet-migrated consumer compiles) ──
    RAIL_ITEMS / HUB_SECTIONS / hubByKey / activeSectionKey map onto MODULES. */
 export const RAIL_ITEMS = MODULES.map((m) => ({

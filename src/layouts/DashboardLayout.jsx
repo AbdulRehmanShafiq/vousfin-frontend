@@ -13,10 +13,12 @@ import { useAuthStore } from '@/stores/useAuthStore'
 import { useBusinessStore } from '@/stores/useBusinessStore'
 import { useUIStore } from '@/stores/useUIStore'
 import { useIdleLogout } from '@/hooks/useIdleLogout'
+import { useModuleTracker } from '@/hooks/useModuleTracker'
 
 export default function DashboardLayout() {
   useIdleLogout()
   useCommandBarHotkey()
+  useModuleTracker()
   const { user } = useAuthStore()
   const { activeBusiness, fetchBusiness } = useBusinessStore()
   const queryClient = useQueryClient()

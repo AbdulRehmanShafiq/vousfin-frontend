@@ -10,7 +10,9 @@
  */
 import { useMemo, useState } from 'react'
 import { Link } from 'react-router-dom'
+import { useQuery } from '@tanstack/react-query'
 import { useTranslation } from 'react-i18next'
+import dashboardService from '@/services/dashboard.service'
 import {
   LayoutDashboard, Plus, Clock,
   TrendingUp, TrendingDown,
@@ -166,6 +168,30 @@ const ACTION_DEFS = [
     labelHover:   'group-hover:text-amber',
   },
 ]
+
+/* ── Module Shortcuts — the user's most-used modules, learned over time ── */
+function ModuleShortcuts() {
+  const { data: shortcuts = [] } = useQuery({
+    queryKey: ['module-shortcuts'],
+    queryFn: () => dashboardService.getModuleShortcuts().then((r) => r.data.data),
+    staleTime: 60_000,
+  })
+  if (!shortcuts.length) return null
+  return (
+    <div className="mb-6">
+      <p className="text-[11px] font-bold uppercase tracking-widest text-text-muted mb-2">Jump back in</p>
+      <div className="flex items-center gap-2 flex-wrap">
+        {shortcuts.map((s) => (
+          <Link key={s.moduleKey} to={s.path}
+            className="group flex items-center gap-2 px-3.5 py-2 rounded-xl border border-glass hover:border-cyan/35 hover:bg-glass-hover transition-all duration-150 active:scale-95">
+            <span className="text-sm font-semibold text-text-primary">{s.label}</span>
+            <ArrowUpRight className="h-3.5 w-3.5 text-text-muted group-hover:text-cyan transition-colors" />
+          </Link>
+        ))}
+      </div>
+    </div>
+  )
+}
 
 function QuickActionsBar({ onNewTransaction }) {
   const pillBase = cn(
@@ -359,6 +385,9 @@ export default function Dashboard() {
       <div className="mb-6">
         <QuickActionsBar onNewTransaction={openTxModal} />
       </div>
+
+      {/* ── YOUR SHORTCUTS — most-used modules, learned from how you work ── */}
+      <ModuleShortcuts />
 
       <div className="space-y-7">
 
