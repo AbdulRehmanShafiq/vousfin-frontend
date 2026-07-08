@@ -52,7 +52,7 @@ export default function AIClassifyPanel({ onClose }) {
   const [busy, setBusy] = useState(false)
   const setF = (k) => (e) => setForm(f => ({ ...f, [k]: e.target.value }))
 
-  // natural language (local parser, no Gemini)
+  // natural language (local parser, no AI call)
   const [nlText, setNlText]   = useState('')
   const [nlBusy, setNlBusy]   = useState(false)
   const [nlResult, setNlResult] = useState(null)
@@ -155,7 +155,7 @@ export default function AIClassifyPanel({ onClose }) {
         Type a sentence, upload a statement, or add one quickly — all run on your local model.
       </p>
 
-      {/* ── Natural language (local, no Gemini) ── */}
+      {/* ── Natural language (local, no AI call) ── */}
       <div>
         <div className="flex items-center gap-2 mb-2">
           <MessageSquare className="w-4 h-4 text-cyan" />

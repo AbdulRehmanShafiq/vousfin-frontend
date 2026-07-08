@@ -18,7 +18,7 @@ const classifierApi = {
   /** Ledger self-audit: Σdebits=Σcredits + orphan check. */
   integrity:     ()                   => aiClient.get(`${BASE}/v1/integrity/balance`),
   getAccuracy:   ()                   => aiClient.get(`${BASE}/v1/health/accuracy`),
-  /** Local (no-Gemini) natural-language parse → resolved transaction. */
+  /** Local (no AI call) natural-language parse → resolved transaction. */
   nlParse:       (text)              => aiClient.post(`${BASE}/v1/nl-parse`, { text }),
   /** AutoPostFeed — most recent zero-touch postings. */
   getAutoPosted: (params = {})        => aiClient.get(`${BASE}/v1/queue/auto-posted`, { params }),

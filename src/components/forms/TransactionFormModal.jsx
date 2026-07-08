@@ -529,7 +529,7 @@ export default function TransactionFormModal({ isOpen, onClose, onSuccess, trans
   const handleSuccess = () => { onSuccess?.(); onClose() }
 
   /**
-   * STEP 5 — Called by NLTab right after Gemini parses the text.
+   * STEP 5 — Called by NLTab right after the AI parses the text.
    * Maps the NL preview shape to the structured form's initialValues shape
    * and switches to the form tab. The NL parser AUTOFILLS the same form —
    * there is no separate NL confirmation flow.
