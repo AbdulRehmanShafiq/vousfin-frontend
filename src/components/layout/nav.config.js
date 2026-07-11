@@ -22,7 +22,7 @@ import {
   Users, FileText, Wallet, Plus,
   Briefcase, CreditCard, ShoppingBag, Truck,
   Landmark, BrainCircuit, ShieldAlert,
-  Boxes, Library, Sparkles, Scale,
+  Boxes, Library, Sparkles, Scale, Inbox,
   ArrowDownCircle, ArrowUpCircle, Banknote,
   FileBarChart2, TrendingUp, Lightbulb, Target, Hammer, Layers,
   Settings, DollarSign, Percent, Palette, Building2, UsersRound, ShieldCheck,
@@ -49,7 +49,9 @@ export const MODULES = [
   {
     key: 'home', name: 'Home', icon: LayoutDashboard, accent: JADE, href: '/dashboard',
     subtitle: 'Your business at a glance', alwaysOn: true,
-    items: [], // Home has no panel list — the rail goes straight to the dashboard.
+    items: [
+      { name: 'Command Center', href: '/command-center', icon: Inbox, primary: true, desc: 'Your one inbox — what needs you, and what VousFin is doing' },
+    ],
   },
   {
     key: 'sales', name: 'Sales', icon: ArrowDownCircle, accent: JADE, href: '/sales',

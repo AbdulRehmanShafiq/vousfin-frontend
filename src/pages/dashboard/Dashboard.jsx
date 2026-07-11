@@ -30,6 +30,7 @@ import { useDashboardAll }  from '@/hooks/useReports'
 import { formatCompactCurrency, formatDate } from '@/utils/formatters'
 import { cn } from '@/utils/cn'
 
+import CommandCenterWidget     from '@/components/dashboard/CommandCenterWidget'
 import SmartKPIStrip           from '@/components/dashboard/SmartKPIStrip'
 import NeedsAttentionFeed      from '@/components/dashboard/NeedsAttentionFeed'
 import BusinessHealthWidget    from '@/components/dashboard/BusinessHealthWidget'
@@ -394,6 +395,9 @@ export default function Dashboard() {
 
         {/* ── 1. CASH HERO — the glance answer ────────────────────── */}
         <CashHero cash={kpis.cashBalance ?? 0} currency={currency} loading={loadDash} />
+
+        {/* ── COMMAND CENTER — limited inbox preview; opens full page ── */}
+        <CommandCenterWidget />
 
         {/* ── 2. KPI STRIP — key metrics, right below the cash glance ── */}
         <Section label={t('dashboard.keyMetrics', 'Key Metrics')} collapsible defaultOpen>
