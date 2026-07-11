@@ -34,6 +34,8 @@ import { getTxTypeFilter } from '@/utils/accountFilterRules'
 import { resolveDebitCreditPair } from '@/utils/accountResolver'
 import { buildFailedImportCsv } from '@/utils/failedImportCsv'
 import { downloadBlob } from '@/utils/exportHelpers'
+import { nlResultToFormValues } from '@/utils/nlFormMapping'
+import { buildPlainSummary } from '@/utils/plainSummary'
 import { cn } from '@/utils/cn'
 
 /* ──────────────────────────────────────────────────────────────────────────────
@@ -650,41 +652,8 @@ export default function TransactionFormModal({ isOpen, onClose, onSuccess, trans
 }
 
 // ─── Tab 1: Natural Language (Step 5: input-only, autofills form) ─────────────
-// Maps a parser preview result → the structured form's initialValues shape.
-function nlResultToFormValues(result, rawText) {
-  return {
-    transactionDate:         result.transactionDate || new Date().toISOString().split('T')[0],
-    description:             result.description || rawText,
-    amount:                  result.amount || 0,
-    transactionType:         result.transactionType || '',
-    debitAccountId:          result.debitAccountId  || '',
-    creditAccountId:         result.creditAccountId || '',
-    debitAccount:            result.debitAccount    || '',
-    creditAccount:           result.creditAccount   || '',
-    confidence:              result.confidence      ?? null,
-    requiresReview:          result.requiresReview  ?? false,
-    reviewReasons:           result.reviewReasons   ?? [],
-    isInstallment:           result.isInstallment   || false,
-    installmentPeriodMonths: result.installmentPeriodMonths || null,
-    totalInstallmentAmount:  result.totalInstallmentAmount  || null,
-    downPayment:             result.downPayment            || 0,
-    installmentFrequency:    result.installmentFrequency   || 'monthly',
-    installmentCount:        result.installmentCount       || result.installmentPeriodMonths || null,
-    interestRate:            result.interestRate           || 0,
-    firstPaymentDate:        result.firstPaymentDate       || '',
-    interestMethod:          result.interestMethod         || 'reducing_balance',
-    taxAmount:               result.taxAmount              || 0,
-    taxRate:                 result.taxRate                || 0,
-    currency:                result.currency               || null,
-    vendorName:              result.vendorName             || result.counterpartyName || '',
-    customerName:            result.customerName           || result.counterpartyName || '',
-    invoiceNumber:           result.invoiceNumber          || '',
-    paymentMethod:           result.paymentMethod          || '',
-    notes:                   result.notes                  || '',
-    resolvedJournalLines:    result.resolvedJournalLines   || [],
-    _rawText:                rawText,
-  }
-}
+// nlResultToFormValues moved to @/utils/nlFormMapping (unit-tested; carries the
+// smart-entry _inventory/_lineItems fields).
 
 function NLTab({ currency, onParsed, onAutoPosted }) {
   const [text, setText] = useState('')
@@ -1013,6 +982,9 @@ function StructuredFormTab({ currency, onSuccess, onCancel, initialValues, editT
   // Phase 3.5 Step 3 — Inventory state
   const [selectedInventoryItemId, setSelectedInventoryItemId] = useState(null)
   const [inventoryQty, setInventoryQty] = useState(1)
+  // Smart entry — a consented brand-new item arriving from the NL parse.
+  // Editable card; created atomically with the transaction at save time.
+  const [pendingNewItem, setPendingNewItem] = useState(null) // { name, unit, quantity, unitCostPrice }
 
   // Phase 5.3 — FX: load latest rates to populate currency options + auto-fill rate
   const { data: latestFxRates } = useLatestRates()
@@ -1155,6 +1127,22 @@ function StructuredFormTab({ currency, onSuccess, onCancel, initialValues, editT
           initialValues.paymentMethod) {
         setShowOptional(true)
       }
+
+      // Smart entry — prefill the inventory linkage the parser resolved
+      const inv = initialValues._inventory
+      if (inv?.mode === 'existing' && inv.itemId) {
+        setSelectedInventoryItemId(inv.itemId)
+        setInventoryQty(inv.quantity > 0 ? inv.quantity : 1)
+        setPendingNewItem(null)
+      } else if (inv?.mode === 'create' && inv.itemName) {
+        setSelectedInventoryItemId(null)
+        setPendingNewItem({
+          name: inv.itemName,
+          unit: inv.unit || 'units',
+          quantity: inv.quantity > 0 ? inv.quantity : 1,
+          unitCostPrice: inv.unitCostPrice || null,
+        })
+      }
     } else {
       reset({ transactionDate: today })
       setNlAiBanner(false)
@@ -1164,6 +1152,7 @@ function StructuredFormTab({ currency, onSuccess, onCancel, initialValues, editT
       setNlPartyFilled(false)
       setSelectedInventoryItemId(null)
       setInventoryQty(1)
+      setPendingNewItem(null)
       setPreSaveWarnings([])
       setPreSaveAcknowledged(false)
     }
@@ -1335,6 +1324,15 @@ function StructuredFormTab({ currency, onSuccess, onCancel, initialValues, editT
       if (selectedVendorId)        extras.vendorId             = selectedVendorId
       if (selectedInventoryItemId) extras.inventoryItemId      = selectedInventoryItemId
       if (selectedInventoryItemId && inventoryQty > 0) extras.inventoryQty = inventoryQty
+      // Smart entry — consented new item is created atomically with the save
+      if (!selectedInventoryItemId && pendingNewItem?.name?.trim() && pendingNewItem.quantity > 0) {
+        extras.newInventoryItem = {
+          name: pendingNewItem.name.trim(),
+          unit: pendingNewItem.unit?.trim() || 'units',
+          quantity: pendingNewItem.quantity,
+          unitCostPrice: pendingNewItem.unitCostPrice || null,
+        }
+      }
       if (referenceNumber?.trim()) extras.transactionReference = referenceNumber.trim()
       if (invoiceNumber?.trim())   extras.invoiceNumber        = invoiceNumber.trim()
       if (notes?.trim())           extras.notes                = notes.trim()
@@ -1526,6 +1524,25 @@ function StructuredFormTab({ currency, onSuccess, onCancel, initialValues, editT
           error={errors.creditAccountId?.message} placeholder="Select Account" searchable />
       </div>
 
+      {/* Plain-language summary — what will happen, in the owner's words */}
+      {(() => {
+        const item = inventoryItems.find(i => i._id === selectedInventoryItemId)
+        const invForSummary = pendingNewItem
+          ? { mode: 'create', itemName: pendingNewItem.name, quantity: pendingNewItem.quantity, unit: pendingNewItem.unit }
+          : item
+            ? { mode: 'existing', itemName: item.name, quantity: inventoryQty, unit: item.unit, currentStock: item.currentStock }
+            : { mode: 'none' }
+        const sentence = buildPlainSummary({
+          transactionType, amount, currency,
+          paymentMethod: watch('paymentMethod'), inventory: invForSummary,
+        })
+        return sentence ? (
+          <p className="text-sm text-text-secondary rounded-lg border border-glass bg-glass-panel px-4 py-3" role="note">
+            {sentence}
+          </p>
+        ) : null
+      })()}
+
       {/* Live Journal Preview — zero API calls, pure client-side feedback */}
       {debitAccountId && creditAccountId && amount > 0 && !hasCompoundJournal && (
         <LiveJournalPreview
@@ -1631,13 +1648,49 @@ function StructuredFormTab({ currency, onSuccess, onCancel, initialValues, editT
         </div>
       )}
 
-      {/* Inventory Item Selector — shown for Inventory Sale / Inventory Purchase */}
-      {/* Inventory selector — shown for any sale or purchase type so stock stays in sync */}
-      {(['Inventory Sale', 'Inventory Purchase', 'Cash Sale', 'Credit Sale', 'Cash Purchase', 'Credit Purchase', 'Income'].includes(transactionType)) && inventoryItems.length > 0 && (
+      {/* Inventory Item Selector — moved up next to the core details (smart entry).
+          Shown for any sale or purchase type so stock stays in sync; visible even
+          with zero items because the new-item card is the zero-item path. */}
+      {(pendingNewItem || ['Inventory Sale', 'Inventory Purchase', 'Cash Sale', 'Credit Sale', 'Cash Purchase', 'Credit Purchase', 'Income'].includes(transactionType)) && (
         <div className="animate-fade-in p-4 rounded-xl bg-positive/5 border border-positive/20 space-y-3">
           <p className="text-xs font-semibold text-positive uppercase tracking-wide">
             Inventory Item
           </p>
+
+          {/* Consented NEW item card — created atomically with the save */}
+          {pendingNewItem && (
+            <div className="rounded-lg border border-cyan/25 bg-cyan/5 px-4 py-3 space-y-2">
+              <div className="flex items-center justify-between">
+                <span className="text-[12px] font-bold text-cyan uppercase tracking-wider">New item — will be added to your inventory</span>
+                <button type="button" className="text-text-muted hover:text-text-primary" aria-label="Remove new item"
+                  onClick={() => setPendingNewItem(null)}>
+                  <X className="h-4 w-4" />
+                </button>
+              </div>
+              <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
+                <Input label="Item name" value={pendingNewItem.name}
+                  onChange={e => setPendingNewItem(p => ({ ...p, name: e.target.value }))} />
+                <Input label="Quantity" type="number" min="0.01" step="any" value={pendingNewItem.quantity}
+                  onChange={e => setPendingNewItem(p => ({ ...p, quantity: parseFloat(e.target.value) || 0 }))} />
+                <Input label="Unit (e.g. bags)" value={pendingNewItem.unit}
+                  onChange={e => setPendingNewItem(p => ({ ...p, unit: e.target.value }))} />
+                <Input label="Cost per unit" type="number" min="0" step="any" value={pendingNewItem.unitCostPrice ?? ''}
+                  placeholder="auto from amount"
+                  onChange={e => setPendingNewItem(p => ({ ...p, unitCostPrice: parseFloat(e.target.value) || null }))} />
+              </div>
+              <p className="text-[12px] text-text-muted">
+                Saving this transaction also adds “{pendingNewItem.name || 'this item'}” to your inventory with the stock above.
+              </p>
+            </div>
+          )}
+
+          {!pendingNewItem && inventoryItems.length === 0 && (
+            <p className="text-[12.5px] text-text-muted">
+              No items in your inventory yet. Use the AI entry tab and it will offer to add one, or add items on the Inventory page.
+            </p>
+          )}
+
+          {!pendingNewItem && inventoryItems.length > 0 && (
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
             <div className="sm:col-span-2">
               <Select
@@ -1664,6 +1717,7 @@ function StructuredFormTab({ currency, onSuccess, onCancel, initialValues, editT
               />
             </div>
           </div>
+          )}
           {selectedInventoryItemId && (() => {
             const item = inventoryItems.find(i => i._id === selectedInventoryItemId)
             if (!item) return null
