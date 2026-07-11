@@ -12,6 +12,7 @@ import Select from '@/components/ui/Select'
 import Button from '@/components/ui/Button'
 import TaxPreviewPanel from '@/components/ui/TaxPreviewPanel'
 import AIClassifyPanel from '@/components/ai/AIClassifyPanel'
+import SimpleEntrySection from '@/components/forms/SimpleEntrySection'
 import { useAccounts } from '@/hooks/useAccounts'
 import { useCustomers, useVendors } from '@/hooks/useParties'
 import { useInventoryItems } from '@/hooks/useInventory'
@@ -986,6 +987,12 @@ function StructuredFormTab({ currency, onSuccess, onCancel, initialValues, editT
   // Editable card; created atomically with the transaction at save time.
   const [pendingNewItem, setPendingNewItem] = useState(null) // { name, unit, quantity, unitCostPrice }
 
+  // Simple ⇄ Advanced entry mode — persisted per user; Simple is the default.
+  // Edit mode and NL prefill always use the full (advanced) form.
+  const [entryMode, setEntryMode] = useState(() => localStorage.getItem('vf-entry-mode') || 'simple')
+  const switchMode = (m) => { setEntryMode(m); localStorage.setItem('vf-entry-mode', m) }
+  const advancedVisible = !!editTransactionId || entryMode === 'advanced' || !!initialValues?._rawText
+
   // Phase 5.3 — FX: load latest rates to populate currency options + auto-fill rate
   const { data: latestFxRates } = useLatestRates()
 
@@ -1485,6 +1492,24 @@ function StructuredFormTab({ currency, onSuccess, onCancel, initialValues, editT
         </p>
       )}
 
+      {/* Simple ⇄ Advanced entry mode (create only; NL prefill opens Advanced) */}
+      {!isEditMode && !initialValues?._rawText && (
+        <div className="flex gap-1 p-1 rounded-xl bg-glass-panel border border-glass">
+          <button type="button" onClick={() => switchMode('simple')}
+            className={cn('flex-1 py-2 px-3 rounded-lg text-sm font-semibold transition-all',
+              !advancedVisible ? 'bg-cyan text-ink-on-accent' : 'text-text-secondary hover:text-text-primary')}>
+            Simple
+          </button>
+          <button type="button" onClick={() => switchMode('advanced')}
+            className={cn('flex-1 py-2 px-3 rounded-lg text-sm font-semibold transition-all',
+              advancedVisible ? 'bg-cyan text-ink-on-accent' : 'text-text-secondary hover:text-text-primary')}>
+            Advanced
+          </button>
+        </div>
+      )}
+
+      {advancedVisible ? (
+      <>
       {/* ── Section: Core Details ──────────────────────────────────────── */}
       <SectionLabel label="Transaction Details" />
 
@@ -1523,6 +1548,14 @@ function StructuredFormTab({ currency, onSuccess, onCancel, initialValues, editT
           value={creditAccountId} onChange={(val) => setValue('creditAccountId', val)}
           error={errors.creditAccountId?.message} placeholder="Select Account" searchable />
       </div>
+      </>
+      ) : (
+        <SimpleEntrySection
+          accounts={accounts}
+          form={{ register, setValue, watch, errors }}
+          onSwitchToAdvanced={() => switchMode('advanced')}
+        />
+      )}
 
       {/* Plain-language summary — what will happen, in the owner's words */}
       {(() => {
@@ -1590,7 +1623,7 @@ function StructuredFormTab({ currency, onSuccess, onCancel, initialValues, editT
       />
 
       {/* Customer / Vendor + Invoice — shown when transaction type/accounts indicate AR or AP */}
-      {(requiresCustomer || requiresVendor) && (
+      {advancedVisible && (requiresCustomer || requiresVendor) && (
         <div className="animate-fade-in p-4 rounded-xl bg-cyan/5 border border-cyan/20 space-y-3 mt-1">
           <p className="text-[12px] font-semibold text-cyan uppercase tracking-wider">
             {requiresCustomer ? 'Customer Details' : 'Vendor Details'}
@@ -1818,8 +1851,8 @@ function StructuredFormTab({ currency, onSuccess, onCancel, initialValues, editT
         </div>
       )}
 
-      {/* Additional Details (collapsible) */}
-      <div className="border border-glass rounded-xl overflow-hidden">
+      {/* Additional Details (collapsible) — advanced mode only */}
+      {advancedVisible && <div className="border border-glass rounded-xl overflow-hidden">
         <button type="button" onClick={() => setShowOptional(v => !v)}
           className="w-full flex items-center justify-between px-4 py-3 text-sm font-medium text-text-secondary hover:text-text-primary hover:bg-glass-hover transition-colors">
           <span className="flex items-center gap-2">
@@ -1913,11 +1946,11 @@ function StructuredFormTab({ currency, onSuccess, onCancel, initialValues, editT
             </div>
           </div>
         )}
-      </div>
+      </div>}
 
-      {/* ── Section: Installment / EMI (optional) — hidden in edit mode ── */}
+      {/* ── Section: Installment / EMI (optional) — hidden in edit mode + simple mode ── */}
       {/* Installment Toggle */}
-      {!isEditMode && <div className="pt-3 border-t border-glass">
+      {advancedVisible && !isEditMode && <div className="pt-3 border-t border-glass">
         <label className="flex items-center gap-3 cursor-pointer group">
           <div className="relative flex items-center">
             <input type="checkbox" className="peer sr-only" {...register('isInstallment')} />
