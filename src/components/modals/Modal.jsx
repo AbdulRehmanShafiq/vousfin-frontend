@@ -3,6 +3,7 @@ import { createPortal } from 'react-dom'
 import { X } from 'lucide-react'
 import { cn } from '@/utils/cn'
 import { useWindowSize } from '@/hooks/useWindowSize'
+import Sheet from '@/components/mobile/Sheet'
 
 export default function Modal({
   isOpen,
@@ -24,6 +25,16 @@ export default function Modal({
     }
   }, [isOpen])
 
+  // Native-feel bottom sheet on mobile — every Modal call site gets this for
+  // free (drag handle, full-height, safe-area, sticky header) with no API change.
+  if (isMobile) {
+    return (
+      <Sheet isOpen={isOpen} onClose={onClose} title={title} className={className} preventOutsideClick={preventOutsideClick}>
+        {children}
+      </Sheet>
+    )
+  }
+
   if (!isOpen) return null
 
   const handleBackdropClick = (e) => {
@@ -39,12 +50,7 @@ export default function Modal({
       aria-modal="true"
       role="dialog"
     >
-      <div
-        className={cn(
-          isMobile ? 'mobile-bottom-sheet w-full animate-slide-up' : 'premium-card w-full max-w-lg animate-fade-in relative',
-          className
-        )}
-      >
+      <div className={cn('premium-card w-full max-w-lg animate-fade-in relative', className)}>
         <div className="mb-6 flex items-center justify-between">
           <h2 className="text-xl font-bold text-text-primary">{title}</h2>
           <button

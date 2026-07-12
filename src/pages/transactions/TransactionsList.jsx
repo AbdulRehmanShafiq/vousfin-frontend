@@ -17,6 +17,8 @@ import {
 
 import { useInfiniteTransactions } from '@/hooks/useTransactions'
 import { useBusinessStore } from '@/stores/useBusinessStore'
+import { useIsMobile } from '@/hooks/useIsMobile'
+import MobileTransactions from './MobileTransactions'
 import { formatCurrency, formatDate } from '@/utils/formatters'
 
 import Button from '@/components/ui/Button'
@@ -202,6 +204,7 @@ export default function TransactionsList() {
   const [expandedRows,   setExpandedRows]   = useState({})
 
   const currency = useBusinessStore(s => s.currency)
+  const isMobile = useIsMobile()
 
   const queryParams = useMemo(() => ({
     sortBy: 'transactionDate',
@@ -215,6 +218,7 @@ export default function TransactionsList() {
     isFetchingNextPage,
     fetchNextPage,
     hasNextPage,
+    refetch,
   } = useInfiniteTransactions(queryParams)
 
   // Flatten all fetched pages into a single array — new pages are appended
@@ -291,6 +295,43 @@ export default function TransactionsList() {
     observer.observe(el)
     return () => observer.disconnect()
   }, [hasNextPage, isFetchingNextPage, fetchNextPage])
+
+  // Mobile-First Redesign, pass 1 — card list + swipe actions instead of the
+  // sideways-scrolling table. All hooks above already ran (rules-of-hooks
+  // safe); this is a plain conditional return. Modals stay mounted below
+  // either way and share the exact same state, so there's one save path.
+  if (isMobile) {
+    return (
+      <>
+        <MobileTransactions
+          rows={filtered}
+          currency={currency}
+          isLoading={isLoading}
+          totals={totals}
+          hasNextPage={hasNextPage}
+          onRefresh={async () => { await refetch() }}
+          canReverse={canReverse}
+          onReverse={setReversalTarget}
+          onViewDetails={(row) => setDetailTarget(row._id)}
+          onCreate={() => setIsFormOpen(true)}
+          sentinelRef={sentinelRef}
+        />
+        <TransactionFormModal isOpen={isFormOpen} onClose={() => setIsFormOpen(false)} />
+        <TransactionFormModal isOpen={Boolean(editTarget)} onClose={() => setEditTarget(null)} transaction={editTarget} />
+        <TransactionReversalModal
+          isOpen={Boolean(reversalTarget)}
+          onClose={() => setReversalTarget(null)}
+          transaction={reversalTarget}
+          onSuccess={() => setReversalTarget(null)}
+        />
+        <TransactionDetailModal
+          isOpen={Boolean(detailTarget)}
+          onClose={() => setDetailTarget(null)}
+          transactionId={detailTarget}
+        />
+      </>
+    )
+  }
 
   return (
     <div className="space-y-3 animate-fade-in">

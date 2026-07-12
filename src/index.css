@@ -465,6 +465,15 @@
   .mobile-bottom-sheet {
     @apply fixed inset-x-0 bottom-0 z-50 rounded-t-2xl bg-charcoal p-6 shadow-2xl transition-all duration-300 md:relative md:inset-auto md:rounded-xl md:p-6 md:shadow-md border border-glass;
   }
+
+  /* Mobile kit — touch targets + safe-area insets (notch/home-indicator) */
+  .tap-target {
+    @apply min-h-[48px] min-w-[48px];
+  }
+  .pt-safe { padding-top: env(safe-area-inset-top); }
+  .pb-safe { padding-bottom: env(safe-area-inset-bottom); }
+  .pl-safe { padding-left: env(safe-area-inset-left); }
+  .pr-safe { padding-right: env(safe-area-inset-right); }
 }
 
 .prose-sm p { @apply mb-2 last:mb-0; }

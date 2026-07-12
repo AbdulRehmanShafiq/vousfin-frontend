@@ -24,6 +24,8 @@ import {
 import { useBusinessStore } from '@/stores/useBusinessStore'
 import { useAuthStore }     from '@/stores/useAuthStore'
 import { useUIStore }       from '@/stores/useUIStore'
+import { useIsMobile }      from '@/hooks/useIsMobile'
+import MobileHome from './MobileHome'
 import PageHeader from '@/components/ui/PageHeader'
 import { useTransactions }  from '@/hooks/useTransactions'
 import { useDashboardAll }  from '@/hooks/useReports'
@@ -339,6 +341,7 @@ export default function Dashboard() {
   const { user }                     = useAuthStore()
   const { currency, activeBusiness } = useBusinessStore()
   const openTxModal                  = useUIStore((s) => s.openTxModal)
+  const isMobile                     = useIsMobile()
 
   /* Mobile transaction bottom drawer */
   const [showTxDrawer, setShowTxDrawer] = useState(false)
@@ -363,6 +366,11 @@ export default function Dashboard() {
   const hour     = new Date().getHours()
   const greeting = hour < 12 ? 'Good morning' : hour < 17 ? 'Good afternoon' : 'Good evening'
   const firstName = (user?.fullName || user?.name || 'there').split(' ')[0]
+
+  // Mobile-First Redesign, pass 1 — a purpose-built phone screen, not the
+  // desktop grid collapsed. All hooks above still ran (rules-of-hooks safe);
+  // this is a plain conditional return.
+  if (isMobile) return <MobileHome />
 
   return (
     <div className="animate-fade-in pb-10">
