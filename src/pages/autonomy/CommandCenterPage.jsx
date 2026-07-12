@@ -415,6 +415,22 @@ export default function CommandCenterPage() {
         </button>
       </div>
 
+      {/* AI tools — the AI features that used to be scattered, gathered here */}
+      <div className="flex flex-wrap items-center gap-2">
+        <span className="text-[12px] font-semibold uppercase tracking-wider text-text-muted mr-1">AI tools</span>
+        {[
+          { to: '/ai/review-queue',      label: 'Review queue' },
+          { to: '/ai/assistant',         label: 'Ask the AI' },
+          { to: '/ai-analyst/anomalies', label: 'Anomalies' },
+          { to: '/ai/intelligence',      label: 'Automation & insights' },
+        ].map(x => (
+          <Link key={x.to} to={x.to}
+            className="inline-flex items-center gap-1 px-3 py-1.5 rounded-lg border border-glass bg-glass-panel/40 text-[12.5px] font-semibold text-text-secondary hover:border-cyan/40 hover:text-text-primary transition-colors">
+            {x.label} <ArrowUpRight className="h-3 w-3" />
+          </Link>
+        ))}
+      </div>
+
       <ControlLine />
 
       <AutonomyDials />
