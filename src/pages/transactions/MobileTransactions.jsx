@@ -10,8 +10,7 @@ import MobilePage from '@/components/mobile/MobilePage'
 import ListCard from '@/components/mobile/ListCard'
 import SwipeRow from '@/components/mobile/SwipeRow'
 import PullToRefresh from '@/components/mobile/PullToRefresh'
-
-const INFLOW_TYPES = new Set(['income', 'cash sale', 'credit sale', 'payment received', 'fx gain'])
+import { isInflow } from '@/utils/transactionFlow'
 
 export default function MobileTransactions({
   rows,
@@ -69,7 +68,7 @@ export default function MobileTransactions({
           ) : (
             <div className="space-y-1.5">
               {rows.map((row) => {
-                const inflow = INFLOW_TYPES.has((row.transactionType || '').toLowerCase())
+                const inflow = isInflow(row.transactionType)
                 const reversed = row.status === 'reversed'
                 const actions = [
                   { label: 'Details', icon: Eye, onClick: () => onViewDetails(row) },

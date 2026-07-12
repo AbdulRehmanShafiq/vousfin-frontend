@@ -18,9 +18,9 @@ import { formatCompactCurrency } from '@/utils/formatters'
 import MobilePage from '@/components/mobile/MobilePage'
 import ListCard from '@/components/mobile/ListCard'
 import PullToRefresh from '@/components/mobile/PullToRefresh'
+import { isInflow as isInflowType } from '@/utils/transactionFlow'
 
-const INFLOW_TYPES = new Set(['income', 'cash sale', 'credit sale', 'payment received', 'revenue', 'sales', 'sale'])
-const isInflow = (tx) => INFLOW_TYPES.has((tx.transactionType || '').toLowerCase())
+const isInflow = (tx) => isInflowType(tx.transactionType)
 
 export default function MobileHome() {
   const queryClient = useQueryClient()

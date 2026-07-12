@@ -43,13 +43,10 @@ import RevenueExpensesChart    from '@/components/dashboard/RevenueExpensesChart
 import CashFlowTrendChart      from '@/components/dashboard/CashFlowTrendChart'
 import TaxPositionWidget       from '@/components/dashboard/TaxPositionWidget'
 import SkeletonLoader          from '@/components/ui/SkeletonLoader'
+import { isInflow as isInflowType } from '@/utils/transactionFlow'
 
 /* ── helpers ──────────────────────────────────────────────────────── */
-const INFLOW_TYPES = new Set([
-  'income', 'cash sale', 'credit sale', 'payment received',
-  'revenue', 'sales', 'sale',
-])
-const isInflow = tx => INFLOW_TYPES.has((tx.transactionType || '').toLowerCase())
+const isInflow = tx => isInflowType(tx.transactionType)
 
 /* Thin alias → the single shared compact money formatter (utils/formatters). */
 const fmtAmt = formatCompactCurrency

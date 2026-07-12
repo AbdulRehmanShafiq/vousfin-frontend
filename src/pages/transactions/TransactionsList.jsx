@@ -20,6 +20,7 @@ import { useBusinessStore } from '@/stores/useBusinessStore'
 import { useIsMobile } from '@/hooks/useIsMobile'
 import MobileTransactions from './MobileTransactions'
 import { formatCurrency, formatDate } from '@/utils/formatters'
+import { INFLOW_TYPES, OUTFLOW_TYPES } from '@/utils/transactionFlow'
 
 import Button from '@/components/ui/Button'
 import KPICard from '@/components/ui/KPICard'
@@ -49,8 +50,9 @@ const TYPE_VARIANT = {
   'fx gain': 'success', 'fx loss': 'danger', 'fx revaluation': 'default',
 }
 
-const INFLOW_TYPES = new Set(['income', 'cash sale', 'credit sale', 'payment received', 'fx gain'])
-const OUTFLOW_TYPES = new Set(['expense', 'cash purchase', 'credit purchase', 'payment made', 'fx loss'])
+// INFLOW_TYPES / OUTFLOW_TYPES now come from the shared @/utils/transactionFlow
+// (single source of truth — see that file for why inventory sale/purchase were
+// previously mis-/un-classified here and in the dashboard).
 const FILTERS = ['All', 'Income', 'Expense', 'AR/AP', 'Transfer']
 
 // ─── memoized sub-components ──────────────────────────────────────────────────
