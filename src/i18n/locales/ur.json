@@ -223,8 +223,8 @@
   "dashboard.businessAnalytics": "چارٹس",
   "dashboard.forecastingCash": "آگے کیا آ رہا ہے",
 
-  "tx.ledger": "لین دین کا کھاتہ",
-  "tx.journal": "ڈبل اندراج محاسبہ جریدہ",
+  "tx.ledger": "لین دین",
+  "tx.journal": "آپ نے جو کچھ درج کیا",
   "tx.record": "درج کریں",
   "tx.col.date": "تاریخ",
   "tx.col.description": "تفصیل",

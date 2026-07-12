@@ -160,11 +160,11 @@ export default function BillsListPage() {
             Bills
           </h1>
           <p className="text-text-secondary mt-1 text-sm">
-            Record, approve, and schedule vendor bills.
+            What your suppliers charge you.
           </p>
         </div>
         <Button icon={Plus} onClick={() => navigate('/purchases/bills/new')}>
-          New Bill
+          New bill
         </Button>
       </div>
 
@@ -194,7 +194,7 @@ export default function BillsListPage() {
           columns={columns}
           data={bills}
           isLoading={isLoading}
-          emptyMessage={query ? 'No bills match your search.' : 'No bills yet. Click "New Bill" to record one.'}
+          emptyMessage={query ? 'No bills match your search.' : 'No bills yet. Tap "New bill" to record your first one.'}
         />
       </div>
     </div>

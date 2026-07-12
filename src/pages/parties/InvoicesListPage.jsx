@@ -172,11 +172,11 @@ export default function InvoicesListPage() {
             Invoices
           </h1>
           <p className="text-text-secondary mt-1 text-sm">
-            Create, edit, and manage customer invoices.
+            The bills you send to customers.
           </p>
         </div>
         <Button icon={Plus} onClick={() => navigate('/sales/invoices/new')}>
-          New Invoice
+          New invoice
         </Button>
       </div>
 
@@ -208,7 +208,7 @@ export default function InvoicesListPage() {
           columns={columns}
           data={invoices}
           isLoading={isLoading}
-          emptyMessage={query ? 'No invoices match your search.' : 'No invoices yet. Click "New Invoice" to create one.'}
+          emptyMessage={query ? 'No invoices match your search.' : 'No invoices yet. Tap "New invoice" to send your first one.'}
         />
       </div>
     </div>

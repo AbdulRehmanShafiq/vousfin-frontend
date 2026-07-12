@@ -118,7 +118,7 @@ export default function CustomersList() {
     },
     {
       key: 'balance',
-      header: 'Outstanding Receivable',
+      header: 'Owes you',
       align: 'right',
       className: 'font-bold text-text-primary',
       render: (row) => {
@@ -137,8 +137,8 @@ export default function CustomersList() {
       {/* ── Header ─────────────────────────────────────────────────── */}
       <PageHeader
         title="Customers"
-        subtitle="Manage your clients and track accounts receivable."
-        action={<Button onClick={() => setIsModalOpen(true)} icon={Plus}>Add Customer</Button>}
+        subtitle="The people you sell to, and what they owe you."
+        action={<Button onClick={() => setIsModalOpen(true)} icon={Plus}>Add customer</Button>}
       />
 
       {/* ── KPI strip ──────────────────────────────────────────────── */}
@@ -151,7 +151,7 @@ export default function CustomersList() {
         />
         <KpiTile
           icon={Wallet}
-          label="Total Receivable"
+          label="Total owed to you"
           value={formatCurrency(totalReceivable, currency)}
           sub={`${owingCount} ${owingCount === 1 ? 'customer owes' : 'customers owe'}`}
           accent={totalReceivable > 0}
@@ -202,7 +202,7 @@ export default function CustomersList() {
         emptyDescription={
           query || filter !== 'all'
             ? 'No customers match your filter. Try clearing it.'
-            : "Click 'Add Customer' to create one."
+            : "Tap 'Add customer' to add your first one."
         }
         emptyIcon={Users}
       />

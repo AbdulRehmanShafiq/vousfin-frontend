@@ -315,7 +315,7 @@ export default function ReceivablesPage() {
     },
     {
       key: 'outstanding',
-      header: 'Outstanding',
+      header: 'Still owed',
       className: 'text-right',
       cellClassName: 'text-right',
       render: (r) => (
@@ -346,10 +346,10 @@ export default function ReceivablesPage() {
         <div>
           <h1 className="flex items-center gap-2 text-2xl font-black text-text-primary tracking-tight">
             <Wallet className="h-6 w-6 text-cyan" />
-            Outstanding Receivables
+            Money owed to you
           </h1>
           <p className="text-text-secondary mt-1 text-sm">
-            Invoices and credit sales still awaiting customer payment.
+            Invoices your customers haven't paid yet.
           </p>
         </div>
         <div className="flex gap-2 flex-wrap">
@@ -367,7 +367,7 @@ export default function ReceivablesPage() {
             loading={repair.isPending}
             title="Fix transactions where correct accounts were used but type label bypassed AR workflow"
           >
-            Reconcile AR
+            Fix mismatches
           </Button>
         </div>
       </div>
@@ -381,7 +381,7 @@ export default function ReceivablesPage() {
       {/* ── KPIs ──────────────────────────────────────────────────── */}
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
         <KpiTile
-          label="Total Outstanding"
+          label="Total owed to you"
           value={formatCurrency(totalOutstanding, currency)}
           sub={`${rows.length} ${rows.length === 1 ? 'invoice' : 'invoices'}`}
           accent
@@ -389,12 +389,12 @@ export default function ReceivablesPage() {
         <KpiTile
           label="Overdue"
           value={overdueCount}
-          sub={overdueCount > 0 ? 'Past due date' : 'All current'}
+          sub={overdueCount > 0 ? 'Past due date' : 'All on time'}
         />
         <KpiTile
-          label="Unique Customers"
+          label="Customers"
           value={new Set(rows.map((r) => r._customerId).filter(Boolean)).size}
-          sub="With outstanding balance"
+          sub="Who still owe you"
         />
       </div>
 
@@ -402,7 +402,7 @@ export default function ReceivablesPage() {
       {aging && (
         <div className="premium-card p-5">
           <h3 className="text-sm font-bold text-text-primary mb-3 flex items-center gap-2">
-            <AlertTriangle className="h-4 w-4 text-amber" /> AR Aging Analysis
+            <AlertTriangle className="h-4 w-4 text-amber" /> How overdue it is
           </h3>
           <div className="grid grid-cols-2 sm:grid-cols-5 gap-3">
             {[
@@ -460,8 +460,8 @@ export default function ReceivablesPage() {
           isLoading={isLoading}
           emptyMessage={
             query
-              ? 'No outstanding receivables match your search.'
-              : 'No outstanding receivables — every invoice is settled.'
+              ? 'No unpaid invoices match your search.'
+              : 'Nobody owes you right now — every invoice is paid.'
           }
         />
       </div>

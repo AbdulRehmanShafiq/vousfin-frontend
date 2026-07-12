@@ -812,8 +812,8 @@ function StartReconciliation({ onStarted }) {
           <Banknote className="w-5 h-5 text-[rgb(var(--c-accent))]" />
         </div>
         <div>
-          <h2 className="font-bold text-[rgb(var(--c-text))]">Start a new reconciliation</h2>
-          <p className="text-xs text-[rgb(var(--c-text3))]">Upload your bank statement and let VousFin match the books</p>
+          <h2 className="font-bold text-[rgb(var(--c-text))]">Match a new statement</h2>
+          <p className="text-xs text-[rgb(var(--c-text3))]">Upload your bank statement and let VousFin match it to your books</p>
         </div>
       </div>
 

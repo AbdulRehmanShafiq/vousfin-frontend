@@ -308,7 +308,7 @@ export default function PayablesPage() {
     },
     {
       key: 'outstanding',
-      header: 'Outstanding',
+      header: 'Still owed',
       className: 'text-right',
       cellClassName: 'text-right',
       render: (r) => (
@@ -339,10 +339,10 @@ export default function PayablesPage() {
         <div>
           <h1 className="flex items-center gap-2 text-2xl font-black text-text-primary tracking-tight">
             <CreditCard className="h-6 w-6 text-amber" />
-            Outstanding Payables
+            Money you owe
           </h1>
           <p className="text-text-secondary mt-1 text-sm">
-            Bills and credit purchases awaiting vendor payment.
+            Bills from suppliers you haven't paid yet.
           </p>
         </div>
         <div className="flex gap-2 flex-wrap">
@@ -360,7 +360,7 @@ export default function PayablesPage() {
             loading={repair.isPending}
             title="Fix transactions where correct accounts were used but type label bypassed AP workflow"
           >
-            Reconcile AP
+            Fix mismatches
           </Button>
         </div>
       </div>
@@ -371,7 +371,7 @@ export default function PayablesPage() {
       {/* ── KPIs ──────────────────────────────────────────────────── */}
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
         <KpiTile
-          label="Total Payable"
+          label="Total you owe"
           value={formatCurrency(totalOutstanding, currency)}
           sub={`${rows.length} ${rows.length === 1 ? 'bill' : 'bills'}`}
           accent
@@ -379,12 +379,12 @@ export default function PayablesPage() {
         <KpiTile
           label="Overdue Bills"
           value={overdueCount}
-          sub={overdueCount > 0 ? 'Past due date' : 'All current'}
+          sub={overdueCount > 0 ? 'Past due date' : 'All on time'}
         />
         <KpiTile
-          label="Unique Vendors"
+          label="Suppliers"
           value={new Set(rows.map((r) => r._vendorId).filter(Boolean)).size}
-          sub="With outstanding balance"
+          sub="You still owe"
         />
       </div>
 
@@ -392,7 +392,7 @@ export default function PayablesPage() {
       {aging && (
         <div className="premium-card p-5">
           <h3 className="text-sm font-bold text-text-primary mb-3 flex items-center gap-2">
-            <AlertTriangle className="h-4 w-4 text-amber" /> AP Aging Analysis
+            <AlertTriangle className="h-4 w-4 text-amber" /> How overdue it is
           </h3>
           <div className="grid grid-cols-2 sm:grid-cols-5 gap-3">
             {[
@@ -450,8 +450,8 @@ export default function PayablesPage() {
           isLoading={isLoading}
           emptyMessage={
             query
-              ? 'No outstanding payables match your search.'
-              : 'No outstanding payables — all bills are settled.'
+              ? 'No unpaid bills match your search.'
+              : 'You owe nothing right now — every bill is paid.'
           }
         />
       </div>
@@ -459,7 +459,7 @@ export default function PayablesPage() {
       {!isLoading && rows.length === 0 && (
         <div className="premium-card p-6 border-positive/20 bg-positive/5 text-sm text-positive flex items-center gap-2">
           <CheckCircle2 className="h-4 w-4" />
-          No outstanding bills. All vendor payments are up to date!
+          You owe nothing right now — every bill is paid.
         </div>
       )}
     </div>

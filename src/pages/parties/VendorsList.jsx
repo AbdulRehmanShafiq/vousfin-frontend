@@ -116,7 +116,7 @@ export default function VendorsList() {
     },
     {
       key: 'balance',
-      header: 'Outstanding Payable',
+      header: 'You owe',
       align: 'right',
       className: 'font-bold text-text-primary',
       render: (row) => {
@@ -134,8 +134,8 @@ export default function VendorsList() {
     <div className="space-y-5">
       <PageHeader
         title="Vendors"
-        subtitle="Manage your suppliers and track accounts payable."
-        action={<Button onClick={() => setIsModalOpen(true)} icon={Plus}>Add Vendor</Button>}
+        subtitle="The suppliers you buy from, and what you owe them."
+        action={<Button onClick={() => setIsModalOpen(true)} icon={Plus}>Add supplier</Button>}
       />
 
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
@@ -147,7 +147,7 @@ export default function VendorsList() {
         />
         <KpiTile
           icon={CreditCard}
-          label="Total Payable"
+          label="Total you owe"
           value={formatCurrency(totalPayable, currency)}
           sub={`${owingCount} ${owingCount === 1 ? 'vendor outstanding' : 'vendors outstanding'}`}
           accent={totalPayable > 0}
@@ -195,8 +195,8 @@ export default function VendorsList() {
         emptyTitle={query || filter !== 'all' ? 'No matches' : 'No vendors yet'}
         emptyDescription={
           query || filter !== 'all'
-            ? 'No vendors match your filter. Try clearing it.'
-            : "Click 'Add Vendor' to create one."
+            ? 'No suppliers match your filter. Try clearing it.'
+            : "Tap 'Add supplier' to add your first one."
         }
         emptyIcon={Briefcase}
       />
