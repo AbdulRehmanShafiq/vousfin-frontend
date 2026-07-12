@@ -31,6 +31,7 @@ import { formatCompactCurrency, formatDate } from '@/utils/formatters'
 import { cn } from '@/utils/cn'
 
 import CommandCenterWidget     from '@/components/dashboard/CommandCenterWidget'
+import MoneyInOutCard          from '@/components/dashboard/MoneyInOutCard'
 import SmartKPIStrip           from '@/components/dashboard/SmartKPIStrip'
 import NeedsAttentionFeed      from '@/components/dashboard/NeedsAttentionFeed'
 import BusinessHealthWidget    from '@/components/dashboard/BusinessHealthWidget'
@@ -138,7 +139,7 @@ function TxRow({ tx, currency }) {
    rail / bottom bar). The first opens the universal Create modal. */
 const ACTION_DEFS = [
   {
-    label: 'Record Transaction',
+    label: 'Record something',
     Icon: Plus,
     action: 'modal',
     iconClass:    'bg-cyan/15 text-cyan',
@@ -146,7 +147,7 @@ const ACTION_DEFS = [
     labelHover:   'group-hover:text-cyan',
   },
   {
-    label: 'New Invoice',
+    label: 'Send an invoice',
     to: '/sales/invoices/new',
     Icon: FileText,
     iconClass:    'bg-emerald-3/15 text-emerald-3',
@@ -154,7 +155,7 @@ const ACTION_DEFS = [
     labelHover:   'group-hover:text-emerald-3',
   },
   {
-    label: 'Chase Payment',
+    label: 'See who owes me',
     to: '/sales/receivables',
     Icon: Bell,
     iconClass:    'bg-gold/15 text-gold',
@@ -162,7 +163,7 @@ const ACTION_DEFS = [
     labelHover:   'group-hover:text-gold',
   },
   {
-    label: 'Pay a Bill',
+    label: 'See what I owe',
     to: '/purchases/payables',
     Icon: CreditCard,
     iconClass:    'bg-amber/15 text-amber',
@@ -241,7 +242,7 @@ function FinancialSnapshot({ ar, ap, currency, loading }) {
   return (
     <div className="premium-card p-5">
       <h3 className="text-[12.5px] font-bold uppercase tracking-widest text-text-muted">
-        Financial Position
+        Who owes what
       </h3>
       <p className="text-[12.5px] text-text-muted mb-4 mt-0.5">Money owed to you, and money you owe</p>
 
@@ -259,9 +260,9 @@ function FinancialSnapshot({ ar, ap, currency, loading }) {
                 <ArrowDownRight className="h-4 w-4 text-cyan" />
               </div>
               <div>
-                <p className="text-[12px] font-semibold text-cyan uppercase tracking-wider">Accounts Receivable</p>
+                <p className="text-[12px] font-semibold text-cyan uppercase tracking-wider">Money owed to you</p>
                 <p className="num text-base font-semibold text-text-primary leading-tight">{fmtAmt(Math.abs(ar), currency)}</p>
-                <p className="text-[12px] text-text-muted mt-0.5">Customers still owe you this</p>
+                <p className="text-[12px] text-text-muted mt-0.5">Customers still owe you this <span className="opacity-60">· Accounts Receivable</span></p>
               </div>
             </div>
             <ExternalLink className="h-3.5 w-3.5 text-text-muted flex-shrink-0" />
@@ -274,9 +275,9 @@ function FinancialSnapshot({ ar, ap, currency, loading }) {
                 <ArrowUpRight className="h-4 w-4 text-amber" />
               </div>
               <div>
-                <p className="text-[12px] font-semibold text-amber uppercase tracking-wider">Accounts Payable</p>
+                <p className="text-[12px] font-semibold text-amber uppercase tracking-wider">Money you owe</p>
                 <p className="num text-base font-semibold text-text-primary leading-tight">{fmtAmt(Math.abs(ap), currency)}</p>
-                <p className="text-[12px] text-text-muted mt-0.5">You still owe vendors this</p>
+                <p className="text-[12px] text-text-muted mt-0.5">You still owe vendors this <span className="opacity-60">· Accounts Payable</span></p>
               </div>
             </div>
             <ExternalLink className="h-3.5 w-3.5 text-text-muted flex-shrink-0" />
@@ -396,81 +397,98 @@ export default function Dashboard() {
         {/* ── 1. CASH HERO — the glance answer ────────────────────── */}
         <CashHero cash={kpis.cashBalance ?? 0} currency={currency} loading={loadDash} />
 
-        {/* ── COMMAND CENTER — limited inbox preview; opens full page ── */}
-        <CommandCenterWidget />
+        {/* ── 2. WHAT NEEDS YOU — the inbox preview + attention feed ── */}
+        <Section label={t('dashboard.needsAttention', 'What needs you')}>
+          <div className="space-y-4">
+            <CommandCenterWidget />
+            <NeedsAttentionFeed />
+          </div>
+        </Section>
 
-        {/* ── 2. KPI STRIP — key metrics, right below the cash glance ── */}
-        <Section label={t('dashboard.keyMetrics', 'Key Metrics')} collapsible defaultOpen>
-          <SmartKPIStrip
-            kpis={kpis}
-            revenueVsExpenses={revenueVsExpenses}
-            loading={loadDash}
+        {/* ── 3. THIS MONTH — plain money in / out / left ──────────── */}
+        <Section label={t('dashboard.thisMonth', 'This month')}>
+          <MoneyInOutCard
+            income={kpis.revenue ?? 0}
+            expenses={kpis.expenses ?? 0}
+            net={kpis.netProfit}
             currency={currency}
+            loading={loadDash}
           />
         </Section>
 
-        {/* ── 3. NEEDS YOUR ATTENTION ─────────────────────────────── */}
-        <Section label={t('dashboard.needsAttention', 'Needs your attention')}>
-          <NeedsAttentionFeed />
-        </Section>
+        {/* ── 4. MORE DETAIL — everything else, calm & collapsed ───── */}
+        {/* One tap opens the full picture: your numbers, how the business is
+            doing, charts, and what's coming. Nothing is removed — just tucked
+            away so the essentials lead the page. */}
+        <Section label={t('dashboard.moreDetail', 'More detail')} collapsible defaultOpen={false}>
+          <div className="space-y-7">
 
-        {/* ── 4. BUSINESS INTELLIGENCE (unified) ──────────────────── */}
-        {/* Where you stand (health) and where you're headed (outlook). The
-            "needs you now" feed now leads the page above. */}
-        <Section label={t('dashboard.businessIntelligence', 'Business Intelligence')} collapsible defaultOpen>
-          <div className="space-y-4">
-            <TaxPositionWidget />
-            <div className="grid grid-cols-1 xl:grid-cols-2 gap-4">
-              <BusinessHealthWidget kpis={kpis} loading={loadDash} />
-              <BusinessOutlookWidget horizon={6} />
-            </div>
-          </div>
-        </Section>
-
-        {/* ── 4. ANALYTICS ────────────────────────────────────────── */}
-        <Section label={t('dashboard.businessAnalytics', 'Business Analytics')} collapsible defaultOpen>
-          {/* Mobile: horizontal swipe carousel — one chart at a time */}
-          <div className="md:hidden -mx-4 px-4">
-            <div className="flex overflow-x-auto snap-x snap-mandatory scrollbar-none gap-4 pb-2">
-              <div className="snap-start flex-shrink-0 w-[calc(100vw-2.5rem)]">
-                <RevenueExpensesChart data={revenueVsExpenses} loading={loadDash} currency={currency} />
-              </div>
-              <div className="snap-start flex-shrink-0 w-[calc(100vw-2.5rem)]">
-                <CashFlowTrendChart   data={cashFlowTrend}     loading={loadDash} currency={currency} />
-              </div>
-            </div>
-            <div className="flex justify-center gap-1.5 mt-1.5">
-              <div className="h-1 w-5 bg-cyan rounded-full" />
-              <div className="h-1 w-2 bg-glass-panel rounded-full" />
-            </div>
-          </div>
-          {/* Desktop: side-by-side grid */}
-          <div className="hidden md:grid md:grid-cols-5 gap-4">
-            <div className="md:col-span-3">
-              <RevenueExpensesChart data={revenueVsExpenses} loading={loadDash} currency={currency} />
-            </div>
-            <div className="md:col-span-2">
-              <CashFlowTrendChart   data={cashFlowTrend}     loading={loadDash} currency={currency} />
-            </div>
-          </div>
-        </Section>
-
-        {/* ── 5. FORECASTING & CASH POSITION ──────────────────────── */}
-        <Section label={t('dashboard.forecastingCash', 'Forecasting & Cash Position')} collapsible defaultOpen>
-          <div className="grid grid-cols-1 lg:grid-cols-5 gap-4">
-            {/* Left: what you're owed / owe */}
-            <div className="lg:col-span-2">
-              <FinancialSnapshot
-                ar={kpis.accountsReceivable ?? 0}
-                ap={kpis.accountsPayable    ?? 0}
-                currency={currency}
+            {/* Your numbers */}
+            <Section label={t('dashboard.keyMetrics', 'Your numbers')}>
+              <SmartKPIStrip
+                kpis={kpis}
+                revenueVsExpenses={revenueVsExpenses}
                 loading={loadDash}
+                currency={currency}
               />
-            </div>
-            {/* Right: forecast engine */}
-            <div className="lg:col-span-3">
-              <ForecastWidget />
-            </div>
+            </Section>
+
+            {/* How your business is doing */}
+            <Section label={t('dashboard.businessIntelligence', 'How your business is doing')}>
+              <div className="space-y-4">
+                <TaxPositionWidget />
+                <div className="grid grid-cols-1 xl:grid-cols-2 gap-4">
+                  <BusinessHealthWidget kpis={kpis} loading={loadDash} />
+                  <BusinessOutlookWidget horizon={6} />
+                </div>
+              </div>
+            </Section>
+
+            {/* Charts */}
+            <Section label={t('dashboard.businessAnalytics', 'Charts')}>
+              {/* Mobile: horizontal swipe carousel — one chart at a time */}
+              <div className="md:hidden -mx-4 px-4">
+                <div className="flex overflow-x-auto snap-x snap-mandatory scrollbar-none gap-4 pb-2">
+                  <div className="snap-start flex-shrink-0 w-[calc(100vw-2.5rem)]">
+                    <RevenueExpensesChart data={revenueVsExpenses} loading={loadDash} currency={currency} />
+                  </div>
+                  <div className="snap-start flex-shrink-0 w-[calc(100vw-2.5rem)]">
+                    <CashFlowTrendChart   data={cashFlowTrend}     loading={loadDash} currency={currency} />
+                  </div>
+                </div>
+                <div className="flex justify-center gap-1.5 mt-1.5">
+                  <div className="h-1 w-5 bg-cyan rounded-full" />
+                  <div className="h-1 w-2 bg-glass-panel rounded-full" />
+                </div>
+              </div>
+              {/* Desktop: side-by-side grid */}
+              <div className="hidden md:grid md:grid-cols-5 gap-4">
+                <div className="md:col-span-3">
+                  <RevenueExpensesChart data={revenueVsExpenses} loading={loadDash} currency={currency} />
+                </div>
+                <div className="md:col-span-2">
+                  <CashFlowTrendChart   data={cashFlowTrend}     loading={loadDash} currency={currency} />
+                </div>
+              </div>
+            </Section>
+
+            {/* What's coming — who owes / you owe + forecast */}
+            <Section label={t('dashboard.forecastingCash', "What's coming")}>
+              <div className="grid grid-cols-1 lg:grid-cols-5 gap-4">
+                <div className="lg:col-span-2">
+                  <FinancialSnapshot
+                    ar={kpis.accountsReceivable ?? 0}
+                    ap={kpis.accountsPayable    ?? 0}
+                    currency={currency}
+                    loading={loadDash}
+                  />
+                </div>
+                <div className="lg:col-span-3">
+                  <ForecastWidget />
+                </div>
+              </div>
+            </Section>
+
           </div>
         </Section>
 
