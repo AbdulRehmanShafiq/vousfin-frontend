@@ -247,7 +247,7 @@ export default function InvoiceEditor({
             <div className="flex items-center gap-3">
               <Receipt className="h-5 w-5 text-cyan" />
               <h2 className="text-lg font-bold text-text-primary">
-                {isReadOnly ? 'View Invoice' : isEdit ? 'Edit Invoice' : 'New Invoice'}
+                {isReadOnly ? 'View invoice' : isEdit ? 'Edit invoice' : 'New invoice'}
               </h2>
             </div>
           </div>
@@ -315,7 +315,7 @@ export default function InvoiceEditor({
                   onClick={onAddCustomer}
                   className="text-xs text-cyan font-semibold hover:underline"
                 >
-                  + New Customer
+                  + Add customer
                 </button>
               )}
             </div>
@@ -326,7 +326,7 @@ export default function InvoiceEditor({
               onChange={e => setCustomerId(e.target.value)}
             >
               <option value="">
-                {customers.length === 0 ? 'No customers yet — click + New Customer above' : 'Select customer...'}
+                {customers.length === 0 ? 'No customers yet — tap + Add customer above' : 'Choose a customer...'}
               </option>
               {customers.map(c => (
                 <option key={c._id} value={c._id}>
@@ -340,14 +340,14 @@ export default function InvoiceEditor({
         {/* Line Items */}
         <Card noPadding>
           <div className="flex items-center justify-between px-6 pt-5 pb-3">
-            <h3 className="text-sm font-bold text-text-primary uppercase tracking-wider">Line Items</h3>
+            <h3 className="text-sm font-bold text-text-primary uppercase tracking-wider">Items</h3>
             <button
               type="button"
               onClick={addLine}
               className="flex items-center gap-1.5 rounded-lg bg-cyan/10 px-3 py-1.5 text-xs font-semibold text-cyan hover:bg-cyan/20 transition-colors"
             >
               <Plus className="h-3.5 w-3.5" />
-              Add Item
+              Add item
             </button>
           </div>
 
@@ -456,12 +456,12 @@ export default function InvoiceEditor({
         {/* Collapsible sections */}
         <Card>
           {/* Invoice Discount & Shipping */}
-          <CollapsibleSection title="Discount, Shipping & Adjustments" icon={Truck} defaultOpen={
+          <CollapsibleSection title="Discount & extra charges" icon={Truck} defaultOpen={
             !!(invoiceDiscountValue || shippingCharges || roundingAdjustment)
           }>
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
               <div>
-                <label className="mb-1.5 block text-sm font-medium text-text-secondary">Invoice Discount</label>
+                <label className="mb-1.5 block text-sm font-medium text-text-secondary">Discount</label>
                 <div className="flex gap-2">
                   <input
                     type="number"
@@ -502,7 +502,7 @@ export default function InvoiceEditor({
           </CollapsibleSection>
 
           {/* Bank Details */}
-          <CollapsibleSection title="Bank / Payment Details" icon={CreditCard}>
+          <CollapsibleSection title="Where you get paid" icon={CreditCard}>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <Input label="Bank Name" value={bankDetails.bankName || ''} onChange={e => setBankDetails(prev => ({ ...prev, bankName: e.target.value }))} placeholder="e.g. HBL" />
               <Input label="Account Title" value={bankDetails.accountTitle || ''} onChange={e => setBankDetails(prev => ({ ...prev, accountTitle: e.target.value }))} />
@@ -514,7 +514,7 @@ export default function InvoiceEditor({
           </CollapsibleSection>
 
           {/* Notes & Terms */}
-          <CollapsibleSection title="Notes & Payment Terms" icon={StickyNote} defaultOpen={!!(notes || paymentTermsText)}>
+          <CollapsibleSection title="Notes & terms" icon={StickyNote} defaultOpen={!!(notes || paymentTermsText)}>
             <div className="space-y-4">
               <div>
                 <label className="mb-1.5 block text-sm font-medium text-text-secondary">Payment Terms</label>
@@ -527,7 +527,7 @@ export default function InvoiceEditor({
                 />
               </div>
               <div>
-                <label className="mb-1.5 block text-sm font-medium text-text-secondary">Internal Notes</label>
+                <label className="mb-1.5 block text-sm font-medium text-text-secondary">Notes (just for you)</label>
                 <textarea
                   className="w-full rounded-lg border border-glass bg-glass-panel px-4 py-3 text-sm text-text-primary placeholder:text-text-muted transition-premium focus:border-cyan focus:outline-none focus:ring-2 focus:ring-cyan/20"
                   rows={2}
@@ -537,7 +537,7 @@ export default function InvoiceEditor({
                 />
               </div>
               <div>
-                <label className="mb-1.5 block text-sm font-medium text-text-secondary">Description</label>
+                <label className="mb-1.5 block text-sm font-medium text-text-secondary">What's this invoice for?</label>
                 <textarea
                   className="w-full rounded-lg border border-glass bg-glass-panel px-4 py-3 text-sm text-text-primary placeholder:text-text-muted transition-premium focus:border-cyan focus:outline-none focus:ring-2 focus:ring-cyan/20"
                   rows={2}

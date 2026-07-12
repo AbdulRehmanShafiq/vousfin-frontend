@@ -210,7 +210,7 @@ export default function BillEditor({
             <div className="flex items-center gap-3">
               <FileText className="h-5 w-5 text-cyan" />
               <h2 className="text-lg font-bold text-text-primary">
-                {isReadOnly ? 'View Bill' : isEdit ? 'Edit Bill' : 'New Bill'}
+                {isReadOnly ? 'View bill' : isEdit ? 'Edit bill' : 'New bill'}
               </h2>
               {bill?.state && <InvoiceStatusBadge state={bill.state} kind="bill" />}
             </div>
@@ -225,10 +225,10 @@ export default function BillEditor({
               disabled={isReadOnly}
             />
             <Input
-              label="Vendor's Bill Ref"
+              label="Supplier's bill number"
               value={vendorReferenceNumber}
               onChange={e => setVendorReferenceNumber(e.target.value)}
-              placeholder="Vendor's invoice #"
+              placeholder="Their invoice number"
             />
             <Input
               label="Issue Date"
@@ -255,7 +255,7 @@ export default function BillEditor({
                     onClick={onAddVendor}
                     className="text-xs text-cyan font-semibold hover:underline"
                   >
-                    + New Vendor
+                    + Add supplier
                   </button>
                 )}
               </div>
@@ -266,7 +266,7 @@ export default function BillEditor({
                 onChange={e => setVendorId(e.target.value)}
               >
                 <option value="">
-                  {vendors.length === 0 ? 'No vendors yet — click + New Vendor above' : 'Select vendor...'}
+                  {vendors.length === 0 ? 'No suppliers yet — tap + Add supplier above' : 'Choose a supplier...'}
                 </option>
                 {vendors.map(v => (
                   <option key={v._id} value={v._id}>
@@ -310,14 +310,14 @@ export default function BillEditor({
         {/* Line Items */}
         <Card noPadding>
           <div className="flex items-center justify-between px-6 pt-5 pb-3">
-            <h3 className="text-sm font-bold text-text-primary uppercase tracking-wider">Line Items</h3>
+            <h3 className="text-sm font-bold text-text-primary uppercase tracking-wider">Items</h3>
             <button
               type="button"
               onClick={addLine}
               className="flex items-center gap-1.5 rounded-lg bg-cyan/10 px-3 py-1.5 text-xs font-semibold text-cyan hover:bg-cyan/20 transition-colors"
             >
               <Plus className="h-3.5 w-3.5" />
-              Add Item
+              Add item
             </button>
           </div>
           <div className="overflow-x-auto px-3 pb-4">
@@ -354,11 +354,11 @@ export default function BillEditor({
         </Card>
 
         <Card>
-          <CollapsibleSection title="Discount, Shipping, WHT & Adjustments" icon={Truck}
+          <CollapsibleSection title="Discount, shipping & tax withheld" icon={Truck}
             defaultOpen={!!(invoiceDiscountValue || shippingCharges || roundingAdjustment || whtAmount)}>
             <div className="grid grid-cols-1 sm:grid-cols-4 gap-4">
               <div>
-                <label className="mb-1.5 block text-sm font-medium text-text-secondary">Bill Discount</label>
+                <label className="mb-1.5 block text-sm font-medium text-text-secondary">Discount</label>
                 <div className="flex gap-2">
                   <input
                     type="number"
@@ -382,15 +382,15 @@ export default function BillEditor({
                 onChange={e => setShippingCharges(parseFloat(e.target.value) || 0)} min="0" />
               <Input label="Rounding" type="number" value={roundingAdjustment || ''}
                 onChange={e => setRoundingAdjustment(parseFloat(e.target.value) || 0)} step="any" />
-              <Input label="Withholding Tax" type="number" value={whtAmount || ''}
+              <Input label="Tax withheld (WHT)" type="number" value={whtAmount || ''}
                 onChange={e => setWhtAmount(parseFloat(e.target.value) || 0)} min="0" />
             </div>
           </CollapsibleSection>
 
-          <CollapsibleSection title="Notes & Description" icon={StickyNote} defaultOpen={!!(notes || description)}>
+          <CollapsibleSection title="Notes" icon={StickyNote} defaultOpen={!!(notes || description)}>
             <div className="space-y-4">
               <div>
-                <label className="mb-1.5 block text-sm font-medium text-text-secondary">Description</label>
+                <label className="mb-1.5 block text-sm font-medium text-text-secondary">What's this bill for?</label>
                 <textarea
                   className="w-full rounded-lg border border-glass bg-glass-panel px-4 py-3 text-sm text-text-primary"
                   rows={2}
@@ -399,7 +399,7 @@ export default function BillEditor({
                 />
               </div>
               <div>
-                <label className="mb-1.5 block text-sm font-medium text-text-secondary">Internal Notes</label>
+                <label className="mb-1.5 block text-sm font-medium text-text-secondary">Notes (just for you)</label>
                 <textarea
                   className="w-full rounded-lg border border-glass bg-glass-panel px-4 py-3 text-sm text-text-primary"
                   rows={2}
@@ -431,7 +431,7 @@ export default function BillEditor({
             />
             {whtAmount > 0 && (
               <div className="mt-3 pt-3 border-t border-glass/40 flex justify-between text-xs text-amber">
-                <span>WHT Deducted</span>
+                <span>Tax withheld</span>
                 <span className="font-mono">- {whtAmount.toFixed(2)}</span>
               </div>
             )}

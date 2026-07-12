@@ -25,13 +25,13 @@ export default function TotalsPanel({
 
   return (
     <div className={cn('space-y-2 text-sm', className)}>
-      <Row label="Subtotal" value={fmt(subtotal)} />
+      <Row label="Items total" value={fmt(subtotal)} />
       {totalLineDiscount > 0 && (
-        <Row label="Line Discounts" value={`- ${fmt(totalLineDiscount)}`} muted />
+        <Row label="Discounts" value={`- ${fmt(totalLineDiscount)}`} muted />
       )}
       {invoiceDiscountAmount > 0 && (
         <Row
-          label={`Invoice Discount${invoiceDiscountType === 'percentage' ? ` (${invoiceDiscountValue}%)` : ''}`}
+          label={`Discount${invoiceDiscountType === 'percentage' ? ` (${invoiceDiscountValue}%)` : ''}`}
           value={`- ${fmt(invoiceDiscountAmount)}`}
           muted
         />
@@ -59,7 +59,7 @@ export default function TotalsPanel({
       )}
       {(paidAmount > 0 || totalCredited > 0) && (
         <div className="border-t border-cyan/20 pt-2">
-          <Row label="Balance Due" value={fmt(balanceDue)} bold accent />
+          <Row label="Still due" value={fmt(balanceDue)} bold accent />
         </div>
       )}
     </div>
