@@ -11,7 +11,7 @@
 import { useMemo, useState, useEffect } from 'react'
 import {
   PackageOpen, Plus, AlertTriangle, Search, X,
-  History, ArrowDownLeft, ArrowUpRight,
+  History, ArrowDownLeft, ArrowUpRight, ChevronDown,
 } from 'lucide-react'
 
 import {
@@ -82,6 +82,9 @@ function ItemForm({ initial, onClose, currency }) {
 
   const set = (k, v) => setForm(prev => ({ ...prev, [k]: v }))
   const isPending = createItem.isPending || updateItem.isPending
+  // Adding a new item shows only the essentials; the rest (codes, tax, reorder,
+  // valuation, vendor) tuck under "Optional details". Editing shows everything.
+  const [showAdvanced, setShowAdvanced] = useState(isEdit)
 
   const handleSave = async () => {
     const payload = {
@@ -105,22 +108,20 @@ function ItemForm({ initial, onClose, currency }) {
     <Modal
       isOpen={true}
       onClose={onClose}
-      title={isEdit ? `Edit — ${initial.name}` : 'Add Inventory Item'}
+      title={isEdit ? `Edit — ${initial.name}` : 'Add an item'}
       className="sm:max-w-lg"
     >
       <div className="space-y-5 pb-1">
         {/* Subtitle */}
         <p className="text-[12.5px] text-text-muted -mt-4">
           {isEdit
-            ? 'Update item details, pricing or valuation method'
-            : 'Define SKU, pricing, reorder levels and valuation'}
+            ? 'Update the name, price, or other details'
+            : 'Just the basics to start — name and price. The rest is optional.'}
         </p>
 
-        {/* ── Item Details ──────────────────────────────────────────── */}
-        <SectionLabel label="Item Details" />
-
+        {/* ── The basics — all you need to add an item ──────────────── */}
         <Input
-          label="Item Name *"
+          label="What is it called? *"
           value={form.name}
           onChange={e => set('name', e.target.value)}
           placeholder="e.g., A4 Paper Ream"
@@ -128,47 +129,14 @@ function ItemForm({ initial, onClose, currency }) {
 
         <div className="grid grid-cols-2 gap-3">
           <Input
-            label="SKU (Stock Code)"
-            value={form.sku}
-            onChange={e => set('sku', e.target.value)}
-            placeholder="e.g., PAPER-A4"
-          />
-          <Input
-            label="Barcode"
-            value={form.barcode}
-            onChange={e => set('barcode', e.target.value)}
-            placeholder="e.g., 6009876543210"
-          />
-        </div>
-
-        <div className="grid grid-cols-2 gap-3">
-          <Input
-            label="Category"
-            value={form.category}
-            onChange={e => set('category', e.target.value)}
-            placeholder="e.g., Stationery"
-          />
-          <Input
-            label="Unit of Measure"
-            value={form.unit}
-            onChange={e => set('unit', e.target.value)}
-            placeholder="pcs / kg / box"
-          />
-        </div>
-
-        {/* ── Pricing ───────────────────────────────────────────────── */}
-        <SectionLabel label="Pricing" note={`amounts in ${currency}`} />
-
-        <div className="grid grid-cols-2 gap-3">
-          <Input
-            label={`Cost Price (${currency}) *`}
+            label={`What it costs you (${currency}) *`}
             type="number" step="0.01" min="0"
             value={form.unitCostPrice}
             onChange={e => set('unitCostPrice', e.target.value)}
             placeholder="0.00"
           />
           <Input
-            label={`Sale Price (${currency})`}
+            label={`What you sell it for (${currency})`}
             type="number" step="0.01" min="0"
             value={form.unitSalePrice}
             onChange={e => set('unitSalePrice', e.target.value)}
@@ -176,79 +144,121 @@ function ItemForm({ initial, onClose, currency }) {
           />
         </div>
 
-        <Input
-          label="Tax Rate (%) — e.g. 17 for GST / sales tax"
-          type="number" step="0.1" min="0" max="100"
-          value={form.taxRate}
-          onChange={e => set('taxRate', e.target.value)}
-          placeholder="Leave blank if tax-exempt"
-        />
-
-        {/* ── Stock Control ─────────────────────────────────────────── */}
-        <SectionLabel label="Stock Control" note="reorder alerts" />
-
         <div className="grid grid-cols-2 gap-3">
           <Input
-            label="Reorder Level (alert threshold)"
-            type="number" min="0"
-            value={form.reorderLevel}
-            onChange={e => set('reorderLevel', e.target.value)}
+            label="Counted in"
+            value={form.unit}
+            onChange={e => set('unit', e.target.value)}
+            placeholder="pcs / kg / box"
           />
           <Input
-            label="Reorder Qty (how much to order)"
-            type="number" min="0"
-            value={form.reorderQty}
-            onChange={e => set('reorderQty', e.target.value)}
+            label="Type (optional)"
+            value={form.category}
+            onChange={e => set('category', e.target.value)}
+            placeholder="e.g., Stationery"
           />
         </div>
 
-        <div>
-          <label className="block text-xs font-medium text-text-secondary mb-1.5">
-            Valuation Method
-            <span className="ml-1 text-text-muted font-normal">(how stock cost is calculated)</span>
-          </label>
-          <select
-            className="w-full px-3 py-2 rounded-lg bg-glass-panel border border-glass text-text-primary text-sm focus:border-cyan focus:outline-none transition-colors"
-            value={form.valuationMethod}
-            onChange={e => set('valuationMethod', e.target.value)}
+        {/* ── Optional details — tucked away so adding is quick ─────── */}
+        <div className="border border-glass rounded-xl overflow-hidden">
+          <button
+            type="button"
+            onClick={() => setShowAdvanced(v => !v)}
+            className="w-full flex items-center justify-between px-4 py-3 text-sm font-medium text-text-secondary hover:text-text-primary hover:bg-glass-hover transition-colors"
           >
-            <option value="weighted_average">Weighted Average — average price of all stock batches</option>
-            <option value="fifo">FIFO — First In First Out (oldest stock sold first)</option>
-          </select>
+            <span className="flex items-center gap-2">
+              <span>Optional details</span>
+              <span className="text-text-muted text-xs font-normal">— codes · tax · low-stock alerts · how cost is worked out</span>
+            </span>
+            <ChevronDown className={cn('h-4 w-4 flex-shrink-0 transition-transform', showAdvanced && 'rotate-180')} />
+          </button>
+
+          {showAdvanced && (
+            <div className="px-4 pb-4 pt-1 space-y-4 border-t border-glass animate-fade-in">
+              <div className="grid grid-cols-2 gap-3">
+                <Input
+                  label="Stock code (SKU)"
+                  value={form.sku}
+                  onChange={e => set('sku', e.target.value)}
+                  placeholder="e.g., PAPER-A4"
+                />
+                <Input
+                  label="Barcode"
+                  value={form.barcode}
+                  onChange={e => set('barcode', e.target.value)}
+                  placeholder="e.g., 6009876543210"
+                />
+              </div>
+
+              <Input
+                label="Tax rate (%) — e.g. 17 for GST / sales tax"
+                type="number" step="0.1" min="0" max="100"
+                value={form.taxRate}
+                onChange={e => set('taxRate', e.target.value)}
+                placeholder="Leave blank if no tax"
+              />
+
+              <div className="grid grid-cols-2 gap-3">
+                <Input
+                  label="Warn me when stock drops to"
+                  type="number" min="0"
+                  value={form.reorderLevel}
+                  onChange={e => set('reorderLevel', e.target.value)}
+                />
+                <Input
+                  label="Then reorder this many"
+                  type="number" min="0"
+                  value={form.reorderQty}
+                  onChange={e => set('reorderQty', e.target.value)}
+                />
+              </div>
+
+              <div>
+                <label className="block text-xs font-medium text-text-secondary mb-1.5">
+                  How its cost is worked out
+                  <span className="ml-1 text-text-muted font-normal">(leave as-is if unsure)</span>
+                </label>
+                <select
+                  className="w-full px-3 py-2 rounded-lg bg-glass-panel border border-glass text-text-primary text-sm focus:border-cyan focus:outline-none transition-colors"
+                  value={form.valuationMethod}
+                  onChange={e => set('valuationMethod', e.target.value)}
+                >
+                  <option value="weighted_average">Average price of all stock you bought</option>
+                  <option value="fifo">Oldest stock is sold first (FIFO)</option>
+                </select>
+              </div>
+
+              <div>
+                <label className="block text-xs font-medium text-text-secondary mb-1.5">
+                  Who you usually buy it from
+                  <span className="ml-1 text-text-muted font-normal">— emailed automatically when stock runs low</span>
+                </label>
+                <select
+                  className="w-full px-3 py-2 rounded-lg bg-glass-panel border border-glass text-text-primary text-sm focus:border-cyan focus:outline-none transition-colors"
+                  value={form.preferredVendorId}
+                  onChange={e => set('preferredVendorId', e.target.value)}
+                >
+                  <option value="">
+                    {vendors.length === 0 ? 'No suppliers yet — add one on the Vendors page' : "None — I'll reorder myself"}
+                  </option>
+                  {vendors.map(v => (
+                    <option key={v._id} value={v._id}>
+                      {v.vendorName || v.contactPerson || '(unnamed vendor)'} {v.email ? `· ${v.email}` : ''}
+                    </option>
+                  ))}
+                </select>
+              </div>
+
+              <textarea
+                rows={2}
+                className="w-full px-3 py-2 rounded-lg bg-glass-panel border border-glass text-text-primary text-sm placeholder:text-text-muted focus:border-cyan focus:outline-none resize-none transition-colors"
+                value={form.description}
+                onChange={e => set('description', e.target.value)}
+                placeholder="Any notes — supplier details, where it's stored, variants…"
+              />
+            </div>
+          )}
         </div>
-
-        {/* ── Preferred Vendor (drives reorder emails) ─────────────── */}
-        <div>
-          <label className="block text-xs font-medium text-text-secondary mb-1.5">
-            Preferred Vendor
-            <span className="ml-1 text-text-muted font-normal">— auto-emailed when stock hits reorder level</span>
-          </label>
-          <select
-            className="w-full px-3 py-2 rounded-lg bg-glass-panel border border-glass text-text-primary text-sm focus:border-cyan focus:outline-none transition-colors"
-            value={form.preferredVendorId}
-            onChange={e => set('preferredVendorId', e.target.value)}
-          >
-            <option value="">
-              {vendors.length === 0 ? 'No vendors yet — create one from the Vendors page' : 'None — manual reorder'}
-            </option>
-            {vendors.map(v => (
-              <option key={v._id} value={v._id}>
-                {v.vendorName || v.contactPerson || '(unnamed vendor)'} {v.email ? `· ${v.email}` : ''}
-              </option>
-            ))}
-          </select>
-        </div>
-
-        {/* ── Notes ─────────────────────────────────────────────────── */}
-        <SectionLabel label="Notes" note="optional" />
-
-        <textarea
-          rows={2}
-          className="w-full px-3 py-2 rounded-lg bg-glass-panel border border-glass text-text-primary text-sm placeholder:text-text-muted focus:border-cyan focus:outline-none resize-none transition-colors"
-          value={form.description}
-          onChange={e => set('description', e.target.value)}
-          placeholder="Supplier details, storage notes, variant info…"
-        />
 
         {/* ── Footer ────────────────────────────────────────────────── */}
         <div className="flex justify-end gap-3 pt-3 border-t border-glass">
@@ -260,7 +270,7 @@ function ItemForm({ initial, onClose, currency }) {
             loading={isPending}
             disabled={!form.name || !form.unitCostPrice}
           >
-            {isEdit ? 'Save Changes' : 'Add Item'}
+            {isEdit ? 'Save changes' : 'Add item'}
           </Button>
         </div>
       </div>
@@ -482,10 +492,10 @@ function StockLedgerModal({ item, onClose, currency }) {
   const stockValue = (summary.currentStock ?? item.currentStock) * (data?.item?.unitCostPrice ?? item.unitCostPrice)
 
   return (
-    <Modal isOpen={true} onClose={onClose} title={`Stock Ledger — ${item.name}`} className="sm:max-w-3xl">
+    <Modal isOpen={true} onClose={onClose} title={`Stock history — ${item.name}`} className="sm:max-w-3xl">
       <div className="space-y-4 pb-1">
         <p className="text-[12.5px] text-text-muted -mt-4">
-          Every purchase and sale that moved this item, oldest first, with a running balance.
+          Every time you bought or sold this item, oldest first, with what's left after each.
         </p>
 
         {/* Summary chips */}
@@ -677,11 +687,11 @@ export default function InventoryPage() {
         <div className="flex items-center gap-2">
           <button type="button" onClick={e => { e.stopPropagation(); setAddStockId(r._id === addStockId ? null : r._id) }}
             className="text-[12.5px] text-positive hover:underline font-semibold">
-            + Stock
+            Add stock
           </button>
           <button type="button" onClick={e => { e.stopPropagation(); setLedgerId(r._id) }}
             className="inline-flex items-center gap-1 text-[12.5px] text-text-secondary hover:text-text-primary hover:underline font-semibold">
-            <History className="h-3 w-3" /> Ledger
+            <History className="h-3 w-3" /> History
           </button>
           <button type="button" onClick={e => { e.stopPropagation(); setEditItem(r) }}
             className="text-[12.5px] text-cyan hover:underline font-semibold">
@@ -706,11 +716,11 @@ export default function InventoryPage() {
             Inventory
           </h1>
           <p className="text-text-secondary mt-1 text-sm">
-            Item catalog with stock levels, valuation, and reorder alerts.
+            Everything you buy and sell — how much you have, what it's worth, and when you're running low.
           </p>
         </div>
         <Button icon={Plus} onClick={() => setShowForm(true)}>
-          New Item
+          Add item
         </Button>
       </div>
 
@@ -791,7 +801,7 @@ export default function InventoryPage() {
           columns={columns}
           data={filtered}
           isLoading={isLoading}
-          emptyMessage={query ? 'No items match your search.' : 'No inventory items yet. Click "New Item" to add one.'}
+          emptyMessage={query ? 'No items match your search.' : 'Nothing here yet. Tap "Add item" to add your first one.'}
         />
       </div>
 
