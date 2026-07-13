@@ -2,9 +2,10 @@ import { useEffect, useMemo, useRef, useState, useCallback } from 'react'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
+import toast from 'react-hot-toast'
 import {
   MessageSquare, LayoutList, Upload, CheckCircle, AlertTriangle, Download,
-  Loader2, X, ChevronUp, ChevronDown, Sparkles,
+  Loader2, X, ChevronUp, ChevronDown, Sparkles, Camera,
 } from 'lucide-react'
 import Modal from '@/components/modals/Modal'
 import Input from '@/components/ui/Input'
@@ -21,6 +22,7 @@ import {
   useCreateInstallmentTransaction,
   useUpdateTransaction,
   useNLPreview,
+  useNLImagePreview,
   useExcelPreview,
   useExcelConfirm,
   usePreSaveCheck,
@@ -37,6 +39,7 @@ import { buildFailedImportCsv } from '@/utils/failedImportCsv'
 import { downloadBlob } from '@/utils/exportHelpers'
 import { nlResultToFormValues } from '@/utils/nlFormMapping'
 import { buildPlainSummary } from '@/utils/plainSummary'
+import { fileToImage } from '@/utils/imageCapture'
 import { cn } from '@/utils/cn'
 
 /* ──────────────────────────────────────────────────────────────────────────────
@@ -666,14 +669,13 @@ function NLTab({ currency, onParsed, onAutoPosted }) {
   // Set when a >=98%-confidence parse auto-posted (opt-in, see Command Center) —
   // shows a confirmation instead of the structured form, since it already saved.
   const [autoPosted, setAutoPosted] = useState(null)
+  const [photoBusy, setPhotoBusy] = useState(false)
+  const photoInputRef = useRef(null)
   const nlPreview = useNLPreview()
+  const nlImagePreview = useNLImagePreview()
 
-  // Re-parse the original description PLUS any answers gathered so far.
-  const runParse = async (collectedAnswers, attempt) => {
-    const combined = collectedAnswers.length
-      ? `${text}\n\nAdditional details:\n${collectedAnswers.map(a => `- ${a.question} ${a.answer}`).join('\n')}`
-      : text
-    const result = await nlPreview.mutateAsync({ text: combined, attempt })
+  // Shared result handling — a typed parse and a photo parse both land here.
+  const applyParseResult = (result, rawTextForForm) => {
     if (!result) return
     if (result.autoPosted) {
       setClarification(null)
@@ -686,8 +688,17 @@ function NLTab({ currency, onParsed, onAutoPosted }) {
     } else {
       // Enough confidence (or the round cap was hit) — autofill the form.
       setClarification(null)
-      onParsed(nlResultToFormValues(result, text))
+      onParsed(nlResultToFormValues(result, rawTextForForm))
     }
+  }
+
+  // Re-parse the original description PLUS any answers gathered so far.
+  const runParse = async (collectedAnswers, attempt) => {
+    const combined = collectedAnswers.length
+      ? `${text}\n\nAdditional details:\n${collectedAnswers.map(a => `- ${a.question} ${a.answer}`).join('\n')}`
+      : text
+    const result = await nlPreview.mutateAsync({ text: combined, attempt })
+    applyParseResult(result, text)
   }
 
   const handleParse = async () => {
@@ -713,6 +724,26 @@ function NLTab({ currency, onParsed, onAutoPosted }) {
       : text
     const result = await nlPreview.mutateAsync({ text: combined, attempt: 5 })
     if (result) onParsed(nlResultToFormValues(result, text))
+  }
+
+  // Snap a bill — fewest-taps entry: pick/shoot a photo, AI reads it, the
+  // structured form fills immediately for review + Save (same "record now"
+  // flow as typing). See docs/superpowers/specs/2026-07-13-photo-receipt-entry-design.md.
+  const pickPhoto = async (e) => {
+    const file = e.target.files?.[0]
+    e.target.value = '' // allow re-selecting the same file
+    if (!file) return
+    if (!file.type.startsWith('image/')) { toast.error('Please choose a photo'); return }
+    setPhotoBusy(true)
+    try {
+      const { base64, mimeType } = await fileToImage(file)
+      const result = await nlImagePreview.mutateAsync({ image: base64, mimeType })
+      applyParseResult(result, '')
+    } catch (err) {
+      if (!err?.response) toast.error('Could not read that photo — try again or type it instead')
+    } finally {
+      setPhotoBusy(false)
+    }
   }
 
   // ── Auto-posted confirmation ─────────────────────────────────────────────────
@@ -794,9 +825,37 @@ function NLTab({ currency, onParsed, onAutoPosted }) {
   return (
     <div className="space-y-5">
       <p className="text-sm text-text-secondary">
-        Describe your transaction in plain English. VousFin will parse it and
-        autofill the structured form for review and editing.
+        Describe your transaction in plain English, or snap a photo of the bill —
+        VousFin will parse it and autofill the structured form for review and editing.
       </p>
+
+      <input
+        ref={photoInputRef}
+        type="file"
+        accept="image/*"
+        capture="environment"
+        className="hidden"
+        onChange={pickPhoto}
+      />
+      <button
+        type="button"
+        onClick={() => photoInputRef.current?.click()}
+        disabled={photoBusy}
+        className="flex w-full items-center justify-center gap-2 rounded-xl border border-cyan/30 bg-cyan/5 py-3 text-sm font-semibold text-cyan hover:bg-cyan/10 transition-colors disabled:opacity-50"
+      >
+        {photoBusy ? (
+          <><Loader2 className="h-4 w-4 animate-spin" /> Reading photo…</>
+        ) : (
+          <><Camera className="h-4 w-4" /> Snap a bill</>
+        )}
+      </button>
+
+      <div className="flex items-center gap-3">
+        <div className="h-px flex-1 bg-glass" />
+        <span className="text-[12px] font-semibold uppercase tracking-wider text-text-muted">or type it</span>
+        <div className="h-px flex-1 bg-glass" />
+      </div>
+
       <div className="space-y-1">
         <label className="block text-xs font-medium text-text-secondary">Transaction Description</label>
         <textarea

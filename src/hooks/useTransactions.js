@@ -153,6 +153,32 @@ export function useNLPreview() {
   })
 }
 
+/** Photo/receipt entry — same shape and cache behavior as useNLPreview, Gemini-backed. */
+export function useNLImagePreview() {
+  const queryClient = useQueryClient()
+  return useMutation({
+    mutationFn: async ({ image, mimeType, attempt }) => {
+      const { data } = await api.post('/transactions/nl/image', { image, mimeType, attempt })
+      return data.data
+    },
+    onSuccess: (result) => {
+      if (result?.autoPosted) {
+        queryClient.invalidateQueries({ queryKey: ['transactions'] })
+        queryClient.invalidateQueries({ queryKey: ['accounts'] })
+        queryClient.invalidateQueries({ queryKey: ['reports'] })
+        queryClient.invalidateQueries({ queryKey: ['tax'] })
+        queryClient.invalidateQueries({ queryKey: ['customers'] })
+        queryClient.invalidateQueries({ queryKey: ['vendors'] })
+        queryClient.invalidateQueries({ queryKey: ['dashboard'] })
+        queryClient.invalidateQueries({ queryKey: ['outstanding'] })
+      }
+    },
+    onError: (error) => {
+      toast.error(error.response?.data?.message || 'Could not read that photo')
+    },
+  })
+}
+
 export function useNLConfirm() {
   const queryClient = useQueryClient()
   return useMutation({

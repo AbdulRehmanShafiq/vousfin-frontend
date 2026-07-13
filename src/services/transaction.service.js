@@ -36,6 +36,7 @@ const transactionService = {
   confirmExcel: (rows) => api.post('/transactions/excel/confirm', { rows }),
   downloadExcelTemplate: () => api.get('/transactions/excel/template', { responseType: 'blob' }),
   naturalLanguageParse: (text) => api.post('/transactions/nl', { text }),
+  naturalLanguageImageParse: (image, mimeType, attempt) => api.post('/transactions/nl/image', { image, mimeType, attempt }),
   naturalLanguageConfirm: (data) => api.post('/transactions/nl/confirm', data),
 }
 
