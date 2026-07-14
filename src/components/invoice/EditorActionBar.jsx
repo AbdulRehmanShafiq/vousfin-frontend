@@ -57,6 +57,9 @@ export default function EditorActionBar({
 
   return (
     <div className="rounded-xl border border-glass bg-glass-panel/60 backdrop-blur p-4 shadow-md">
+      {/* Mobile-First Redesign, pass 2 — the primary draft actions also live in
+          a thumb-zone sticky bar (below), so on phones they're hidden here to
+          avoid duplication. Everything else (title, read-only actions) stays. */}
       <div className="flex flex-wrap items-center justify-between gap-3">
         {/* ── Left: Title + state ───────────────────────────────── */}
         <div className="flex items-center gap-3 min-w-0">
@@ -86,7 +89,7 @@ export default function EditorActionBar({
                 type="button"
                 onClick={onSaveDraft}
                 disabled={saving || !canSave}
-                className="btn-outline flex items-center gap-1.5 rounded-lg px-3 py-2 text-xs font-semibold disabled:opacity-40"
+                className="btn-outline hidden md:flex items-center gap-1.5 rounded-lg px-3 py-2 text-xs font-semibold disabled:opacity-40"
               >
                 <Save className="h-3.5 w-3.5" />
                 Save Draft
@@ -95,7 +98,7 @@ export default function EditorActionBar({
                 type="button"
                 onClick={onSubmit}
                 disabled={saving || !canSubmit}
-                className="btn-gradient flex items-center gap-1.5 rounded-lg px-3 py-2 text-xs font-semibold disabled:opacity-40"
+                className="btn-gradient hidden md:flex items-center gap-1.5 rounded-lg px-3 py-2 text-xs font-semibold disabled:opacity-40"
               >
                 <Send className="h-3.5 w-3.5" />
                 Submit for Approval
@@ -170,6 +173,35 @@ export default function EditorActionBar({
           )}
         </div>
       </div>
+
+      {/* ── Mobile: sticky thumb-zone primary actions (draft only) ──────────
+          Fixed just above the global MobileNav (which is fixed bottom-0,
+          ~58px tall). Hidden ≥ md, where the inline buttons above show. */}
+      {!isReadOnly && (
+        <div
+          className="fixed inset-x-0 z-30 flex gap-2 border-t border-glass bg-charcoal/96 px-4 py-3 backdrop-blur-md md:hidden"
+          style={{ bottom: 'calc(58px + env(safe-area-inset-bottom, 0px))' }}
+        >
+          <button
+            type="button"
+            onClick={onSaveDraft}
+            disabled={saving || !canSave}
+            className="btn-outline flex flex-1 items-center justify-center gap-2 rounded-xl py-3 text-sm font-semibold disabled:opacity-40"
+          >
+            <Save className="h-4 w-4" />
+            Save draft
+          </button>
+          <button
+            type="button"
+            onClick={onSubmit}
+            disabled={saving || !canSubmit}
+            className="btn-gradient flex flex-[1.4] items-center justify-center gap-2 rounded-xl py-3 text-sm font-semibold disabled:opacity-40"
+          >
+            <Send className="h-4 w-4" />
+            Submit
+          </button>
+        </div>
+      )}
     </div>
   )
 }

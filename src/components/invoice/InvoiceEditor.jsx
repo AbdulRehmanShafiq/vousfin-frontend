@@ -221,7 +221,7 @@ export default function InvoiceEditor({
 
   // ── Render ─────────────────────────────────────────────────────────
   return (
-    <div className={cn('space-y-4', className)}>
+    <div className={cn('space-y-4 pb-24 md:pb-0', className)}>
       {/* Always-visible top action bar with state + action buttons */}
       <EditorActionBar
         kind="invoice"
@@ -402,7 +402,7 @@ export default function InvoiceEditor({
                   </div>
                   {inventoryItems.length > 0 && (
                     <select
-                      className="w-full rounded border border-glass bg-glass-panel px-2 py-1 text-xs text-text-secondary focus:border-cyan focus:outline-none"
+                      className="w-full rounded border border-glass bg-glass-panel px-2 py-2.5 text-base text-text-secondary focus:border-cyan focus:outline-none"
                       value={item.inventoryItemId || ''}
                       onChange={e => {
                         const invId = e.target.value
@@ -420,7 +420,7 @@ export default function InvoiceEditor({
                     </select>
                   )}
                   <input
-                    className="w-full rounded border border-glass bg-glass-panel px-2 py-1.5 text-sm text-text-primary"
+                    className="w-full rounded border border-glass bg-glass-panel px-2 py-2.5 text-base text-text-primary"
                     value={item.name || ''}
                     onChange={e => handleLineChange(i, { ...item, name: e.target.value })}
                     placeholder="Item name"
@@ -433,15 +433,15 @@ export default function InvoiceEditor({
                   <div className="grid grid-cols-3 gap-2">
                     <div>
                       <label className="text-[12px] text-text-muted">Qty</label>
-                      <input type="number" className="w-full rounded border border-glass bg-glass-panel px-2 py-1 text-sm text-right" value={item.quantity || ''} onChange={e => handleLineChange(i, { ...item, quantity: parseFloat(e.target.value) || 0 })} />
+                      <input type="number" className="w-full rounded border border-glass bg-glass-panel px-2 py-2.5 text-base text-right" value={item.quantity || ''} onChange={e => handleLineChange(i, { ...item, quantity: parseFloat(e.target.value) || 0 })} />
                     </div>
                     <div>
                       <label className="text-[12px] text-text-muted">Price</label>
-                      <input type="number" className="w-full rounded border border-glass bg-glass-panel px-2 py-1 text-sm text-right" value={item.unitPrice || ''} onChange={e => handleLineChange(i, { ...item, unitPrice: parseFloat(e.target.value) || 0 })} />
+                      <input type="number" className="w-full rounded border border-glass bg-glass-panel px-2 py-2.5 text-base text-right" value={item.unitPrice || ''} onChange={e => handleLineChange(i, { ...item, unitPrice: parseFloat(e.target.value) || 0 })} />
                     </div>
                     <div>
                       <label className="text-[12px] text-text-muted">Tax %</label>
-                      <input type="number" className="w-full rounded border border-glass bg-glass-panel px-2 py-1 text-sm text-right" value={item.taxRate || ''} onChange={e => handleLineChange(i, { ...item, taxRate: parseFloat(e.target.value) || 0 })} />
+                      <input type="number" className="w-full rounded border border-glass bg-glass-panel px-2 py-2.5 text-base text-right" value={item.taxRate || ''} onChange={e => handleLineChange(i, { ...item, taxRate: parseFloat(e.target.value) || 0 })} />
                     </div>
                   </div>
                   <div className="text-right text-sm font-semibold text-text-primary tabular-nums">
