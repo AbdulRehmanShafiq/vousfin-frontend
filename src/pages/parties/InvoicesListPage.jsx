@@ -14,19 +14,22 @@ import {
 } from '@/hooks/useInvoices'
 import { useBusinessStore } from '@/stores/useBusinessStore'
 import { formatCurrency, formatDate } from '@/utils/formatters'
+import { useIsMobile } from '@/hooks/useIsMobile'
 import Button from '@/components/ui/Button'
 import Input from '@/components/ui/Input'
 import DataTable from '@/components/tables/DataTable'
 import InvoiceStatusBadge from '@/components/invoice/InvoiceStatusBadge'
 import ApprovalChip from '@/components/invoice/ApprovalChip'
+import MobileInvoices from './MobileInvoices'
 
 export default function InvoicesListPage() {
   const navigate = useNavigate()
+  const isMobile = useIsMobile()
   const currency = useBusinessStore(s => s.currency)
   const [query, setQuery] = useState('')
   const [stateFilter, setStateFilter] = useState('')
 
-  const { data, isLoading } = useInvoices({
+  const { data, isLoading, refetch } = useInvoices({
     search: query || undefined,
     state:  stateFilter || undefined,
     limit:  100,
@@ -39,6 +42,31 @@ export default function InvoicesListPage() {
               : Array.isArray(data)       ? data : []
     return arr
   }, [data])
+
+  const handleArchive = (r) => {
+    if (confirm(`Archive invoice ${r.invoiceNumber}?`)) archiveInvoice.mutate({ id: r._id })
+  }
+
+  // Mobile-First Redesign, pass 2 — card list instead of the sideways-scrolling
+  // table. All hooks above already ran (rules-of-hooks safe).
+  if (isMobile) {
+    return (
+      <MobileInvoices
+        rows={invoices}
+        currency={currency}
+        isLoading={isLoading}
+        query={query}
+        onQuery={setQuery}
+        stateFilter={stateFilter}
+        onStateFilter={setStateFilter}
+        onRefresh={async () => { await refetch() }}
+        onNew={() => navigate('/sales/invoices/new')}
+        onOpen={(id) => navigate(`/sales/invoices/${id}/edit`)}
+        onDownloadPdf={(id) => downloadPdf.mutate(id)}
+        onArchive={handleArchive}
+      />
+    )
+  }
 
   const columns = [
     {

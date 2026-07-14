@@ -23,7 +23,9 @@ import {
 } from '@/hooks/useParties'
 import { useAccounts } from '@/hooks/useAccounts'
 import { useBusinessStore } from '@/stores/useBusinessStore'
+import { useIsMobile } from '@/hooks/useIsMobile'
 import { formatCurrency, formatDate } from '@/utils/formatters'
+import MobileOutstanding from './MobileOutstanding'
 
 import Badge from '@/components/ui/Badge'
 import Button from '@/components/ui/Button'
@@ -159,7 +161,8 @@ function PaymentForm({ row, currency, onClose, bankAccounts }) {
 /* ── Main Page ───────────────────────────────────────────────────────── */
 export default function PayablesPage() {
   const currency = useBusinessStore(s => s.currency)
-  const { data, isLoading } = useOutstandingBalances('payable', { withAging: true })
+  const isMobile = useIsMobile()
+  const { data, isLoading, refetch } = useOutstandingBalances('payable', { withAging: true })
   const repair    = useRepairARAPTransactions()
   const refreshAP = useRefreshOverdueAP()
   const { data: rawAccounts } = useAccounts()
@@ -217,6 +220,25 @@ export default function PayablesPage() {
     : rows.filter((r) => daysSince(r._dueDate || r._date) > 0).length
 
   const payingRow = payingRowId ? rows.find(r => r._id === payingRowId) : null
+
+  // Mobile-First Redesign, pass 2 — summary + tap-to-pay card list.
+  if (isMobile) {
+    return (
+      <MobileOutstanding
+        kind="payable"
+        rows={filtered}
+        currency={currency}
+        isLoading={isLoading}
+        query={query}
+        onQuery={setQuery}
+        totalOutstanding={totalOutstanding}
+        overdueCount={overdueCount}
+        partyCount={new Set(rows.map((r) => r._vendorId).filter(Boolean)).size}
+        bankAccounts={bankAccounts}
+        onRefresh={async () => { await refetch() }}
+      />
+    )
+  }
 
   const columns = [
     {

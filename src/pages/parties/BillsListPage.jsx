@@ -7,19 +7,22 @@ import { Plus, Search, FileText, Edit, Trash2 } from 'lucide-react'
 import { useBills, useArchiveBill } from '@/hooks/useInvoices'
 import { useBusinessStore } from '@/stores/useBusinessStore'
 import { formatCurrency, formatDate } from '@/utils/formatters'
+import { useIsMobile } from '@/hooks/useIsMobile'
 import Button from '@/components/ui/Button'
 import Input from '@/components/ui/Input'
 import DataTable from '@/components/tables/DataTable'
 import InvoiceStatusBadge from '@/components/invoice/InvoiceStatusBadge'
 import ApprovalChip from '@/components/invoice/ApprovalChip'
+import MobileBills from './MobileBills'
 
 export default function BillsListPage() {
   const navigate = useNavigate()
+  const isMobile = useIsMobile()
   const currency = useBusinessStore(s => s.currency)
   const [query, setQuery] = useState('')
   const [stateFilter, setStateFilter] = useState('')
 
-  const { data, isLoading } = useBills({
+  const { data, isLoading, refetch } = useBills({
     search: query || undefined,
     state:  stateFilter || undefined,
     limit:  100,
@@ -31,6 +34,29 @@ export default function BillsListPage() {
               : Array.isArray(data)       ? data : []
     return arr
   }, [data])
+
+  const handleArchive = (r) => {
+    if (confirm(`Archive bill ${r.billNumber}?`)) archiveBill.mutate({ id: r._id })
+  }
+
+  // Mobile-First Redesign, pass 2 — card list instead of the table.
+  if (isMobile) {
+    return (
+      <MobileBills
+        rows={bills}
+        currency={currency}
+        isLoading={isLoading}
+        query={query}
+        onQuery={setQuery}
+        stateFilter={stateFilter}
+        onStateFilter={setStateFilter}
+        onRefresh={async () => { await refetch() }}
+        onNew={() => navigate('/purchases/bills/new')}
+        onOpen={(id) => navigate(`/purchases/bills/${id}/edit`)}
+        onArchive={handleArchive}
+      />
+    )
+  }
 
   const columns = [
     {
