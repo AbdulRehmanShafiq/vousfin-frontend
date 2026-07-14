@@ -9,6 +9,7 @@
  *   - "Submit / Save Draft" for draft state
  *   - "Approve / Cancel / Send / Schedule / PDF" for non-draft states
  */
+import { createPortal } from 'react-dom'
 import {
   Save, Send, FileDown, CheckCircle2, XCircle, CalendarCheck, MoreVertical,
 } from 'lucide-react'
@@ -175,9 +176,11 @@ export default function EditorActionBar({
       </div>
 
       {/* ── Mobile: sticky thumb-zone primary actions (draft only) ──────────
-          Fixed just above the global MobileNav (which is fixed bottom-0,
-          ~58px tall). Hidden ≥ md, where the inline buttons above show. */}
-      {!isReadOnly && (
+          Portaled to <body> so no ancestor's backdrop-filter / framer-motion
+          transform turns it into a containing block (which would un-fix it).
+          Sits just above the global MobileNav (fixed bottom-0, ~58px tall);
+          hidden ≥ md, where the inline buttons above show. */}
+      {!isReadOnly && createPortal(
         <div
           className="fixed inset-x-0 z-30 flex gap-2 border-t border-glass bg-charcoal/96 px-4 py-3 backdrop-blur-md md:hidden"
           style={{ bottom: 'calc(58px + env(safe-area-inset-bottom, 0px))' }}
@@ -200,7 +203,8 @@ export default function EditorActionBar({
             <Send className="h-4 w-4" />
             Submit
           </button>
-        </div>
+        </div>,
+        document.body,
       )}
     </div>
   )

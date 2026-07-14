@@ -152,7 +152,11 @@ export default function MobileOutstanding({
         </div>
       </PullToRefresh>
 
+      {/* key by row id so the form's initial state (amount = outstanding,
+          default account) is re-seeded each time a different row is tapped —
+          without the key the useState initializers keep the first row's values. */}
       <PaymentSheet
+        key={payingRow?._id || 'none'}
         row={payingRow}
         kind={kind}
         currency={currency}
