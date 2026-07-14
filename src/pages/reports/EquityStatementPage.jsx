@@ -81,13 +81,15 @@ export default function EquityStatementPage() {
           <p className="text-text-secondary mt-1 text-sm">How owner equity changed during the period</p>
         </div>
         <div className="flex flex-wrap items-center gap-2">
-          <Input type="date" value={dateRange.startDate}
-            onChange={e => setDateRange(p => ({ ...p, startDate: e.target.value }))}
-            containerClassName="flex-1 sm:flex-none sm:w-36" />
-          <span className="text-text-muted text-sm">to</span>
-          <Input type="date" value={dateRange.endDate}
-            onChange={e => setDateRange(p => ({ ...p, endDate: e.target.value }))}
-            containerClassName="flex-1 sm:flex-none sm:w-36" />
+          <div className="flex min-w-0 flex-1 items-center gap-2 sm:flex-none">
+            <Input type="date" value={dateRange.startDate}
+              onChange={e => setDateRange(p => ({ ...p, startDate: e.target.value }))}
+              containerClassName="min-w-0 flex-1 sm:flex-none sm:w-36" />
+            <span className="text-text-muted text-xs">to</span>
+            <Input type="date" value={dateRange.endDate}
+              onChange={e => setDateRange(p => ({ ...p, endDate: e.target.value }))}
+              containerClassName="min-w-0 flex-1 sm:flex-none sm:w-36" />
+          </div>
           <ExportButton
             data={exportData}
             filename={`equity-statement-${dateRange.endDate}.csv`}
@@ -136,13 +138,13 @@ export default function EquityStatementPage() {
         ) : !data || rows.length === 0 ? (
           <p className="text-center py-10 text-text-muted">No data for this period.</p>
         ) : (
-          <div className="space-y-6">
-            <div className="text-center border-b border-glass pb-5">
-              <h2 className="text-lg sm:text-xl font-bold text-text-primary">Statement of Changes in Equity</h2>
-              <p className="text-text-secondary text-sm">{dateRange.startDate} — {dateRange.endDate}</p>
+          <div className="space-y-3.5 sm:space-y-6">
+            <div className="text-center border-b border-glass pb-3 sm:pb-5">
+              <h2 className="text-base sm:text-xl font-bold text-text-primary">Statement of Changes in Equity</h2>
+              <p className="text-text-secondary text-xs sm:text-sm">{dateRange.startDate} — {dateRange.endDate}</p>
             </div>
 
-            <table className="w-full text-sm">
+            <table className="w-full min-w-[440px] text-[13px] sm:text-sm">
               <thead>
                 <tr>
                   <th className="text-left py-2 pr-4 font-bold text-text-secondary uppercase text-xs tracking-wider w-48">

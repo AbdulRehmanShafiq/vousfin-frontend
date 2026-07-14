@@ -65,11 +65,13 @@ export default function GeneralLedgerPage() {
           <p className="text-text-secondary mt-1 text-sm">Per-account transactions with running balance</p>
         </div>
         <div className="flex flex-wrap items-center gap-2">
-          <Input type="date" value={dateRange.startDate}
-            onChange={e => setDateRange(p => ({ ...p, startDate: e.target.value }))} containerClassName="flex-1 sm:flex-none sm:w-36" />
-          <span className="text-text-muted text-sm">to</span>
-          <Input type="date" value={dateRange.endDate}
-            onChange={e => setDateRange(p => ({ ...p, endDate: e.target.value }))} containerClassName="flex-1 sm:flex-none sm:w-36" />
+          <div className="flex min-w-0 flex-1 items-center gap-2 sm:flex-none">
+            <Input type="date" value={dateRange.startDate}
+              onChange={e => setDateRange(p => ({ ...p, startDate: e.target.value }))} containerClassName="min-w-0 flex-1 sm:flex-none sm:w-36" />
+            <span className="text-text-muted text-xs">to</span>
+            <Input type="date" value={dateRange.endDate}
+              onChange={e => setDateRange(p => ({ ...p, endDate: e.target.value }))} containerClassName="min-w-0 flex-1 sm:flex-none sm:w-36" />
+          </div>
           <ExportButton data={exportData} filename={`general-ledger-${dateRange.endDate}.csv`} />
         </div>
       </div>

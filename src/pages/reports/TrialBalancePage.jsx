@@ -54,10 +54,12 @@ export default function TrialBalancePage() {
           <p className="text-text-secondary mt-1 text-sm">Verify debits equal credits — with opening & closing balances</p>
         </div>
         <div className="flex flex-wrap items-center gap-2">
-          <span className="text-text-muted text-xs">From</span>
-          <Input type="date" value={fromDate} onChange={e => setFromDate(e.target.value)} containerClassName="flex-1 sm:flex-none sm:w-32" />
-          <span className="text-text-muted text-xs">As of</span>
-          <Input type="date" value={asOfDate} onChange={e => setAsOfDate(e.target.value)} containerClassName="flex-1 sm:flex-none sm:w-32" />
+          <div className="flex min-w-0 flex-1 items-center gap-1.5 sm:flex-none">
+            <span className="text-text-muted text-xs">From</span>
+            <Input type="date" value={fromDate} onChange={e => setFromDate(e.target.value)} containerClassName="min-w-0 flex-1 sm:flex-none sm:w-32" />
+            <span className="text-text-muted text-xs">to</span>
+            <Input type="date" value={asOfDate} onChange={e => setAsOfDate(e.target.value)} containerClassName="min-w-0 flex-1 sm:flex-none sm:w-32" />
+          </div>
           <ExportButton data={exportData} filename={`trial-balance-${asOfDate}.csv`} />
         </div>
       </div>
