@@ -22,6 +22,7 @@ import {
 import { useAccounts } from '@/hooks/useAccounts'
 import { useVendors } from '@/hooks/useParties'
 import { useBusinessStore } from '@/stores/useBusinessStore'
+import { useIsMobile } from '@/hooks/useIsMobile'
 import { formatCurrency } from '@/utils/formatters'
 
 import Button from '@/components/ui/Button'
@@ -29,6 +30,8 @@ import Input from '@/components/ui/Input'
 import Badge from '@/components/ui/Badge'
 import DataTable from '@/components/tables/DataTable'
 import Modal from '@/components/modals/Modal'
+import Sheet from '@/components/mobile/Sheet'
+import MobileInventory from './MobileInventory'
 import { cn } from '@/utils/cn'
 
 /* ── Section label — matches TransactionFormModal style ─────────────── */
@@ -279,7 +282,7 @@ function ItemForm({ initial, onClose, currency }) {
 }
 
 /* ── Add Stock inline form ───────────────────────────────────────────── */
-function AddStockForm({ item, onClose, currency }) {
+function AddStockForm({ item, onClose, currency, hideHeader = false }) {
   const addStock = useAddStock()
   const { data: accountsData } = useAccounts()
   const { data: vendorsData } = useVendors({ limit: 200 })
@@ -353,15 +356,17 @@ function AddStockForm({ item, onClose, currency }) {
   ]
 
   return (
-    <div className="bg-navy/80 border border-positive/20 rounded-xl p-4 space-y-4 animate-fade-in">
-      <div className="flex items-center justify-between">
-        <p className="text-sm font-semibold text-positive flex items-center gap-1.5">
-          <Plus className="h-4 w-4" /> Add Stock — {item.name}
-        </p>
-        <button type="button" onClick={onClose} className="text-text-muted hover:text-text-primary">
-          <X className="h-4 w-4" />
-        </button>
-      </div>
+    <div className={cn('space-y-4 animate-fade-in', !hideHeader && 'bg-navy/80 border border-positive/20 rounded-xl p-4')}>
+      {!hideHeader && (
+        <div className="flex items-center justify-between">
+          <p className="text-sm font-semibold text-positive flex items-center gap-1.5">
+            <Plus className="h-4 w-4" /> Add Stock — {item.name}
+          </p>
+          <button type="button" onClick={onClose} className="text-text-muted hover:text-text-primary">
+            <X className="h-4 w-4" />
+          </button>
+        </div>
+      )}
 
       {/* Qty + Cost */}
       <div className="grid grid-cols-2 gap-3">
@@ -572,7 +577,8 @@ function StockLedgerModal({ item, onClose, currency }) {
 /* ── Main Page ───────────────────────────────────────────────────────── */
 export default function InventoryPage() {
   const currency = useBusinessStore(s => s.currency)
-  const { data: rawItems,    isLoading } = useInventoryItems({ limit: 200 })
+  const isMobile = useIsMobile()
+  const { data: rawItems,    isLoading, refetch } = useInventoryItems({ limit: 200 })
   const { data: valuation              } = useInventoryValuation()
   const { data: lowStockItems          } = useLowStockAlerts()
   const toggleActive = useToggleInventoryActive()
@@ -605,6 +611,42 @@ export default function InventoryPage() {
 
   const addStockItem = addStockId ? items.find(i => i._id === addStockId) : null
   const ledgerItem   = ledgerId   ? items.find(i => i._id === ledgerId)   : null
+
+  // Mobile-First Redesign, pass 2 — card list + per-item actions sheet. The
+  // create/edit + stock-ledger modals below are Modal (→ Sheet on mobile);
+  // add-stock is an inline card, so on mobile it rides in a Sheet.
+  if (isMobile) {
+    return (
+      <>
+        <MobileInventory
+          rows={filtered}
+          currency={currency}
+          isLoading={isLoading}
+          valuation={valuation}
+          lowStockCount={valuation?.lowStockCount ?? lowStockItems?.length ?? 0}
+          query={query}
+          onQuery={setQuery}
+          showInactive={showInactive}
+          onShowInactive={setShowInactive}
+          onRefresh={async () => { await refetch() }}
+          onNew={() => setShowForm(true)}
+          onAddStock={setAddStockId}
+          onHistory={setLedgerId}
+          onEdit={setEditItem}
+          onToggleActive={(id) => toggleActive.mutate(id)}
+        />
+        {(showForm || editItem) && (
+          <ItemForm initial={editItem} currency={currency} onClose={() => { setShowForm(false); setEditItem(null) }} />
+        )}
+        <Sheet isOpen={!!addStockItem} onClose={() => setAddStockId(null)} title={addStockItem ? `Add stock — ${addStockItem.name}` : ''}>
+          {addStockItem && <AddStockForm item={addStockItem} currency={currency} onClose={() => setAddStockId(null)} hideHeader />}
+        </Sheet>
+        {ledgerItem && (
+          <StockLedgerModal item={ledgerItem} currency={currency} onClose={() => setLedgerId(null)} />
+        )}
+      </>
+    )
+  }
 
   const columns = [
     {
