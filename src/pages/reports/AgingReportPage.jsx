@@ -92,7 +92,7 @@ export default function AgingReportPage() {
                 <button key={key} onClick={() => setBucket(bucket === key ? 'all' : key)}
                   className={`premium-card p-4 text-left border transition-all ${BUCKET_COLORS[key]} ${bucket === key ? 'ring-2 ring-cyan' : ''}`}>
                   <p className="text-xs font-bold uppercase tracking-wider opacity-70">{b.label}</p>
-                  <p className="text-lg font-black mt-1">{formatCurrency(b.total, currency)}</p>
+                  <p className="text-base sm:text-lg font-black mt-1 tabular-nums break-words">{formatCurrency(b.total, currency)}</p>
                   <p className="text-xs opacity-60 mt-0.5">{b.items.length} items · {pct}%</p>
                 </button>
               )

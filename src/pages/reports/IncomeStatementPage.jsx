@@ -72,9 +72,9 @@ export default function IncomeStatementPage() {
           ].map(({ label, val, positive }) => (
             <div key={label} className="premium-card px-4 py-3 flex flex-col gap-1">
               <span className="text-xs font-bold text-text-secondary uppercase tracking-wider">{label}</span>
-              <div className="flex items-center gap-2">
+              <div className="flex items-center gap-2 min-w-0">
                 {positive ? <TrendingUp className="h-4 w-4 text-positive flex-shrink-0" /> : <TrendingDown className="h-4 w-4 text-negative flex-shrink-0" />}
-                <span className={`font-black text-lg ${positive ? 'text-positive' : 'text-negative'}`}>
+                <span className={`font-black text-base sm:text-lg tabular-nums truncate ${positive ? 'text-positive' : 'text-negative'}`}>
                   {formatCurrency(val, currency)}
                 </span>
               </div>
