@@ -93,8 +93,39 @@ export default function TrialBalancePage() {
         </div>
       )}
 
-      {/* Table */}
-      <div className="premium-card overflow-x-auto">
+      {/* Mobile loading + cards — stacked, closing Dr/Cr per account (opening/
+          period columns are desktop-only to keep the phone view readable). */}
+      {isLoading && <div className="premium-card p-4 md:hidden"><SkeletonLoader count={6} /></div>}
+      {!isLoading && rows.length > 0 && (
+        <div className="premium-card divide-y divide-glass md:hidden">
+          {rows.map((r, idx) => {
+            const dr = r.closingDebit ?? r.debit ?? 0
+            const cr = r.closingCredit ?? r.credit ?? 0
+            return (
+              <div key={r.accountId || idx} className="flex items-center justify-between gap-3 px-4 py-3">
+                <div className="min-w-0">
+                  <p className="truncate text-sm font-medium text-text-primary">{r.accountName}</p>
+                  <p className="text-[12px] text-text-muted">{r.accountCode ? `${r.accountCode} · ` : ''}{r.accountType}</p>
+                </div>
+                <div className="flex-shrink-0 text-right tabular-nums">
+                  {dr > 0 && <p className="text-sm text-text-primary">Dr {formatCurrency(dr, currency)}</p>}
+                  {cr > 0 && <p className="text-sm text-text-primary">Cr {formatCurrency(cr, currency)}</p>}
+                </div>
+              </div>
+            )
+          })}
+          <div className="flex items-center justify-between gap-3 bg-glass-hover px-4 py-3 font-black text-sm">
+            <span className="text-text-primary">TOTAL</span>
+            <div className="text-right tabular-nums">
+              <p className="text-text-primary">Dr {formatCurrency(totalDebits, currency)}</p>
+              <p className={isBalanced ? 'text-text-primary' : 'text-negative'}>Cr {formatCurrency(totalCredits, currency)}</p>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Table (desktop) */}
+      <div className="premium-card overflow-x-auto hidden md:block">
         {isLoading ? (
           <div className="p-6"><SkeletonLoader count={8} /></div>
         ) : (

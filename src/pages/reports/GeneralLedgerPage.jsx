@@ -148,9 +148,9 @@ function AccountLedger({ account, currency, open, onToggle }) {
         </div>
       </button>
 
-      {/* Entries table */}
+      {/* Entries table (desktop) */}
       {open && (
-        <div className="border-t border-glass overflow-x-auto">
+        <div className="border-t border-glass overflow-x-auto hidden md:block">
           <table className="w-full text-sm min-w-[600px]">
             <thead>
               <tr className="bg-glass">
@@ -206,6 +206,41 @@ function AccountLedger({ account, currency, open, onToggle }) {
               </tr>
             </tfoot>
           </table>
+        </div>
+      )}
+
+      {/* Entries (mobile) — one stacked row per entry with a running balance */}
+      {open && (
+        <div className="border-t border-glass divide-y divide-glass md:hidden">
+          <div className="flex items-center justify-between gap-3 bg-glass/50 px-4 py-2.5">
+            <span className="text-sm font-semibold text-text-secondary">Opening balance</span>
+            <span className="text-sm font-semibold tabular-nums text-text-primary">{formatCurrency(account.openingBalance, currency)}</span>
+          </div>
+          {(account.entries || []).map((entry, idx) => (
+            <div key={idx} className="flex items-start justify-between gap-3 px-4 py-2.5">
+              <div className="min-w-0">
+                <p className="truncate text-sm text-text-primary">{entry.description}</p>
+                <p className="text-[12px] text-text-muted">
+                  {new Date(entry.date).toLocaleDateString('en-US', { month: 'short', day: '2-digit' })}
+                  {entry.reference ? ` · ${entry.reference}` : ''}
+                  {entry.debit > 0 ? ` · Dr ${formatCurrency(entry.debit, currency)}` : ''}
+                  {entry.credit > 0 ? ` · Cr ${formatCurrency(entry.credit, currency)}` : ''}
+                </p>
+              </div>
+              <span className={`flex-shrink-0 text-sm font-medium tabular-nums ${entry.runningBalance >= 0 ? 'text-text-primary' : 'text-negative'}`}>
+                {formatCurrency(entry.runningBalance, currency)}
+              </span>
+            </div>
+          ))}
+          {(account.entries || []).length === 0 && (
+            <p className="px-4 py-4 text-center text-xs text-text-muted">No transactions in this period.</p>
+          )}
+          <div className="flex items-center justify-between gap-3 bg-glass px-4 py-3">
+            <span className="text-xs font-black uppercase text-text-primary">Closing balance</span>
+            <span className={`text-sm font-black tabular-nums ${account.closingBalance >= 0 ? 'text-cyan' : 'text-negative'}`}>
+              {formatCurrency(account.closingBalance, currency)}
+            </span>
+          </div>
         </div>
       )}
     </div>

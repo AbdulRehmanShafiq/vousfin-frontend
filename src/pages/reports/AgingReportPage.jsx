@@ -124,7 +124,30 @@ export default function AgingReportPage() {
                 <button onClick={() => setBucket('all')} className="text-xs text-cyan hover:underline">Clear filter</button>
               )}
             </div>
-            <table className="w-full text-sm min-w-[700px]">
+            {/* Mobile cards */}
+            <div className="divide-y divide-glass md:hidden">
+              {visibleItems.length === 0 ? (
+                <p className="py-10 text-center text-text-muted">No outstanding items.</p>
+              ) : visibleItems.map((item, idx) => (
+                <div key={item.transactionId || idx} className={`flex items-center justify-between gap-3 px-4 py-3 ${SEVERITY_ROW[item.severity] || ''}`}>
+                  <div className="min-w-0">
+                    <p className="truncate text-sm font-medium text-text-primary">{item.party}</p>
+                    <p className="text-[12px] text-text-muted">
+                      {item.invoiceNumber ? `${item.invoiceNumber} · ` : ''}
+                      <span className={item.isOverdue ? 'text-negative font-semibold' : 'text-positive'}>
+                        {item.isOverdue ? `+${item.daysOverdue}d overdue` : 'current'}
+                      </span>
+                    </p>
+                  </div>
+                  <span className="flex-shrink-0 text-sm font-bold tabular-nums text-text-primary">
+                    {formatCurrency(item.remainingBalance, currency)}
+                  </span>
+                </div>
+              ))}
+            </div>
+
+            {/* Detail table (desktop) */}
+            <table className="hidden w-full text-sm min-w-[700px] md:table">
               <thead>
                 <tr className="bg-glass border-b border-glass">
                   <th className="py-2.5 px-4 text-left text-xs font-bold text-text-secondary uppercase tracking-wider">Party</th>
