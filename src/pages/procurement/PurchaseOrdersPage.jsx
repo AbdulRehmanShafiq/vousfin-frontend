@@ -10,7 +10,7 @@ import { useBusinessStore } from '@/stores/useBusinessStore'
 import { formatCurrency, formatDate } from '@/utils/formatters'
 import Button from '@/components/ui/Button'
 import Input from '@/components/ui/Input'
-import DataTable from '@/components/tables/DataTable'
+import DataTable from '@/design-system/data/SmartTable'
 import InvoiceStatusBadge from '@/components/invoice/InvoiceStatusBadge'
 import ApprovalChip from '@/components/invoice/ApprovalChip'
 

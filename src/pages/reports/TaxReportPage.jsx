@@ -1,4 +1,3 @@
-import { useState } from 'react'
 import { Receipt } from 'lucide-react'
 import { useTaxSummary } from '@/hooks/useReports'
 import { useBusinessStore } from '@/stores/useBusinessStore'
@@ -7,11 +6,11 @@ import ExportButton from '@/components/ui/ExportButton'
 import Input from '@/components/ui/Input'
 import SkeletonLoader from '@/components/ui/SkeletonLoader'
 
+import { usePeriodStore } from '@/stores/usePeriodStore'
+
 export default function TaxReportPage() {
-  const [dateRange, setDateRange] = useState({
-    startDate: new Date(new Date().getFullYear(), 0, 1).toISOString().split('T')[0],
-    endDate:   new Date().toISOString().split('T')[0],
-  })
+  const dateRange = usePeriodStore((s) => s.range)      // global report period
+  const setDateRange = usePeriodStore((s) => s.setRange)
 
   const { data, isLoading } = useTaxSummary(dateRange)
   const currency = useBusinessStore(s => s.currency)

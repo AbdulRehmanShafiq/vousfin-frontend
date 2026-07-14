@@ -77,6 +77,22 @@ export default {
         /* Readable ink ON the accent fill (dark for bright accents, light for dark) */
         'ink-on-accent': 'rgb(var(--c-on-accent))',
 
+        /* ══ LEDGER SEMANTIC ROLES (2026-07) — the vocabulary new code uses.
+           Components reference roles, never hues. Legacy names above are
+           deprecated aliases kept only until their usages are migrated. ══ */
+        ink: {
+          DEFAULT: withAlpha('--ink-primary'),
+          primary: withAlpha('--ink-primary'),
+          secondary: withAlpha('--ink-secondary'),
+          tertiary: withAlpha('--ink-tertiary'),
+        },
+        money: {
+          in: withAlpha('--money-in'),
+          out: withAlpha('--money-out'),
+          'in-subtle': 'rgb(var(--money-in) / 0.10)',
+          'out-subtle': 'rgb(var(--money-out) / 0.10)',
+        },
+
         /* ── Legacy ramp (mapped to accent family) ── */
         brand: {
           50: withAlpha('--c-accent'), 100: withAlpha('--c-accent'), 200: withAlpha('--c-accent'),
@@ -88,6 +104,9 @@ export default {
           DEFAULT: withAlpha('--c-bg2'),
           muted: withAlpha('--c-bg'),
           border: 'var(--c-border)',
+          canvas: withAlpha('--surface-canvas'),
+          raised: withAlpha('--surface-raised'),
+          overlay: withAlpha('--surface-overlay'),
         },
       },
 
@@ -97,11 +116,15 @@ export default {
         mono: ['Spline Sans Mono', 'IBM Plex Mono', 'ui-monospace', 'monospace'],
       },
 
-      /* ── New named sizes only (no override of Tailwind's core scale, to avoid
-         global regressions). Prefer these over arbitrary text-[Npx]. ── */
+      /* ── Ledger type scale — named sizes replace arbitrary text-[Npx]
+         (lint-banned in migrated code). Core Tailwind scale untouched. ── */
       fontSize: {
         label: ['11px', { lineHeight: '1.3', letterSpacing: '0.04em' }],
+        small: ['13px', { lineHeight: '1.5' }],
+        body: ['14px', { lineHeight: '1.55' }],
         md: ['15px', { lineHeight: '1.55' }],
+        heading: ['16px', { lineHeight: '1.4' }],
+        title: ['20px', { lineHeight: '1.3', letterSpacing: '-0.01em' }],
         display: ['32px', { lineHeight: '1.1', letterSpacing: '-0.02em' }],
       },
 
@@ -140,6 +163,9 @@ export default {
       borderRadius: {
         sm: '6px',
         DEFAULT: '10px',
+        control: 'var(--radius-control)',
+        card: 'var(--radius-card)',
+        overlay: 'var(--radius-overlay)',
       },
     },
   },

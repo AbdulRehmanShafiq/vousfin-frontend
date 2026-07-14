@@ -117,6 +117,7 @@ const BankReconciliationPage = lazy(() => import('@/pages/reconciliation/BankRec
 const ReportBuilderPage      = lazy(() => import('@/pages/reports/ReportBuilderPage'))        // FR-02.5
 const SupportPage            = lazy(() => import('@/pages/support/SupportPage'))
 const AdminPage              = lazy(() => import('@/pages/admin/AdminPage'))                  // Admin panel
+const DesignCatalogPage      = lazy(() => import('@/pages/design/DesignCatalogPage'))         // Ledger catalog (dev only)
 
 const LoadingFallback = () => (
   <div className="flex h-screen w-full items-center justify-center bg-navy">
@@ -333,6 +334,9 @@ export const routes = [
           { path: 'ai/intelligence', element: withSuspense(IntelligencePage) }, // Intelligence Roadmap
 
           { path: 'support', element: withSuspense(SupportPage) },
+
+          /* Ledger design catalog — the living component gallery (dev only) */
+          ...(import.meta.env.DEV ? [{ path: 'design', element: withSuspense(DesignCatalogPage) }] : []),
         ],
       },
     ],

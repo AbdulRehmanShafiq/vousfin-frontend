@@ -9,7 +9,7 @@ import { useGoodsReceipts, useConfirmGRN, useArchiveGRN } from '@/hooks/useProcu
 import { useBusinessStore } from '@/stores/useBusinessStore'
 import { formatCurrency, formatDate } from '@/utils/formatters'
 import Input from '@/components/ui/Input'
-import DataTable from '@/components/tables/DataTable'
+import DataTable from '@/design-system/data/SmartTable'
 
 const STATE_FILTERS = [
   { value: '',                      label: 'All' },

@@ -286,16 +286,6 @@ export function shortcutForPath(pathname) {
   return null
 }
 
-/* ── Backward-compat aliases (kept so any not-yet-migrated consumer compiles) ──
-   RAIL_ITEMS / HUB_SECTIONS / hubByKey / activeSectionKey map onto MODULES. */
-export const RAIL_ITEMS = MODULES.map((m) => ({
-  key: m.key, name: m.name, icon: m.icon, href: m.href, accent: m.accent, pinBottom: m.pinBottom,
-}))
-export const HUB_SECTIONS = MODULES.filter((m) => m.key !== 'home')
-export function hubByKey(key) {
-  // Accept both new module keys and legacy hub keys
-  const legacy = { 'money-in': 'sales', 'money-out': 'purchases', ledger: 'accounting', autopilot: 'banking', intelligence: 'reports', budgets: 'planning', cost: 'planning' }
-  return moduleByKey(legacy[key] || key)
-}
-export const activeSectionKey = activeModuleKey
-export const NAV_SECTIONS = MODULES // legacy export (Sidebar.jsx removed)
+/* Legacy aliases (RAIL_ITEMS / HUB_SECTIONS / hubByKey / activeSectionKey /
+   NAV_SECTIONS) removed 2026-07-14 with their only consumers
+   (SectionRail.jsx, SectionHubPage.jsx). MODULES is the one model. */

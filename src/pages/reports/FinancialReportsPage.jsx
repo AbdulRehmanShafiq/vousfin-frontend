@@ -15,6 +15,7 @@ import {
 import { cn } from '@/utils/cn'
 import SkeletonLoader from '@/components/ui/SkeletonLoader'
 import AINarrativePanel from '@/components/reports/AINarrativePanel'
+import { usePeriodStore, PERIOD_PRESETS } from '@/stores/usePeriodStore'
 
 const IncomeStatementPage   = lazy(() => import('./IncomeStatementPage'))
 const BalanceSheetPage      = lazy(() => import('./BalanceSheetPage'))
@@ -49,14 +50,17 @@ const TabFallback = () => (
 export default function FinancialReportsPage() {
   const { tab }  = useParams()
   const navigate = useNavigate()
+  const { preset, range, setPreset } = usePeriodStore()
 
   const validTab = TABS.find(t => t.key === tab)
 
-  // Eager-mount every report so they all load on entry and tab switches are
-  // instant (no per-tab "click to load" flash). Each report hook fetches once
-  // and shares its cache; transaction changes invalidate ['reports'] so they
-  // refresh on the spot.
-  const [mountedTabs] = useState(() => Object.fromEntries(TABS.map(t => [t.key, true])))
+  // Lazy mount-once (Ledger spec §10.4): only the visited tabs mount, so
+  // entering Reports fires ONE fetch tree instead of ten. A visited tab stays
+  // mounted, keeping the instant tab switches and shared caches.
+  const [mountedTabs, setMountedTabs] = useState(() => (validTab ? { [validTab.key]: true } : {}))
+  if (validTab && !mountedTabs[validTab.key]) {
+    setMountedTabs((m) => ({ ...m, [validTab.key]: true }))
+  }
 
   const handleTabChange = useCallback((key) => {
     navigate(`/financial-reports/${key}`, { replace: true })
@@ -102,6 +106,30 @@ export default function FinancialReportsPage() {
             <Printer className="h-4 w-4" />
             <span className="hidden sm:inline">Print</span>
           </button>
+        </div>
+
+        {/* Global period — set once, applies to every statement tab (Ledger §10.4) */}
+        <div className="mt-2 flex flex-wrap items-center gap-1.5" role="group" aria-label="Report period">
+          <span className="text-label uppercase tracking-wider text-text-muted mr-1">Period</span>
+          {PERIOD_PRESETS.map((p) => (
+            <button
+              key={p.key}
+              type="button"
+              onClick={() => setPreset(p.key)}
+              aria-pressed={preset === p.key}
+              className={cn(
+                'rounded-full border px-2.5 py-1 text-xs font-medium transition-colors',
+                preset === p.key
+                  ? 'border-accent/40 bg-accent-soft text-accent'
+                  : 'border-glass text-text-secondary hover:bg-glass-hover hover:text-text-primary',
+              )}
+            >
+              {p.label}
+            </button>
+          ))}
+          <span className={cn('text-xs num ml-1', preset === 'custom' ? 'text-accent' : 'text-text-muted')}>
+            {range.startDate} → {range.endDate}
+          </span>
         </div>
       </div>
 

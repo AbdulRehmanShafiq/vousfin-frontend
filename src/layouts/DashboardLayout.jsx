@@ -14,12 +14,15 @@ import { useBusinessStore } from '@/stores/useBusinessStore'
 import { useUIStore } from '@/stores/useUIStore'
 import { useIdleLogout } from '@/hooks/useIdleLogout'
 import { useModuleTracker } from '@/hooks/useModuleTracker'
+import { useGlobalShortcuts } from '@/hooks/useGlobalShortcuts'
+import ShortcutOverlay from '@/components/layout/ShortcutOverlay'
 import PageTransition from '@/components/layout/PageTransition'
 
 export default function DashboardLayout() {
   useIdleLogout()
   useCommandBarHotkey()
   useModuleTracker()
+  const { overlayOpen, setOverlayOpen } = useGlobalShortcuts()
   const { user } = useAuthStore()
   const { activeBusiness, fetchBusiness } = useBusinessStore()
   const queryClient = useQueryClient()
@@ -79,6 +82,9 @@ export default function DashboardLayout() {
 
       {/* Global feedback modal — opened from the user menu (useFeedbackStore) */}
       <FeedbackModal />
+
+      {/* "?" keyboard cheat sheet */}
+      <ShortcutOverlay open={overlayOpen} onClose={() => setOverlayOpen(false)} />
     </div>
   )
 }

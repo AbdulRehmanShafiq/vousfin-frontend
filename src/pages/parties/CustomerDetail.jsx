@@ -23,7 +23,7 @@ import { formatCurrency, formatDate } from '@/utils/formatters'
 
 import Button from '@/components/ui/Button'
 import Badge from '@/components/ui/Badge'
-import DataTable from '@/components/tables/DataTable'
+import DataTable from '@/design-system/data/SmartTable'
 import SkeletonLoader from '@/components/ui/SkeletonLoader'
 import Input from '@/components/ui/Input'
 import { cn } from '@/utils/cn'

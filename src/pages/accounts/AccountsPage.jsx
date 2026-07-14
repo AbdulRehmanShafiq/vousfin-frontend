@@ -6,7 +6,7 @@ import { formatCurrency } from '@/utils/formatters'
 
 import Button from '@/components/ui/Button'
 import KPICard from '@/components/ui/KPICard'
-import DataTable from '@/components/tables/DataTable'
+import DataTable from '@/design-system/data/SmartTable'
 import Badge from '@/components/ui/Badge'
 import AccountFormModal from '@/components/forms/AccountFormModal'
 

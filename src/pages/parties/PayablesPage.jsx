@@ -29,7 +29,7 @@ import MobileOutstanding from './MobileOutstanding'
 
 import Badge from '@/components/ui/Badge'
 import Button from '@/components/ui/Button'
-import DataTable from '@/components/tables/DataTable'
+import DataTable from '@/design-system/data/SmartTable'
 import Input from '@/components/ui/Input'
 import Select from '@/components/ui/Select'
 import InvoiceStatusBadge from '@/components/invoice/InvoiceStatusBadge'

@@ -1,5 +1,5 @@
 import DatePicker from '@/components/common/DatePicker'
-import Button from '@/components/common/Button'
+import Button from '@/components/ui/Button'
 
 export default function ReportDateRangePicker({ startDate, endDate, onChange, onApply, loading }) {
   return (

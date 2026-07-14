@@ -1,10 +1,13 @@
 import { useRef, useState } from 'react'
-import { Bell, LogOut, Palette, ShieldCheck, MessageSquare, ChevronDown, Search } from 'lucide-react'
+import { Bell, LogOut, Palette, ShieldCheck, MessageSquare, ChevronDown, Search, Plus, ClipboardCheck, BrainCircuit, ShieldAlert, Activity } from 'lucide-react'
 import { Link, useLocation, useNavigate } from 'react-router-dom'
+import { useQuery } from '@tanstack/react-query'
 import { useCommandBar } from '@/features/command-bar/useCommandBar'
 import { useAuthStore } from '@/stores/useAuthStore'
 import { useFeedbackStore } from '@/stores/useFeedbackStore'
+import { useUIStore } from '@/stores/useUIStore'
 import { useOnClickOutside } from '@/hooks/useOnClickOutside'
+import approvalService from '@/services/approval.service'
 import { cn } from '@/utils/cn'
 import vousFinLogo from '@/assets/vousfin-logo.png'
 import { pageTitleFor } from './nav.config'
@@ -14,11 +17,24 @@ export default function Header() {
   const logout = useAuthStore((s) => s.logout)
   const setFeedbackOpen = useFeedbackStore((s) => s.setIsOpen)
   const openCommandBar = useCommandBar((s) => s.openBar)
+  const openTxModal = useUIStore((s) => s.openTxModal)
   const location = useLocation()
   const navigate = useNavigate()
   const [menuOpen, setMenuOpen] = useState(false)
+  const [notifOpen, setNotifOpen] = useState(false)
   const menuRef = useRef(null)
+  const notifRef = useRef(null)
   useOnClickOutside(menuRef, () => setMenuOpen(false))
+  useOnClickOutside(notifRef, () => setNotifOpen(false))
+
+  // Same query key the rail uses — one shared poller, zero extra requests.
+  const { data: approvalsPending = 0 } = useQuery({
+    queryKey: ['approvals-count'],
+    queryFn: () => approvalService.count().then((r) => r.data.data?.pending ?? 0),
+    staleTime: 30_000,
+    refetchInterval: 60_000,
+    retry: false,
+  })
 
   // Title derives from the same nav model the rail renders — no drift.
   const title = pageTitleFor(location.pathname)
@@ -35,6 +51,18 @@ export default function Header() {
         <h1 className="font-display text-lg font-semibold text-text-primary tracking-tight">{title}</h1>
 
         <div className="flex items-center gap-x-3 lg:gap-x-4">
+          {/* Global create — the QBO-style omnipresent "+ New" (also key: c) */}
+          <button
+            type="button"
+            onClick={openTxModal}
+            aria-keyshortcuts="c"
+            aria-label="Record something new"
+            className="hidden sm:inline-flex items-center gap-1.5 rounded-lg btn-gradient px-3 py-1.5 text-sm font-semibold"
+          >
+            <Plus className="h-4 w-4" aria-hidden="true" />
+            New
+          </button>
+
           {/* Search + AI assistant → the one unified command bar (also Cmd/Ctrl+K or "/") */}
           <button
             type="button"
@@ -48,14 +76,51 @@ export default function Header() {
             <kbd className="hidden rounded bg-navy px-1.5 text-[10px] leading-5 lg:inline">⌘K</kbd>
           </button>
 
-          {/* Bell → recent activity / audit trail ("what changed") */}
-          <Link
-            to="/activity"
-            className="-m-2 p-2 rounded-md text-text-muted hover:text-text-primary hover:bg-glass-hover transition-colors"
-            aria-label="View recent activity"
-          >
-            <Bell className="h-[18px] w-[18px]" aria-hidden="true" />
-          </Link>
+          {/* Notifications — what needs you, with deep links (Ledger shell v2) */}
+          <div className="relative" ref={notifRef}>
+            <button
+              type="button"
+              onClick={() => setNotifOpen((o) => !o)}
+              aria-haspopup="menu"
+              aria-expanded={notifOpen}
+              aria-label={approvalsPending > 0 ? `Notifications — ${approvalsPending} approvals waiting` : 'Notifications'}
+              className="relative -m-2 p-2 rounded-md text-text-muted hover:text-text-primary hover:bg-glass-hover transition-colors"
+            >
+              <Bell className="h-[18px] w-[18px]" aria-hidden="true" />
+              {approvalsPending > 0 && (
+                <span className="absolute top-0.5 right-0.5 min-w-[15px] h-[15px] px-1 rounded-full bg-amber text-[10px] font-bold text-ink-on-accent flex items-center justify-center">
+                  {approvalsPending > 99 ? '99+' : approvalsPending}
+                </span>
+              )}
+            </button>
+            {notifOpen && (
+              <div role="menu" className="absolute right-0 top-[calc(100%+8px)] w-72 rounded-overlay border border-glass bg-charcoal p-1.5 shadow-elevated z-50">
+                <p className="px-3 py-2 text-label uppercase tracking-wider text-text-muted border-b border-glass mb-1">What needs you</p>
+                {[
+                  { to: '/approvals', icon: ClipboardCheck, label: 'Approvals waiting', badge: approvalsPending },
+                  { to: '/ai/review-queue', icon: BrainCircuit, label: 'AI entries to confirm' },
+                  { to: '/reconciliation/exceptions', icon: ShieldAlert, label: 'Reconciliation exceptions' },
+                  { to: '/activity', icon: Activity, label: 'Recent activity' },
+                ].map((n) => (
+                  <Link
+                    key={n.to}
+                    to={n.to}
+                    role="menuitem"
+                    onClick={() => setNotifOpen(false)}
+                    className="flex items-center gap-2.5 rounded-md px-3 py-2 text-sm text-text-secondary hover:bg-glass-hover hover:text-text-primary transition-colors"
+                  >
+                    <n.icon className="h-4 w-4 text-text-muted" aria-hidden="true" />
+                    <span className="flex-1">{n.label}</span>
+                    {n.badge > 0 && (
+                      <span className="min-w-[18px] h-[18px] px-1.5 rounded-full bg-amber text-[11px] font-bold text-ink-on-accent flex items-center justify-center">
+                        {n.badge}
+                      </span>
+                    )}
+                  </Link>
+                ))}
+              </div>
+            )}
+          </div>
 
           {/* Separator */}
           <div className="hidden lg:block lg:h-5 lg:w-px lg:bg-glass" aria-hidden="true" />

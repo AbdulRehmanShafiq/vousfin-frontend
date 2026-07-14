@@ -7,8 +7,11 @@ import ExportButton from '@/components/ui/ExportButton'
 import Input from '@/components/ui/Input'
 import SkeletonLoader from '@/components/ui/SkeletonLoader'
 
+import { usePeriodStore } from '@/stores/usePeriodStore'
+
 export default function TrialBalancePage() {
-  const [asOfDate,  setAsOfDate]  = useState(new Date().toISOString().split('T')[0])
+  const asOfDate = usePeriodStore((s) => s.range.endDate)      // global period end
+  const setAsOfDate = (d) => usePeriodStore.getState().setRange((p) => ({ ...p, endDate: d }))
   const [fromDate,  setFromDate]  = useState('')
   const [showFull,  setShowFull]  = useState(false)  // toggle full columns
   const [filterZero, setFilterZero] = useState(true)  // hide zero-balance rows

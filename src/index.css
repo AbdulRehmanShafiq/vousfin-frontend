@@ -51,13 +51,17 @@
     --atmos-1: rgba(124, 114, 255, 0.10);
     --atmos-2: rgba(201, 166, 255, 0.05);
     --atmos-3: rgba(40, 36, 90, 0.20);
-    --grain-opacity: 0.4;
-    /* personality */
-    --radius-card: 14px;
+    /* ── Ledger personality — FIXED app-wide (no longer per-theme knobs) ──
+       radius: control 8 / card 12 / overlay 16 · display face = UI face
+       (serif is the landing's voice, never the app shell's). */
+    --radius-control: 8px;
+    --radius-card: 12px;
+    --radius-overlay: 16px;
     --font-display: 'Schibsted Grotesk', system-ui, 'Segoe UI', sans-serif;
-    /* card elevation (dark default; light themes override) */
-    --shadow-card: inset 0 1px 0 rgba(255, 255, 255, 0.04), 0 10px 30px -14px rgba(0, 0, 0, 0.55);
-    --shadow-card-hover: inset 0 1px 0 rgba(255, 255, 255, 0.05), 0 0 0 1px rgb(var(--c-accent) / 0.08), 0 18px 44px -16px rgba(0, 0, 0, 0.72);
+    /* card elevation — dark modes are flat (hairlines carry depth);
+       light theme overrides with real shadows. */
+    --shadow-card: none;
+    --shadow-card-hover: 0 1px 0 var(--c-border), 0 12px 28px -20px rgba(0, 0, 0, 0.45);
     /* legacy aliases (recompute when --c-* are overridden) */
     --bg: rgb(var(--c-bg)); --bg2: rgb(var(--c-bg2)); --bg3: rgb(var(--c-bg3));
     --text: rgb(var(--c-text)); --text2: rgb(var(--c-text2)); --text3: rgb(var(--c-text3));
@@ -79,64 +83,64 @@
     --text-label: 11px; --text-xs: 12px; --text-sm: 13px; --text-base: 14px;
     --text-md: 15px; --text-lg: 17px; --text-xl: 20px; --text-2xl: 24px; --text-display: 32px;
 
-    /* ── Density / whitespace scale (Calm redesign) ── */
-    --space-page: 2rem;        /* page gutter rhythm */
-    --space-section: 1.75rem;  /* between page sections */
-    --space-card: 1.25rem;     /* inside a card */
+    /* ── Whitespace scale — ONE density (the calm values are THE values) ── */
+    --space-page: 2.5rem;      /* page gutter rhythm */
+    --space-section: 2.25rem;  /* between page sections */
+    --space-card: 1.4rem;      /* inside a card */
     --hairline: var(--c-border);
+
+    /* ══ LEDGER SEMANTIC LAYER — components reference ONLY these roles.
+       Channel triplets alias the theme's --c-* set, so every mode (and Labs
+       theme) inherits automatically. Never reference a hue name in a
+       component; reference the role. ══ */
+    --surface-canvas: var(--c-bg);
+    --surface-raised: var(--c-bg2);
+    --surface-overlay: var(--c-bg3);
+    --ink-primary: var(--c-text);
+    --ink-secondary: var(--c-text2);
+    --ink-tertiary: var(--c-text3);
+    --money-in: var(--c-positive);
+    --money-out: var(--c-negative);
+    --border-hairline: var(--c-border);
+    --border-strong: var(--c-border2);
   }
 
-  /* ░░ CALM density — radical-minimal surface treatment ░░
-     One attribute on <html> flattens the whole app: cards go flat with a
-     single visible hairline at rest and only firm up on hover/focus,
-     whitespace opens up, and the film grain quiets down. Reversible by
-     switching to "cozy" (Settings → Appearance). Higher specificity than
-     [data-theme] so it wins across every colour theme. */
-  html[data-density="calm"] {
-    --grain-opacity: 0.16;
-    --shadow-card: none;
-    --shadow-card-hover: 0 1px 0 var(--c-border), 0 12px 28px -20px rgba(0, 0, 0, 0.45);
-    --space-page: 2.5rem;
-    --space-section: 2.25rem;
-    --space-card: 1.4rem;
-  }
-
-  /* ░░ Atelier — landing-matched luxury gold (DEFAULT) · Playfair ░░ */
+  /* ░░ Ledger Dark (key: atelier) — DEFAULT ░░
+     A private bank's book of record: warm near-black canvas, cream ink,
+     champagne accent reserved for the primary action + active nav,
+     jade money-in / clay money-out. Landing-matched brand identity. */
   [data-theme="atelier"] {
     color-scheme: dark;
-    --c-bg: 18 16 14;          /* #12100E warm black */
-    --c-bg2: 26 23 20;         /* #1A1714 card */
-    --c-bg3: 36 32 28;         /* #24201C surface */
+    --c-bg: 19 17 16;          /* #131110 warm near-black */
+    --c-bg2: 28 25 22;         /* #1C1916 card */
+    --c-bg3: 38 34 30;         /* #262220 overlay */
     --c-text: 245 240 232;     /* #F5F0E8 cream */
-    --c-text2: 168 155 140;    /* #A89B8C */
-    --c-text3: 107 98 89;      /* #6B6259 */
-    --c-accent: 200 169 110;   /* #C8A96E gold */
-    --c-accent2: 184 147 90;   /* #B8935A gold dark */
-    --c-on-accent: 18 16 14;   /* ink on gold */
-    --c-positive: 126 181 166; /* #7EB5A6 teal */
-    --c-negative: 224 115 107; /* warm red */
-    --c-highlight: 212 184 122;/* #D4B87A gold light */
+    --c-text2: 178 166 150;    /* #B2A696 — AA on raised */
+    --c-text3: 133 122 109;    /* #857A6D — AA-large, contrast-tuned */
+    --c-accent: 200 169 110;   /* #C8A96E champagne */
+    --c-accent2: 184 147 90;   /* #B8935A */
+    --c-on-accent: 19 17 16;   /* ink on champagne */
+    --c-positive: 126 181 166; /* #7EB5A6 jade — money in */
+    --c-negative: 224 115 107; /* #E0736B clay — money out */
+    --c-highlight: 212 184 122;/* #D4B87A */
     --sec-money-in: 126 181 166;
     --sec-money-out: 196 136 106;
     --sec-ledger: 200 169 110;
     --sec-autopilot: 212 184 122;
     --sec-intelligence: 184 147 90;
-    --sec-settings: 168 155 140;
+    --sec-settings: 178 166 150;
     --chart-revenue: 126 181 166;
     --chart-expenses: 196 136 106;
     --chart-profit: 200 169 110;
     --chart-cash: 212 184 122;
-    --chart-neutral: 107 98 89;
+    --chart-neutral: 133 122 109;
     --c-border: rgba(245, 240, 232, 0.09);
-    --c-border2: rgba(245, 240, 232, 0.16);
+    --c-border2: rgba(245, 240, 232, 0.17);
     --glass-panel: rgba(245, 240, 232, 0.04);
     --glass-hover: rgba(245, 240, 232, 0.07);
-    --atmos-1: rgba(200, 169, 110, 0.12);
-    --atmos-2: rgba(196, 136, 106, 0.06);
-    --atmos-3: rgba(60, 45, 25, 0.22);
-    --grain-opacity: 0.5;
-    --radius-card: 16px;
-    --font-display: 'Playfair Display', Georgia, serif;
+    --atmos-1: rgba(200, 169, 110, 0.09);
+    --atmos-2: rgba(196, 136, 106, 0.05);
+    --atmos-3: rgba(60, 45, 25, 0.16);
   }
 
   /* ░░ Terminal — Bloomberg data desk ░░ */
@@ -172,9 +176,6 @@
     --atmos-1: rgba(45, 224, 224, 0.10);
     --atmos-2: rgba(45, 224, 122, 0.04);
     --atmos-3: rgba(10, 40, 50, 0.22);
-    --grain-opacity: 0.45;
-    --radius-card: 6px;
-    --font-display: 'Schibsted Grotesk', system-ui, 'Segoe UI', sans-serif;
   }
 
   /* ░░ Maison — editorial luxury ░░ */
@@ -210,50 +211,46 @@
     --atmos-1: rgba(232, 179, 65, 0.10);
     --atmos-2: rgba(200, 147, 43, 0.06);
     --atmos-3: rgba(60, 45, 18, 0.22);
-    --grain-opacity: 0.5;
-    --radius-card: 16px;
-    --font-display: 'Fraunces', Georgia, serif;
   }
 
-  /* ░░ Daybreak — soft daylight (light) · calm cool canvas, off-white cards ░░ */
+  /* ░░ Ledger Light (key: daybreak) — the daylight half of the same brand ░░
+     Warm paper canvas, white cards, bronze accent — the SAME warm-neutral
+     family as Ledger Dark so light/dark read as one product, not two themes. */
   [data-theme="daybreak"] {
     color-scheme: light;
-    --c-bg: 233 236 242;        /* soft cool gray canvas (not glaring white) */
-    --c-bg2: 252 253 255;       /* cards float just above the canvas */
-    --c-bg3: 243 245 250;
-    --c-text: 23 26 35;
-    --c-text2: 84 92 108;
-    --c-text3: 128 137 153;
-    --c-accent: 99 91 255;
-    --c-accent2: 75 69 214;
+    --c-bg: 240 237 231;        /* #F0EDE7 warm paper */
+    --c-bg2: 255 254 252;       /* cards float just above the canvas */
+    --c-bg3: 247 244 239;
+    --c-text: 28 25 23;         /* #1C1917 warm ink */
+    --c-text2: 92 84 74;        /* #5C544A */
+    --c-text3: 133 124 112;     /* #857C70 */
+    --c-accent: 140 106 58;     /* #8C6A3A bronze (champagne's daylight form) */
+    --c-accent2: 114 85 44;
     --c-on-accent: 255 255 255;
-    --c-positive: 22 138 84;
-    --c-negative: 216 58 62;
-    --c-highlight: 201 134 32;
-    --sec-money-in: 22 138 84;
-    --sec-money-out: 216 58 62;
-    --sec-ledger: 201 134 32;
-    --sec-autopilot: 99 91 255;
-    --sec-intelligence: 75 69 214;
-    --sec-settings: 84 92 108;
-    --chart-revenue: 22 138 84;
-    --chart-expenses: 216 58 62;
-    --chart-profit: 99 91 255;
-    --chart-cash: 201 134 32;
-    --chart-neutral: 128 137 153;
-    --c-border: rgba(23, 26, 35, 0.11);
-    --c-border2: rgba(23, 26, 35, 0.20);
-    --glass-panel: rgba(23, 26, 35, 0.04);
-    --glass-hover: rgba(23, 26, 35, 0.07);
-    --atmos-1: rgba(99, 91, 255, 0.05);
-    --atmos-2: rgba(201, 134, 32, 0.045);
-    --atmos-3: rgba(99, 91, 255, 0.035);
-    --grain-opacity: 0.10;
-    --radius-card: 18px;
-    --font-display: 'Schibsted Grotesk', system-ui, 'Segoe UI', sans-serif;
-    /* crisp light elevation (Stripe-style) instead of the deep dark shadow */
-    --shadow-card: 0 1px 2px rgba(16, 24, 40, 0.05), 0 10px 26px -14px rgba(16, 24, 40, 0.16);
-    --shadow-card-hover: 0 0 0 1px rgb(var(--c-accent) / 0.20), 0 14px 32px -12px rgba(16, 24, 40, 0.20);
+    --c-positive: 20 122 84;    /* deep jade — money in */
+    --c-negative: 190 74 56;    /* clay — money out */
+    --c-highlight: 158 116 47;
+    --sec-money-in: 20 122 84;
+    --sec-money-out: 190 74 56;
+    --sec-ledger: 140 106 58;
+    --sec-autopilot: 114 85 44;
+    --sec-intelligence: 140 106 58;
+    --sec-settings: 92 84 74;
+    --chart-revenue: 20 122 84;
+    --chart-expenses: 190 74 56;
+    --chart-profit: 140 106 58;
+    --chart-cash: 158 116 47;
+    --chart-neutral: 133 124 112;
+    --c-border: rgba(28, 25, 23, 0.12);
+    --c-border2: rgba(28, 25, 23, 0.22);
+    --glass-panel: rgba(28, 25, 23, 0.04);
+    --glass-hover: rgba(28, 25, 23, 0.07);
+    --atmos-1: rgba(140, 106, 58, 0.05);
+    --atmos-2: rgba(158, 116, 47, 0.04);
+    --atmos-3: rgba(140, 106, 58, 0.03);
+    /* crisp light elevation (Stripe-style) instead of dark-mode flatness */
+    --shadow-card: 0 1px 2px rgba(30, 24, 16, 0.05), 0 10px 26px -14px rgba(30, 24, 16, 0.14);
+    --shadow-card-hover: 0 0 0 1px rgb(var(--c-accent) / 0.20), 0 14px 32px -12px rgba(30, 24, 16, 0.18);
   }
 
   html { scroll-behavior: smooth; }
@@ -280,19 +277,11 @@
       rgb(var(--c-bg));
   }
 
-  /* Film grain — kills banding (lighter on light themes) */
-  body::after {
-    content: '';
-    position: fixed;
-    inset: 0;
-    z-index: 60;
-    pointer-events: none;
-    opacity: var(--grain-opacity);
-    mix-blend-mode: overlay;
-    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='300' height='300' filter='url(%23n)' opacity='0.05'/%3E%3C/svg%3E");
-  }
+  /* Film grain removed from app surfaces (Ledger): it painted a full-screen
+     mix-blend overlay ABOVE all content on every frame. The landing keeps its
+     own scoped atmosphere; data surfaces earn depth from hairlines + tone. */
 
-  /* Display font — theme-driven (serif on Maison, grotesk elsewhere) */
+  /* Display font — the UI face everywhere (serif is landing-only) */
   h1, h2 {
     font-family: var(--font-display);
     letter-spacing: -0.015em;
@@ -316,7 +305,6 @@
       transition-duration: 0.001ms !important;
       scroll-behavior: auto !important;
     }
-    body::after { display: none; } /* film grain shimmer off */
   }
 }
 
@@ -345,33 +333,26 @@
     border: 1px solid var(--c-border);
   }
 
-  /* Surface card — radius is theme personality */
+  /* Surface card — Ledger: quiet at rest. Flat fill + one hairline; the
+     border firms up (and light mode lifts) on hover/focus. No gradients,
+     no resting shadow on dark — hairlines and tone carry the depth. */
   .premium-card {
-    background:
-      linear-gradient(180deg, rgba(255, 255, 255, 0.03), rgba(255, 255, 255, 0) 40%),
-      rgb(var(--c-bg2));
+    background: rgb(var(--c-bg2));
     border: 1px solid var(--c-border);
     border-radius: var(--radius-card);
     box-shadow: var(--shadow-card);
     @apply transition-all duration-200 relative;
   }
-  .premium-card:hover {
+  .premium-card:hover,
+  .premium-card:focus-within {
     border-color: var(--c-border2);
     box-shadow: var(--shadow-card-hover);
   }
 
-  /* CALM: cards are quiet — flat fill + a single whisper-thin hairline, no
-     gradient/shadow at rest; the border firms up + a faint lift appears on
-     hover/focus. Keeps cards clearly readable (they must not vanish into the
-     background on low-contrast dark themes) while removing all heavy chrome. */
-  html[data-density="calm"] .premium-card {
-    background: rgb(var(--c-bg2));
-    border-color: var(--c-border);
-  }
-  html[data-density="calm"] .premium-card:hover,
-  html[data-density="calm"] .premium-card:focus-within {
-    border-color: var(--c-border2);
-  }
+  /* ═══ LEDGER RULING — the signature. Statement subtotals carry a single
+     rule; grand totals a double rule, exactly like a hand-ruled ledger. ═══ */
+  .rule-subtotal { border-top: 1px solid var(--c-border2); }
+  .rule-total { border-top: 3px double rgb(var(--c-text) / 0.55); }
 
   /* Highlight hairline along a card's top edge */
   .gold-hairline::before {
@@ -545,10 +526,6 @@
     0 24px 60px -24px rgba(0, 0, 0, 0.75);
 }
 
-.bg-grain {
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='300' height='300' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E");
-}
-
 /* Hide from print/PDF (toolbars, FABs, decorative chrome) */
 .vf-no-print { }
 
@@ -561,7 +538,7 @@
     --c-text: 17 17 17; --c-text2: 60 60 60; --c-text3: 110 110 110;
     --c-border: rgba(0, 0, 0, 0.18); --c-border2: rgba(0, 0, 0, 0.32);
     --glass-panel: rgba(0, 0, 0, 0.03); --glass-hover: rgba(0, 0, 0, 0.05);
-    --shadow-card: none; --shadow-card-hover: none; --grain-opacity: 0;
+    --shadow-card: none; --shadow-card-hover: none;
   }
   body { background: #fff !important; }
   body::before, body::after { display: none !important; } /* aurora + grain */

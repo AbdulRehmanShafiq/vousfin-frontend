@@ -11,11 +11,11 @@ import Button from '@/components/ui/Button'
 import Input from '@/components/ui/Input'
 import SkeletonLoader from '@/components/ui/SkeletonLoader'
 
+import { usePeriodStore } from '@/stores/usePeriodStore'
+
 export default function EquityStatementPage() {
-  const [dateRange, setDateRange] = useState(() => ({
-    startDate: new Date(new Date().getFullYear(), 0, 1).toISOString().split('T')[0],
-    endDate:   new Date().toISOString().split('T')[0],
-  }))
+  const dateRange = usePeriodStore((s) => s.range)      // global report period
+  const setDateRange = usePeriodStore((s) => s.setRange)
   const [pdfLoading, setPdfLoading] = useState(false)
   const { data, isLoading } = useEquityStatement(dateRange)
   const currency = useBusinessStore(s => s.currency)
