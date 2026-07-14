@@ -30,6 +30,7 @@ import {
 import { useCurrentPeriod } from '@/hooks/useFiscalYear'
 import { useLatestRates, useConversionPreview } from '@/hooks/useFxRates'
 import { useBusinessStore } from '@/stores/useBusinessStore'
+import { useUIStore } from '@/stores/useUIStore'
 import { formatCurrency } from '@/utils/formatters'
 import { buildGroupedAccountOptions } from '@/utils/accountOptions'
 import { matchesFilter } from '@/utils/transactionPresets'
@@ -524,7 +525,11 @@ export default function TransactionFormModal({ isOpen, onClose, onSuccess, trans
   if (isOpen !== wasOpen) {
     setWasOpen(isOpen)
     if (isOpen) {
-      setActiveTab('form')
+      // Mobile Easy M1 — the Capture sheet can deep-link a lane:
+      //   photo/nl → the NL tab (which owns "Snap a bill" + the sentence line)
+      //   simple   → the structured form (simple chips are its default)
+      const intent = useUIStore.getState().txModalIntent
+      setActiveTab(intent?.lane === 'photo' || intent?.lane === 'nl' ? 'nl' : 'form')
       setEngineMode('manual')
       setNlPrefill(null)
     }

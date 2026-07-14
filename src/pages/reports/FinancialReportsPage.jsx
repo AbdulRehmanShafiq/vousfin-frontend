@@ -7,7 +7,9 @@
  * URL: /financial-reports/:tab
  */
 import { lazy, Suspense, useState, useCallback } from 'react'
-import { useParams, useNavigate, Navigate } from 'react-router-dom'
+import { useParams, useNavigate, Navigate, useSearchParams } from 'react-router-dom'
+import { useIsMobile } from '@/hooks/useIsMobile'
+import MobileReportCards from './MobileReportCards'
 import {
   LineChart, Scale, PieChart, BookOpen, Download,
   Clock, Receipt, BarChart2, Building2, Layers, Printer,
@@ -51,6 +53,8 @@ export default function FinancialReportsPage() {
   const { tab }  = useParams()
   const navigate = useNavigate()
   const { preset, range, setPreset } = usePeriodStore()
+  const isMobile = useIsMobile()
+  const [searchParams] = useSearchParams()
 
   const validTab = TABS.find(t => t.key === tab)
 
@@ -65,6 +69,13 @@ export default function FinancialReportsPage() {
   const handleTabChange = useCallback((key) => {
     navigate(`/financial-reports/${key}`, { replace: true })
   }, [navigate])
+
+  // Mobile Easy §4.6 — phones read statements as answer cards first;
+  // ?full=1 renders the complete desktop hub (linked from each card).
+  // After every hook, so hook order never varies between renders.
+  if (isMobile && searchParams.get('full') !== '1') {
+    return <MobileReportCards />
+  }
 
   if (!validTab) return <Navigate to="/financial-reports/income-statement" replace />
 

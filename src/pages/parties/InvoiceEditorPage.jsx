@@ -17,6 +17,8 @@ import {
 import { useCustomers } from '@/hooks/useParties'
 import { useInventoryItems } from '@/hooks/useInventory'
 import InvoiceEditor from '@/components/invoice/InvoiceEditor'
+import MobileDocFlow from '@/components/mobile/MobileDocFlow'
+import { useIsMobile } from '@/hooks/useIsMobile'
 import AccountingImpactPanel from '@/components/invoice/AccountingImpactPanel'
 import SmartContextPanel from '@/components/common/SmartContextPanel'
 import PartyFormModal from '@/components/forms/PartyFormModal'
@@ -80,12 +82,43 @@ export default function InvoiceEditorPage() {
     }
   }
 
+  const isMobile = useIsMobile()
+
   // Gate render until invoice is actually loaded (not just !isLoading).
   // React Query can briefly return isLoading=false data=undefined on first
   // mount before the fetch starts, which would cause the editor's useState
   // initializers to fire with undefined and lock in empty values.
   if (isEdit && (isLoading || !invoice)) {
     return <div className="space-y-5"><SkeletonLoader count={3} /></div>
+  }
+
+  // Mobile Easy §4.4 — creating on a phone uses the 3-step flow (same hooks,
+  // same accounting path). Editing/viewing keeps the full editor.
+  if (!isEdit && isMobile) {
+    return (
+      <>
+        <MobileDocFlow
+          kind="invoice"
+          parties={customers}
+          currency={currency}
+          defaultPartyId={pendingCustomerId}
+          onAddParty={() => setShowCustomerModal(true)}
+          onCreateDraft={async (payload) => {
+            const resp = await createDraft.mutateAsync(payload)
+            return resp?.data?.data?._id || resp?.data?._id
+          }}
+          onSubmit={(invoiceId) => submit.mutateAsync({ id: invoiceId })}
+          onDone={() => navigate('/sales/invoices')}
+          onBack={() => navigate('/sales/invoices')}
+        />
+        <PartyFormModal
+          isOpen={showCustomerModal}
+          onClose={() => setShowCustomerModal(false)}
+          onCreated={(c) => setPendingCustomerId(c._id)}
+          type="customer"
+        />
+      </>
+    )
   }
 
   return (

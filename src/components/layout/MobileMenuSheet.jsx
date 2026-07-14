@@ -1,11 +1,37 @@
 import { useNavigate, useLocation, Link } from 'react-router-dom'
-import { LogOut, Shield, MessageSquare } from 'lucide-react'
+import { LogOut, Shield, MessageSquare, Inbox, ChevronRight } from 'lucide-react'
 import { createPortal } from 'react-dom'
+import { useQuery } from '@tanstack/react-query'
 import { useAuthStore } from '@/stores/useAuthStore'
 import { useFeedbackStore } from '@/stores/useFeedbackStore'
 import { useModulesStore } from '@/stores/useModulesStore'
+import approvalService from '@/services/approval.service'
 import { MODULES, activeModuleKey } from './nav.config'
 import { cn } from '@/utils/cn'
+
+/* Pinned Inbox row — badge from the same shared approvals poller. */
+function InboxRow({ onGo }) {
+  const { data: pending = 0 } = useQuery({
+    queryKey: ['approvals-count'],
+    queryFn: () => approvalService.count().then((r) => r.data.data?.pending ?? 0),
+    staleTime: 30_000,
+    retry: false,
+  })
+  return (
+    <button
+      type="button"
+      onClick={() => onGo('/inbox')}
+      className="tap-target mb-2.5 flex w-full items-center gap-2.5 rounded-2xl border border-glass bg-glass-panel px-4 py-3 text-sm font-semibold text-text-primary transition-colors hover:bg-glass-hover active:scale-[0.99]"
+    >
+      <Inbox className="h-4 w-4 text-accent" aria-hidden="true" />
+      <span className="flex-1 text-left">Inbox — what needs you</span>
+      {pending > 0 && (
+        <span className="min-w-[20px] rounded-full bg-highlight/15 px-1.5 py-0.5 text-center text-xs font-bold text-highlight-2">{pending}</span>
+      )}
+      <ChevronRight className="h-4 w-4 text-text-muted" aria-hidden="true" />
+    </button>
+  )
+}
 
 /*
  * MobileMenuSheet — the "Menu" tab's bottom sheet.
@@ -32,6 +58,9 @@ export default function MobileMenuSheet({ open, onClose }) {
       <div className="absolute inset-0 bg-navy/70 backdrop-blur-sm animate-fade-in" onClick={onClose} />
       <div className="absolute inset-x-0 bottom-0 rounded-t-2xl border border-b-0 border-glass bg-charcoal p-4 pb-6 shadow-2xl animate-slide-up-sheet">
         <div className="mx-auto mb-4 h-1 w-10 rounded-full bg-glass-panel" />
+
+        {/* Inbox — pinned first: the phone's approve/confirm surface (Mobile Easy §4.5) */}
+        <InboxRow onGo={go} />
 
         <div className="grid grid-cols-3 gap-2.5">
           {items.map((item) => {

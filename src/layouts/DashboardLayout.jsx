@@ -4,6 +4,7 @@ import { useQueryClient } from '@tanstack/react-query'
 import RailPanel from '@/components/layout/RailPanel'
 import Header from '@/components/layout/Header'
 import MobileNav from '@/components/layout/MobileNav'
+import CaptureSheet from '@/components/mobile/CaptureSheet'
 import TransactionFormModal from '@/components/forms/TransactionFormModal'
 import AnnouncementBanner from '@/components/AnnouncementBanner'
 import FeedbackModal from '@/components/FeedbackModal'
@@ -66,6 +67,9 @@ export default function DashboardLayout() {
 
       {/* Mobile bottom nav — the only mobile nav surface (< lg) */}
       <MobileNav />
+
+      {/* Mobile Easy — the ⊕ Capture sheet (photo / sentence / simple chips) */}
+      <CaptureSheet />
 
       {/* Global command bar — search + inline AI assistant. Open with
           Cmd/Ctrl+K, "/", the header button, or the mobile "AI" tab. The old

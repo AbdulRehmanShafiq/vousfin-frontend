@@ -13,6 +13,7 @@ import { CheckCheck, Loader2 } from 'lucide-react'
 import { cn } from '@/utils/cn'
 import classifierApi from '@/services/ai/classifierService'
 import transactionService from '@/services/transaction.service'
+import { postDraft } from '@/features/inbox/postDraft'
 import ClassificationCard from '@/components/ai/ClassificationCard'
 import ClassificationHealthPanel from '@/components/ai/ClassificationHealthPanel'
 
@@ -34,31 +35,8 @@ function ReviewList() {
 
   const refresh = () => qc.invalidateQueries({ queryKey: ['ai-drafts'] })
 
-  // Post one draft as a real journal entry (used by Confirm-all), with idempotent claim
-  const postOne = async (d) => {
-    const isExpense = d.tx_type === 'DEBIT'
-    const categoryId = isExpense ? d.debit_account_id : d.credit_account_id
-    const bankId     = isExpense ? d.credit_account_id : d.debit_account_id
-    if (!categoryId || !bankId) throw new Error('unresolved accounts')
-    // Claim atomically — skip silently if already taken (idempotency)
-    try { await classifierApi.claim(d.draft_id) }
-    catch (e) { if (e?.response?.status === 409) return; throw e }
-    try {
-      const res = await transactionService.create({
-        transactionDate: d.tx_date,
-        description:     (d.narration_raw || d.payee_raw || 'AI transaction').slice(0, 200),
-        amount:         Number(d.amount),
-        debitAccountId:  isExpense ? categoryId : bankId,
-        creditAccountId: isExpense ? bankId : categoryId,
-      })
-      const posted = res?.data?.data
-      const jeId = posted?.status === 'pending' ? null : (posted?._id || res?.data?._id)
-      await classifierApi.markConfirmed(d.draft_id, { journal_entry_id: jeId })
-    } catch (e) {
-      try { await classifierApi.release(d.draft_id) } catch { /* ignore */ }
-      throw e
-    }
-  }
+  // ONE posting path shared with the mobile Inbox (features/inbox/postDraft)
+  const postOne = postDraft
 
   // Keyboard session — accept/skip without touching the mouse. Only sound,
   // resolvable drafts can be accepted; everything else needs the card's own

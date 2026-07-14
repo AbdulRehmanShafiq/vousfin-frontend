@@ -119,6 +119,8 @@ const ReportBuilderPage      = lazy(() => import('@/pages/reports/ReportBuilderP
 const SupportPage            = lazy(() => import('@/pages/support/SupportPage'))
 const AdminPage              = lazy(() => import('@/pages/admin/AdminPage'))                  // Admin panel
 const DesignCatalogPage      = lazy(() => import('@/pages/design/DesignCatalogPage'))         // Ledger catalog (dev only)
+const MobileMoneyPage        = lazy(() => import('@/pages/money/MobileMoneyPage'))            // Mobile Easy — Money tab
+const MobileInboxPage        = lazy(() => import('@/pages/inbox/MobileInboxPage'))            // Mobile Easy — Inbox
 
 const LoadingFallback = () => (
   <div className="flex h-screen w-full items-center justify-center bg-navy">
@@ -336,6 +338,10 @@ export const routes = [
           { path: 'ai/intelligence', element: withSuspense(IntelligencePage) }, // Intelligence Roadmap
 
           { path: 'support', element: withSuspense(SupportPage) },
+
+          /* Mobile Easy — phone-first surfaces (desktop visits redirect) */
+          { path: 'money', element: withSuspense(MobileMoneyPage) },
+          { path: 'inbox', element: withSuspense(MobileInboxPage) },
 
           /* Ledger design catalog — the living component gallery (dev only) */
           ...(import.meta.env.DEV ? [{ path: 'design', element: withSuspense(DesignCatalogPage) }] : []),

@@ -15,9 +15,11 @@ import { useDashboardAll } from '@/hooks/useReports'
 import { useTransactions } from '@/hooks/useTransactions'
 import { useAutonomyInbox } from '@/hooks/useAutonomy'
 import { formatCompactCurrency } from '@/utils/formatters'
+import { usePermissions } from '@/hooks/usePermissions'
 import MobilePage from '@/components/mobile/MobilePage'
 import ListCard from '@/components/mobile/ListCard'
 import PullToRefresh from '@/components/mobile/PullToRefresh'
+import Explain from '@/design-system/workflow/Explain'
 import { isInflow as isInflowType } from '@/utils/transactionFlow'
 
 const isInflow = (tx) => isInflowType(tx.transactionType)
@@ -43,6 +45,9 @@ export default function MobileHome() {
 
   const kpis = dashData?.kpis || {}
   const needsYouCount = inbox?.counts?.actions ?? 0
+  // Role-aware Home (Mobile Easy §4.1): staff see the work chip above the money
+  const { roles, loaded: rolesLoaded } = usePermissions()
+  const workFirst = rolesLoaded && roles.length > 0 && !roles.includes('owner')
 
   const hour = new Date().getHours()
   const greeting = hour < 12 ? 'Good morning' : hour < 17 ? 'Good afternoon' : 'Good evening'
@@ -73,29 +78,42 @@ export default function MobileHome() {
     >
       <PullToRefresh onRefresh={handleRefresh} className="h-full">
         <div className="space-y-5 pb-4">
-          {/* Cash hero */}
-          <div>
-            <p className="text-small font-semibold uppercase tracking-wider text-text-muted">Cash on hand</p>
-            {loadDash ? (
-              <div className="mt-2 h-9 w-40 animate-pulse rounded-lg bg-glass-panel" />
-            ) : (
-              <p className="num mt-1 text-[34px] font-bold leading-none tracking-tight text-text-primary">
-                {formatCompactCurrency(kpis.cashBalance ?? 0, currency)}
-              </p>
-            )}
-          </div>
-
-          {/* What needs you */}
-          {needsYouCount > 0 && (
-            <Link
-              to="/command-center"
-              className="flex items-center gap-2 rounded-full bg-highlight/12 px-4 py-2.5 text-sm font-semibold text-highlight active:scale-[0.98] transition-transform"
-            >
-              <Bell className="h-4 w-4 flex-shrink-0" />
-              {needsYouCount} {needsYouCount === 1 ? 'thing needs' : 'things need'} you
-              <ChevronRight className="ml-auto h-4 w-4 flex-shrink-0" />
-            </Link>
-          )}
+          {/* The answer + the work — staff see the work chip first (§4.1) */}
+          {(() => {
+            const hero = (
+              <div key="hero">
+                <p className="text-small font-semibold uppercase tracking-wider text-text-muted inline-flex items-center gap-0.5">
+                  Cash on hand
+                  <Explain
+                    title="Cash on hand"
+                    rows={[{ label: 'Cash + bank balances', value: formatCompactCurrency(kpis.cashBalance ?? 0, currency) }]}
+                    note="The current balance of every cash and bank account in your books."
+                    to="/accounts"
+                    toLabel="See the accounts"
+                  />
+                </p>
+                {loadDash ? (
+                  <div className="mt-2 h-9 w-40 animate-pulse rounded-lg bg-glass-panel" />
+                ) : (
+                  <p className="num mt-1 text-[34px] font-bold leading-none tracking-tight text-text-primary">
+                    {formatCompactCurrency(kpis.cashBalance ?? 0, currency)}
+                  </p>
+                )}
+              </div>
+            )
+            const chip = needsYouCount > 0 && (
+              <Link
+                key="chip"
+                to="/inbox"
+                className="flex items-center gap-2 rounded-full bg-highlight/12 px-4 py-2.5 text-sm font-semibold text-highlight active:scale-[0.98] transition-transform"
+              >
+                <Bell className="h-4 w-4 flex-shrink-0" />
+                {needsYouCount} {needsYouCount === 1 ? 'thing needs' : 'things need'} you
+                <ChevronRight className="ml-auto h-4 w-4 flex-shrink-0" />
+              </Link>
+            )
+            return workFirst ? <>{chip}{hero}</> : <>{hero}{chip}</>
+          })()}
 
           {/* Money in / out */}
           <div className="grid grid-cols-2 gap-3">

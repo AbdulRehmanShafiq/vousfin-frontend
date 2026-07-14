@@ -19,6 +19,8 @@ import SmartContextPanel from '@/components/common/SmartContextPanel'
 import PartyFormModal from '@/components/forms/PartyFormModal'
 import SkeletonLoader from '@/components/ui/SkeletonLoader'
 import { useBusinessStore } from '@/stores/useBusinessStore'
+import MobileDocFlow from '@/components/mobile/MobileDocFlow'
+import { useIsMobile } from '@/hooks/useIsMobile'
 
 export default function BillEditorPage() {
   const { id } = useParams()
@@ -76,11 +78,41 @@ export default function BillEditorPage() {
     }
   }
 
+  const isMobile = useIsMobile()
+
   // Gate render until bill is actually loaded (not just !isLoading) to
   // prevent the editor from mounting with undefined data and locking in
   // empty form values.
   if (isEdit && (isLoading || !bill)) {
     return <div className="space-y-5"><SkeletonLoader count={3} /></div>
+  }
+
+  // Mobile Easy §4.4 — phone creation uses the 3-step flow (same hooks/path)
+  if (!isEdit && isMobile) {
+    return (
+      <>
+        <MobileDocFlow
+          kind="bill"
+          parties={vendors}
+          currency={currency}
+          defaultPartyId={pendingVendorId}
+          onAddParty={() => setShowVendorModal(true)}
+          onCreateDraft={async (payload) => {
+            const resp = await createDraft.mutateAsync(payload)
+            return resp?.data?.data?._id || resp?.data?._id
+          }}
+          onSubmit={(billId) => submit.mutateAsync({ id: billId })}
+          onDone={() => navigate('/purchases/bills')}
+          onBack={() => navigate('/purchases/bills')}
+        />
+        <PartyFormModal
+          isOpen={showVendorModal}
+          onClose={() => setShowVendorModal(false)}
+          onCreated={(v) => setPendingVendorId(v._id)}
+          type="vendor"
+        />
+      </>
+    )
   }
 
   return (
