@@ -67,6 +67,7 @@ const IntelligencePage = lazy(() => import('@/pages/ai/IntelligencePage')) // In
 const FinancialReportsPage = lazy(() => import('@/pages/reports/FinancialReportsPage'))
 const AIAnalystPage        = lazy(() => import('@/pages/ai/AIAnalystPage'))
 const FiscalYearPage       = lazy(() => import('@/pages/accounting/FiscalYearPage'))
+const ClosePage            = lazy(() => import('@/pages/accounting/ClosePage'))      // Ledger §7.5 — Close Cockpit
 const CurrencyRatesPage    = lazy(() => import('@/pages/settings/CurrencyRatesPage'))
 const TaxConfigPage        = lazy(() => import('@/pages/settings/TaxConfigPage'))    // Phase 5.4.8
 const TaxAutopilotPage     = lazy(() => import('@/pages/tax/TaxAutopilotPage'))      // FR-04.1
@@ -275,6 +276,7 @@ export const routes = [
           { path: 'purchases/procurement-dashboard', element: withSuspense(ProcurementDashboard) },
           { path: 'business/settings', element: withSuspense(BusinessSettings)  },
           { path: 'accounting/fiscal-years',    element: withSuspense(FiscalYearPage)     },
+          { path: 'accounting/close',           element: withSuspense(ClosePage)          }, // Close Cockpit
           { path: 'settings/exchange-rates',    element: withSuspense(CurrencyRatesPage)  },
           { path: 'settings/tax',               element: withSuspense(TaxConfigPage)      }, // Phase 5.4.8
           { path: 'settings/appearance',        element: withSuspense(AppearancePage)     },

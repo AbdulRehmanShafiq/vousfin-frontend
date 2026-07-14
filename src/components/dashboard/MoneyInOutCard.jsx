@@ -8,6 +8,7 @@ import { Link } from 'react-router-dom'
 import { ArrowDownRight, ArrowUpRight, Wallet, ExternalLink } from 'lucide-react'
 import { formatCompactCurrency } from '@/utils/formatters'
 import { cn } from '@/utils/cn'
+import Explain from '@/design-system/workflow/Explain'
 
 export default function MoneyInOutCard({ income = 0, expenses = 0, net, currency, loading = false }) {
   const left = net != null ? net : income - expenses
@@ -66,8 +67,19 @@ export default function MoneyInOutCard({ income = 0, expenses = 0, net, currency
           <div className={cn('p-1.5 rounded-lg', negative ? 'bg-negative/15' : 'bg-cyan/15')}>
             <Wallet className={cn('h-4 w-4', negative ? 'text-negative' : 'text-cyan')} />
           </div>
-          <span className="text-sm font-semibold text-text-primary">
+          <span className="text-sm font-semibold text-text-primary inline-flex items-center gap-0.5">
             {negative ? "What you're short" : "What's left"}
+            <Explain
+              title="What's left"
+              rows={[
+                { label: 'Money coming in', value: formatCompactCurrency(income, currency) },
+                { label: '− money going out', value: formatCompactCurrency(expenses, currency) },
+                { label: '= left', value: formatCompactCurrency(left, currency) },
+              ]}
+              note="Your income minus your expenses for this period, from the same ledger the reports read."
+              to="/financial-reports/income-statement"
+              toLabel="See the full statement"
+            />
           </span>
         </div>
         <span

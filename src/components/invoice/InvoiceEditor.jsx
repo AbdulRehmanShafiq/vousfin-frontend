@@ -18,6 +18,7 @@ import {
   Plus, ChevronDown, ChevronUp, Receipt, CreditCard, StickyNote, Truck,
 } from 'lucide-react'
 import { cn } from '@/utils/cn'
+import { useEditorKeys } from '@/design-system/workflow/useEditorKeys'
 import Card from '@/components/ui/Card'
 import Input from '@/components/ui/Input'
 import LineItemRow, { computeLineValues } from './LineItemRow'
@@ -218,6 +219,9 @@ export default function InvoiceEditor({
 
   const handleSave = () => onSaveDraft?.(buildFormData())
   const handleSubmit = () => onSubmit?.(buildFormData())
+
+  // ⌘/Ctrl+Enter saves the draft from anywhere in the editor (Ledger §10.2)
+  useEditorKeys({ onSave: handleSave, enabled: !isReadOnly && !saving })
 
   // ── Render ─────────────────────────────────────────────────────────
   return (

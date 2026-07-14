@@ -1,10 +1,11 @@
 /**
  * BillsListPage — Phase 2 — Landing page for the Bill (AP) domain.
  */
-import { useMemo, useState } from 'react'
+import { useMemo } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { Plus, Search, FileText, Edit, Trash2 } from 'lucide-react'
 import { useBills, useArchiveBill } from '@/hooks/useInvoices'
+import { useListViewState } from '@/hooks/useListViewState'
 import { useBusinessStore } from '@/stores/useBusinessStore'
 import { formatCurrency, formatDate } from '@/utils/formatters'
 import { useIsMobile } from '@/hooks/useIsMobile'
@@ -19,8 +20,11 @@ export default function BillsListPage() {
   const navigate = useNavigate()
   const isMobile = useIsMobile()
   const currency = useBusinessStore(s => s.currency)
-  const [query, setQuery] = useState('')
-  const [stateFilter, setStateFilter] = useState('')
+  // Saved view — search + status filter survive leaving and returning (wave 2)
+  const [view, setView] = useListViewState('bills', { query: '', state: '' })
+  const { query, state: stateFilter } = view
+  const setQuery = (q) => setView({ query: q })
+  const setStateFilter = (s) => setView({ state: s })
 
   const { data, isLoading, refetch } = useBills({
     search: query || undefined,
@@ -133,37 +137,14 @@ export default function BillsListPage() {
         </div>
       ),
     },
-    {
-      key: 'actions',
-      header: '',
-      render: (r) => (
-        <div className="flex items-center gap-2">
-          {r.state === 'draft' && (
-            <button
-              type="button"
-              onClick={(e) => { e.stopPropagation(); navigate(`/purchases/bills/${r._id}/edit`) }}
-              className="text-text-muted hover:text-cyan transition-colors"
-              title="Edit"
-            >
-              <Edit className="h-4 w-4" />
-            </button>
-          )}
-          <button
-            type="button"
-            onClick={(e) => {
-              e.stopPropagation()
-              if (confirm(`Archive bill ${r.billNumber}?`)) {
-                archiveBill.mutate({ id: r._id })
-              }
-            }}
-            className="text-text-muted hover:text-negative transition-colors"
-            title="Archive"
-          >
-            <Trash2 className="h-4 w-4" />
-          </button>
-        </div>
-      ),
-    },
+  ]
+
+  /* Wave 2: hover-revealed row actions (swipe/⋯ on mobile via SmartTable) */
+  const rowActions = (r) => [
+    ...(r.state === 'draft'
+      ? [{ label: 'Edit', icon: Edit, onClick: (row) => navigate(`/purchases/bills/${row._id}/edit`) }]
+      : []),
+    { label: 'Archive', icon: Trash2, tone: 'danger', onClick: handleArchive },
   ]
 
   const STATE_FILTERS = [
@@ -220,6 +201,7 @@ export default function BillsListPage() {
           columns={columns}
           data={bills}
           isLoading={isLoading}
+          rowActions={rowActions}
           emptyMessage={query ? 'No bills match your search.' : 'No bills yet. Tap "New bill" to record your first one.'}
         />
       </div>

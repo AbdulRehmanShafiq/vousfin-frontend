@@ -18,7 +18,7 @@
  */
 import {
   LayoutDashboard, Activity,
-  Receipt, BookOpen, Repeat, ClipboardCheck, CalendarDays,
+  Receipt, BookOpen, Repeat, ClipboardCheck, CalendarDays, CalendarCheck,
   Users, FileText, Wallet, Plus,
   Briefcase, CreditCard, ShoppingBag, Truck,
   Landmark, BrainCircuit, ShieldAlert,
@@ -95,6 +95,7 @@ export const MODULES = [
       { name: 'Chart of Accounts', href: '/accounts',                icon: BookOpen,       primary: true, desc: 'The account structure of your business' },
       { name: 'Transactions',      href: '/transactions',            icon: Receipt,        exact: true, primary: true, desc: 'Every entry in your books — the journal' },
       { name: 'Approvals',         href: '/approvals',               icon: ClipboardCheck, primary: true, badgeKey: 'approvals', statKey: 'approvals', desc: 'Items waiting for sign-off' },
+      { name: 'Close the Month',   href: '/accounting/close',        icon: CalendarCheck,  primary: true, desc: 'The month-end checklist, then lock the period' },
       { name: 'Fixed Assets',      href: '/assets',                  icon: Building2,      activePrefix: '/assets', desc: 'Equipment and vehicles with depreciation' },
       { name: 'Inventory',         href: '/inventory',               icon: Boxes,          desc: 'Stock you hold and its value' },
       { name: 'Fiscal Years',      href: '/accounting/fiscal-years', icon: CalendarDays,   desc: 'Open and close accounting periods' },

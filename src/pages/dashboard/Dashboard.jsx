@@ -44,6 +44,8 @@ import CashFlowTrendChart      from '@/components/dashboard/CashFlowTrendChart'
 import TaxPositionWidget       from '@/components/dashboard/TaxPositionWidget'
 import SkeletonLoader          from '@/components/ui/SkeletonLoader'
 import { isInflow as isInflowType } from '@/utils/transactionFlow'
+import Explain from '@/design-system/workflow/Explain'
+import { usePermissions } from '@/hooks/usePermissions'
 
 /* ── helpers ──────────────────────────────────────────────────────── */
 const isInflow = tx => isInflowType(tx.transactionType)
@@ -308,7 +310,16 @@ function CashHero({ cash, currency, loading }) {
     <div className="premium-card gold-hairline relative overflow-hidden p-5 sm:p-6">
       <div className="flex flex-wrap items-center justify-between gap-4">
         <div>
-          <p className="text-label font-bold uppercase tracking-widest text-text-muted">Cash on hand</p>
+          <p className="text-label font-bold uppercase tracking-widest text-text-muted inline-flex items-center gap-0.5">
+            Cash on hand
+            <Explain
+              title="Cash on hand"
+              rows={[{ label: 'Cash + bank balances', value: fmtAmt(cash, currency) }]}
+              note="The current balance of every cash and bank account in your books, from the ledger."
+              to="/accounts"
+              toLabel="See the accounts"
+            />
+          </p>
           {loading ? (
             <div className="mt-2 h-10 w-48 animate-pulse rounded-lg bg-glass-panel" />
           ) : (
@@ -350,6 +361,10 @@ export default function Dashboard() {
 
   const { data: dashData, isLoading: loadDash } = useDashboardAll(dateRange)
   const { data: txData,   isLoading: loadTx   } = useTransactions({ limit: 6 })
+  // Role-aware Today (Ledger §10.1): owners see the money answer first;
+  // accountants/staff see their work queue first.
+  const { roles, loaded: rolesLoaded } = usePermissions()
+  const workFirst = rolesLoaded && roles.length > 0 && !roles.includes('owner')
 
   const recentTxs = Array.isArray(txData?.docs)         ? txData.docs
     : Array.isArray(txData?.transactions)               ? txData.transactions
@@ -399,16 +414,29 @@ export default function Dashboard() {
 
       <div className="space-y-7">
 
-        {/* ── 1. CASH HERO — the glance answer ────────────────────── */}
-        <CashHero cash={kpis.cashBalance ?? 0} currency={currency} loading={loadDash} />
-
-        {/* ── 2. WHAT NEEDS YOU — the inbox preview + attention feed ── */}
-        <Section label={t('dashboard.needsAttention', 'What needs you')}>
-          <div className="space-y-4">
-            <CommandCenterWidget />
-            <NeedsAttentionFeed />
-          </div>
-        </Section>
+        {/* ── 1+2. THE ANSWER + THE WORK — order depends on who you are.
+            Owner: "am I OK?" first. Accountant/staff: the queue first. ── */}
+        {workFirst ? (
+          <>
+            <Section label={t('dashboard.needsAttention', 'What needs you')}>
+              <div className="space-y-4">
+                <CommandCenterWidget />
+                <NeedsAttentionFeed />
+              </div>
+            </Section>
+            <CashHero cash={kpis.cashBalance ?? 0} currency={currency} loading={loadDash} />
+          </>
+        ) : (
+          <>
+            <CashHero cash={kpis.cashBalance ?? 0} currency={currency} loading={loadDash} />
+            <Section label={t('dashboard.needsAttention', 'What needs you')}>
+              <div className="space-y-4">
+                <CommandCenterWidget />
+                <NeedsAttentionFeed />
+              </div>
+            </Section>
+          </>
+        )}
 
         {/* ── 3. THIS MONTH — plain money in / out / left ──────────── */}
         <Section label={t('dashboard.thisMonth', 'This month')}>

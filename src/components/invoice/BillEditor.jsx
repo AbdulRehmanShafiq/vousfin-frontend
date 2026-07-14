@@ -13,6 +13,7 @@ import {
   Plus, ChevronDown, ChevronUp, FileText, StickyNote, Truck,
 } from 'lucide-react'
 import { cn } from '@/utils/cn'
+import { useEditorKeys } from '@/design-system/workflow/useEditorKeys'
 import Card from '@/components/ui/Card'
 import Input from '@/components/ui/Input'
 import LineItemRow, { computeLineValues } from './LineItemRow'
@@ -97,6 +98,9 @@ export default function BillEditor({
 }) {
   const isEdit = !!bill
   const isReadOnly = isEdit && bill?.state !== 'draft'
+
+  // ⌘/Ctrl+Enter saves the draft from anywhere in the editor (Ledger §10.2)
+  useEditorKeys({ onSave: () => onSaveDraft?.(buildFormData()), enabled: !isReadOnly && !saving })
 
   const [billNumber, setBillNumber] = useState(bill?.billNumber || '')
   const [vendorReferenceNumber, setVendorReferenceNumber] = useState(bill?.vendorReferenceNumber || '')

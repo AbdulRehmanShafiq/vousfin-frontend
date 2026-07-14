@@ -12,6 +12,7 @@ import { Plus, Search, FileText, FileDown, Edit, Trash2 } from 'lucide-react'
 import {
   useInvoices, useArchiveInvoice, useDownloadInvoicePdf,
 } from '@/hooks/useInvoices'
+import { useListViewState } from '@/hooks/useListViewState'
 import { useBusinessStore } from '@/stores/useBusinessStore'
 import { formatCurrency, formatDate } from '@/utils/formatters'
 import { useIsMobile } from '@/hooks/useIsMobile'
@@ -26,8 +27,12 @@ export default function InvoicesListPage() {
   const navigate = useNavigate()
   const isMobile = useIsMobile()
   const currency = useBusinessStore(s => s.currency)
-  const [query, setQuery] = useState('')
-  const [stateFilter, setStateFilter] = useState('')
+  // Saved view — search + status filter survive leaving and returning (wave 2)
+  const [view, setView] = useListViewState('invoices', { query: '', state: '' })
+  const { query, state: stateFilter } = view
+  const setQuery = (q) => setView({ query: q })
+  const setStateFilter = (s) => setView({ state: s })
+  const [selectedKeys, setSelectedKeys] = useState([])
 
   const { data, isLoading, refetch } = useInvoices({
     search: query || undefined,
@@ -138,45 +143,16 @@ export default function InvoicesListPage() {
         </div>
       ),
     },
-    {
-      key: 'actions',
-      header: '',
-      render: (r) => (
-        <div className="flex items-center gap-2">
-          <button
-            type="button"
-            onClick={(e) => { e.stopPropagation(); downloadPdf.mutate(r._id) }}
-            className="text-text-muted hover:text-cyan transition-colors"
-            title="Download PDF"
-          >
-            <FileDown className="h-4 w-4" />
-          </button>
-          {r.state === 'draft' && (
-            <button
-              type="button"
-              onClick={(e) => { e.stopPropagation(); navigate(`/sales/invoices/${r._id}/edit`) }}
-              className="text-text-muted hover:text-cyan transition-colors"
-              title="Edit"
-            >
-              <Edit className="h-4 w-4" />
-            </button>
-          )}
-          <button
-            type="button"
-            onClick={(e) => {
-              e.stopPropagation()
-              if (confirm(`Archive invoice ${r.invoiceNumber}?`)) {
-                archiveInvoice.mutate({ id: r._id })
-              }
-            }}
-            className="text-text-muted hover:text-negative transition-colors"
-            title="Archive"
-          >
-            <Trash2 className="h-4 w-4" />
-          </button>
-        </div>
-      ),
-    },
+  ]
+
+  /* Wave 2: hover-revealed row actions (SmartTable renders these as swipe/⋯
+     actions on mobile too) — replaces the always-visible actions column. */
+  const rowActions = (r) => [
+    { label: 'Download PDF', icon: FileDown, onClick: (row) => downloadPdf.mutate(row._id) },
+    ...(r.state === 'draft'
+      ? [{ label: 'Edit', icon: Edit, onClick: (row) => navigate(`/sales/invoices/${row._id}/edit`) }]
+      : []),
+    { label: 'Archive', icon: Trash2, tone: 'danger', onClick: handleArchive },
   ]
 
   const STATE_FILTERS = [
@@ -230,12 +206,23 @@ export default function InvoicesListPage() {
         </select>
       </div>
 
-      {/* Table */}
+      {/* Table — row actions on hover, selection → bulk PDF download */}
       <div className="premium-card overflow-x-auto">
         <DataTable
           columns={columns}
           data={invoices}
           isLoading={isLoading}
+          rowActions={rowActions}
+          selectable
+          selectedKeys={selectedKeys}
+          onSelectionChange={setSelectedKeys}
+          bulkActions={[
+            {
+              label: 'Download PDFs',
+              icon: FileDown,
+              onClick: (rows) => { rows.forEach((r) => downloadPdf.mutate(r._id)); setSelectedKeys([]) },
+            },
+          ]}
           emptyMessage={query ? 'No invoices match your search.' : 'No invoices yet. Tap "New invoice" to send your first one.'}
         />
       </div>

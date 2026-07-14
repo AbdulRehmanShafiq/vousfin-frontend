@@ -6,10 +6,11 @@
  * transaction system (appears in the ledger, balances, reports). "Confirm all"
  * posts every high-confidence item in one click.
  */
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { useQuery, useQueryClient } from '@tanstack/react-query'
 import toast from 'react-hot-toast'
 import { CheckCheck, Loader2 } from 'lucide-react'
+import { cn } from '@/utils/cn'
 import classifierApi from '@/services/ai/classifierService'
 import transactionService from '@/services/transaction.service'
 import ClassificationCard from '@/components/ai/ClassificationCard'
@@ -21,6 +22,9 @@ function ReviewList() {
   const qc = useQueryClient()
   const [page, setPage] = useState(1)
   const [bulkBusy, setBulkBusy] = useState(false)
+  // Match View keyboard session (Ledger §7.4): j/k focus · a accept · s skip
+  const [focusIdx, setFocusIdx] = useState(0)
+  const [sessionDone, setSessionDone] = useState(0)
 
   const { data: items = [], isLoading } = useQuery({
     queryKey:  ['ai-drafts', page],
@@ -56,6 +60,38 @@ function ReviewList() {
     }
   }
 
+  // Keyboard session — accept/skip without touching the mouse. Only sound,
+  // resolvable drafts can be accepted; everything else needs the card's own
+  // controls (never post an entry with unresolved accounts blindly).
+  useEffect(() => {
+    const onKey = async (e) => {
+      if (e.metaKey || e.ctrlKey || e.altKey) return
+      if (e.target.closest?.('input, textarea, select, [contenteditable="true"]')) return
+      if (!items.length) return
+      if (e.key === 'j' || e.key === 'ArrowDown') { e.preventDefault(); setFocusIdx((i) => Math.min(i + 1, items.length - 1)) }
+      else if (e.key === 'k' || e.key === 'ArrowUp') { e.preventDefault(); setFocusIdx((i) => Math.max(i - 1, 0)) }
+      else if (e.key === 's') { e.preventDefault(); setFocusIdx((i) => Math.min(i + 1, items.length - 1)) }
+      else if (e.key === 'a') {
+        const d = items[Math.min(focusIdx, items.length - 1)]
+        if (!d) return
+        if (!d.debit_account_id || !d.credit_account_id) { toast('This one needs accounts picked on the card first', { icon: 'ℹ️' }); return }
+        e.preventDefault()
+        try {
+          await postOne(d)
+          setSessionDone((n) => n + 1)
+          toast.success('Posted')
+          refresh()
+        } catch { toast.error("Couldn't post that one") }
+      }
+    }
+    window.addEventListener('keydown', onKey)
+    return () => window.removeEventListener('keydown', onKey)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [items, focusIdx])
+
+  // Clamp at render — the list shrinks after each post, no effect needed
+  const safeFocus = Math.min(focusIdx, Math.max(items.length - 1, 0))
+
   const confirmAll = async () => {
     const ready = items.filter(d => (d.confidence ?? 0) >= AUTO_CONFIDENCE && d.debit_account_id && d.credit_account_id)
     if (ready.length === 0) { toast('Nothing high-confidence to confirm', { icon: 'ℹ️' }); return }
@@ -88,7 +124,11 @@ function ReviewList() {
   return (
     <div className="space-y-4">
       <div className="flex items-center justify-between">
-        <p className="text-xs text-text-muted">{items.length} awaiting review on this page</p>
+        <p className="text-xs text-text-muted">
+          {items.length} awaiting review on this page
+          {sessionDone > 0 && <span className="text-positive font-medium"> · {sessionDone} posted this session</span>}
+          <span className="hidden lg:inline text-text-muted/70"> · keys: j/k move · a accept · s skip</span>
+        </p>
         <button
           onClick={confirmAll}
           disabled={bulkBusy || readyCount === 0}
@@ -100,7 +140,11 @@ function ReviewList() {
       </div>
 
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-        {items.map(d => <ClassificationCard key={d.draft_id} draft={d} onResolved={refresh} />)}
+        {items.map((d, i) => (
+          <div key={d.draft_id} className={cn('rounded-xl transition-shadow', i === safeFocus && 'ring-2 ring-accent/50')}>
+            <ClassificationCard draft={d} onResolved={refresh} />
+          </div>
+        ))}
       </div>
 
       <div className="flex justify-center gap-2 pt-2">
