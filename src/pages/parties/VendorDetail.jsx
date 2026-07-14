@@ -59,12 +59,12 @@ function KpiTile({ icon: Icon, label, value, sub, accent, accentColor = 'amber' 
   return (
     <div className={cn(
       'premium-card p-5 flex flex-col gap-1.5',
-      accent && accentColor === 'amber' && 'border-amber/30 bg-amber/5',
+      accent && accentColor === 'amber' && 'border-highlight/30 bg-highlight/5',
       accent && accentColor === 'red'   && 'border-negative/30 bg-negative/5',
-      accent && accentColor === 'cyan'  && 'border-cyan/30 bg-cyan/5',
+      accent && accentColor === 'cyan'  && 'border-accent/30 bg-accent/5',
     )}>
       <div className="flex items-center justify-between">
-        <span className="text-[12.5px] text-text-muted font-semibold uppercase tracking-wider">{label}</span>
+        <span className="text-small text-text-muted font-semibold uppercase tracking-wider">{label}</span>
         {Icon && <Icon className="h-4 w-4 text-text-muted/70" />}
       </div>
       <span className="text-2xl font-black text-text-primary leading-tight">{value}</span>
@@ -80,7 +80,7 @@ function FieldRow({ icon: Icon, label, value }) {
     <div className="flex items-start gap-2.5 text-sm">
       <Icon className="h-4 w-4 flex-shrink-0 text-text-muted mt-0.5" />
       <div className="min-w-0">
-        <p className="text-[12.5px] text-text-muted uppercase tracking-wider font-semibold">{label}</p>
+        <p className="text-small text-text-muted uppercase tracking-wider font-semibold">{label}</p>
         <p className="text-text-primary break-words">{value}</p>
       </div>
     </div>
@@ -96,7 +96,7 @@ function Tab({ active, onClick, icon: Icon, label }) {
       className={cn(
         'inline-flex items-center gap-2 px-4 py-2.5 text-sm font-semibold border-b-2 transition-colors',
         active
-          ? 'border-amber text-amber'
+          ? 'border-highlight text-highlight'
           : 'border-transparent text-text-muted hover:text-text-primary hover:border-glass'
       )}
     >
@@ -220,7 +220,7 @@ export default function VendorDetail() {
       cellClassName: 'text-right font-bold',
       render: (row) => (
         <span className={cn(
-          (row.transactionType || row.type) === 'Expense' ? 'text-amber' : 'text-text-primary'
+          (row.transactionType || row.type) === 'Expense' ? 'text-highlight' : 'text-text-primary'
         )}>
           {formatCurrency(row.amount, currency)}
         </span>
@@ -254,7 +254,7 @@ export default function VendorDetail() {
       key: 'invoiceNumber',
       header: 'Ref #',
       render: (row) => (
-        <span className="text-amber text-xs font-mono">{row.invoiceNumber || row.billNumber || '—'}</span>
+        <span className="text-highlight text-xs font-mono">{row.invoiceNumber || row.billNumber || '—'}</span>
       ),
     },
     {
@@ -279,7 +279,7 @@ export default function VendorDetail() {
       className: 'text-right',
       cellClassName: 'text-right',
       render: (row) => row.credit > 0
-        ? <span className="text-amber font-semibold">{formatCurrency(row.credit, currency)}</span>
+        ? <span className="text-highlight font-semibold">{formatCurrency(row.credit, currency)}</span>
         : <span className="text-text-muted">—</span>,
     },
     {
@@ -288,7 +288,7 @@ export default function VendorDetail() {
       className: 'text-right',
       cellClassName: 'text-right font-bold',
       render: (row) => (
-        <span className={row.balance > 0 ? 'text-amber' : 'text-text-primary'}>
+        <span className={row.balance > 0 ? 'text-highlight' : 'text-text-primary'}>
           {formatCurrency(row.balance ?? 0, currency)}
         </span>
       ),
@@ -325,7 +325,7 @@ export default function VendorDetail() {
       <div className="premium-card p-8 text-center animate-fade-in">
         <AlertCircle className="h-10 w-10 text-text-muted mx-auto mb-3" />
         <p className="text-text-primary font-semibold mb-1">Vendor not found</p>
-        <Link to="/vendors" className="text-sm text-cyan hover:underline">← Back to vendors</Link>
+        <Link to="/vendors" className="text-sm text-accent hover:underline">← Back to vendors</Link>
       </div>
     )
   }
@@ -339,7 +339,7 @@ export default function VendorDetail() {
       <div className="flex items-center justify-between gap-3 flex-wrap">
         <Link
           to="/vendors"
-          className="inline-flex items-center gap-1.5 text-sm text-text-muted hover:text-cyan transition-colors"
+          className="inline-flex items-center gap-1.5 text-sm text-text-muted hover:text-accent transition-colors"
         >
           <ArrowLeft className="h-4 w-4" /> Back to vendors
         </Link>
@@ -356,8 +356,8 @@ export default function VendorDetail() {
       {/* ── Profile card ───────────────────────────────────────────────── */}
       <div className="premium-card p-6">
         <div className="flex items-start gap-4">
-          <div className="flex h-14 w-14 flex-shrink-0 items-center justify-center rounded-full bg-amber/15 border border-amber/30">
-            <Briefcase className="h-6 w-6 text-amber" />
+          <div className="flex h-14 w-14 flex-shrink-0 items-center justify-center rounded-full bg-highlight/15 border border-highlight/30">
+            <Briefcase className="h-6 w-6 text-highlight" />
           </div>
           <div className="flex-1 min-w-0">
             <div className="flex items-center gap-3 flex-wrap">
@@ -469,7 +469,7 @@ export default function VendorDetail() {
                   <button
                     type="button"
                     onClick={() => { setStartDate(''); setEndDate('') }}
-                    className="text-xs text-text-muted hover:text-cyan transition-colors px-2"
+                    className="text-xs text-text-muted hover:text-accent transition-colors px-2"
                   >
                     Clear
                   </button>
@@ -492,13 +492,13 @@ export default function VendorDetail() {
             {stmt?.summary && (
               <div className="px-6 py-3 grid grid-cols-2 sm:grid-cols-4 gap-3">
                 {[
-                  { label: 'Total Billed',  value: formatCurrency(stmt.summary.totalBilled  || 0, currency), color: 'text-amber' },
+                  { label: 'Total Billed',  value: formatCurrency(stmt.summary.totalBilled  || 0, currency), color: 'text-highlight' },
                   { label: 'Total Paid',    value: formatCurrency(stmt.summary.totalPaid    || 0, currency), color: 'text-positive' },
-                  { label: 'Outstanding',   value: formatCurrency(stmt.summary.outstanding  || 0, currency), color: 'text-amber'  },
+                  { label: 'Outstanding',   value: formatCurrency(stmt.summary.outstanding  || 0, currency), color: 'text-highlight'  },
                   { label: 'Overdue',       value: formatCurrency(stmt.summary.overdueAmount || 0, currency), color: 'text-negative'   },
                 ].map(c => (
                   <div key={c.label} className="bg-glass/30 rounded-lg px-4 py-3">
-                    <p className="text-[12px] text-text-muted uppercase tracking-wider font-semibold">{c.label}</p>
+                    <p className="text-xs text-text-muted uppercase tracking-wider font-semibold">{c.label}</p>
                     <p className={cn('text-base font-black mt-0.5', c.color)}>{c.value}</p>
                   </div>
                 ))}

@@ -70,7 +70,7 @@ export default function ExportPage() {
     <div className="space-y-8 animate-fade-in">
       <div>
         <h1 className="flex items-center gap-2 text-xl sm:text-2xl font-black text-text-primary tracking-tight">
-          <Download className="h-6 w-6 text-cyan" />
+          <Download className="h-6 w-6 text-accent" />
           Export Reports
         </h1>
         <p className="text-text-secondary mt-1 text-sm">Download professional financial reports as PDF or Excel.</p>
@@ -86,11 +86,11 @@ export default function ExportPage() {
             <div className="space-y-2">
               {REPORT_TYPES.map(rt => (
                 <label key={rt.value}
-                  className="flex items-center gap-3 p-3 rounded-xl border border-glass hover:border-cyan/30 hover:bg-glass-hover cursor-pointer transition-colors">
+                  className="flex items-center gap-3 p-3 rounded-xl border border-glass hover:border-accent/30 hover:bg-glass-hover cursor-pointer transition-colors">
                   <div className={`h-4 w-4 rounded-full border-2 flex items-center justify-center transition-colors ${
-                    reportType === rt.value ? 'border-cyan' : 'border-glass'
+                    reportType === rt.value ? 'border-accent' : 'border-glass'
                   }`}>
-                    {reportType === rt.value && <div className="h-2 w-2 rounded-full bg-cyan" />}
+                    {reportType === rt.value && <div className="h-2 w-2 rounded-full bg-accent" />}
                   </div>
                   <input type="radio" name="reportType" value={rt.value}
                     checked={reportType === rt.value} onChange={e => setReportType(e.target.value)} className="sr-only" />
@@ -122,7 +122,7 @@ export default function ExportPage() {
                 {['receivable', 'payable'].map(t => (
                   <label key={t} className="flex items-center gap-2 cursor-pointer">
                     <input type="radio" name="agingType" value={t} checked={agingType === t}
-                      onChange={() => setAgingType(t)} className="accent-cyan" />
+                      onChange={() => setAgingType(t)} className="accent-accent" />
                     <span className="text-sm text-text-primary capitalize">{t}</span>
                   </label>
                 ))}

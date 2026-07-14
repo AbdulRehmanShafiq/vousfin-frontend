@@ -16,8 +16,8 @@ const pct = (p) => (p == null ? '—' : `${Math.round(p * 100)}%`)
 const SCENARIOS = ['base', 'optimistic', 'pessimistic']
 
 const RAG = {
-  green: { dot: 'bg-emerald', text: 'text-emerald', label: 'On track' },
-  amber: { dot: 'bg-amber', text: 'text-amber', label: 'Watch' },
+  green: { dot: 'bg-positive', text: 'text-positive', label: 'On track' },
+  amber: { dot: 'bg-highlight', text: 'text-highlight', label: 'Watch' },
   red:   { dot: 'bg-negative', text: 'text-negative', label: 'Over' },
 }
 
@@ -47,7 +47,7 @@ export default function VarianceDashboardPage() {
   return (
     <div className="animate-fade-in pb-10 space-y-5 max-w-5xl">
       <div className="flex items-center gap-3">
-        <div className="p-2 rounded-xl bg-cyan/15"><FileBarChart2 className="h-5 w-5 text-cyan" /></div>
+        <div className="p-2 rounded-xl bg-accent/15"><FileBarChart2 className="h-5 w-5 text-accent" /></div>
         <div>
           <h1 className="text-2xl font-semibold text-text-primary tracking-tight">Budget vs Actual</h1>
           <p className="text-sm text-text-secondary mt-0.5">How your real numbers compare to the plan.</p>
@@ -56,16 +56,16 @@ export default function VarianceDashboardPage() {
 
       <div className="premium-card p-4 flex items-end gap-3 flex-wrap">
         <label className="flex flex-col gap-1">
-          <span className="text-[11.5px] text-text-muted">Plan type</span>
+          <span className="text-label text-text-muted">Plan type</span>
           <select value={scenario} onChange={(e) => { setScenario(e.target.value); setBudgetId('') }}
-            className="px-3 py-2 rounded-lg border border-glass bg-glass-panel/40 text-[13px] text-text-primary capitalize focus:outline-none">
+            className="px-3 py-2 rounded-lg border border-glass bg-glass-panel/40 text-small text-text-primary capitalize focus:outline-none">
             {SCENARIOS.map((s) => <option key={s} value={s} className="bg-charcoal capitalize">{s}</option>)}
           </select>
         </label>
         <label className="flex flex-col gap-1 flex-1 min-w-[200px]">
-          <span className="text-[11.5px] text-text-muted">Budget</span>
+          <span className="text-label text-text-muted">Budget</span>
           <select value={activeId} onChange={(e) => setBudgetId(e.target.value)}
-            className="px-3 py-2 rounded-lg border border-glass bg-glass-panel/40 text-[13px] text-text-primary focus:outline-none">
+            className="px-3 py-2 rounded-lg border border-glass bg-glass-panel/40 text-small text-text-primary focus:outline-none">
             {scenarioBudgets.length === 0 && <option value="" className="bg-charcoal">No active budget for this plan type</option>}
             {scenarioBudgets.map((b) => <option key={b._id} value={b._id} className="bg-charcoal">{b.name} (v{b.version})</option>)}
           </select>
@@ -73,7 +73,7 @@ export default function VarianceDashboardPage() {
       </div>
 
       {isLoading && (
-        <div className="premium-card p-6 flex items-center gap-2 text-text-secondary text-[13px]">
+        <div className="premium-card p-6 flex items-center gap-2 text-text-secondary text-small">
           <Loader2 className="h-4 w-4 animate-spin" /> Working out the numbers…
         </div>
       )}
@@ -81,7 +81,7 @@ export default function VarianceDashboardPage() {
       {!isLoading && activeId && lines.length > 0 && (
         <div className="premium-card p-4">
           <div className="overflow-x-auto">
-            <table className="w-full text-[12.5px]">
+            <table className="w-full text-small">
               <thead>
                 <tr className="text-text-muted text-left border-b border-glass">
                   <th className="py-2 pr-3 font-medium">Account</th>
@@ -99,14 +99,14 @@ export default function VarianceDashboardPage() {
                   return (
                     <tr key={`${l.accountId}-${l.costCenterId || ''}`} className="border-b border-glass/50 hover:bg-glass-hover">
                       <td className="py-2 pr-3">
-                        <Link to={to} className="text-text-primary hover:text-cyan">{l.accountName || l.accountId}</Link>
+                        <Link to={to} className="text-text-primary hover:text-accent">{l.accountName || l.accountId}</Link>
                       </td>
                       <td className="py-2 px-3 text-right text-text-secondary">{money(l.budget)}</td>
                       <td className="py-2 px-3 text-right text-text-secondary">{money(l.actual)}</td>
-                      <td className={`py-2 px-3 text-right ${l.favorable ? 'text-emerald' : rag.text}`}>{money(l.variance)}</td>
+                      <td className={`py-2 px-3 text-right ${l.favorable ? 'text-positive' : rag.text}`}>{money(l.variance)}</td>
                       <td className="py-2 px-3 text-right text-text-secondary">{pct(l.variancePct)}</td>
                       <td className="py-2 pl-3">
-                        <span className={`inline-flex items-center gap-1.5 text-[11px] ${rag.text}`}>
+                        <span className={`inline-flex items-center gap-1.5 text-label ${rag.text}`}>
                           <span className={`h-2 w-2 rounded-full ${rag.dot}`} />
                           {l.favorable ? 'On track' : rag.label}
                         </span>
@@ -127,15 +127,15 @@ export default function VarianceDashboardPage() {
               </tfoot>
             </table>
           </div>
-          <p className="text-[11px] text-text-muted mt-2">Click any account to see the entries behind it.</p>
+          <p className="text-label text-text-muted mt-2">Click any account to see the entries behind it.</p>
         </div>
       )}
 
       {!isLoading && activeId && lines.length === 0 && (
-        <div className="premium-card p-6 text-center text-[13px] text-text-secondary">This budget has no lines to compare yet.</div>
+        <div className="premium-card p-6 text-center text-small text-text-secondary">This budget has no lines to compare yet.</div>
       )}
       {!isLoading && !activeId && (
-        <div className="premium-card p-6 text-center text-[13px] text-text-secondary">
+        <div className="premium-card p-6 text-center text-small text-text-secondary">
           No active budget for this plan type yet. Create one in the Budget Editor and get it approved.
         </div>
       )}

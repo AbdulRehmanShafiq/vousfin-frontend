@@ -30,13 +30,13 @@ function LedgerLine({ side, account, code, amount, currency }) {
     <div className="flex items-center justify-between gap-3 text-sm py-1">
       <span className="flex items-center gap-2 min-w-0">
         <span className={cn(
-          'inline-flex h-5 w-7 flex-shrink-0 items-center justify-center rounded text-[12px] font-black',
-          isDebit ? 'bg-cyan/15 text-cyan' : 'bg-amber/15 text-amber'
+          'inline-flex h-5 w-7 flex-shrink-0 items-center justify-center rounded text-xs font-black',
+          isDebit ? 'bg-accent/15 text-accent' : 'bg-highlight/15 text-highlight'
         )}>
           {side}
         </span>
         <span className="truncate text-text-primary">{account}</span>
-        {code && <span className="text-[12px] text-text-muted font-mono">{code}</span>}
+        {code && <span className="text-xs text-text-muted font-mono">{code}</span>}
       </span>
       <span className="font-mono font-semibold text-text-primary whitespace-nowrap">
         {formatCurrency(amount, currency)}
@@ -77,9 +77,9 @@ export default function AccountingImpactPanel({ kind, entity, currency }) {
   return (
     <div className="premium-card p-5 space-y-3">
       <div className="flex items-center gap-2">
-        <BookOpen className="h-4 w-4 text-cyan" />
+        <BookOpen className="h-4 w-4 text-accent" />
         <h3 className="text-sm font-bold text-text-primary">Accounting Impact</h3>
-        <span className="ml-auto text-[12px] uppercase tracking-wider font-semibold text-positive/90 flex items-center gap-1">
+        <span className="ml-auto text-xs uppercase tracking-wider font-semibold text-positive/90 flex items-center gap-1">
           <CheckCircle2 className="h-3 w-3" /> Ledger-synced
         </span>
       </div>
@@ -113,7 +113,7 @@ export default function AccountingImpactPanel({ kind, entity, currency }) {
           </div>
           <div className={cn(
             'flex items-center gap-2 text-xs rounded-lg px-3 py-2',
-            isBill ? 'bg-amber/5 text-amber' : 'bg-cyan/5 text-cyan'
+            isBill ? 'bg-highlight/5 text-highlight' : 'bg-accent/5 text-accent'
           )}>
             {isBill ? <TrendingUp className="h-3.5 w-3.5" /> : <TrendingUp className="h-3.5 w-3.5" />}
             Increases <span className="font-semibold">{partyName}</span>’s

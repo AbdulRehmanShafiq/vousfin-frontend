@@ -46,7 +46,7 @@ export default function GoogleSuccess() {
     <div className="flex flex-col items-center justify-center gap-4 py-16">
       {/* Spinner */}
       <svg
-        className="h-10 w-10 animate-spin text-cyan"
+        className="h-10 w-10 animate-spin text-accent"
         xmlns="http://www.w3.org/2000/svg"
         fill="none"
         viewBox="0 0 24 24"

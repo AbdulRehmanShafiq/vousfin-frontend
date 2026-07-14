@@ -38,7 +38,7 @@ export default function PayrollAccrualModal({ isOpen, onClose, focus = 'EOBI' })
   return (
     <Modal isOpen={isOpen} onClose={onClose} title="Record payroll obligation" className="sm:max-w-md">
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-5 py-4">
-        <p className="text-[13px] text-text-secondary -mt-2">
+        <p className="text-small text-text-secondary -mt-2">
           Enter this month's employer social-security contributions. They appear in
           your live tax position as {focus === 'SESSI' ? 'SESSI' : 'EOBI'} obligations.
         </p>

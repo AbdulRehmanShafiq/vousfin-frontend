@@ -36,7 +36,7 @@ function Item({ faq, open, onToggle, reduced }) {
             exit={{ height: 0, opacity: 0 }}
             transition={{ duration: reduced ? 0 : 0.32, ease: EASE }}
           >
-            <p className="px-6 pb-6 text-[15px] leading-relaxed text-[#A89B8C]">{faq.a}</p>
+            <p className="px-6 pb-6 text-md leading-relaxed text-[#A89B8C]">{faq.a}</p>
           </motion.div>
         )}
       </AnimatePresence>

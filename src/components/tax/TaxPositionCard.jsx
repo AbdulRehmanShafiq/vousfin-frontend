@@ -42,13 +42,13 @@ export default function TaxPositionCard({ tax, series = [], currency = 'PKR', on
           </div>
           <div className="min-w-0">
             <h3 className="text-sm font-bold text-text-primary leading-tight truncate">{tax.label}</h3>
-            <p className="text-[12px] text-text-muted leading-tight">
+            <p className="text-xs text-text-muted leading-tight">
               {tax.nextDeadline?.returnType || meta.blurb}
             </p>
           </div>
         </div>
         {!tracked && (
-          <span className="shrink-0 text-[11px] font-semibold uppercase tracking-wider text-text-muted
+          <span className="shrink-0 text-label font-semibold uppercase tracking-wider text-text-muted
             bg-glass-panel border border-glass rounded-full px-2 py-0.5">
             Not tracked
           </span>
@@ -63,14 +63,14 @@ export default function TaxPositionCard({ tax, series = [], currency = 'PKR', on
               <p className="num text-[1.55rem] font-semibold text-positive leading-none">
                 {compactMoney(Math.abs(tax.raw ?? tax.liability), currency)}
               </p>
-              <p className="text-[12px] text-positive/80 mt-1 font-medium">Refund due</p>
+              <p className="text-xs text-positive/80 mt-1 font-medium">Refund due</p>
             </>
           ) : (
             <>
               <p className="num text-[1.55rem] font-semibold text-text-primary leading-none">
                 {compactMoney(tax.liability, currency)}
               </p>
-              <p className="text-[12px] text-text-muted mt-1">
+              <p className="text-xs text-text-muted mt-1">
                 {meta.estimate
                   ? 'Estimated from your profit so far this year'
                   : tax.liability > 0 ? 'To pay this period' : 'Nothing due right now'}
@@ -80,7 +80,7 @@ export default function TaxPositionCard({ tax, series = [], currency = 'PKR', on
         ) : (
           <>
             <p className="num text-[1.55rem] font-semibold text-text-muted/70 leading-none">—</p>
-            <p className="text-[12px] text-text-muted mt-1">
+            <p className="text-xs text-text-muted mt-1">
               {isPayroll ? 'Turn on payroll to track EOBI/SESSI' : 'Estimate not available yet'}
             </p>
           </>
@@ -98,14 +98,14 @@ export default function TaxPositionCard({ tax, series = [], currency = 'PKR', on
         <button
           type="button"
           onClick={() => onAddPayroll(tax.taxType)}
-          className="inline-flex items-center gap-1.5 self-start text-[12.5px] font-semibold text-cyan hover:underline"
+          className="inline-flex items-center gap-1.5 self-start text-small font-semibold text-accent hover:underline"
         >
           <Plus className="h-3.5 w-3.5" /> Record this month
         </button>
       )}
       {isPayroll && !tracked && (
         <Link to="/settings/tax"
-          className="inline-flex items-center gap-1 self-start text-[12.5px] font-semibold text-text-muted hover:text-cyan transition-colors">
+          className="inline-flex items-center gap-1 self-start text-small font-semibold text-text-muted hover:text-accent transition-colors">
           Enable in Tax Engine <ArrowUpRight className="h-3.5 w-3.5" />
         </Link>
       )}

@@ -22,7 +22,7 @@ function StatCard({ label, value, icon: Icon, accent = 'text-accent' }) {
         <Icon className="h-5 w-5" />
       </div>
       <div>
-        <p className="text-[11px] uppercase tracking-wider text-text-muted mb-0.5">{label}</p>
+        <p className="text-label uppercase tracking-wider text-text-muted mb-0.5">{label}</p>
         <p className="text-2xl font-bold text-text-primary">
           {value === undefined || value === null ? '—' : value.toLocaleString()}
         </p>
@@ -34,14 +34,14 @@ function StatCard({ label, value, icon: Icon, accent = 'text-accent' }) {
 // ── Status badge ──────────────────────────────────────────────────────────────
 const STATUS_COLORS = {
   active: 'bg-positive/15 text-positive',
-  pending: 'bg-amber/15 text-amber',
+  pending: 'bg-highlight/15 text-highlight',
   suspended: 'bg-negative/15 text-negative',
   deleted: 'bg-text-muted/20 text-text-muted',
 }
 
 function StatusBadge({ status }) {
   return (
-    <span className={cn('inline-flex items-center rounded-full px-2 py-0.5 text-[11px] font-semibold capitalize', STATUS_COLORS[status] || 'bg-glass-panel text-text-secondary')}>
+    <span className={cn('inline-flex items-center rounded-full px-2 py-0.5 text-label font-semibold capitalize', STATUS_COLORS[status] || 'bg-glass-panel text-text-secondary')}>
       {status}
     </span>
   )
@@ -50,7 +50,7 @@ function StatusBadge({ status }) {
 function RoleBadge({ role }) {
   return (
     <span className={cn(
-      'inline-flex items-center rounded-full px-2 py-0.5 text-[11px] font-semibold capitalize',
+      'inline-flex items-center rounded-full px-2 py-0.5 text-label font-semibold capitalize',
       role === 'admin' ? 'bg-accent/15 text-accent' : 'bg-glass-panel text-text-secondary',
     )}>
       {role}
@@ -62,7 +62,7 @@ function RoleBadge({ role }) {
 function Pagination({ page, total, limit, onPage }) {
   const totalPages = Math.max(1, Math.ceil(total / limit))
   return (
-    <div className="flex items-center justify-between pt-4 border-t border-glass text-[13px] text-text-muted">
+    <div className="flex items-center justify-between pt-4 border-t border-glass text-small text-text-muted">
       <span>{total} total</span>
       <div className="flex items-center gap-2">
         <button
@@ -92,18 +92,18 @@ function ConfirmDialog({ open, title, message, onConfirm, onCancel, danger = fal
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-navy/70 backdrop-blur-sm">
       <div className="w-full max-w-sm rounded-xl border border-glass bg-charcoal p-6 shadow-2xl">
         <h3 className="text-base font-semibold text-text-primary mb-2">{title}</h3>
-        <p className="text-[13px] text-text-secondary mb-6">{message}</p>
+        <p className="text-small text-text-secondary mb-6">{message}</p>
         <div className="flex gap-3 justify-end">
           <button
             onClick={onCancel}
-            className="px-4 py-2 rounded-lg border border-glass text-[13px] text-text-secondary hover:bg-glass-hover transition-colors"
+            className="px-4 py-2 rounded-lg border border-glass text-small text-text-secondary hover:bg-glass-hover transition-colors"
           >
             Cancel
           </button>
           <button
             onClick={onConfirm}
             className={cn(
-              'px-4 py-2 rounded-lg text-[13px] font-semibold transition-colors',
+              'px-4 py-2 rounded-lg text-small font-semibold transition-colors',
               danger
                 ? 'bg-negative/90 hover:bg-negative text-white'
                 : 'bg-accent/90 hover:bg-accent text-ink-on-accent',
@@ -139,11 +139,11 @@ function OverviewTab() {
     <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
       <StatCard label="Total Users" value={data?.totalUsers} icon={Users} accent="text-accent" />
       <StatCard label="Active" value={data?.activeCustomers} icon={UserCheck} accent="text-positive" />
-      <StatCard label="Pending" value={data?.pendingCustomers} icon={Clock} accent="text-amber" />
+      <StatCard label="Pending" value={data?.pendingCustomers} icon={Clock} accent="text-highlight" />
       <StatCard label="Suspended" value={data?.suspendedCustomers} icon={UserX} accent="text-negative" />
       <StatCard label="Admins" value={data?.adminCount} icon={ShieldCheck} accent="text-accent" />
-      <StatCard label="Businesses" value={data?.totalBusinesses} icon={Building2} accent="text-cyan" />
-      <StatCard label="Transactions" value={data?.totalTransactions} icon={TrendingUp} accent="text-gold" />
+      <StatCard label="Businesses" value={data?.totalBusinesses} icon={Building2} accent="text-accent" />
+      <StatCard label="Transactions" value={data?.totalTransactions} icon={TrendingUp} accent="text-highlight" />
       <StatCard label="New (30d)" value={data?.newUsersLast30Days} icon={ArrowUpCircle} accent="text-positive" />
     </div>
   )
@@ -206,7 +206,7 @@ function UsersTab() {
             placeholder="Search by name or email…"
             value={search}
             onChange={(e) => { setSearch(e.target.value); setPage(1) }}
-            className="w-full pl-9 pr-3 py-2 rounded-lg border border-glass bg-glass-panel/40 text-[13px] text-text-primary placeholder:text-text-muted focus:outline-none focus:border-cyan/40 transition-colors"
+            className="w-full pl-9 pr-3 py-2 rounded-lg border border-glass bg-glass-panel/40 text-small text-text-primary placeholder:text-text-muted focus:outline-none focus:border-accent/40 transition-colors"
           />
         </div>
         <div className="w-full sm:w-44">
@@ -225,9 +225,9 @@ function UsersTab() {
 
       {/* Table */}
       <div className="rounded-xl border border-glass bg-charcoal overflow-x-auto">
-        <table className="w-full text-[13px]">
+        <table className="w-full text-small">
           <thead>
-            <tr className="border-b border-glass text-text-muted text-[11px] uppercase tracking-wider">
+            <tr className="border-b border-glass text-text-muted text-label uppercase tracking-wider">
               <th className="px-4 py-3 text-left font-semibold">Name</th>
               <th className="px-4 py-3 text-left font-semibold">Email</th>
               <th className="px-4 py-3 text-left font-semibold">Status</th>
@@ -273,7 +273,7 @@ function UsersTab() {
                       <button
                         onClick={() => setConfirm({ type: 'suspend', id: u._id })}
                         title="Suspend account"
-                        className="rounded p-1.5 text-amber hover:bg-amber/10 transition-colors"
+                        className="rounded p-1.5 text-highlight hover:bg-highlight/10 transition-colors"
                       >
                         <UserX className="h-4 w-4" />
                       </button>
@@ -321,7 +321,7 @@ function UsersTab() {
                       <button
                         onClick={() => setConfirm({ type: 'resetMfa', id: u._id })}
                         title="Reset MFA"
-                        className="rounded p-1.5 text-cyan hover:bg-cyan/10 transition-colors"
+                        className="rounded p-1.5 text-accent hover:bg-accent/10 transition-colors"
                       >
                         <Zap className="h-4 w-4" />
                       </button>
@@ -388,14 +388,14 @@ function BusinessesTab() {
           placeholder="Search by business name…"
           value={search}
           onChange={(e) => { setSearch(e.target.value); setPage(1) }}
-          className="w-full pl-9 pr-3 py-2 rounded-lg border border-glass bg-glass-panel/40 text-[13px] text-text-primary placeholder:text-text-muted focus:outline-none focus:border-cyan/40 transition-colors"
+          className="w-full pl-9 pr-3 py-2 rounded-lg border border-glass bg-glass-panel/40 text-small text-text-primary placeholder:text-text-muted focus:outline-none focus:border-accent/40 transition-colors"
         />
       </div>
 
       <div className="rounded-xl border border-glass bg-charcoal overflow-x-auto">
-        <table className="w-full text-[13px]">
+        <table className="w-full text-small">
           <thead>
-            <tr className="border-b border-glass text-text-muted text-[11px] uppercase tracking-wider">
+            <tr className="border-b border-glass text-text-muted text-label uppercase tracking-wider">
               <th className="px-4 py-3 text-left font-semibold">Business Name</th>
               <th className="px-4 py-3 text-left font-semibold">Type</th>
               <th className="px-4 py-3 text-left font-semibold">Currency</th>
@@ -504,7 +504,7 @@ function FeedbackTab() {
         <div className="w-full sm:w-auto">
           <button
             onClick={() => setPage(1)}
-            className="btn-gradient px-4 py-2 rounded-lg text-[13px] font-medium text-white hover:opacity-90 transition-colors"
+            className="btn-gradient px-4 py-2 rounded-lg text-small font-medium text-white hover:opacity-90 transition-colors"
           >
             Refresh
           </button>
@@ -513,9 +513,9 @@ function FeedbackTab() {
 
       {/* Table */}
       <div className="rounded-xl border border-glass bg-charcoal overflow-x-auto">
-        <table className="w-full text-[13px]">
+        <table className="w-full text-small">
           <thead>
-            <tr className="border-b border-glass text-text-muted text-[11px] uppercase tracking-wider">
+            <tr className="border-b border-glass text-text-muted text-label uppercase tracking-wider">
               <th className="px-4 py-3 text-left font-semibold">Type</th>
               <th className="px-4 py-3 text-left font-semibold">Subject</th>
               <th className="px-4 py-3 text-left font-semibold">Message</th>
@@ -540,10 +540,10 @@ function FeedbackTab() {
             {feedbacks.map((f) => (
               <tr key={f._id} className="border-b border-glass/50 last:border-0 hover:bg-glass-hover/30 transition-colors">
                 <td className="px-4 py-3 text-text-secondary">
-                  <span className={`inline-flex items-center rounded-full px-2 py-0.5 text-[10px] font-semibold ${
+                  <span className={`inline-flex items-center rounded-full px-2 py-0.5 text-label font-semibold ${
                     f.type === 'bug' ? 'bg-negative/20 text-negative' :
                     f.type === 'feature' ? 'bg-accent/20 text-accent' :
-                    f.type === 'question' ? 'bg-cyan/20 text-cyan' :
+                    f.type === 'question' ? 'bg-accent/20 text-accent' :
                     'bg-text-muted/20 text-text-muted'
                   }`}>
                     {f.type.charAt(0).toUpperCase() + f.type.slice(1)}
@@ -568,8 +568,8 @@ function FeedbackTab() {
                 </td>
                 <td className="px-4 py-3">
                   <span className={`inline-flex>
-                    {f.status === 'new' ? 'bg-amber/20 text-amber' :
-                    f.status === 'reviewed' ? 'bg-cyan/20 text-cyan' :
+                    {f.status === 'new' ? 'bg-highlight/20 text-highlight' :
+                    f.status === 'reviewed' ? 'bg-accent/20 text-accent' :
                     f.status === 'resolved' ? 'bg-positive/20 text-positive' :
                     'bg-text-muted/20 text-text-muted'
                   }`}>
@@ -582,7 +582,7 @@ function FeedbackTab() {
                     <select
                       value={f.status}
                       onChange={(e) => setConfirm({ type: 'updateStatus', id: f._id, extra: e.target.value })}
-                      className="border border-glass px-2 py-1 rounded-lg text-[12px] bg-glass-panel focus:outline-none focus:border-cyan/40"
+                      className="border border-glass px-2 py-1 rounded-lg text-xs bg-glass-panel focus:outline-none focus:border-accent/40"
                     >
                       <option value="new">New</option>
                       <option value="reviewed">Reviewed</option>
@@ -596,7 +596,7 @@ function FeedbackTab() {
                           value={f.adminNote || ''}
                           onChange={(e) => setConfirm({ type: 'updateNote', id: f._id, extra: e.target.value })}
                           placeholder="Add admin note..."
-                          className="w-full px-3 py-2 rounded-lg border border-glass bg-glass-panel/40 text-[12px] resize-none focus:outline-none focus:border-cyan/40"
+                          className="w-full px-3 py-2 rounded-lg border border-glass bg-glass-panel/40 text-xs resize-none focus:outline-none focus:border-accent/40"
                           rows={2}
                         />
                         <button
@@ -609,7 +609,7 @@ function FeedbackTab() {
                               }
                             }
                           }}
-                          className="mt-2 px-3 py-1 rounded-lg bg-accent/20 text-accent hover:bg-accent/30 text-[12px]"
+                          className="mt-2 px-3 py-1 rounded-lg bg-accent/20 text-accent hover:bg-accent/30 text-xs"
                         >
                           Save
                         </button>
@@ -745,7 +745,7 @@ function SupportTab() {
         <div className="w-full sm:w-auto">
           <button
             onClick={() => setPage(1)}
-            className="btn-gradient px-4 py-2 rounded-lg text-[13px] font-medium text-white hover:opacity-90 transition-colors"
+            className="btn-gradient px-4 py-2 rounded-lg text-small font-medium text-white hover:opacity-90 transition-colors"
           >
             Refresh
           </button>
@@ -755,9 +755,9 @@ function SupportTab() {
       {/* Ticket list */}
       <div className="rounded-xl border border-glass bg-charcoal">
         <div className="overflow-x-auto">
-          <table className="w-full text-[13px]">
+          <table className="w-full text-small">
             <thead>
-              <tr className="border-b border-glass text-text-muted text-[11px] uppercase tracking-wider">
+              <tr className="border-b border-glass text-text-muted text-label uppercase tracking-wider">
                 <th className="px-4 py-3 text-left font-semibold">Subject</th>
                 <th className="px-4 py-3 text-left font-semibold">Requester</th>
                 <th className="px-4 py-3 text-left font-semibold">Priority</th>
@@ -784,9 +784,9 @@ function SupportTab() {
                   <td className="px-4 py-3 font-medium text-text-primary">{t.subject}</td>
                   <td className="px-4 py-3 text-text-secondary">{t.userId?.email ?? '—'}</td>
                   <td className="px-4 py-3">
-                    <span className={`inline-flex items-center rounded-full px-2 py-0.5 text-[10px] font-semibold ${
+                    <span className={`inline-flex items-center rounded-full px-2 py-0.5 text-label font-semibold ${
                       t.priority === 'low' ? 'bg-text-muted/20 text-text-muted' :
-                      t.priority === 'medium' ? 'bg-amber/20 text-amber' :
+                      t.priority === 'medium' ? 'bg-highlight/20 text-highlight' :
                       t.priority === 'high' ? 'bg-negative/20 text-negative' :
                       t.priority === 'urgent' ? 'bg-positive/20 text-positive' :
                       'bg-text-muted/20 text-text-muted'
@@ -795,9 +795,9 @@ function SupportTab() {
                     </span>
                   </td>
                   <td className="px-4 py-3">
-                    <span className={`inline-flex items-center rounded-full px-2 py-0.5 text-[10px] font-semibold ${
-                      t.status === 'open' ? 'bg-amber/20 text-amber' :
-                      t.status === 'in_progress' ? 'bg-cyan/20 text-cyan' :
+                    <span className={`inline-flex items-center rounded-full px-2 py-0.5 text-label font-semibold ${
+                      t.status === 'open' ? 'bg-highlight/20 text-highlight' :
+                      t.status === 'in_progress' ? 'bg-accent/20 text-accent' :
                       t.status === 'resolved' ? 'bg-positive/20 text-positive' :
                       t.status === 'closed' ? 'bg-text-muted/20 text-text-muted' :
                       'bg-text-muted/20 text-text-muted'
@@ -814,7 +814,7 @@ function SupportTab() {
                       <select
                         value={t.status}
                         onChange={(e) => setConfirm({ type: 'updateStatus', id: t._id, extra: e.target.value })}
-                        className="border border-glass px-2 py-1 rounded-lg text-[12px] bg-glass-panel focus:outline-none focus:border-cyan/40"
+                        className="border border-glass px-2 py-1 rounded-lg text-xs bg-glass-panel focus:outline-none focus:border-accent/40"
                       >
                         <option value="open">Open</option>
                         <option value="in_progress">In Progress</option>
@@ -826,7 +826,7 @@ function SupportTab() {
                       <select
                         value={t.priority}
                         onChange={(e) => setConfirm({ type: 'updatePriority', id: t._id, extra: e.target.value })}
-                        className="ml-2 border border-glass px-2 py-1 rounded-lg text-[12px] bg-glass-panel focus:outline-none focus:border-cyan/40"
+                        className="ml-2 border border-glass px-2 py-1 rounded-lg text-xs bg-glass-panel focus:outline-none focus:border-accent/40"
                       >
                         <option value="low">Low</option>
                         <option value="medium">Medium</option>
@@ -849,7 +849,7 @@ function SupportTab() {
             <h2 className="text-xl font-semibold text-text-primary">Ticket Details</h2>
             <button
               onClick={() => setSelectedTicketId(null)}
-              className="px-3 py-1 rounded-lg border border-glass text-[12px] text-text-secondary hover:bg-glass-hover transition-colors"
+              className="px-3 py-1 rounded-lg border border-glass text-xs text-text-secondary hover:bg-glass-hover transition-colors"
             >
               Back to list
             </button>
@@ -857,18 +857,18 @@ function SupportTab() {
 
           <div className="p-4 space-y-4">
             <div className="space-y-2">
-              <p className="text-[13px] font-medium text-text-primary">Subject:</p>
-              <p className="text-[13px] text-text-secondary">{tickets.find(t => t._id === selectedTicketId)?.subject || '—'}</p>
+              <p className="text-small font-medium text-text-primary">Subject:</p>
+              <p className="text-small text-text-secondary">{tickets.find(t => t._id === selectedTicketId)?.subject || '—'}</p>
             </div>
             <div className="space-y-2">
-              <p className="text-[13px] font-medium text-text-primary">Description:</p>
-              <p className="text-[13px] text-text-secondary">{tickets.find(t => t._id === selectedTicketId)?.message || '—'}</p>
+              <p className="text-small font-medium text-text-primary">Description:</p>
+              <p className="text-small text-text-secondary">{tickets.find(t => t._id === selectedTicketId)?.message || '—'}</p>
             </div>
             <div className="space-y-2">
-              <p className="text-[13px] font-medium text-text-primary">Priority:</p>
-              <p className={`text-[13px] inline-flex items-center rounded-full px-2 py-0.5 text-[10px] font-semibold ${
+              <p className="text-small font-medium text-text-primary">Priority:</p>
+              <p className={`text-small inline-flex items-center rounded-full px-2 py-0.5 text-label font-semibold ${
                   tickets.find(t => t._id === selectedTicketId)?.priority === 'low' ? 'bg-text-muted/20 text-text-muted' :
-                  tickets.find(t => t._id === selectedTicketId)?.priority === 'medium' ? 'bg-amber/20 text-amber' :
+                  tickets.find(t => t._id === selectedTicketId)?.priority === 'medium' ? 'bg-highlight/20 text-highlight' :
                   tickets.find(t => t._id === selectedTicketId)?.priority === 'high' ? 'bg-negative/20 text-negative' :
                   tickets.find(t => t._id === selectedTicketId)?.priority === 'urgent' ? 'bg-positive/20 text-positive' :
                   'bg-text-muted/20 text-text-muted'
@@ -877,10 +877,10 @@ function SupportTab() {
               </p>
             </div>
             <div className="space-y-2">
-              <p className="text-[13px] font-medium text-text-primary">Status:</p>
-              <p className={`text-[13px] inline-flex items-center rounded-full px-2 py-0.5 text-[10px] font-semibold ${
-                  tickets.find(t => t._id === selectedTicketId)?.status === 'open' ? 'bg-amber/20 text-amber' :
-                  tickets.find(t => t._id === selectedTicketId)?.status === 'in_progress' ? 'bg-cyan/20 text-cyan' :
+              <p className="text-small font-medium text-text-primary">Status:</p>
+              <p className={`text-small inline-flex items-center rounded-full px-2 py-0.5 text-label font-semibold ${
+                  tickets.find(t => t._id === selectedTicketId)?.status === 'open' ? 'bg-highlight/20 text-highlight' :
+                  tickets.find(t => t._id === selectedTicketId)?.status === 'in_progress' ? 'bg-accent/20 text-accent' :
                   tickets.find(t => t._id === selectedTicketId)?.status === 'resolved' ? 'bg-positive/20 text-positive' :
                   tickets.find(t => t._id === selectedTicketId)?.status === 'closed' ? 'bg-text-muted/20 text-text-muted' :
                   'bg-text-muted/20 text-text-muted'
@@ -901,8 +901,8 @@ function SupportTab() {
                   <div className={`max-w-[80%] ${
                     msg.fromUser ? 'bg-green-500/10 text-green-500 self-start' : 'bg-blue-500/10 text-blue-500 self-end'
                   } rounded-lg px-3 py-2`}>
-                    <p className="text-[13px] whitespace-pre-wrap">{msg.body}</p>
-                    <p className="text-[11px] opacity-70">
+                    <p className="text-small whitespace-pre-wrap">{msg.body}</p>
+                    <p className="text-label opacity-70">
                       {msg.fromUser ? 'User' : 'Admin'} • {new Date(msg.createdAt).toLocaleString()}
                     </p>
                   </div>
@@ -919,13 +919,13 @@ function SupportTab() {
                 value={replyText}
                 onChange={(e) => setReplyText(e.target.value)}
                 placeholder="Type your reply..."
-                className="w-full px-3 py-2 rounded-lg border border-glass bg-glass-panel/40 text-[12px] resize-none focus:outline-none focus:border-cyan/40"
+                className="w-full px-3 py-2 rounded-lg border border-glass bg-glass-panel/40 text-xs resize-none focus:outline-none focus:border-accent/40"
                 rows={3}
               />
               <button
                 onClick={handleSendReply}
                 disabled={!replyText.trim() || isReplying}
-                className="w-full btn-gradient py-2 px-4 text-[13px] font-medium text-white hover:opacity-90 transition-colors disabled:opacity-50"
+                className="w-full btn-gradient py-2 px-4 text-small font-medium text-white hover:opacity-90 transition-colors disabled:opacity-50"
               >
                 {isReplying ? 'Sending...' : 'Send Reply'}
               </button>
@@ -1044,27 +1044,27 @@ function AnnouncementsTab() {
         </h2>
         <form onSubmit={handleSubmit} className="space-y-3">
           <div>
-            <label className="block mb-1 text-[13px] font-medium text-text-secondary">Title</label>
+            <label className="block mb-1 text-small font-medium text-text-secondary">Title</label>
             <input
               value={formData.title}
               onChange={(e) => setFormData({ ...formData, title: e.target.value })}
               placeholder="Announcement title"
-              className="w-full px-3 py-2 rounded-lg border border-glass bg-glass-panel/40 text-[13px] focus:outline-none focus:border-cyan/40"
+              className="w-full px-3 py-2 rounded-lg border border-glass bg-glass-panel/40 text-small focus:outline-none focus:border-accent/40"
             />
           </div>
           <div>
-            <label className="block mb-1 text-[13px] font-medium text-text-secondary">Body</label>
+            <label className="block mb-1 text-small font-medium text-text-secondary">Body</label>
             <textarea
               value={formData.body}
               onChange={(e) => setFormData({ ...formData, body: e.target.value })}
               placeholder="Announcement details"
-              className="w-full px-3 py-2 rounded-lg border border-glass bg-glass-panel/40 text-[13px] resize-none focus:outline-none focus:border-cyan/40"
+              className="w-full px-3 py-2 rounded-lg border border-glass bg-glass-panel/40 text-small resize-none focus:outline-none focus:border-accent/40"
               rows={4}
             />
           </div>
           <div className="flex gap-3">
             <div className="flex-1">
-              <label className="block mb-1 text-[13px] font-medium text-text-secondary">Type</label>
+              <label className="block mb-1 text-small font-medium text-text-secondary">Type</label>
               <SelectField
                 value={formData.type}
                 onChange={(e) => setFormData({ ...formData, type: e.target.value })}
@@ -1075,7 +1075,7 @@ function AnnouncementsTab() {
               </SelectField>
             </div>
             <div className="flex-1">
-              <label className="block mb-1 text-[13px] font-medium text-text-secondary">Active</label>
+              <label className="block mb-1 text-small font-medium text-text-secondary">Active</label>
               <SelectField
                 value={formData.active.toString()}
                 onChange={(e) => setFormData({ ...formData, active: e.target.value === 'true' })}
@@ -1085,12 +1085,12 @@ function AnnouncementsTab() {
               </SelectField>
             </div>
             <div>
-              <label className="block mb-1 text-[13px] font-medium text-text-secondary">Expires At (optional)</label>
+              <label className="block mb-1 text-small font-medium text-text-secondary">Expires At (optional)</label>
               <input
                 type="date"
                 value={formData.expiresAt}
                 onChange={(e) => setFormData({ ...formData, expiresAt: e.target.value })}
-                className="w-full px-3 py-2 rounded-lg border border-glass bg-glass-panel/40 text-[13px] focus:outline-none focus:border-cyan/40"
+                className="w-full px-3 py-2 rounded-lg border border-glass bg-glass-panel/40 text-small focus:outline-none focus:border-accent/40"
               />
             </div>
           </div>
@@ -1113,7 +1113,7 @@ function AnnouncementsTab() {
             </button>
             <button
               type="submit"
-              className="ml-2 btn-gradient py-2 px-4 text-[13px] font-medium text-white hover:opacity-90 transition-colors"
+              className="ml-2 btn-gradient py-2 px-4 text-small font-medium text-white hover:opacity-90 transition-colors"
             >
               {editId ? 'Update' : 'Create'}
             </button>
@@ -1124,9 +1124,9 @@ function AnnouncementsTab() {
       {/* Announcements list */}
       <div className="rounded-xl border border-glass bg-charcoal">
         <div className="overflow-x-auto">
-          <table className="w-full text-[13px]">
+          <table className="w-full text-small">
             <thead>
-              <tr className="border-b border-glass text-text-muted text-[11px] uppercase tracking-wider">
+              <tr className="border-b border-glass text-text-muted text-label uppercase tracking-wider">
                 <th className="px-4 py-3 text-left font-semibold">Title</th>
                 <th className="px-4 py-3 text-left font-semibold">Type</th>
                 <th className="px-4 py-3 text-left font-semibold">Active</th>
@@ -1149,9 +1149,9 @@ function AnnouncementsTab() {
                 <tr key={a._id} className="border-b border-glass/50 last:border-0 hover:bg-glass-hover/30 transition-colors">
                   <td className="px-4 py-3 font-medium text-text-primary">{a.title}</td>
                   <td className="px-4 py-3">
-                    <span className={`inline-flex items-center rounded-full px-2 py-0.5 text-[10px] font-semibold ${
-                      a.type === 'info' ? 'bg-cyan/20 text-cyan' :
-                      a.type === 'warning' ? 'bg-amber/20 text-amber' :
+                    <span className={`inline-flex items-center rounded-full px-2 py-0.5 text-label font-semibold ${
+                      a.type === 'info' ? 'bg-accent/20 text-accent' :
+                      a.type === 'warning' ? 'bg-highlight/20 text-highlight' :
                       a.type === 'success' ? 'bg-positive/20 text-positive' :
                       'bg-text-muted/20 text-text-muted'
                     }`}>
@@ -1159,7 +1159,7 @@ function AnnouncementsTab() {
                     </span>
                   </td>
                   <td className="px-4 py-3">
-                    <span className={`inline-flex items-center rounded-full px-2 py-0.5 text-[10px] font-semibold ${
+                    <span className={`inline-flex items-center rounded-full px-2 py-0.5 text-label font-semibold ${
                       a.active ? 'bg-positive/20 text-positive' : 'bg-text-muted/20 text-text-muted'
                     }`}>
                       {a.active ? 'Active' : 'Inactive'}
@@ -1274,7 +1274,7 @@ function ActivityTab() {
         <div className="rounded-xl border border-glass bg-charcoal p-4">
           <div className="flex items-center gap-2">
             <Activity className="h-4 w-4 text-accent" />
-            <span className="text-[13px] font-medium text-text-secondary">Loading activity log...</span>
+            <span className="text-small font-medium text-text-secondary">Loading activity log...</span>
           </div>
           <div className="mt-2 h-24 rounded-xl border border-glass bg-charcoal animate-pulse" />
         </div>
@@ -1287,7 +1287,7 @@ function ActivityTab() {
       {/* Controls */}
       <div className="flex flex-wrap items-center gap-3 mb-4">
         <div>
-          <label className="block mb-1 text-[13px] font-medium text-text-secondary">Entries per page</label>
+          <label className="block mb-1 text-small font-medium text-text-secondary">Entries per page</label>
           <SelectField
             value={perPage.toString()}
             onChange={(e) => {
@@ -1305,9 +1305,9 @@ function ActivityTab() {
 
       {/* Activity table */}
       <div className="rounded-xl border border-glass bg-charcoal overflow-x-auto">
-        <table className="w-full text-[13px]">
+        <table className="w-full text-small">
           <thead>
-            <tr className="border-b border-glass text-text-muted text-[11px] uppercase tracking-wider">
+            <tr className="border-b border-glass text-text-muted text-label uppercase tracking-wider">
               <th className="px-4 py-3 text-left font-semibold">Action</th>
               <th className="px-4 py-3 text-left font-semibold">Entity Type</th>
               <th className="px-4 py-3 text-left font-semibold">Performed By</th>
@@ -1337,7 +1337,7 @@ function ActivityTab() {
 
       {/* Pagination */}
       <div className="flex items-center justify-between pt-4 border-t border-glass">
-        <span className="text-[13px] text-text-muted">
+        <span className="text-small text-text-muted">
           Showing {(page - 1) * perPage + 1}-{Math.min(page * perPage, total)} of {total} entries
         </span>
         <div className="flex items-center gap-2">
@@ -1348,7 +1348,7 @@ function ActivityTab() {
           >
             Previous
           </button>
-          <span className="text-[13px] text-text-muted">{page} of {Math.ceil(total / perPage)}</span>
+          <span className="text-small text-text-muted">{page} of {Math.ceil(total / perPage)}</span>
           <button
             onClick={() => setPage(Math.min(Math.ceil(total / perPage), page + 1))}
             disabled={page >= Math.ceil(total / perPage) || total === 0}
@@ -1393,7 +1393,7 @@ export default function AdminPage() {
       {/* Page header */}
       <div>
         <h1 className="text-2xl font-bold text-text-primary">Admin Panel</h1>
-        <p className="mt-1 text-[13px] text-text-muted">Manage users, businesses, and platform health.</p>
+        <p className="mt-1 text-small text-text-muted">Manage users, businesses, and platform health.</p>
       </div>
 
       {/* Tab bar */}
@@ -1403,7 +1403,7 @@ export default function AdminPage() {
             key={tab.key}
             onClick={() => setActiveTab(tab.key)}
             className={cn(
-              'px-4 py-2.5 text-[13px] font-medium transition-colors border-b-2 -mb-px',
+              'px-4 py-2.5 text-small font-medium transition-colors border-b-2 -mb-px',
               activeTab === tab.key
                 ? 'border-accent text-text-primary'
                 : 'border-transparent text-text-muted hover:text-text-secondary',

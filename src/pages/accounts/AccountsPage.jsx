@@ -68,7 +68,7 @@ export default function AccountsPage() {
         <div>
           <p className="font-bold text-text-primary">{row.accountName}</p>
           {row.isDefault && <span className="text-xs text-text-muted">System Default</span>}
-          {row.autoCreated && <span className="text-xs text-amber-500">Added automatically during import — review name & type</span>}
+          {row.autoCreated && <span className="text-xs text-highlight">Added automatically during import — review name & type</span>}
         </div>
       ),
     },
@@ -143,7 +143,7 @@ export default function AccountsPage() {
                 onClick={() => setActiveFilter(f)}
                 className={`whitespace-nowrap rounded-full px-4 py-1.5 text-sm font-medium transition-colors ${
                   activeFilter === f
-                    ? 'bg-cyan text-ink-on-accent shadow-glow-cyan'
+                    ? 'bg-accent text-ink-on-accent shadow-glow-accent'
                     : 'bg-glass-panel text-text-secondary hover:bg-glass-hover hover:text-text-primary border border-glass'
                 }`}
               >

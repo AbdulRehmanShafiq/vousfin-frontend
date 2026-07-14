@@ -76,9 +76,9 @@ function KpiTile({ label, value, sub, accent }) {
   return (
     <div className={cn(
       'premium-card p-5 flex flex-col gap-1',
-      accent && 'border-cyan/30 bg-cyan/5'
+      accent && 'border-accent/30 bg-accent/5'
     )}>
-      <span className="text-[12.5px] text-text-muted font-semibold uppercase tracking-wider">
+      <span className="text-small text-text-muted font-semibold uppercase tracking-wider">
         {label}
       </span>
       <span className="text-2xl font-black text-text-primary leading-tight">{value}</span>
@@ -111,9 +111,9 @@ function PaymentForm({ row, currency, onClose, bankAccounts }) {
   }
 
   return (
-    <div className="bg-navy/80 border border-cyan/20 rounded-xl p-4 space-y-3 animate-fade-in">
+    <div className="bg-navy/80 border border-accent/20 rounded-xl p-4 space-y-3 animate-fade-in">
       <div className="flex items-center justify-between">
-        <p className="text-sm font-semibold text-cyan flex items-center gap-1.5">
+        <p className="text-sm font-semibold text-accent flex items-center gap-1.5">
           <DollarSign className="h-4 w-4" /> Record Payment
         </p>
         <button type="button" onClick={onClose} className="text-text-muted hover:text-text-primary">
@@ -122,7 +122,7 @@ function PaymentForm({ row, currency, onClose, bankAccounts }) {
       </div>
       <p className="text-xs text-text-muted">
         Outstanding: <span className="font-semibold text-text-primary">{formatCurrency(max, currency)}</span>
-        {row._customerName && <> · <span className="text-cyan">{row._customerName}</span></>}
+        {row._customerName && <> · <span className="text-accent">{row._customerName}</span></>}
       </p>
       <div className="grid grid-cols-2 gap-2">
         <Input
@@ -267,7 +267,7 @@ export default function ReceivablesPage() {
         <Link
           to={`/customers/${r._customerId}`}
           onClick={(e) => e.stopPropagation()}
-          className="font-semibold text-text-primary hover:text-cyan transition-colors"
+          className="font-semibold text-text-primary hover:text-accent transition-colors"
         >
           {r._customerName}
         </Link>
@@ -279,7 +279,7 @@ export default function ReceivablesPage() {
       key: 'invoice',
       header: 'Invoice #',
       render: (r) => r._invoice
-        ? <span className="font-mono text-xs text-cyan">{r._invoice}</span>
+        ? <span className="font-mono text-xs text-accent">{r._invoice}</span>
         : <span className="text-text-muted text-xs">—</span>,
     },
     {
@@ -329,8 +329,8 @@ export default function ReceivablesPage() {
         const bucket = ageBucket(d)
         return (
           <div className="flex items-center gap-1.5">
-            <Badge variant={bucket.variant} className="text-[12px]">{bucket.label}</Badge>
-            <span className="text-[12px] text-text-muted">{d}d</span>
+            <Badge variant={bucket.variant} className="text-xs">{bucket.label}</Badge>
+            <span className="text-xs text-text-muted">{d}d</span>
           </div>
         )
       },
@@ -353,7 +353,7 @@ export default function ReceivablesPage() {
         <button
           type="button"
           onClick={(e) => { e.stopPropagation(); setPayingRowId(r._id === payingRowId ? null : r._id) }}
-          className="text-xs text-cyan hover:underline font-semibold whitespace-nowrap"
+          className="text-xs text-accent hover:underline font-semibold whitespace-nowrap"
         >
           {r._id === payingRowId ? 'Cancel' : '+ Pay'}
         </button>
@@ -367,7 +367,7 @@ export default function ReceivablesPage() {
       <div className="flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between">
         <div>
           <h1 className="flex items-center gap-2 text-2xl font-black text-text-primary tracking-tight">
-            <Wallet className="h-6 w-6 text-cyan" />
+            <Wallet className="h-6 w-6 text-accent" />
             Money owed to you
           </h1>
           <p className="text-text-secondary mt-1 text-sm">
@@ -424,7 +424,7 @@ export default function ReceivablesPage() {
       {aging && (
         <div className="premium-card p-5">
           <h3 className="text-sm font-bold text-text-primary mb-3 flex items-center gap-2">
-            <AlertTriangle className="h-4 w-4 text-amber" /> How overdue it is
+            <AlertTriangle className="h-4 w-4 text-highlight" /> How overdue it is
           </h3>
           <div className="grid grid-cols-2 sm:grid-cols-5 gap-3">
             {[
@@ -439,7 +439,7 @@ export default function ReceivablesPage() {
                 <div key={b.key} className="rounded-xl border border-glass bg-glass-panel p-3">
                   <div className="flex items-center justify-between mb-1">
                     <Badge variant={b.variant}>{b.label}</Badge>
-                    <span className="text-[12px] text-text-muted">
+                    <span className="text-xs text-text-muted">
                       {bucket.count} {bucket.count === 1 ? 'inv' : 'invs'}
                     </span>
                   </div>

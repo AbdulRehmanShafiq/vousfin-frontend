@@ -28,7 +28,7 @@ const pct = (n) => (n === null || n === undefined ? '—' : `${Math.round(n * 10
 function SectionTitle({ icon: Icon, title, hint }) {
   return (
     <div className="mb-3 flex items-center gap-2">
-      <Icon className="h-4 w-4 text-cyan" />
+      <Icon className="h-4 w-4 text-accent" />
       <h2 className="text-sm font-bold uppercase tracking-[0.08em] text-text-secondary">{title}</h2>
       {hint && <span className="text-xs text-text-muted">· {hint}</span>}
     </div>
@@ -52,7 +52,7 @@ function AdvisorFeed() {
         <div className="space-y-2">
           {recs.map((r) => (
             <Card key={r.id} className="flex items-start gap-3">
-              <AlertTriangle className={`mt-0.5 h-4 w-4 shrink-0 ${r.severity === 'critical' ? 'text-negative' : r.severity === 'high' ? 'text-amber-2' : 'text-cyan'}`} />
+              <AlertTriangle className={`mt-0.5 h-4 w-4 shrink-0 ${r.severity === 'critical' ? 'text-negative' : r.severity === 'high' ? 'text-highlight-2' : 'text-accent'}`} />
               <div className="min-w-0 flex-1">
                 <div className="flex items-center gap-2">
                   <p className="font-semibold text-text-primary">{r.title}</p>
@@ -60,7 +60,7 @@ function AdvisorFeed() {
                 </div>
                 <p className="mt-1 text-sm text-text-muted">{r.why}</p>
                 {r.action?.link && (
-                  <a href={r.action.link} className="mt-2 inline-flex items-center gap-1 text-xs font-semibold text-cyan hover:underline">
+                  <a href={r.action.link} className="mt-2 inline-flex items-center gap-1 text-xs font-semibold text-accent hover:underline">
                     {r.action.label} <ChevronRight className="h-3 w-3" />
                   </a>
                 )}
@@ -123,7 +123,7 @@ function ScorecardStrip() {
           <div className="mt-3 grid grid-cols-2 gap-2">
             {caps.map(([label, rate]) => (
               <div key={label} className="rounded-lg bg-glass-panel px-3 py-2">
-                <p className="text-[11px] uppercase tracking-wide text-text-muted">{label}</p>
+                <p className="text-label uppercase tracking-wide text-text-muted">{label}</p>
                 <p className="num text-lg font-semibold text-text-primary">{pct(rate)}</p>
               </div>
             ))}
@@ -146,7 +146,7 @@ function ScorecardStrip() {
                   <div key={c.key} className="flex items-center gap-2 text-sm">
                     {c.ok ? <Check className="h-4 w-4 text-positive" /> : <X className="h-4 w-4 text-negative" />}
                     <span className={c.ok ? 'text-text-muted' : 'text-text-primary'}>{c.label}</span>
-                    {!c.ok && c.count > 0 && <span className="text-xs text-amber-2">({c.count})</span>}
+                    {!c.ok && c.count > 0 && <span className="text-xs text-highlight-2">({c.count})</span>}
                   </div>
                 ))}
               </div>
@@ -236,7 +236,7 @@ function DecisionLedger() {
       <div className="mb-2 flex flex-wrap gap-1.5">
         {kinds.map((k) => (
           <button key={k || 'all'} onClick={() => setKind(k)}
-            className={`rounded-md px-2.5 py-1 text-xs font-semibold ${kind === k ? 'bg-cyan text-black' : 'bg-glass-panel text-text-muted hover:text-text-primary'}`}>
+            className={`rounded-md px-2.5 py-1 text-xs font-semibold ${kind === k ? 'bg-accent text-black' : 'bg-glass-panel text-text-muted hover:text-text-primary'}`}>
             {k || 'All'}
           </button>
         ))}

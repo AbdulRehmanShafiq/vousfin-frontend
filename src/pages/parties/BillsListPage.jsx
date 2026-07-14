@@ -70,7 +70,7 @@ export default function BillsListPage() {
         <button
           type="button"
           onClick={() => navigate(`/purchases/bills/${r._id}/edit`)}
-          className="font-mono text-sm text-cyan hover:underline font-semibold"
+          className="font-mono text-sm text-accent hover:underline font-semibold"
         >
           {r.billNumber}
         </button>
@@ -119,7 +119,7 @@ export default function BillsListPage() {
       render: (r) => {
         const balance = r.remainingBalance ?? (r.totalAmount || 0) - (r.paidAmount || 0)
         return (
-          <span className={`font-mono text-sm ${balance > 0 ? 'text-amber' : 'text-positive'}`}>
+          <span className={`font-mono text-sm ${balance > 0 ? 'text-highlight' : 'text-positive'}`}>
             {formatCurrency(balance, r.currencyCode || currency)}
           </span>
         )
@@ -163,7 +163,7 @@ export default function BillsListPage() {
       <div className="flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between">
         <div>
           <h1 className="flex items-center gap-2 text-2xl font-black text-text-primary tracking-tight">
-            <FileText className="h-6 w-6 text-cyan" />
+            <FileText className="h-6 w-6 text-accent" />
             Bills
           </h1>
           <p className="text-text-secondary mt-1 text-sm">

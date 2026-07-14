@@ -31,7 +31,7 @@ const CashFlowTrendChart = memo(function CashFlowTrendChart({ data = [], loading
     <div className="premium-card p-5 h-full">
       <div className="mb-5">
         <h3 className="text-sm font-bold text-text-primary">Cash Flow Trend</h3>
-        <p className="text-[12.5px] text-text-muted mt-0.5">Net cash movement · YTD</p>
+        <p className="text-small text-text-muted mt-0.5">Net cash movement · YTD</p>
       </div>
       {data.length === 0 ? (
         <div className="h-64 flex items-center justify-center text-text-muted text-sm border border-dashed border-glass rounded-xl">

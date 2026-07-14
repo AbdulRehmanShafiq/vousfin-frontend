@@ -31,11 +31,11 @@ export default function MoneyInOutCard({ income = 0, expenses = 0, net, currency
     <div className="premium-card p-5">
       <div className="flex items-center justify-between gap-3 mb-4">
         <div>
-          <h3 className="text-[12.5px] font-bold uppercase tracking-widest text-text-muted">This month</h3>
-          <p className="text-[12.5px] text-text-muted mt-0.5">Money coming in, going out, and what's left</p>
+          <h3 className="text-small font-bold uppercase tracking-widest text-text-muted">This month</h3>
+          <p className="text-small text-text-muted mt-0.5">Money coming in, going out, and what's left</p>
         </div>
         <Link to="/financial-reports/income-statement"
-          className="flex items-center gap-1 text-[12.5px] text-cyan hover:underline font-medium shrink-0">
+          className="flex items-center gap-1 text-small text-accent hover:underline font-medium shrink-0">
           See detail <ExternalLink className="h-3 w-3" />
         </Link>
       </div>
@@ -50,9 +50,9 @@ export default function MoneyInOutCard({ income = 0, expenses = 0, net, currency
       </div>
 
       {/* Money going out */}
-      <div className="flex items-center justify-between p-3 rounded-xl bg-amber/[0.06] border border-amber/15 mb-2.5">
+      <div className="flex items-center justify-between p-3 rounded-xl bg-highlight/[0.06] border border-highlight/15 mb-2.5">
         <div className="flex items-center gap-2.5">
-          <div className="p-1.5 rounded-lg bg-amber/15"><ArrowUpRight className="h-4 w-4 text-amber" /></div>
+          <div className="p-1.5 rounded-lg bg-highlight/15"><ArrowUpRight className="h-4 w-4 text-highlight" /></div>
           <span className="text-sm font-medium text-text-secondary">Money going out</span>
         </div>
         <span className="num text-base font-semibold text-text-primary">{formatCompactCurrency(expenses, currency)}</span>
@@ -61,11 +61,11 @@ export default function MoneyInOutCard({ income = 0, expenses = 0, net, currency
       {/* What's left */}
       <div className={cn(
         'flex items-center justify-between p-3 rounded-xl border',
-        negative ? 'bg-negative/[0.06] border-negative/20' : 'bg-cyan/[0.06] border-cyan/20',
+        negative ? 'bg-negative/[0.06] border-negative/20' : 'bg-accent/[0.06] border-accent/20',
       )}>
         <div className="flex items-center gap-2.5">
-          <div className={cn('p-1.5 rounded-lg', negative ? 'bg-negative/15' : 'bg-cyan/15')}>
-            <Wallet className={cn('h-4 w-4', negative ? 'text-negative' : 'text-cyan')} />
+          <div className={cn('p-1.5 rounded-lg', negative ? 'bg-negative/15' : 'bg-accent/15')}>
+            <Wallet className={cn('h-4 w-4', negative ? 'text-negative' : 'text-accent')} />
           </div>
           <span className="text-sm font-semibold text-text-primary inline-flex items-center gap-0.5">
             {negative ? "What you're short" : "What's left"}

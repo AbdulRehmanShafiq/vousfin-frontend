@@ -63,7 +63,7 @@ export default function Register() {
     return (
       <div className="w-full">
         <div className="mb-8 text-center">
-          <MailCheck className="mx-auto h-12 w-12 text-cyan mb-4" aria-hidden="true" />
+          <MailCheck className="mx-auto h-12 w-12 text-accent mb-4" aria-hidden="true" />
           <h1 className="text-2xl font-semibold text-text-primary tracking-tight">{t('auth.register.checkEmail', 'Check your email')}</h1>
           <p className="mt-2 text-text-secondary text-sm">
             We&apos;ve sent a verification link to{' '}
@@ -78,7 +78,7 @@ export default function Register() {
           </Button>
           <Link
             to="/login"
-            className="block w-full text-center rounded-md border border-transparent px-4 py-2.5 text-sm font-semibold text-cyan hover:text-cyan-2 transition-colors"
+            className="block w-full text-center rounded-md border border-transparent px-4 py-2.5 text-sm font-semibold text-accent hover:text-accent-2 transition-colors"
           >
             {t('action.backToLogin', 'Back to Sign In')}
           </Link>
@@ -152,7 +152,7 @@ export default function Register() {
 
       <p className="mt-8 text-center text-sm text-text-muted">
         {t('auth.register.hasAccount', 'Already have an account?')}{' '}
-        <Link to="/login" className="font-bold text-cyan hover:underline">
+        <Link to="/login" className="font-bold text-accent hover:underline">
           {t('action.signIn', 'Sign In')}
         </Link>
       </p>

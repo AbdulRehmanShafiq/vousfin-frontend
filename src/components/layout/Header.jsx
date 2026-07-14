@@ -73,7 +73,7 @@ export default function Header() {
           >
             <Search className="h-[18px] w-[18px]" aria-hidden="true" />
             <span className="hidden sm:inline">Search or ask AI</span>
-            <kbd className="hidden rounded bg-navy px-1.5 text-[10px] leading-5 lg:inline">⌘K</kbd>
+            <kbd className="hidden rounded bg-navy px-1.5 text-label leading-5 lg:inline">⌘K</kbd>
           </button>
 
           {/* Notifications — what needs you, with deep links (Ledger shell v2) */}
@@ -88,7 +88,7 @@ export default function Header() {
             >
               <Bell className="h-[18px] w-[18px]" aria-hidden="true" />
               {approvalsPending > 0 && (
-                <span className="absolute top-0.5 right-0.5 min-w-[15px] h-[15px] px-1 rounded-full bg-amber text-[10px] font-bold text-ink-on-accent flex items-center justify-center">
+                <span className="absolute top-0.5 right-0.5 min-w-[15px] h-[15px] px-1 rounded-full bg-highlight text-label font-bold text-ink-on-accent flex items-center justify-center">
                   {approvalsPending > 99 ? '99+' : approvalsPending}
                 </span>
               )}
@@ -112,7 +112,7 @@ export default function Header() {
                     <n.icon className="h-4 w-4 text-text-muted" aria-hidden="true" />
                     <span className="flex-1">{n.label}</span>
                     {n.badge > 0 && (
-                      <span className="min-w-[18px] h-[18px] px-1.5 rounded-full bg-amber text-[11px] font-bold text-ink-on-accent flex items-center justify-center">
+                      <span className="min-w-[18px] h-[18px] px-1.5 rounded-full bg-highlight text-label font-bold text-ink-on-accent flex items-center justify-center">
                         {n.badge}
                       </span>
                     )}
@@ -138,7 +138,7 @@ export default function Header() {
               <span className="h-7 w-7 rounded-full bg-accent-soft border border-glass-2 flex items-center justify-center text-accent text-xs font-semibold">
                 {initial}
               </span>
-              <span className="hidden lg:block text-[13px] text-text-secondary">{user?.fullName || 'User'}</span>
+              <span className="hidden lg:block text-small text-text-secondary">{user?.fullName || 'User'}</span>
               <ChevronDown className={cn('hidden lg:block h-3.5 w-3.5 text-text-muted transition-transform', menuOpen && 'rotate-180')} />
             </button>
 

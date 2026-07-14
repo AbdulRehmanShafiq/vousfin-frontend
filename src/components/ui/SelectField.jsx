@@ -27,7 +27,7 @@ export const SelectField = forwardRef(({
   return (
     <div className="w-full">
       {label && (
-        <label htmlFor={fieldId} className="mb-1.5 block text-[11px] text-text-muted uppercase tracking-wider">
+        <label htmlFor={fieldId} className="mb-1.5 block text-label text-text-muted uppercase tracking-wider">
           {label}
         </label>
       )}
@@ -36,8 +36,8 @@ export const SelectField = forwardRef(({
         id={fieldId}
         name={name}
         className={cn(
-          'w-full px-3 py-2 rounded-lg border border-glass bg-glass-panel/40 text-[13px] text-text-primary',
-          'focus:outline-none focus:border-cyan/40 transition-colors',
+          'w-full px-3 py-2 rounded-lg border border-glass bg-glass-panel/40 text-small text-text-primary',
+          'focus:outline-none focus:border-accent/40 transition-colors',
           error ? 'border-negative/50' : '',
           className,
         )}

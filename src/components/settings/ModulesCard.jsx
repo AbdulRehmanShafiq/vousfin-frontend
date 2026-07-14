@@ -18,7 +18,7 @@ export default function ModulesCard() {
     <div className="premium-card p-5 sm:p-6 space-y-4">
       <div>
         <h3 className="font-display text-lg font-semibold text-text-primary">Navigation modules</h3>
-        <p className="mt-1 text-[13px] text-text-secondary">
+        <p className="mt-1 text-small text-text-secondary">
           Show only the parts of VousFin you use. Core modules always stay visible.
         </p>
       </div>

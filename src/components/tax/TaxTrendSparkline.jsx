@@ -11,7 +11,7 @@ const TinyTooltip = memo(({ active, payload, currency }) => {
   if (!active || !payload?.length) return null
   const p = payload[0].payload
   return (
-    <div className="rounded-lg border border-glass bg-charcoal/95 backdrop-blur-sm px-2.5 py-1.5 shadow-elevated text-[11px]">
+    <div className="rounded-lg border border-glass bg-charcoal/95 backdrop-blur-sm px-2.5 py-1.5 shadow-elevated text-label">
       <p className="font-bold text-text-primary leading-none mb-0.5">{formatCurrency(p.value, currency)}</p>
       <p className="text-text-muted leading-none">{formatDate(p.date, 'd MMM')}</p>
     </div>
@@ -25,7 +25,7 @@ function TaxTrendSparkline({ series = [], color = 'rgb(var(--chart-cash))', curr
 
   if (points.length < 2) {
     return (
-      <div className="flex items-center gap-2 text-[11.5px] text-text-muted" style={{ height }}>
+      <div className="flex items-center gap-2 text-label text-text-muted" style={{ height }}>
         <div className="h-px flex-1 bg-glass" />
         <span className="shrink-0">Trend builds daily</span>
         <div className="h-px flex-1 bg-glass" />

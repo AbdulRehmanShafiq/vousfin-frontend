@@ -265,7 +265,7 @@ export default function TransactionReviewQueuePage() {
         {TABS.map(t => (
           <button key={t.key} onClick={() => setTab(t.key)}
             className={`text-sm px-4 py-2 font-medium border-b-2 transition-colors ${
-              tab === t.key ? 'border-cyan text-cyan' : 'border-transparent text-text-muted hover:text-text-secondary'}`}>
+              tab === t.key ? 'border-accent text-accent' : 'border-transparent text-text-muted hover:text-text-secondary'}`}>
             {t.label}
           </button>
         ))}

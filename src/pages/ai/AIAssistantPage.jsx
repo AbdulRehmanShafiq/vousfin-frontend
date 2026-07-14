@@ -7,7 +7,7 @@ function RecommendationItem({ item }) {
   const iconMap = {
     warning: <AlertTriangle className="h-4 w-4 text-warning flex-shrink-0 mt-0.5" />,
     positive: <TrendingUp className="h-4 w-4 text-positive flex-shrink-0 mt-0.5" />,
-    info: <Lightbulb className="h-4 w-4 text-cyan flex-shrink-0 mt-0.5" />,
+    info: <Lightbulb className="h-4 w-4 text-accent flex-shrink-0 mt-0.5" />,
   }
   const icon = iconMap[item.type] || iconMap.info
 
@@ -32,7 +32,7 @@ export default function AIAssistantPage() {
       {/* Header */}
       <div>
         <h1 className="flex items-center gap-2 text-2xl font-black text-text-primary tracking-tight">
-          <BrainCircuit className="h-6 w-6 text-cyan" />
+          <BrainCircuit className="h-6 w-6 text-accent" />
           AI Financial Assistant
         </h1>
         <p className="text-text-secondary mt-1">
@@ -48,9 +48,9 @@ export default function AIAssistantPage() {
 
         {/* Recommendations Panel — takes 1/3 */}
         <div className="space-y-4">
-          <div className="premium-card p-5 border-cyan/20 bg-cyan/5">
+          <div className="premium-card p-5 border-accent/20 bg-accent/5">
             <h2 className="flex items-center gap-2 text-base font-bold text-text-primary mb-4 border-b border-glass pb-3">
-              <Lightbulb className="h-4 w-4 text-cyan" />
+              <Lightbulb className="h-4 w-4 text-accent" />
               AI Recommendations
             </h2>
 

@@ -69,7 +69,7 @@ function Queue() {
       <div className="flex gap-1">
         {STATUS_FILTERS.map((s) => (
           <button key={s.key} onClick={() => setStatus(s.key)}
-            className={`text-xs px-3 py-1.5 rounded-lg font-medium ${status === s.key ? 'bg-cyan text-ink-on-accent' : 'bg-glass-panel text-text-secondary hover:bg-glass-hover'}`}>
+            className={`text-xs px-3 py-1.5 rounded-lg font-medium ${status === s.key ? 'bg-accent text-ink-on-accent' : 'bg-glass-panel text-text-secondary hover:bg-glass-hover'}`}>
             {s.label}
           </button>
         ))}
@@ -145,7 +145,7 @@ function Settings() {
   if (isLoading || form === null) return <div className="h-40 bg-glass-panel animate-pulse rounded-xl" />
 
   const set = (k, v) => setForm((f) => ({ ...f, [k]: v }))
-  const inp = 'w-full text-sm border border-glass-2 rounded-lg px-3 py-2 outline-none focus:ring-2 focus:ring-cyan'
+  const inp = 'w-full text-sm border border-glass-2 rounded-lg px-3 py-2 outline-none focus:ring-2 focus:ring-accent'
 
   const save = async () => {
     setSaving(true)
@@ -205,7 +205,7 @@ export default function ApprovalsQueuePage() {
       <div className="flex gap-1 border-b border-glass">
         {TABS.map((t) => (
           <button key={t.key} onClick={() => setTab(t.key)}
-            className={`text-sm px-4 py-2 font-medium border-b-2 transition-colors ${tab === t.key ? 'border-cyan text-cyan' : 'border-transparent text-text-muted hover:text-text-secondary'}`}>
+            className={`text-sm px-4 py-2 font-medium border-b-2 transition-colors ${tab === t.key ? 'border-accent text-accent' : 'border-transparent text-text-muted hover:text-text-secondary'}`}>
             {t.label}
           </button>
         ))}

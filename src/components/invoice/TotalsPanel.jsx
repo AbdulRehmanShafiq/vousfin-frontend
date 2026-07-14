@@ -47,7 +47,7 @@ export default function TotalsPanel({
       )}
 
       {/* Grand total */}
-      <div className="border-t border-cyan/20 pt-2 mt-2">
+      <div className="border-t border-accent/20 pt-2 mt-2">
         <Row label="Total" value={fmt(totalAmount)} bold />
       </div>
 
@@ -58,7 +58,7 @@ export default function TotalsPanel({
         <Row label="Credited" value={`- ${fmt(totalCredited)}`} muted />
       )}
       {(paidAmount > 0 || totalCredited > 0) && (
-        <div className="border-t border-cyan/20 pt-2">
+        <div className="border-t border-accent/20 pt-2">
           <Row label="Still due" value={fmt(balanceDue)} bold accent />
         </div>
       )}
@@ -79,7 +79,7 @@ function Row({ label, value, bold = false, muted = false, accent = false }) {
       <span className={cn(
         'tabular-nums text-right',
         bold && 'font-bold text-base',
-        accent && 'text-cyan',
+        accent && 'text-accent',
         !bold && !muted && 'text-text-primary',
         muted && 'text-text-muted',
       )}>

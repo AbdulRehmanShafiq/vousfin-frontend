@@ -66,7 +66,7 @@ export default function AnnouncementBanner() {
       case 'info':
         return 'bg-blue-500/10 text-blue-500 border-blue-500/20'
       case 'warning':
-        return 'bg-amber-500/10 text-amber-500 border-amber-500/20'
+        return 'bg-highlight/10 text-highlight border-highlight/20'
       case 'success':
         return 'bg-green-500/10 text-green-500 border-green-500/20'
       default:
@@ -96,10 +96,10 @@ export default function AnnouncementBanner() {
           )}
         </div>
         <div className="flex-1">
-          <p className="mb-1 text-[13px] font-medium">{announcement.title}</p>
-          <p className="text-[13px]">{announcement.body}</p>
+          <p className="mb-1 text-small font-medium">{announcement.title}</p>
+          <p className="text-small">{announcement.body}</p>
           {announcement.expiresAt && (
-            <p className="mt-1 text-[11px] text-text-muted">
+            <p className="mt-1 text-label text-text-muted">
               Expires: {new Date(announcement.expiresAt).toLocaleDateString()}
             </p>
           )}

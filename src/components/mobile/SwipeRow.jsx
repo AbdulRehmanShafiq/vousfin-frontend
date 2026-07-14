@@ -6,7 +6,7 @@ import Sheet from './Sheet'
 const ACTION_WIDTH = 76
 const TONE_CLASS = {
   default: 'bg-glass-panel text-text-secondary',
-  accent: 'bg-cyan/15 text-cyan',
+  accent: 'bg-accent/15 text-accent',
   danger: 'bg-negative/15 text-negative',
 }
 
@@ -56,7 +56,7 @@ export default function SwipeRow({ children, actions = [], className }) {
               onClick={() => runAction(a.onClick)}
               tabIndex={-1}
               style={{ width: ACTION_WIDTH }}
-              className={cn('tap-target flex flex-col items-center justify-center gap-1 text-[12px] font-semibold', TONE_CLASS[a.tone] || TONE_CLASS.default)}
+              className={cn('tap-target flex flex-col items-center justify-center gap-1 text-xs font-semibold', TONE_CLASS[a.tone] || TONE_CLASS.default)}
             >
               {a.icon && <a.icon className="h-4 w-4" />}
               {a.label}

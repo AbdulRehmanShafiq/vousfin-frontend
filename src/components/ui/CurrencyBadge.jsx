@@ -20,7 +20,7 @@ export default function CurrencyBadge({ code, baseCurrency, rate, size = 'xs' })
 
   const sizeClass = size === 'sm'
     ? 'px-2 py-0.5 text-xs'
-    : 'px-1.5 py-px text-[12px]'
+    : 'px-1.5 py-px text-xs'
 
   return (
     <span
@@ -29,7 +29,7 @@ export default function CurrencyBadge({ code, baseCurrency, rate, size = 'xs' })
         inline-flex items-center rounded font-mono font-semibold tracking-wide
         ${sizeClass}
         ${isForeign
-          ? 'bg-amber/15 text-amber border border-amber/25'
+          ? 'bg-highlight/15 text-highlight border border-highlight/25'
           : 'bg-glass-panel text-text-muted border border-glass'}
       `}
     >

@@ -10,9 +10,9 @@ import { useBusinessStore } from '@/stores/useBusinessStore'
 import { formatCurrency } from '@/utils/formatters'
 
 const LEVEL_STYLES = {
-  reminder:      'text-cyan border-cyan/30 bg-cyan/5',
-  first_notice:  'text-amber border-amber/30 bg-amber/5',
-  second_notice: 'text-amber border-amber/30 bg-amber/5',
+  reminder:      'text-accent border-accent/30 bg-accent/5',
+  first_notice:  'text-highlight border-highlight/30 bg-highlight/5',
+  second_notice: 'text-highlight border-highlight/30 bg-highlight/5',
   final_notice:  'text-negative border-negative/30 bg-negative/5',
   collections:   'text-negative border-negative/40 bg-negative/10',
 }
@@ -25,7 +25,7 @@ export default function CollectionsSummaryBanner() {
   return (
     <div className="premium-card p-4">
       <div className="flex items-center gap-2 mb-3">
-        <Megaphone className="h-4 w-4 text-cyan shrink-0" />
+        <Megaphone className="h-4 w-4 text-accent shrink-0" />
         <span className="text-sm font-semibold text-text-primary">Collections &amp; Dunning</span>
         <span className="text-xs text-text-muted">overdue receivables by escalation level</span>
       </div>

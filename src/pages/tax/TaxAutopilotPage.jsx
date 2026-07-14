@@ -40,7 +40,7 @@ function ObligationHero({ taxes, totalPayable, currency }) {
         <>
           <div className="relative flex flex-col lg:flex-row lg:items-end lg:justify-between gap-5">
             <div className="min-w-0">
-              <p className="text-[11.5px] font-bold uppercase tracking-widest text-text-muted mb-2">Next obligation</p>
+              <p className="text-label font-bold uppercase tracking-widest text-text-muted mb-2">Next obligation</p>
               <h2 className="text-xl font-semibold text-text-primary leading-tight">{top.label}</h2>
               <div className="mt-2.5">
                 <DeadlineCountdown deadline={top.nextDeadline} />
@@ -50,18 +50,18 @@ function ObligationHero({ taxes, totalPayable, currency }) {
               <p className="num text-[2.2rem] sm:text-[2.6rem] font-semibold text-text-primary leading-none tracking-tight">
                 {compactMoney(top.liability, currency)}
               </p>
-              <p className="text-[12.5px] text-text-muted mt-1.5">
+              <p className="text-small text-text-muted mt-1.5">
                 {top.nextDeadline.returnType} · payable
               </p>
             </div>
           </div>
 
           <div className="relative mt-5 pt-4 border-t border-glass flex items-center justify-between gap-3 flex-wrap">
-            <span className="text-[12.5px] text-text-secondary">
+            <span className="text-small text-text-secondary">
               Total tax position{' '}
               <span className="num font-semibold text-text-primary">{compactMoney(totalPayable, currency)}</span>
             </span>
-            <span className="text-[12px] text-text-muted inline-flex items-center gap-1.5">
+            <span className="text-xs text-text-muted inline-flex items-center gap-1.5">
               <Sparkles className="h-3 w-3" /> Includes an income-tax estimate
             </span>
           </div>
@@ -73,7 +73,7 @@ function ObligationHero({ taxes, totalPayable, currency }) {
           </div>
           <div>
             <h2 className="text-lg font-semibold text-text-primary">You're all clear</h2>
-            <p className="text-[13px] text-text-muted mt-0.5">No tax is payable right now. We'll surface obligations as they accrue.</p>
+            <p className="text-small text-text-muted mt-0.5">No tax is payable right now. We'll surface obligations as they accrue.</p>
           </div>
         </div>
       )}
@@ -128,14 +128,14 @@ export default function TaxAutopilotPage() {
         </div>
         <div className="flex items-center gap-3 shrink-0">
           {position?.asOf && (
-            <span className="text-[12px] text-text-muted hidden sm:inline">
+            <span className="text-xs text-text-muted hidden sm:inline">
               Updated {formatDate(position.asOf, 'd MMM, h:mm a')}
             </span>
           )}
           <button
             type="button"
             onClick={() => refetch()}
-            className="p-2 rounded-lg border border-glass text-text-muted hover:text-cyan hover:border-cyan/40 transition-colors"
+            className="p-2 rounded-lg border border-glass text-text-muted hover:text-accent hover:border-accent/40 transition-colors"
             aria-label="Refresh tax position"
           >
             <RefreshCw className={cn('h-4 w-4', isFetching && 'animate-spin')} />
@@ -149,7 +149,7 @@ export default function TaxAutopilotPage() {
       ) : isError ? (
         <div className="premium-card p-6 text-center">
           <p className="text-sm text-negative font-medium">Couldn't load your tax position.</p>
-          <button onClick={() => refetch()} className="mt-2 text-sm text-cyan font-semibold hover:underline">Try again</button>
+          <button onClick={() => refetch()} className="mt-2 text-sm text-accent font-semibold hover:underline">Try again</button>
         </div>
       ) : (
         <ObligationHero taxes={taxes} totalPayable={position?.totalPayable ?? 0} currency={currency} />
@@ -158,7 +158,7 @@ export default function TaxAutopilotPage() {
       {/* ── Per-tax cards ──────────────────────────────────────────── */}
       <div>
         <div className="flex items-center gap-3 mb-3">
-          <span className="text-[12.5px] font-bold uppercase tracking-widest text-text-muted">By tax type</span>
+          <span className="text-small font-bold uppercase tracking-widest text-text-muted">By tax type</span>
           <div className="flex-1 h-px bg-glass" />
         </div>
 
@@ -186,10 +186,10 @@ export default function TaxAutopilotPage() {
       {/* ── Ways to pay less tax (FR-04.2 advisories) ──────────────── */}
       <div>
         <div className="flex items-center gap-3 mb-3">
-          <span className="text-[12.5px] font-bold uppercase tracking-widest text-text-muted">Ways to pay less tax</span>
+          <span className="text-small font-bold uppercase tracking-widest text-text-muted">Ways to pay less tax</span>
           <div className="flex-1 h-px bg-glass" />
           {advData?.totalPotentialSavingPKR > 0 && (
-            <span className="text-[12.5px] font-bold text-positive shrink-0">
+            <span className="text-small font-bold text-positive shrink-0">
               Up to <span className="num">{compactMoney(advData.totalPotentialSavingPKR, currency)}</span>
             </span>
           )}
@@ -206,7 +206,7 @@ export default function TaxAutopilotPage() {
             </div>
             <div>
               <p className="text-sm font-semibold text-text-primary">No optimizations found</p>
-              <p className="text-[13px] text-text-muted mt-0.5">Your tax setup looks efficient — we'll flag savings here as your ledger changes.</p>
+              <p className="text-small text-text-muted mt-0.5">Your tax setup looks efficient — we'll flag savings here as your ledger changes.</p>
             </div>
           </div>
         ) : (
@@ -222,7 +222,7 @@ export default function TaxAutopilotPage() {
       {/* ── Footer link to the engine ──────────────────────────────── */}
       <Link
         to="/settings/tax"
-        className="inline-flex items-center gap-2 text-[13px] text-text-muted hover:text-cyan transition-colors"
+        className="inline-flex items-center gap-2 text-small text-text-muted hover:text-accent transition-colors"
       >
         <Settings2 className="h-4 w-4" />
         Configure tax rates, registration & income-tax rate in the Tax Engine

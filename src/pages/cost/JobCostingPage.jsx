@@ -16,7 +16,7 @@ import { getErrorMessage } from '@/utils/errorHandler'
 
 const money = (n) => Number(n || 0).toLocaleString('en-PK', { maximumFractionDigits: 0 })
 const CATEGORIES = ['material', 'labour', 'overhead']
-const STATUS_STYLE = { open: 'text-text-muted', in_progress: 'text-cyan', completed: 'text-emerald', cancelled: 'text-amber' }
+const STATUS_STYLE = { open: 'text-text-muted', in_progress: 'text-accent', completed: 'text-positive', cancelled: 'text-highlight' }
 
 function VarianceRow({ label, v }) {
   if (!v) return null
@@ -26,7 +26,7 @@ function VarianceRow({ label, v }) {
       <td className="py-2 pr-3 capitalize text-text-primary">{label}</td>
       <td className="py-2 px-3 text-right text-text-secondary">{money(v.standard)}</td>
       <td className="py-2 px-3 text-right text-text-secondary">{money(v.actual)}</td>
-      <td className={`py-2 pl-3 text-right ${over ? 'text-negative' : 'text-emerald'}`}>
+      <td className={`py-2 pl-3 text-right ${over ? 'text-negative' : 'text-positive'}`}>
         {over ? '+' : ''}{money(v.variance)} {over ? 'over' : 'under'}
       </td>
     </tr>
@@ -54,30 +54,30 @@ function JobDetail({ jobId, onBack }) {
     onError: (e) => toast.error(getErrorMessage(e)),
   })
 
-  if (isLoading || !job) return <div className="premium-card p-6 text-text-secondary text-[13px]"><Loader2 className="h-4 w-4 animate-spin inline mr-2" />Loading…</div>
+  if (isLoading || !job) return <div className="premium-card p-6 text-text-secondary text-small"><Loader2 className="h-4 w-4 animate-spin inline mr-2" />Loading…</div>
   const v = job.variance || {}
   const canEdit = job.status === 'open' || job.status === 'in_progress'
 
   return (
     <div className="space-y-4">
-      <button onClick={onBack} className="inline-flex items-center gap-1.5 text-[12.5px] text-text-secondary hover:text-cyan">
+      <button onClick={onBack} className="inline-flex items-center gap-1.5 text-small text-text-secondary hover:text-accent">
         <ArrowLeft className="h-4 w-4" /> All jobs
       </button>
       <div className="premium-card p-4 space-y-3">
         <div className="flex items-center justify-between gap-3 flex-wrap">
           <div>
-            <h2 className="text-[15px] font-semibold text-text-primary">{job.name} <span className="text-text-muted">({job.code})</span></h2>
-            <span className={`text-[11px] uppercase tracking-wider ${STATUS_STYLE[job.status]}`}>{job.status.replace('_', ' ')}</span>
+            <h2 className="text-md font-semibold text-text-primary">{job.name} <span className="text-text-muted">({job.code})</span></h2>
+            <span className={`text-label uppercase tracking-wider ${STATUS_STYLE[job.status]}`}>{job.status.replace('_', ' ')}</span>
           </div>
           {job.status === 'in_progress' && (
             <button onClick={() => complete.mutate()} disabled={complete.isPending}
-              className="btn-gradient inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-[12px] font-semibold disabled:opacity-50">
+              className="btn-gradient inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold disabled:opacity-50">
               {complete.isPending ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <BookCheck className="h-3.5 w-3.5" />} Complete job
             </button>
           )}
         </div>
 
-        <table className="w-full text-[12.5px]">
+        <table className="w-full text-small">
           <thead>
             <tr className="text-text-muted text-left border-b border-glass">
               <th className="py-2 pr-3 font-medium">Category</th>
@@ -96,7 +96,7 @@ function JobDetail({ jobId, onBack }) {
               <td className="py-2 pr-3">Total</td>
               <td className="py-2 px-3 text-right">{money(v.total?.standard)}</td>
               <td className="py-2 px-3 text-right">{money(v.total?.actual)}</td>
-              <td className={`py-2 pl-3 text-right ${v.total?.favourable ? 'text-emerald' : 'text-negative'}`}>
+              <td className={`py-2 pl-3 text-right ${v.total?.favourable ? 'text-positive' : 'text-negative'}`}>
                 {v.total?.favourable ? '' : '+'}{money(v.total?.variance)}
               </td>
             </tr>
@@ -106,30 +106,30 @@ function JobDetail({ jobId, onBack }) {
 
       {canEdit && (
         <div className="premium-card p-4 space-y-3">
-          <p className="text-[12.5px] font-semibold text-text-secondary">Add a cost</p>
+          <p className="text-small font-semibold text-text-secondary">Add a cost</p>
           <div className="flex items-end gap-2 flex-wrap">
             <label className="flex flex-col gap-1">
-              <span className="text-[11px] text-text-muted">Type</span>
+              <span className="text-label text-text-muted">Type</span>
               <select value={form.category} onChange={(e) => setForm({ ...form, category: e.target.value })}
-                className="px-3 py-2 rounded-lg border border-glass bg-glass-panel/40 text-[13px] text-text-primary capitalize focus:outline-none">
+                className="px-3 py-2 rounded-lg border border-glass bg-glass-panel/40 text-small text-text-primary capitalize focus:outline-none">
                 {CATEGORIES.map((c) => <option key={c} value={c} className="bg-charcoal capitalize">{c}</option>)}
               </select>
             </label>
             <label className="flex flex-col gap-1">
-              <span className="text-[11px] text-text-muted">Amount</span>
+              <span className="text-label text-text-muted">Amount</span>
               <input type="number" value={form.amount} onChange={(e) => setForm({ ...form, amount: e.target.value })}
-                className="w-28 px-3 py-2 rounded-lg border border-glass bg-glass-panel/40 text-[13px] text-right text-text-primary focus:outline-none focus:border-cyan/40" />
+                className="w-28 px-3 py-2 rounded-lg border border-glass bg-glass-panel/40 text-small text-right text-text-primary focus:outline-none focus:border-accent/40" />
             </label>
             <label className="flex flex-col gap-1 flex-1 min-w-[160px]">
-              <span className="text-[11px] text-text-muted">Paid from / consumed</span>
+              <span className="text-label text-text-muted">Paid from / consumed</span>
               <select value={form.sourceAccountId} onChange={(e) => setForm({ ...form, sourceAccountId: e.target.value })}
-                className="px-3 py-2 rounded-lg border border-glass bg-glass-panel/40 text-[13px] text-text-primary focus:outline-none">
+                className="px-3 py-2 rounded-lg border border-glass bg-glass-panel/40 text-small text-text-primary focus:outline-none">
                 <option value="" className="bg-charcoal">Pick an account…</option>
                 {accounts.map((a) => <option key={a._id} value={a._id} className="bg-charcoal">{a.accountCode} — {a.accountName}</option>)}
               </select>
             </label>
             <button onClick={() => addCost.mutate()} disabled={!form.amount || !form.sourceAccountId || addCost.isPending}
-              className="btn-gradient inline-flex items-center gap-1.5 px-4 py-2 rounded-lg text-[12.5px] font-semibold disabled:opacity-50">
+              className="btn-gradient inline-flex items-center gap-1.5 px-4 py-2 rounded-lg text-small font-semibold disabled:opacity-50">
               {addCost.isPending ? <Loader2 className="h-4 w-4 animate-spin" /> : <Plus className="h-4 w-4" />} Add
             </button>
           </div>
@@ -138,8 +138,8 @@ function JobDetail({ jobId, onBack }) {
 
       {(job.costSheet || []).length > 0 && (
         <div className="premium-card p-4">
-          <p className="text-[12.5px] font-semibold text-text-secondary mb-2">Cost history</p>
-          <table className="w-full text-[12px]">
+          <p className="text-small font-semibold text-text-secondary mb-2">Cost history</p>
+          <table className="w-full text-xs">
             <tbody>
               {job.costSheet.map((c, i) => (
                 <tr key={i} className="border-b border-glass/50">
@@ -183,13 +183,13 @@ export default function JobCostingPage() {
     <div className="animate-fade-in pb-10 space-y-5 max-w-4xl">
       <div className="flex items-center justify-between gap-3 flex-wrap">
         <div className="flex items-center gap-3">
-          <div className="p-2 rounded-xl bg-gold/15"><Hammer className="h-5 w-5 text-gold" /></div>
+          <div className="p-2 rounded-xl bg-highlight/15"><Hammer className="h-5 w-5 text-highlight" /></div>
           <div>
             <h1 className="text-2xl font-semibold text-text-primary tracking-tight">Jobs</h1>
             <p className="text-sm text-text-secondary mt-0.5">Track what each job costs against its budget.</p>
           </div>
         </div>
-        <button onClick={() => setCreating(!creating)} className="btn-gradient inline-flex items-center gap-1.5 px-4 py-2 rounded-lg text-[12.5px] font-semibold">
+        <button onClick={() => setCreating(!creating)} className="btn-gradient inline-flex items-center gap-1.5 px-4 py-2 rounded-lg text-small font-semibold">
           <Plus className="h-4 w-4" /> New job
         </button>
       </div>
@@ -197,18 +197,18 @@ export default function JobCostingPage() {
       {creating && (
         <div className="premium-card p-4 space-y-3">
           <div className="flex items-end gap-2 flex-wrap">
-            <label className="flex flex-col gap-1"><span className="text-[11px] text-text-muted">Code</span>
-              <input value={nj.code} onChange={(e) => setNj({ ...nj, code: e.target.value })} className="w-28 px-3 py-2 rounded-lg border border-glass bg-glass-panel/40 text-[13px] text-text-primary focus:outline-none focus:border-cyan/40" /></label>
-            <label className="flex flex-col gap-1 flex-1 min-w-[160px]"><span className="text-[11px] text-text-muted">Name</span>
-              <input value={nj.name} onChange={(e) => setNj({ ...nj, name: e.target.value })} className="px-3 py-2 rounded-lg border border-glass bg-glass-panel/40 text-[13px] text-text-primary focus:outline-none focus:border-cyan/40" /></label>
+            <label className="flex flex-col gap-1"><span className="text-label text-text-muted">Code</span>
+              <input value={nj.code} onChange={(e) => setNj({ ...nj, code: e.target.value })} className="w-28 px-3 py-2 rounded-lg border border-glass bg-glass-panel/40 text-small text-text-primary focus:outline-none focus:border-accent/40" /></label>
+            <label className="flex flex-col gap-1 flex-1 min-w-[160px]"><span className="text-label text-text-muted">Name</span>
+              <input value={nj.name} onChange={(e) => setNj({ ...nj, name: e.target.value })} className="px-3 py-2 rounded-lg border border-glass bg-glass-panel/40 text-small text-text-primary focus:outline-none focus:border-accent/40" /></label>
           </div>
           <div className="flex items-end gap-2 flex-wrap">
             {['material', 'labour', 'overhead'].map((k) => (
-              <label key={k} className="flex flex-col gap-1"><span className="text-[11px] text-text-muted capitalize">Budget {k}</span>
-                <input type="number" value={nj[k]} onChange={(e) => setNj({ ...nj, [k]: e.target.value })} className="w-28 px-3 py-2 rounded-lg border border-glass bg-glass-panel/40 text-[13px] text-right text-text-primary focus:outline-none focus:border-cyan/40" /></label>
+              <label key={k} className="flex flex-col gap-1"><span className="text-label text-text-muted capitalize">Budget {k}</span>
+                <input type="number" value={nj[k]} onChange={(e) => setNj({ ...nj, [k]: e.target.value })} className="w-28 px-3 py-2 rounded-lg border border-glass bg-glass-panel/40 text-small text-right text-text-primary focus:outline-none focus:border-accent/40" /></label>
             ))}
             <button onClick={() => create.mutate()} disabled={!nj.code || !nj.name || create.isPending}
-              className="btn-gradient inline-flex items-center gap-1.5 px-4 py-2 rounded-lg text-[12.5px] font-semibold disabled:opacity-50">
+              className="btn-gradient inline-flex items-center gap-1.5 px-4 py-2 rounded-lg text-small font-semibold disabled:opacity-50">
               {create.isPending ? <Loader2 className="h-4 w-4 animate-spin" /> : <Plus className="h-4 w-4" />} Create
             </button>
           </div>
@@ -216,11 +216,11 @@ export default function JobCostingPage() {
       )}
 
       <div className="space-y-2">
-        {jobs.length === 0 && <div className="premium-card p-6 text-center text-[13px] text-text-secondary">No jobs yet. Create one to start tracking costs.</div>}
+        {jobs.length === 0 && <div className="premium-card p-6 text-center text-small text-text-secondary">No jobs yet. Create one to start tracking costs.</div>}
         {jobs.map((j) => (
           <button key={j._id} onClick={() => setSelected(j._id)} className="premium-card p-3 w-full flex items-center justify-between text-left hover:bg-glass-hover">
-            <span className="text-[13px] text-text-primary">{j.name} <span className="text-text-muted">({j.code})</span></span>
-            <span className={`text-[10.5px] uppercase tracking-wider ${STATUS_STYLE[j.status]}`}>{j.status.replace('_', ' ')}</span>
+            <span className="text-small text-text-primary">{j.name} <span className="text-text-muted">({j.code})</span></span>
+            <span className={`text-label uppercase tracking-wider ${STATUS_STYLE[j.status]}`}>{j.status.replace('_', ' ')}</span>
           </button>
         ))}
       </div>

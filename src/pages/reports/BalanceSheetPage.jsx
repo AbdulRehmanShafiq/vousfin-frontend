@@ -53,7 +53,7 @@ export default function BalanceSheetPage() {
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div>
           <h1 className="flex items-center gap-2 text-xl sm:text-2xl font-black text-text-primary tracking-tight">
-            <Scale className="h-6 w-6 text-cyan" />
+            <Scale className="h-6 w-6 text-accent" />
             Balance Sheet
           </h1>
           <p className="text-text-secondary mt-1 text-sm">Financial position — Assets, Liabilities, Equity</p>
@@ -129,7 +129,7 @@ export default function BalanceSheetPage() {
               <BSSection section={data.equity} currency={currency} title="Equity" />
 
               <div className={`flex items-center justify-between gap-3 py-2.5 px-3.5 sm:py-4 sm:px-5 rounded-xl border sm:border-2 ${
-                isBalanced ? 'border-cyan/40 bg-cyan/5' : 'border-negative/40 bg-negative/5'
+                isBalanced ? 'border-accent/40 bg-accent/5' : 'border-negative/40 bg-negative/5'
               }`}>
                 <span className="min-w-0 truncate text-sm sm:text-lg font-black text-text-primary">Total Liabilities &amp; Equity</span>
                 <span className={`whitespace-nowrap text-sm sm:text-lg font-black tabular-nums ${isBalanced ? 'text-text-primary' : 'text-negative'}`}>
@@ -153,20 +153,20 @@ function BSSection({ section, currency, title }) {
   return (
     <div className="space-y-2 sm:space-y-3">
       {title && (
-        <h3 className="text-[11px] sm:text-xs font-bold text-text-muted uppercase tracking-wider px-1">{title}</h3>
+        <h3 className="text-label sm:text-xs font-bold text-text-muted uppercase tracking-wider px-1">{title}</h3>
       )}
       {groups && groups.length > 0
         ? groups.map(g => <SubtypeGroup key={g.label} group={g} currency={currency} />)
         : accounts.map((acc, i) => (
           <div key={acc.accountId || i} className="flex items-center justify-between gap-3 py-1 px-1 sm:py-1.5 sm:px-4">
-            <span className="min-w-0 truncate text-[13px] sm:text-sm text-text-primary">{acc.accountName}</span>
-            <span className="whitespace-nowrap text-[13px] sm:text-sm font-medium text-text-primary tabular-nums">{formatCurrency(acc.balance, currency)}</span>
+            <span className="min-w-0 truncate text-small sm:text-sm text-text-primary">{acc.accountName}</span>
+            <span className="whitespace-nowrap text-small sm:text-sm font-medium text-text-primary tabular-nums">{formatCurrency(acc.balance, currency)}</span>
           </div>
         ))
       }
       <div className="flex items-center justify-between gap-3 py-1.5 px-1 sm:py-2 sm:px-4 border-t border-glass">
-        <span className="min-w-0 truncate text-[13px] sm:text-sm font-semibold text-text-secondary">Total {title || ''}</span>
-        <span className="whitespace-nowrap text-[13px] sm:text-sm font-bold text-text-primary tabular-nums">{formatCurrency(total, currency)}</span>
+        <span className="min-w-0 truncate text-small sm:text-sm font-semibold text-text-secondary">Total {title || ''}</span>
+        <span className="whitespace-nowrap text-small sm:text-sm font-bold text-text-primary tabular-nums">{formatCurrency(total, currency)}</span>
       </div>
     </div>
   )
@@ -182,9 +182,9 @@ function SubtypeGroup({ group, currency }) {
         onClick={() => setOpen(o => !o)}
         className="w-full flex items-center justify-between gap-2 px-3 py-2 sm:px-4 bg-glass hover:bg-glass-hover transition-colors"
       >
-        <span className="min-w-0 truncate text-[11px] sm:text-xs font-bold text-text-secondary uppercase tracking-wider">{group.label}</span>
+        <span className="min-w-0 truncate text-label sm:text-xs font-bold text-text-secondary uppercase tracking-wider">{group.label}</span>
         <div className="flex flex-shrink-0 items-center gap-2">
-          <span className="whitespace-nowrap text-[13px] sm:text-sm font-bold text-text-primary tabular-nums">{formatCurrency(group.total, currency)}</span>
+          <span className="whitespace-nowrap text-small sm:text-sm font-bold text-text-primary tabular-nums">{formatCurrency(group.total, currency)}</span>
           {open ? <ChevronDown className="h-4 w-4 text-text-muted" /> : <ChevronRight className="h-4 w-4 text-text-muted" />}
         </div>
       </button>
@@ -192,8 +192,8 @@ function SubtypeGroup({ group, currency }) {
         <div className="divide-y divide-glass">
           {visibleAccounts.map((acc, i) => (
             <div key={acc.accountId || i} className="flex items-center justify-between gap-3 py-1.5 px-3 sm:px-6 hover:bg-glass-hover transition-colors">
-              <span className="min-w-0 truncate text-[13px] sm:text-sm text-text-primary">{acc.accountName}</span>
-              <span className="whitespace-nowrap text-[13px] sm:text-sm font-medium text-text-primary tabular-nums">{formatCurrency(acc.balance, currency)}</span>
+              <span className="min-w-0 truncate text-small sm:text-sm text-text-primary">{acc.accountName}</span>
+              <span className="whitespace-nowrap text-small sm:text-sm font-medium text-text-primary tabular-nums">{formatCurrency(acc.balance, currency)}</span>
             </div>
           ))}
         </div>
@@ -204,7 +204,7 @@ function SubtypeGroup({ group, currency }) {
 
 function TotalRow({ label, value, currency }) {
   return (
-    <div className="flex items-center justify-between gap-3 py-2.5 px-3.5 sm:py-3 sm:px-5 rounded-xl bg-cyan/5 border sm:border-2 border-cyan/40">
+    <div className="flex items-center justify-between gap-3 py-2.5 px-3.5 sm:py-3 sm:px-5 rounded-xl bg-accent/5 border sm:border-2 border-accent/40">
       <span className="min-w-0 truncate text-sm sm:text-lg font-black text-text-primary">{label}</span>
       <span className="whitespace-nowrap text-sm sm:text-lg font-black text-text-primary tabular-nums">{formatCurrency(value, currency)}</span>
     </div>

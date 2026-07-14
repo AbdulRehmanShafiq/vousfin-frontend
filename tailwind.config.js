@@ -46,6 +46,11 @@ export default {
         cyan: ACCENT,
         accent: ACCENT,
         gold: GOLD,
+        /* Semantic name for the theme highlight (gold/amber's replacement) */
+        highlight: {
+          DEFAULT: withAlpha('--c-highlight'),
+          2: withAlpha('--c-highlight'),
+        },
         amber: {
           DEFAULT: withAlpha('--c-highlight'), // attention = theme highlight
           2: withAlpha('--c-highlight'),
@@ -133,6 +138,7 @@ export default {
         card: 'inset 0 1px 0 rgba(255, 255, 255, 0.04), 0 10px 30px -14px rgba(0, 0, 0, 0.55)',
         elevated: 'inset 0 1px 0 rgba(255, 255, 255, 0.05), 0 24px 60px -24px rgba(0, 0, 0, 0.75)',
         'glow-cyan': '0 0 0 1px rgb(var(--c-accent) / 0.18), 0 8px 28px -10px rgb(var(--c-accent) / 0.35)',
+        'glow-accent': '0 0 0 1px rgb(var(--c-accent) / 0.18), 0 8px 28px -10px rgb(var(--c-accent) / 0.35)',
         'glow-em': '0 0 0 1px rgb(var(--c-accent) / 0.18), 0 8px 28px -10px rgb(var(--c-accent) / 0.35)',
       },
 

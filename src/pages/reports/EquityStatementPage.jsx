@@ -75,7 +75,7 @@ export default function EquityStatementPage() {
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div>
           <h1 className="flex items-center gap-2 text-xl sm:text-2xl font-black text-text-primary tracking-tight">
-            <Layers className="h-6 w-6 text-cyan" />
+            <Layers className="h-6 w-6 text-accent" />
             Equity Statement
           </h1>
           <p className="text-text-secondary mt-1 text-sm">How owner equity changed during the period</p>
@@ -144,7 +144,7 @@ export default function EquityStatementPage() {
               <p className="text-text-secondary text-xs sm:text-sm">{dateRange.startDate} — {dateRange.endDate}</p>
             </div>
 
-            <table className="w-full min-w-[440px] text-[13px] sm:text-sm">
+            <table className="w-full min-w-[440px] text-small sm:text-sm">
               <thead>
                 <tr>
                   <th className="text-left py-2 pr-4 font-bold text-text-secondary uppercase text-xs tracking-wider w-48">
@@ -170,7 +170,7 @@ export default function EquityStatementPage() {
                       key={row.key}
                       className={`transition-colors ${
                         isKeyRow
-                          ? 'bg-cyan/5 font-black'
+                          ? 'bg-accent/5 font-black'
                           : 'hover:bg-glass-hover'
                       }`}
                     >

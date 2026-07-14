@@ -22,8 +22,8 @@ const STATE_FILTERS = [
 
 const STATE_COLOR = {
   draft:                'text-text-muted',
-  confirmed:            'text-cyan',
-  discrepancy_reported: 'text-amber',
+  confirmed:            'text-accent',
+  discrepancy_reported: 'text-highlight',
   reconciled:           'text-positive',
   cancelled:            'text-negative',
 }
@@ -67,7 +67,7 @@ export default function GoodsReceiptsPage() {
       key: 'grnNumber',
       header: 'GRN #',
       render: (r) => (
-        <span className="font-mono text-sm text-cyan font-semibold">{r.grnNumber}</span>
+        <span className="font-mono text-sm text-accent font-semibold">{r.grnNumber}</span>
       ),
     },
     {
@@ -77,7 +77,7 @@ export default function GoodsReceiptsPage() {
         <button
           type="button"
           onClick={() => r.purchaseOrderId?._id && navigate(`/procurement/purchase-orders/${r.purchaseOrderId._id}/edit`)}
-          className="font-mono text-xs text-text-secondary hover:text-cyan"
+          className="font-mono text-xs text-text-secondary hover:text-accent"
         >
           {r.purchaseOrderId?.poNumber || '—'}
         </button>
@@ -101,7 +101,7 @@ export default function GoodsReceiptsPage() {
       key: 'discrepancies',
       header: 'Issues',
       render: (r) => r.hasDiscrepancies ? (
-        <span className="flex items-center gap-1 text-xs text-amber">
+        <span className="flex items-center gap-1 text-xs text-highlight">
           <AlertTriangle className="h-3.5 w-3.5" />
           {r.discrepancies?.length || ''}
         </span>
@@ -177,7 +177,7 @@ export default function GoodsReceiptsPage() {
       <div className="flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between">
         <div>
           <h1 className="flex items-center gap-2 text-2xl font-black text-text-primary tracking-tight">
-            <Truck className="h-6 w-6 text-cyan" />
+            <Truck className="h-6 w-6 text-accent" />
             Goods Receipts
           </h1>
           <p className="text-text-secondary mt-1 text-sm">

@@ -54,8 +54,8 @@ export default function SimpleEntrySection({ accounts, form, onSwitchToAdvanced 
             className={cn(
               'rounded-xl border px-3 py-3 text-sm font-medium text-left transition-colors',
               chipId === c.id
-                ? 'border-cyan bg-cyan/10 text-text-primary'
-                : 'border-glass bg-glass-panel text-text-secondary hover:border-cyan/50'
+                ? 'border-accent bg-accent/10 text-text-primary'
+                : 'border-glass bg-glass-panel text-text-secondary hover:border-accent/50'
             )}>
             {c.label}
           </button>

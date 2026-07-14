@@ -37,7 +37,7 @@ export default function ForgotPassword() {
   if (isSuccess) {
     return (
       <div className="w-full text-center">
-        <div className="mx-auto mb-6 flex h-16 w-16 items-center justify-center rounded-full bg-emerald/10">
+        <div className="mx-auto mb-6 flex h-16 w-16 items-center justify-center rounded-full bg-positive/10">
           <Mail className="h-8 w-8 text-positive" />
         </div>
         <h2 className="mb-2 text-2xl font-black text-text-primary">Check your email</h2>
@@ -51,7 +51,7 @@ export default function ForgotPassword() {
 
   return (
     <div className="w-full">
-      <Link to="/login" className="mb-8 inline-flex items-center gap-2 text-sm text-text-muted hover:text-cyan transition-colors">
+      <Link to="/login" className="mb-8 inline-flex items-center gap-2 text-sm text-text-muted hover:text-accent transition-colors">
         <ArrowLeft className="h-4 w-4" />
         Back to login
       </Link>

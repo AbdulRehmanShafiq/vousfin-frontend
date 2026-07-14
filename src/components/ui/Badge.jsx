@@ -2,8 +2,8 @@ import { cn } from '@/utils/cn'
 
 const variants = {
   default: 'bg-glass-panel text-text-secondary border-glass',
-  success: 'bg-positive-muted text-positive border-emerald/20',
-  warning: 'bg-amber/10 text-amber-2 border-amber/20',
+  success: 'bg-positive-muted text-positive border-positive/20',
+  warning: 'bg-highlight/10 text-highlight-2 border-highlight/20',
   danger: 'bg-negative-muted text-negative border-negative/20',
   info: 'bg-accent-soft text-accent border-accent/20',
 }

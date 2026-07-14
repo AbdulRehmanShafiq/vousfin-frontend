@@ -13,7 +13,7 @@ import { cn } from '@/utils/cn'
 
 const LABEL_STYLE = {
   High:         { cls: 'text-positive border-positive/30 bg-positive/5', Icon: ShieldCheck },
-  Medium:       { cls: 'text-amber border-amber/30 bg-amber/5',       Icon: ShieldCheck },
+  Medium:       { cls: 'text-highlight border-highlight/30 bg-highlight/5',       Icon: ShieldCheck },
   Low:          { cls: 'text-negative border-negative/30 bg-negative/5',          Icon: AlertTriangle },
   Insufficient: { cls: 'text-text-muted border-border bg-bg-subtle',              Icon: Info },
 }
@@ -31,7 +31,7 @@ export default function ForecastCard({ target = 'Revenue', horizon = 6 }) {
     return (
       <div className="premium-card p-5 border-border bg-bg-subtle">
         <div className="flex items-center gap-2 text-text-primary font-semibold">
-          <Info className="h-4 w-4 text-cyan" /> {target} forecast
+          <Info className="h-4 w-4 text-accent" /> {target} forecast
         </div>
         <p className="mt-2 text-sm text-text-muted">
           {score?.basis || 'Record a few months of transactions to unlock AI forecasting for your business.'}
@@ -82,12 +82,12 @@ export default function ForecastCard({ target = 'Revenue', horizon = 6 }) {
       {/* top reasons */}
       {explain?.narrative && (
         <div className="rounded-lg bg-bg-subtle border border-border p-3 text-sm text-text-secondary flex gap-2">
-          <Sparkles className="h-4 w-4 text-cyan shrink-0 mt-0.5" />
+          <Sparkles className="h-4 w-4 text-accent shrink-0 mt-0.5" />
           <span>{explain.narrative}</span>
         </div>
       )}
 
-      <div className="flex flex-wrap items-center gap-x-4 gap-y-1 text-[12.5px] text-text-muted">
+      <div className="flex flex-wrap items-center gap-x-4 gap-y-1 text-small text-text-muted">
         {ensemble.modelType && <span>Model: {ensemble.modelType}</span>}
         {score?.confidence != null && <span>Confidence score: {score.confidence}/100</span>}
         {ensemble.baselineGate?.gatePassed != null && (

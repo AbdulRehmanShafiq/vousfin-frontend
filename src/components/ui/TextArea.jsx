@@ -27,7 +27,7 @@ export const TextArea = forwardRef(({
           name={name}
           rows={rows}
           className={cn(
-            'w-full rounded-lg border bg-glass-panel px-4 py-3 text-sm text-text-primary transition-premium placeholder:text-text-muted focus:border-cyan focus:outline-none focus:ring-2 focus:ring-cyan/20 focus:bg-glass-hover scrollbar-thin',
+            'w-full rounded-lg border bg-glass-panel px-4 py-3 text-sm text-text-primary transition-premium placeholder:text-text-muted focus:border-accent focus:outline-none focus:ring-2 focus:ring-accent/20 focus:bg-glass-hover scrollbar-thin',
             error ? 'border-negative/50 focus:border-negative focus:ring-negative/20' : 'border-glass',
             className
           )}

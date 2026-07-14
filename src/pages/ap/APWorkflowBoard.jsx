@@ -28,18 +28,18 @@ import ReminderStateBadge    from '@/components/ap/ReminderStateBadge'
 
 const COLUMNS = [
   { key: 'inbox',            label: 'Inbox',            states: ['draft'],               color: 'border-glass', headerBg: 'bg-glass/50' },
-  { key: 'under_review',     label: 'Under Review',     states: ['awaiting_approval'],   color: 'border-amber/30',  headerBg: 'bg-amber/10'  },
+  { key: 'under_review',     label: 'Under Review',     states: ['awaiting_approval'],   color: 'border-highlight/30',  headerBg: 'bg-highlight/10'  },
   { key: 'approved',         label: 'Approved',         states: ['approved'],            color: 'border-positive/30',headerBg: 'bg-positive/10'},
-  { key: 'scheduled',        label: 'Scheduled',        states: ['scheduled'],           color: 'border-cyan/30',    headerBg: 'bg-cyan/10'    },
+  { key: 'scheduled',        label: 'Scheduled',        states: ['scheduled'],           color: 'border-accent/30',    headerBg: 'bg-accent/10'    },
   { key: 'paid',             label: 'Paid',             states: ['paid'],                color: 'border-positive/30',headerBg: 'bg-positive/10'},
   { key: 'blocked',          label: 'Blocked',          states: ['overdue', 'cancelled'],color: 'border-negative/30',    headerBg: 'bg-negative/10'    },
 ]
 
 const MATCH_STATUS_COLORS = {
   matched:       'text-positive',
-  over_billed:   'text-amber',
-  under_received:'text-amber',
-  mismatch:      'text-amber',
+  over_billed:   'text-highlight',
+  under_received:'text-highlight',
+  mismatch:      'text-highlight',
   blocked:       'text-negative',
 }
 
@@ -51,14 +51,14 @@ function BillCard({ bill }) {
   return (
     <Link
       to={`/purchases/bills/${bill._id}/edit`}
-      className="block premium-card p-3 hover:border-cyan/30 transition-colors space-y-1.5"
+      className="block premium-card p-3 hover:border-accent/30 transition-colors space-y-1.5"
     >
       <div className="flex items-start justify-between gap-1">
-        <span className="text-xs font-mono text-cyan truncate">{bill.billNumber}</span>
+        <span className="text-xs font-mono text-accent truncate">{bill.billNumber}</span>
         {bill.reminderState && <ReminderStateBadge state={bill.reminderState} />}
       </div>
 
-      <p className="text-[12.5px] text-text-muted truncate">
+      <p className="text-small text-text-muted truncate">
         {bill.vendorSnapshot?.vendorName || 'Vendor'}
       </p>
 
@@ -66,17 +66,17 @@ function BillCard({ bill }) {
         <span className="text-sm font-semibold text-text-primary">
           {fmt(bill.totalAmount)}
         </span>
-        <span className="text-[12px] text-text-muted">{fmtDate(bill.dueDate)}</span>
+        <span className="text-xs text-text-muted">{fmtDate(bill.dueDate)}</span>
       </div>
 
       {matchStatus && matchStatus !== 'none' && matchStatus !== 'pending' && (
-        <span className={`text-[12px] font-medium capitalize ${MATCH_STATUS_COLORS[matchStatus] || 'text-text-muted'}`}>
+        <span className={`text-xs font-medium capitalize ${MATCH_STATUS_COLORS[matchStatus] || 'text-text-muted'}`}>
           {matchStatus.replace(/_/g, ' ')}
         </span>
       )}
 
       {bill.isRecurring && (
-        <div className="flex items-center gap-1 text-[12px] text-cyan">
+        <div className="flex items-center gap-1 text-xs text-accent">
           <Repeat className="h-3 w-3" />
           Recurring
         </div>
@@ -92,17 +92,17 @@ function Column({ col, bills }) {
       <div className={`${col.headerBg} px-3 py-2.5 rounded-t-xl`}>
         <div className="flex items-center justify-between">
           <span className="text-xs font-bold text-text-primary">{col.label}</span>
-          <span className="text-[12px] text-text-muted bg-glass rounded-full px-1.5 py-0.5">
+          <span className="text-xs text-text-muted bg-glass rounded-full px-1.5 py-0.5">
             {bills.length}
           </span>
         </div>
         {bills.length > 0 && (
-          <p className="text-[12px] text-text-muted mt-0.5">{fmt(total)}</p>
+          <p className="text-xs text-text-muted mt-0.5">{fmt(total)}</p>
         )}
       </div>
       <div className="flex flex-col gap-2 p-2 overflow-y-auto max-h-[60vh]">
         {bills.length === 0 ? (
-          <p className="text-[12.5px] text-text-muted text-center py-4">No bills</p>
+          <p className="text-small text-text-muted text-center py-4">No bills</p>
         ) : (
           bills.map(b => <BillCard key={b._id} bill={b} />)
         )}
@@ -117,12 +117,12 @@ function ScheduleRow({ schedule, onDeactivate }) {
     <div className="flex items-center justify-between py-2 border-b border-glass last:border-0">
       <div>
         <p className="text-sm text-text-primary">{schedule.name}</p>
-        <p className="text-[12.5px] text-text-muted">
+        <p className="text-small text-text-muted">
           {schedule.recurrencePattern} · Next: {fmtDate(schedule.nextRunDate)}
         </p>
       </div>
       <div className="flex items-center gap-2">
-        <span className={`text-[12.5px] px-1.5 py-0.5 rounded ${schedule.isActive ? 'bg-positive/15 text-positive' : 'bg-glass text-text-muted'}`}>
+        <span className={`text-small px-1.5 py-0.5 rounded ${schedule.isActive ? 'bg-positive/15 text-positive' : 'bg-glass text-text-muted'}`}>
           {schedule.isActive ? 'Active' : 'Inactive'}
         </span>
         {schedule.isActive && (
@@ -130,7 +130,7 @@ function ScheduleRow({ schedule, onDeactivate }) {
             type="button"
             onClick={() => deactivate.mutate(schedule._id)}
             disabled={deactivate.isPending}
-            className="text-[12.5px] text-negative hover:text-negative transition-colors"
+            className="text-small text-negative hover:text-negative transition-colors"
           >
             Stop
           </button>
@@ -179,7 +179,7 @@ export default function APWorkflowBoard() {
             type="button"
             onClick={() => refreshRisk.mutate()}
             disabled={refreshRisk.isPending}
-            className="flex items-center gap-1.5 px-3 py-1.5 bg-glass rounded text-xs text-text-secondary hover:text-cyan transition-colors"
+            className="flex items-center gap-1.5 px-3 py-1.5 bg-glass rounded text-xs text-text-secondary hover:text-accent transition-colors"
           >
             <RefreshCw className={`h-3.5 w-3.5 ${refreshRisk.isPending ? 'animate-spin' : ''}`} />
             Refresh Risk
@@ -188,7 +188,7 @@ export default function APWorkflowBoard() {
             type="button"
             onClick={() => refetch()}
             disabled={isFetching}
-            className="flex items-center gap-1.5 px-3 py-1.5 bg-glass rounded text-xs text-text-secondary hover:text-cyan transition-colors"
+            className="flex items-center gap-1.5 px-3 py-1.5 bg-glass rounded text-xs text-text-secondary hover:text-accent transition-colors"
           >
             <RefreshCw className={`h-3.5 w-3.5 ${isFetching ? 'animate-spin' : ''}`} />
             Refresh
@@ -209,19 +209,19 @@ export default function APWorkflowBoard() {
           {reminderData && (
             <div className="premium-card p-4 space-y-2">
               <h3 className="text-xs font-bold text-text-primary flex items-center gap-1.5">
-                <Clock className="h-3.5 w-3.5 text-cyan" />
+                <Clock className="h-3.5 w-3.5 text-accent" />
                 Reminder Summary
               </h3>
               <div className="grid grid-cols-2 gap-2">
                 {[
-                  { key: 'upcoming', label: 'Upcoming', color: 'text-cyan' },
-                  { key: 'due_today', label: 'Due Today', color: 'text-amber' },
-                  { key: 'overdue', label: 'Overdue', color: 'text-amber' },
+                  { key: 'upcoming', label: 'Upcoming', color: 'text-accent' },
+                  { key: 'due_today', label: 'Due Today', color: 'text-highlight' },
+                  { key: 'overdue', label: 'Overdue', color: 'text-highlight' },
                   { key: 'critical_overdue', label: 'Critical', color: 'text-negative' },
                 ].map(({ key, label, color }) => (
                   <div key={key} className="text-center">
                     <p className={`text-lg font-bold ${color}`}>{reminderData[key]?.count || 0}</p>
-                    <p className="text-[12px] text-text-muted">{label}</p>
+                    <p className="text-xs text-text-muted">{label}</p>
                   </div>
                 ))}
               </div>
@@ -235,13 +235,13 @@ export default function APWorkflowBoard() {
               <div className="flex flex-wrap gap-2">
                 {[
                   { level: 'low',      color: 'text-positive' },
-                  { level: 'medium',   color: 'text-cyan'     },
-                  { level: 'high',     color: 'text-amber'   },
+                  { level: 'medium',   color: 'text-accent'     },
+                  { level: 'high',     color: 'text-highlight'   },
                   { level: 'critical', color: 'text-negative'     },
                 ].map(({ level, color }) => riskSummary[level] > 0 && (
                   <div key={level} className="text-center">
                     <p className={`text-base font-bold ${color}`}>{riskSummary[level]}</p>
-                    <p className="text-[12px] text-text-muted capitalize">{level}</p>
+                    <p className="text-xs text-text-muted capitalize">{level}</p>
                   </div>
                 ))}
               </div>
@@ -258,7 +258,7 @@ export default function APWorkflowBoard() {
             type="button"
             onClick={() => setStateFilter(f)}
             className={`px-3 py-1 rounded text-xs font-medium transition-colors capitalize
-              ${stateFilter === f ? 'bg-cyan text-ink-on-accent' : 'bg-glass text-text-muted hover:text-text-primary'}`}
+              ${stateFilter === f ? 'bg-accent text-ink-on-accent' : 'bg-glass text-text-muted hover:text-text-primary'}`}
           >
             {f === 'all' ? 'All Bills' : f}
           </button>
@@ -267,7 +267,7 @@ export default function APWorkflowBoard() {
           <button
             type="button"
             onClick={() => setShowSchedules(s => !s)}
-            className="flex items-center gap-1 text-xs text-text-muted hover:text-cyan transition-colors"
+            className="flex items-center gap-1 text-xs text-text-muted hover:text-accent transition-colors"
           >
             <Repeat className="h-3.5 w-3.5" />
             Recurring Schedules
@@ -281,12 +281,12 @@ export default function APWorkflowBoard() {
         <div className="premium-card p-4 space-y-1">
           <div className="flex items-center justify-between mb-3">
             <h3 className="text-sm font-bold text-text-primary flex items-center gap-1.5">
-              <Calendar className="h-4 w-4 text-cyan" />
+              <Calendar className="h-4 w-4 text-accent" />
               Active Schedules
             </h3>
             <Link
               to="/purchases/bills/new"
-              className="text-xs text-cyan hover:underline"
+              className="text-xs text-accent hover:underline"
             >
               New Bill
             </Link>

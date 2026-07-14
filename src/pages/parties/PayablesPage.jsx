@@ -74,9 +74,9 @@ function KpiTile({ label, value, sub, accent }) {
   return (
     <div className={cn(
       'premium-card p-5 flex flex-col gap-1',
-      accent && 'border-amber/30 bg-amber/5'
+      accent && 'border-highlight/30 bg-highlight/5'
     )}>
-      <span className="text-[12.5px] text-text-muted font-semibold uppercase tracking-wider">
+      <span className="text-small text-text-muted font-semibold uppercase tracking-wider">
         {label}
       </span>
       <span className="text-2xl font-black text-text-primary leading-tight">{value}</span>
@@ -109,9 +109,9 @@ function PaymentForm({ row, currency, onClose, bankAccounts }) {
   }
 
   return (
-    <div className="bg-navy/80 border border-amber/20 rounded-xl p-4 space-y-3 animate-fade-in">
+    <div className="bg-navy/80 border border-highlight/20 rounded-xl p-4 space-y-3 animate-fade-in">
       <div className="flex items-center justify-between">
-        <p className="text-sm font-semibold text-amber flex items-center gap-1.5">
+        <p className="text-sm font-semibold text-highlight flex items-center gap-1.5">
           <DollarSign className="h-4 w-4" /> Record Payment to Vendor
         </p>
         <button type="button" onClick={onClose} className="text-text-muted hover:text-text-primary">
@@ -120,7 +120,7 @@ function PaymentForm({ row, currency, onClose, bankAccounts }) {
       </div>
       <p className="text-xs text-text-muted">
         Outstanding: <span className="font-semibold text-text-primary">{formatCurrency(max, currency)}</span>
-        {row._vendorName && <> · <span className="text-amber">{row._vendorName}</span></>}
+        {row._vendorName && <> · <span className="text-highlight">{row._vendorName}</span></>}
       </p>
       <div className="grid grid-cols-2 gap-2">
         <Input
@@ -261,7 +261,7 @@ export default function PayablesPage() {
         <Link
           to={`/vendors/${r._vendorId}`}
           onClick={(e) => e.stopPropagation()}
-          className="font-semibold text-text-primary hover:text-amber transition-colors"
+          className="font-semibold text-text-primary hover:text-highlight transition-colors"
         >
           {r._vendorName}
         </Link>
@@ -273,7 +273,7 @@ export default function PayablesPage() {
       key: 'bill',
       header: 'Bill #',
       render: (r) => r._bill
-        ? <span className="font-mono text-xs text-amber">{r._bill}</span>
+        ? <span className="font-mono text-xs text-highlight">{r._bill}</span>
         : <span className="text-text-muted text-xs">—</span>,
     },
     {
@@ -322,8 +322,8 @@ export default function PayablesPage() {
         const bucket = ageBucket(d)
         return (
           <div className="flex items-center gap-1.5">
-            <Badge variant={bucket.variant} className="text-[12px]">{bucket.label}</Badge>
-            <span className="text-[12px] text-text-muted">{d}d</span>
+            <Badge variant={bucket.variant} className="text-xs">{bucket.label}</Badge>
+            <span className="text-xs text-text-muted">{d}d</span>
           </div>
         )
       },
@@ -346,7 +346,7 @@ export default function PayablesPage() {
         <button
           type="button"
           onClick={(e) => { e.stopPropagation(); setPayingRowId(r._id === payingRowId ? null : r._id) }}
-          className="text-xs text-amber hover:underline font-semibold whitespace-nowrap"
+          className="text-xs text-highlight hover:underline font-semibold whitespace-nowrap"
         >
           {r._id === payingRowId ? 'Cancel' : '+ Pay'}
         </button>
@@ -360,7 +360,7 @@ export default function PayablesPage() {
       <div className="flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between">
         <div>
           <h1 className="flex items-center gap-2 text-2xl font-black text-text-primary tracking-tight">
-            <CreditCard className="h-6 w-6 text-amber" />
+            <CreditCard className="h-6 w-6 text-highlight" />
             Money you owe
           </h1>
           <p className="text-text-secondary mt-1 text-sm">
@@ -414,7 +414,7 @@ export default function PayablesPage() {
       {aging && (
         <div className="premium-card p-5">
           <h3 className="text-sm font-bold text-text-primary mb-3 flex items-center gap-2">
-            <AlertTriangle className="h-4 w-4 text-amber" /> How overdue it is
+            <AlertTriangle className="h-4 w-4 text-highlight" /> How overdue it is
           </h3>
           <div className="grid grid-cols-2 sm:grid-cols-5 gap-3">
             {[
@@ -429,7 +429,7 @@ export default function PayablesPage() {
                 <div key={b.key} className="rounded-xl border border-glass bg-glass-panel p-3">
                   <div className="flex items-center justify-between mb-1">
                     <Badge variant={b.variant}>{b.label}</Badge>
-                    <span className="text-[12px] text-text-muted">
+                    <span className="text-xs text-text-muted">
                       {bucket.count} {bucket.count === 1 ? 'bill' : 'bills'}
                     </span>
                   </div>

@@ -74,7 +74,7 @@ export default function ClassificationHealthPanel() {
           label="Auto-Post Rate"
           value={`${Math.round(autoPostRate * 100)}%`}
           sub={`${autoPosted} of ${totalProc} transactions`}
-          color={autoPostRate >= 0.70 ? 'text-positive' : 'text-amber'}
+          color={autoPostRate >= 0.70 ? 'text-positive' : 'text-highlight'}
         />
         <StatCard
           label="7-Day Accuracy"
@@ -86,7 +86,7 @@ export default function ClassificationHealthPanel() {
           label="Correction Rate"
           value={`${Math.round(corrRate * 100)}%`}
           sub="Lower is better"
-          color={corrRate <= 0.06 ? 'text-positive' : 'text-amber'}
+          color={corrRate <= 0.06 ? 'text-positive' : 'text-highlight'}
         />
         <StatCard
           label="Model Version"
@@ -98,7 +98,7 @@ export default function ClassificationHealthPanel() {
 
       {/* FR-01.2 acceptance criterion indicator */}
       <div className={`flex items-center gap-2 text-xs px-3 py-2 rounded-lg ${
-        accuracy >= 0.94 ? 'bg-positive/10 text-positive' : 'bg-amber/10 text-amber'
+        accuracy >= 0.94 ? 'bg-positive/10 text-positive' : 'bg-highlight/10 text-highlight'
       }`}>
         <span>{accuracy >= 0.94 ? '✓' : '⚠'}</span>
         <span>

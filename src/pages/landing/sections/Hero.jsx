@@ -72,7 +72,7 @@ export default function Hero() {
     <section ref={sectionRef} id="hero" className="relative flex min-h-[100dvh] items-center overflow-hidden">
       {/* Background — static gold glow is the base + reduced-motion fallback */}
       <div className="bg-hero-glow pointer-events-none absolute inset-0" />
-      {/* The ONE cinematic centerpiece: budgeted liquid-gold WebGL field */}
+      {/* The ONE cinematic centerpiece: budgeted liquid-highlight WebGL field */}
       {!prefersReducedMotion && (
         <Suspense fallback={null}>
           <LiquidGoldCanvas className="pointer-events-none absolute inset-0 opacity-60 [mask-image:radial-gradient(125%_100%_at_62%_28%,#000_28%,transparent_82%)] [-webkit-mask-image:radial-gradient(125%_100%_at_62%_28%,#000_28%,transparent_82%)]" />

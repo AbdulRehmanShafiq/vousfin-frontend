@@ -20,11 +20,11 @@ function ChatBubble({ m }) {
   return (
     <div className={`flex gap-2 ${isUser ? 'justify-end' : 'justify-start'}`}>
       {!isUser && (
-        <div className="mt-0.5 flex h-6 w-6 shrink-0 items-center justify-center rounded-full border border-cyan/30 bg-cyan/20">
-          <Bot className="h-3.5 w-3.5 text-cyan" aria-hidden="true" />
+        <div className="mt-0.5 flex h-6 w-6 shrink-0 items-center justify-center rounded-full border border-accent/30 bg-accent/20">
+          <Bot className="h-3.5 w-3.5 text-accent" aria-hidden="true" />
         </div>
       )}
-      <div className={`max-w-[80%] rounded-xl px-3 py-2 text-sm leading-relaxed ${isUser ? 'rounded-tr-sm bg-cyan text-ink-on-accent font-medium' : 'rounded-tl-sm border border-glass bg-glass-panel text-text-primary'}`}>
+      <div className={`max-w-[80%] rounded-xl px-3 py-2 text-sm leading-relaxed ${isUser ? 'rounded-tr-sm bg-accent text-ink-on-accent font-medium' : 'rounded-tl-sm border border-glass bg-glass-panel text-text-primary'}`}>
         {isUser ? m.content : (
           <>
             {m.content
@@ -47,7 +47,7 @@ function TypingDots() {
   return (
     <div className="flex items-center gap-1 px-2 py-1">
       {['-0.3s', '-0.15s', '0s'].map((d) => (
-        <span key={d} className="h-1.5 w-1.5 animate-bounce rounded-full bg-cyan/60" style={{ animationDelay: d }} />
+        <span key={d} className="h-1.5 w-1.5 animate-bounce rounded-full bg-accent/60" style={{ animationDelay: d }} />
       ))}
     </div>
   )
@@ -198,7 +198,7 @@ export function CommandBar() {
                 className="rounded-md p-1 text-text-muted hover:bg-glass hover:text-text-primary">
                 <ArrowLeft className="h-4 w-4" aria-hidden="true" />
               </button>
-              <Sparkles className="h-4 w-4 text-cyan" aria-hidden="true" />
+              <Sparkles className="h-4 w-4 text-accent" aria-hidden="true" />
               <span className="flex-1 text-sm font-medium text-text-primary">AI Assistant</span>
               <button type="button" onClick={() => { closeBar(); navigate('/ai/assistant') }}
                 aria-label="Open the full AI assistant page"
@@ -235,7 +235,7 @@ export function CommandBar() {
                 autoFocus
               />
               <button type="button" onClick={sendChat} disabled={!chatDraft.trim() || aiLoading} aria-label="Send message"
-                className="rounded-md p-1.5 text-cyan hover:bg-glass disabled:opacity-40">
+                className="rounded-md p-1.5 text-accent hover:bg-glass disabled:opacity-40">
                 <Send className="h-4 w-4" aria-hidden="true" />
               </button>
             </div>
@@ -267,9 +267,9 @@ export function CommandBar() {
                 onMouseDown={(ev) => { ev.preventDefault(); enterChat(query) }}
                 className={`flex w-full items-center gap-3 border-t border-glass px-4 py-2.5 text-left ${active === -1 ? 'bg-glass' : ''}`}
               >
-                <Sparkles className="h-4 w-4 shrink-0 text-cyan" aria-hidden="true" />
+                <Sparkles className="h-4 w-4 shrink-0 text-accent" aria-hidden="true" />
                 <span className="flex-1 truncate text-text-primary">Ask AI: “{query}”</span>
-                <span className="rounded bg-glass px-1.5 py-0.5 text-[10px] uppercase text-text-muted">Chat</span>
+                <span className="rounded bg-glass px-1.5 py-0.5 text-label uppercase text-text-muted">Chat</span>
               </button>
             )}
             {results.length > 0 && (
@@ -286,7 +286,7 @@ export function CommandBar() {
                       {Icon ? <Icon className="h-4 w-4 shrink-0 text-text-muted" aria-hidden="true" /> : null}
                       <span className="flex-1 truncate">{e.title}</span>
                       <span className="truncate text-xs text-text-muted">{e.path.join(' › ')}</span>
-                      <span className="rounded bg-glass px-1.5 py-0.5 text-[10px] uppercase text-text-muted">{GROUP_LABEL[e.type]}</span>
+                      <span className="rounded bg-glass px-1.5 py-0.5 text-label uppercase text-text-muted">{GROUP_LABEL[e.type]}</span>
                     </li>
                   )
                 })}

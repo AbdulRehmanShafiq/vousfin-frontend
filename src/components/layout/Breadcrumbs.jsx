@@ -29,7 +29,7 @@ export default function Breadcrumbs() {
 
   return (
     <nav className="mb-4 flex items-center gap-1 text-sm text-text-muted">
-      <Link to="/dashboard" className="hover:text-cyan transition-colors">
+      <Link to="/dashboard" className="hover:text-accent transition-colors">
         <Home className="h-4 w-4" />
       </Link>
       {segments.map((seg, i) => {
@@ -41,7 +41,7 @@ export default function Breadcrumbs() {
             {isLast ? (
               <span className="font-medium text-text-primary">{LABELS[seg] || seg}</span>
             ) : (
-              <Link to={path} className="hover:text-cyan transition-colors">
+              <Link to={path} className="hover:text-accent transition-colors">
                 {LABELS[seg] || seg}
               </Link>
             )}

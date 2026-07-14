@@ -64,7 +64,7 @@ export default function TransactionDetailModal({ isOpen, onClose, transactionId 
           <div className="flex items-start justify-between gap-4 pb-4 border-b border-glass">
             <div className="min-w-0">
               <div className="flex items-center gap-2 mb-1">
-                <Receipt className="h-4 w-4 text-cyan flex-shrink-0" />
+                <Receipt className="h-4 w-4 text-accent flex-shrink-0" />
                 <h3 className="font-bold text-text-primary truncate">{tx.description}</h3>
               </div>
               <div className="flex flex-wrap gap-3 text-xs text-text-muted">
@@ -88,12 +88,12 @@ export default function TransactionDetailModal({ isOpen, onClose, transactionId 
 
           {/* ── Journal Lines ────────────────────────────────────── */}
           <div>
-            <p className="text-[12px] font-bold uppercase tracking-widest text-text-muted mb-2 flex items-center gap-1">
+            <p className="text-xs font-bold uppercase tracking-widest text-text-muted mb-2 flex items-center gap-1">
               <FileText className="h-3 w-3" /> Journal Entry
             </p>
             <table className="w-full text-xs">
               <thead>
-                <tr className="border-b border-glass text-[12px] uppercase tracking-wider text-text-muted">
+                <tr className="border-b border-glass text-xs uppercase tracking-wider text-text-muted">
                   <th className="text-left py-1.5 w-12">Side</th>
                   <th className="text-left py-1.5">Account</th>
                   <th className="text-right py-1.5 w-32">Amount</th>
@@ -103,13 +103,13 @@ export default function TransactionDetailModal({ isOpen, onClose, transactionId 
                 {lines.map((l, i) => (
                   <tr key={i} className="border-b border-glass/40">
                     <td className="py-2">
-                      <span className={`inline-block px-2 py-0.5 rounded font-mono text-[12px] font-bold ${
-                        l.side === 'DR' ? 'bg-positive/15 text-positive' : 'bg-amber/15 text-amber'
+                      <span className={`inline-block px-2 py-0.5 rounded font-mono text-xs font-bold ${
+                        l.side === 'DR' ? 'bg-positive/15 text-positive' : 'bg-highlight/15 text-highlight'
                       }`}>{l.side}</span>
                     </td>
                     <td className="py-2 text-text-primary">
                       {l.accountName}
-                      {l.description && <div className="text-[12px] text-text-muted">{l.description}</div>}
+                      {l.description && <div className="text-xs text-text-muted">{l.description}</div>}
                     </td>
                     <td className="py-2 text-right font-mono tabular-nums text-text-primary">
                       {formatCurrency(l.amount, currency)}
@@ -124,7 +124,7 @@ export default function TransactionDetailModal({ isOpen, onClose, transactionId 
                       DR {formatCurrency(totalDebits, currency)} · CR {formatCurrency(totalCredits, currency)}
                     </span>
                     {!balanced && (
-                      <div className="text-[12px] text-negative flex items-center justify-end gap-1 mt-1">
+                      <div className="text-xs text-negative flex items-center justify-end gap-1 mt-1">
                         <AlertTriangle className="h-3 w-3" /> Not balanced
                       </div>
                     )}
@@ -158,21 +158,21 @@ export default function TransactionDetailModal({ isOpen, onClose, transactionId 
 
           {/* ── Currency / FX ───────────────────────────────────── */}
           {tx.currencyCode && tx.exchangeRate && tx.exchangeRate !== 1 && (
-            <div className="rounded-lg border border-cyan/20 bg-cyan/5 p-3">
-              <p className="text-[12px] font-bold uppercase tracking-widest text-cyan mb-1.5 flex items-center gap-1">
+            <div className="rounded-lg border border-accent/20 bg-accent/5 p-3">
+              <p className="text-xs font-bold uppercase tracking-widest text-accent mb-1.5 flex items-center gap-1">
                 <Coins className="h-3 w-3" /> Multi-Currency
               </p>
               <div className="grid grid-cols-3 gap-2 text-xs">
                 <div>
-                  <div className="text-text-muted text-[12px]">Original</div>
+                  <div className="text-text-muted text-xs">Original</div>
                   <div className="font-mono text-text-primary">{formatCurrency(tx.amount, tx.currencyCode)}</div>
                 </div>
                 <div className="flex items-center justify-center">
                   <ArrowRight className="h-3 w-3 text-text-muted" />
-                  <span className="text-text-muted text-[12px] ml-1">× {tx.exchangeRate}</span>
+                  <span className="text-text-muted text-xs ml-1">× {tx.exchangeRate}</span>
                 </div>
                 <div>
-                  <div className="text-text-muted text-[12px]">Base</div>
+                  <div className="text-text-muted text-xs">Base</div>
                   <div className="font-mono text-text-primary">{formatCurrency(tx.baseCurrencyAmount, 'PKR')}</div>
                 </div>
               </div>
@@ -182,7 +182,7 @@ export default function TransactionDetailModal({ isOpen, onClose, transactionId 
           {/* ── Settlements ─────────────────────────────────────── */}
           {tx.settlements?.length > 0 && (
             <div>
-              <p className="text-[12px] font-bold uppercase tracking-widest text-text-muted mb-2 flex items-center gap-1">
+              <p className="text-xs font-bold uppercase tracking-widest text-text-muted mb-2 flex items-center gap-1">
                 <Link2 className="h-3 w-3" /> Settlements ({tx.settlements.length})
               </p>
               <div className="space-y-1.5">
@@ -193,9 +193,9 @@ export default function TransactionDetailModal({ isOpen, onClose, transactionId 
                   </div>
                 ))}
                 {(tx.remainingBalance !== null && tx.remainingBalance !== undefined) && (
-                  <div className="flex items-center justify-between gap-3 rounded bg-amber/10 border border-amber/30 px-3 py-2 text-xs mt-2">
-                    <span className="font-semibold text-amber">Outstanding Balance</span>
-                    <span className="font-mono font-bold text-amber">{formatCurrency(tx.remainingBalance, currency)}</span>
+                  <div className="flex items-center justify-between gap-3 rounded bg-highlight/10 border border-highlight/30 px-3 py-2 text-xs mt-2">
+                    <span className="font-semibold text-highlight">Outstanding Balance</span>
+                    <span className="font-mono font-bold text-highlight">{formatCurrency(tx.remainingBalance, currency)}</span>
                   </div>
                 )}
               </div>
@@ -205,7 +205,7 @@ export default function TransactionDetailModal({ isOpen, onClose, transactionId 
           {/* ── Inventory link ──────────────────────────────────── */}
           {tx.inventoryItemId && tx.inventoryQty && (
             <div className="rounded-lg border border-positive/20 bg-positive/5 p-3 text-xs">
-              <p className="text-[12px] font-bold uppercase tracking-widest text-positive mb-1">Inventory Movement</p>
+              <p className="text-xs font-bold uppercase tracking-widest text-positive mb-1">Inventory Movement</p>
               <p className="text-text-primary">{tx.inventoryQty} units of {tx.inventoryItem?.name || 'item'}</p>
             </div>
           )}
@@ -221,17 +221,17 @@ export default function TransactionDetailModal({ isOpen, onClose, transactionId 
           {/* ── Audit Trail ─────────────────────────────────────── */}
           {tx.auditTrail?.length > 0 && (
             <div>
-              <p className="text-[12px] font-bold uppercase tracking-widest text-text-muted mb-2 flex items-center gap-1">
+              <p className="text-xs font-bold uppercase tracking-widest text-text-muted mb-2 flex items-center gap-1">
                 <History className="h-3 w-3" /> Audit Trail
               </p>
               <div className="space-y-1.5 max-h-40 overflow-y-auto pr-2 scrollbar-thin">
                 {tx.auditTrail.map((e, i) => (
                   <div key={i} className="flex items-start gap-2 text-xs">
-                    <span className="text-cyan font-mono shrink-0 text-[12px] whitespace-nowrap">{formatDateTime(e.timestamp || e.createdAt)}</span>
-                    <span className={`shrink-0 rounded-full px-1.5 py-px font-semibold text-[12px] ${
+                    <span className="text-accent font-mono shrink-0 text-xs whitespace-nowrap">{formatDateTime(e.timestamp || e.createdAt)}</span>
+                    <span className={`shrink-0 rounded-full px-1.5 py-px font-semibold text-xs ${
                       e.action === 'Reversed' ? 'bg-negative/15 text-negative' :
                       e.action === 'Created'  ? 'bg-positive/15 text-positive' :
-                      e.action === 'Edited'   ? 'bg-amber/15 text-amber' :
+                      e.action === 'Edited'   ? 'bg-highlight/15 text-highlight' :
                       'bg-glass-panel text-text-muted'
                     }`}>{e.action}</span>
                     <span className="text-text-muted">by {e.performedByName || 'System'}</span>
@@ -244,14 +244,14 @@ export default function TransactionDetailModal({ isOpen, onClose, transactionId 
           {/* ── Notes / tags ────────────────────────────────────── */}
           {tx.notes && (
             <div className="rounded bg-glass-panel/40 p-3 text-xs">
-              <p className="text-[12px] font-bold uppercase tracking-widest text-text-muted mb-1">Notes</p>
+              <p className="text-xs font-bold uppercase tracking-widest text-text-muted mb-1">Notes</p>
               <p className="text-text-secondary">{tx.notes}</p>
             </div>
           )}
           {tx.tags?.length > 0 && (
             <div className="flex flex-wrap gap-1.5">
               {tx.tags.map((t, i) => (
-                <span key={i} className="text-[12px] bg-cyan/10 text-cyan rounded px-2 py-0.5">{t}</span>
+                <span key={i} className="text-xs bg-accent/10 text-accent rounded px-2 py-0.5">{t}</span>
               ))}
             </div>
           )}

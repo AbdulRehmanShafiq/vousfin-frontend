@@ -23,17 +23,17 @@ export default function AdminLayout() {
           <Shield className="h-5 w-5 text-accent" />
           <span className="font-display text-base font-semibold text-text-primary tracking-tight">
             vous<span className="text-gradient">Fin</span>
-            <span className="ml-2 text-text-muted text-[13px] font-normal">Admin</span>
+            <span className="ml-2 text-text-muted text-small font-normal">Admin</span>
           </span>
         </div>
 
         <div className="flex items-center gap-4">
-          <span className="text-[13px] text-text-secondary">
+          <span className="text-small text-text-secondary">
             {user?.email}
           </span>
           <button
             onClick={handleLogout}
-            className="flex items-center gap-1.5 text-[13px] text-negative/80 hover:text-negative transition-colors"
+            className="flex items-center gap-1.5 text-small text-negative/80 hover:text-negative transition-colors"
           >
             <LogOut className="h-4 w-4" />
             Log out

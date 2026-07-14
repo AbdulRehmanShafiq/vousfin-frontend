@@ -11,7 +11,7 @@ import { Package } from 'lucide-react'
 
 const fmt = (n) => (n == null ? '—' : Number(n).toLocaleString(undefined, { maximumFractionDigits: 2 }))
 
-function ProgressBar({ value, max, colorClass = 'bg-cyan' }) {
+function ProgressBar({ value, max, colorClass = 'bg-accent' }) {
   const pct = max > 0 ? Math.min(100, (value / max) * 100) : 0
   return (
     <div className="relative h-2 rounded-full bg-glass overflow-hidden">
@@ -34,14 +34,14 @@ export default function POReceivingProgress({ po }) {
   const overallPct    = totalOrdered > 0 ? Math.min(100, (totalReceived / totalOrdered) * 100) : 0
 
   const overallColor = overallPct >= 100 ? 'text-positive'
-                     : overallPct > 0    ? 'text-cyan'
+                     : overallPct > 0    ? 'text-accent'
                      : 'text-text-muted'
 
   return (
     <div className="premium-card p-4 space-y-4">
       <div className="flex items-center justify-between">
         <h3 className="text-sm font-bold text-text-primary flex items-center gap-1.5">
-          <Package className="h-4 w-4 text-cyan" />
+          <Package className="h-4 w-4 text-accent" />
           Receiving Progress
         </h3>
         <span className={`text-sm font-semibold ${overallColor}`}>
@@ -54,9 +54,9 @@ export default function POReceivingProgress({ po }) {
         <ProgressBar
           value={totalReceived}
           max={totalOrdered}
-          colorClass={overallPct >= 100 ? 'bg-positive' : 'bg-cyan'}
+          colorClass={overallPct >= 100 ? 'bg-positive' : 'bg-accent'}
         />
-        <div className="flex justify-between text-[12px] text-text-muted">
+        <div className="flex justify-between text-xs text-text-muted">
           <span>{fmt(totalReceived)} received</span>
           <span>{fmt(totalOrdered)} ordered</span>
         </div>
@@ -70,7 +70,7 @@ export default function POReceivingProgress({ po }) {
             const qr = li.quantityReceived || 0
             const linePct = qo > 0 ? Math.min(100, (qr / qo) * 100) : 0
             const lineColor = linePct >= 100 ? 'bg-positive'
-                            : linePct > 0    ? 'bg-cyan'
+                            : linePct > 0    ? 'bg-accent'
                             : 'bg-glass'
             return (
               <div key={i} className="space-y-1">
@@ -91,7 +91,7 @@ export default function POReceivingProgress({ po }) {
 
       {/* Linked GRNs summary */}
       {Array.isArray(po.linkedGrnIds) && po.linkedGrnIds.length > 0 && (
-        <p className="text-[12px] text-text-muted">
+        <p className="text-xs text-text-muted">
           {po.linkedGrnIds.length} GRN{po.linkedGrnIds.length !== 1 ? 's' : ''} linked
         </p>
       )}

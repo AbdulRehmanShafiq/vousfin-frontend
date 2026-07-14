@@ -60,12 +60,12 @@ function KpiTile({ icon: Icon, label, value, sub, accent, accentColor = 'cyan' }
   return (
     <div className={cn(
       'premium-card p-5 flex flex-col gap-1.5',
-      accent && accentColor === 'cyan'  && 'border-cyan/30 bg-cyan/5',
+      accent && accentColor === 'cyan'  && 'border-accent/30 bg-accent/5',
       accent && accentColor === 'red'   && 'border-negative/30 bg-negative/5',
-      accent && accentColor === 'amber' && 'border-amber/30 bg-amber/5',
+      accent && accentColor === 'amber' && 'border-highlight/30 bg-highlight/5',
     )}>
       <div className="flex items-center justify-between">
-        <span className="text-[12.5px] text-text-muted font-semibold uppercase tracking-wider">{label}</span>
+        <span className="text-small text-text-muted font-semibold uppercase tracking-wider">{label}</span>
         {Icon && <Icon className="h-4 w-4 text-text-muted/70" />}
       </div>
       <span className="text-2xl font-black text-text-primary leading-tight">{value}</span>
@@ -81,7 +81,7 @@ function FieldRow({ icon: Icon, label, value }) {
     <div className="flex items-start gap-2.5 text-sm">
       <Icon className="h-4 w-4 flex-shrink-0 text-text-muted mt-0.5" />
       <div className="min-w-0">
-        <p className="text-[12.5px] text-text-muted uppercase tracking-wider font-semibold">{label}</p>
+        <p className="text-small text-text-muted uppercase tracking-wider font-semibold">{label}</p>
         <p className="text-text-primary break-words">{value}</p>
       </div>
     </div>
@@ -97,7 +97,7 @@ function Tab({ active, onClick, icon: Icon, label }) {
       className={cn(
         'inline-flex items-center gap-2 px-4 py-2.5 text-sm font-semibold border-b-2 transition-colors',
         active
-          ? 'border-cyan text-cyan'
+          ? 'border-accent text-accent'
           : 'border-transparent text-text-muted hover:text-text-primary hover:border-glass'
       )}
     >
@@ -256,7 +256,7 @@ export default function CustomerDetail() {
       key: 'invoiceNumber',
       header: 'Ref #',
       render: (row) => (
-        <span className="text-cyan text-xs font-mono">{row.invoiceNumber || '—'}</span>
+        <span className="text-accent text-xs font-mono">{row.invoiceNumber || '—'}</span>
       ),
     },
     {
@@ -290,7 +290,7 @@ export default function CustomerDetail() {
       className: 'text-right',
       cellClassName: 'text-right font-bold',
       render: (row) => (
-        <span className={row.balance > 0 ? 'text-cyan' : 'text-text-primary'}>
+        <span className={row.balance > 0 ? 'text-accent' : 'text-text-primary'}>
           {formatCurrency(row.balance ?? 0, currency)}
         </span>
       ),
@@ -331,7 +331,7 @@ export default function CustomerDetail() {
       <div className="premium-card p-8 text-center animate-fade-in">
         <AlertCircle className="h-10 w-10 text-text-muted mx-auto mb-3" />
         <p className="text-text-primary font-semibold mb-1">Customer not found</p>
-        <Link to="/customers" className="text-sm text-cyan hover:underline">← Back to customers</Link>
+        <Link to="/customers" className="text-sm text-accent hover:underline">← Back to customers</Link>
       </div>
     )
   }
@@ -345,7 +345,7 @@ export default function CustomerDetail() {
       <div className="flex items-center justify-between gap-3 flex-wrap">
         <Link
           to="/customers"
-          className="inline-flex items-center gap-1.5 text-sm text-text-muted hover:text-cyan transition-colors"
+          className="inline-flex items-center gap-1.5 text-sm text-text-muted hover:text-accent transition-colors"
         >
           <ArrowLeft className="h-4 w-4" /> Back to customers
         </Link>
@@ -362,8 +362,8 @@ export default function CustomerDetail() {
       {/* ── Profile card ───────────────────────────────────────────────── */}
       <div className="premium-card p-6">
         <div className="flex items-start gap-4">
-          <div className="flex h-14 w-14 flex-shrink-0 items-center justify-center rounded-full bg-cyan/15 border border-cyan/30">
-            <Users className="h-6 w-6 text-cyan" />
+          <div className="flex h-14 w-14 flex-shrink-0 items-center justify-center rounded-full bg-accent/15 border border-accent/30">
+            <Users className="h-6 w-6 text-accent" />
           </div>
           <div className="flex-1 min-w-0">
             <div className="flex items-center gap-3 flex-wrap">
@@ -477,7 +477,7 @@ export default function CustomerDetail() {
                   <button
                     type="button"
                     onClick={() => { setStartDate(''); setEndDate('') }}
-                    className="text-xs text-text-muted hover:text-cyan transition-colors px-2"
+                    className="text-xs text-text-muted hover:text-accent transition-colors px-2"
                   >
                     Clear
                   </button>
@@ -502,11 +502,11 @@ export default function CustomerDetail() {
                 {[
                   { label: 'Total Invoiced', value: formatCurrency(stmt.summary.totalInvoiced || 0, currency), color: 'text-text-primary' },
                   { label: 'Total Paid',     value: formatCurrency(stmt.summary.totalPaid     || 0, currency), color: 'text-positive' },
-                  { label: 'Outstanding',    value: formatCurrency(stmt.summary.outstanding   || 0, currency), color: 'text-cyan'        },
+                  { label: 'Outstanding',    value: formatCurrency(stmt.summary.outstanding   || 0, currency), color: 'text-accent'        },
                   { label: 'Overdue',        value: formatCurrency(stmt.summary.overdueAmount || 0, currency), color: 'text-negative'     },
                 ].map(c => (
                   <div key={c.label} className="bg-glass/30 rounded-lg px-4 py-3">
-                    <p className="text-[12px] text-text-muted uppercase tracking-wider font-semibold">{c.label}</p>
+                    <p className="text-xs text-text-muted uppercase tracking-wider font-semibold">{c.label}</p>
                     <p className={cn('text-base font-black mt-0.5', c.color)}>{c.value}</p>
                   </div>
                 ))}

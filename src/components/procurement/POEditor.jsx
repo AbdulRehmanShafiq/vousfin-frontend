@@ -96,10 +96,10 @@ function CollapsibleSection({ title, icon: Icon, defaultOpen = false, children }
 function POStateBadge({ state }) {
   const MAP = {
     draft:              { label: 'Draft',              color: 'text-text-muted border-text-muted/30' },
-    pending_approval:   { label: 'Pending Approval',   color: 'text-amber  border-amber/30'  },
-    approved:           { label: 'Approved',           color: 'text-cyan    border-cyan/30'    },
+    pending_approval:   { label: 'Pending Approval',   color: 'text-highlight  border-highlight/30'  },
+    approved:           { label: 'Approved',           color: 'text-accent    border-accent/30'    },
     partially_received: { label: 'Partially Received', color: 'text-accent-2 border-accent-2/30' },
-    fully_received:     { label: 'Fully Received',     color: 'text-cyan       border-cyan/30'       },
+    fully_received:     { label: 'Fully Received',     color: 'text-accent       border-accent/30'       },
     billed:             { label: 'Billed',             color: 'text-positive border-positive/30' },
     closed:             { label: 'Closed',             color: 'text-positive border-positive/30' },
     cancelled:          { label: 'Cancelled',          color: 'text-negative    border-negative/30'    },
@@ -183,14 +183,14 @@ function NextStepsCard({ state }) {
                 <div className={cn(
                   'h-1.5 rounded-full transition-all',
                   i === 0 ? 'w-3' : 'w-5',
-                  done   ? 'bg-cyan'           :
-                  active ? 'bg-cyan/80 w-7'    :
+                  done   ? 'bg-accent'           :
+                  active ? 'bg-accent/80 w-7'    :
                            'bg-glass/50',
                 )} />
                 {i < activeSteps.length - 1 && (
                   <div className={cn(
                     'w-1 h-1 rounded-full mx-0.5',
-                    done ? 'bg-cyan/40' : 'bg-glass/30'
+                    done ? 'bg-accent/40' : 'bg-glass/30'
                   )} />
                 )}
               </div>
@@ -223,7 +223,7 @@ function POLineRow({ item, readOnly, onChange, onRemove }) {
             value={item.name}
             onChange={e => update('name', e.target.value)}
             placeholder="Item name"
-            className="w-full bg-transparent border border-glass/30 rounded px-2 py-1 text-sm text-text-primary focus:border-cyan outline-none"
+            className="w-full bg-transparent border border-glass/30 rounded px-2 py-1 text-sm text-text-primary focus:border-accent outline-none"
           />
         )}
       </td>
@@ -237,7 +237,7 @@ function POLineRow({ item, readOnly, onChange, onRemove }) {
             step="any"
             value={item.quantityOrdered}
             onChange={e => update('quantityOrdered', parseFloat(e.target.value) || 0)}
-            className="w-full bg-transparent border border-glass/30 rounded px-2 py-1 text-sm text-center focus:border-cyan outline-none"
+            className="w-full bg-transparent border border-glass/30 rounded px-2 py-1 text-sm text-center focus:border-accent outline-none"
           />
         )}
       </td>
@@ -258,7 +258,7 @@ function POLineRow({ item, readOnly, onChange, onRemove }) {
             step="any"
             value={item.unitPrice}
             onChange={e => update('unitPrice', parseFloat(e.target.value) || 0)}
-            className="w-full bg-transparent border border-glass/30 rounded px-2 py-1 text-sm font-mono text-right focus:border-cyan outline-none"
+            className="w-full bg-transparent border border-glass/30 rounded px-2 py-1 text-sm font-mono text-right focus:border-accent outline-none"
           />
         )}
       </td>
@@ -273,7 +273,7 @@ function POLineRow({ item, readOnly, onChange, onRemove }) {
             step="0.5"
             value={item.taxRate}
             onChange={e => update('taxRate', parseFloat(e.target.value) || 0)}
-            className="w-full bg-transparent border border-glass/30 rounded px-2 py-1 text-sm text-center focus:border-cyan outline-none"
+            className="w-full bg-transparent border border-glass/30 rounded px-2 py-1 text-sm text-center focus:border-accent outline-none"
           />
         )}
       </td>
@@ -387,7 +387,7 @@ export default function POEditor({
           {/* Card header */}
           <div className="flex items-center justify-between mb-5">
             <div className="flex items-center gap-3">
-              <ShoppingBag className="h-5 w-5 text-cyan" />
+              <ShoppingBag className="h-5 w-5 text-accent" />
               <div>
                 <h2 className="text-lg font-bold text-text-primary">
                   {po ? `Purchase Order — ${po.poNumber}` : 'New Purchase Order'}
@@ -454,7 +454,7 @@ export default function POEditor({
                   size="sm"
                   icon={CheckCircle}
                   disabled={saving}
-                  className="bg-cyan/20 text-cyan hover:bg-cyan/30 border-cyan/30"
+                  className="bg-accent/20 text-accent hover:bg-accent/30 border-accent/30"
                   onClick={() => onClose(po._id)}
                 >
                   Close PO
@@ -494,7 +494,7 @@ export default function POEditor({
                   <select
                     value={vendorId}
                     onChange={e => setVendorId(e.target.value)}
-                    className="flex-1 rounded-lg border border-glass bg-glass-panel px-3 py-2 text-sm text-text-primary focus:border-cyan focus:ring-1 focus:ring-cyan outline-none"
+                    className="flex-1 rounded-lg border border-glass bg-glass-panel px-3 py-2 text-sm text-text-primary focus:border-accent focus:ring-1 focus:ring-accent outline-none"
                   >
                     <option value="">Select vendor…</option>
                     {vendors.map(v => (
@@ -504,7 +504,7 @@ export default function POEditor({
                   <button
                     type="button"
                     onClick={onAddVendor}
-                    className="px-2.5 rounded-lg border border-glass text-text-muted hover:text-cyan hover:border-cyan transition-colors text-xs"
+                    className="px-2.5 rounded-lg border border-glass text-text-muted hover:text-accent hover:border-accent transition-colors text-xs"
                     title="Add new vendor"
                   >
                     +
@@ -589,7 +589,7 @@ export default function POEditor({
               <button
                 type="button"
                 onClick={handleAddLine}
-                className="mt-2 flex items-center gap-1.5 text-xs text-cyan hover:text-cyan/80 transition-colors"
+                className="mt-2 flex items-center gap-1.5 text-xs text-accent hover:text-accent/80 transition-colors"
               >
                 <Plus className="h-3.5 w-3.5" />
                 Add line
@@ -605,7 +605,7 @@ export default function POEditor({
                 <span className="font-mono">{fmt(totals.subtotal)}</span>
               </div>
               {totals.totalDisc > 0 && (
-                <div className="flex justify-between text-amber">
+                <div className="flex justify-between text-highlight">
                   <span>Discounts</span>
                   <span className="font-mono">−{fmt(totals.totalDisc)}</span>
                 </div>
@@ -624,7 +624,7 @@ export default function POEditor({
               )}
               <div className="flex justify-between font-bold text-text-primary border-t border-glass/40 pt-1">
                 <span>Total</span>
-                <span className="font-mono text-cyan">{fmt(totals.totalAmount)}</span>
+                <span className="font-mono text-accent">{fmt(totals.totalAmount)}</span>
               </div>
             </div>
           </div>
@@ -688,7 +688,7 @@ export default function POEditor({
                   placeholder="Internal notes for this PO…"
                   value={notes}
                   onChange={e => setNotes(e.target.value)}
-                  className="w-full rounded-lg border border-glass bg-glass-panel px-3 py-2 text-sm text-text-primary resize-none focus:border-cyan outline-none"
+                  className="w-full rounded-lg border border-glass bg-glass-panel px-3 py-2 text-sm text-text-primary resize-none focus:border-accent outline-none"
                 />
               )}
             </CollapsibleSection>
@@ -704,7 +704,7 @@ export default function POEditor({
             <div className="space-y-1">
               {po.linkedGrnIds.map((grn) => (
                 <div key={grn._id || grn} className="flex justify-between text-sm text-text-secondary">
-                  <span className="font-mono text-xs text-cyan">{grn.grnNumber || String(grn).slice(-6)}</span>
+                  <span className="font-mono text-xs text-accent">{grn.grnNumber || String(grn).slice(-6)}</span>
                   <span>{grn.state || '—'}</span>
                   {grn.totalReceivedValue != null && (
                     <span className="font-mono">{fmt(grn.totalReceivedValue)}</span>

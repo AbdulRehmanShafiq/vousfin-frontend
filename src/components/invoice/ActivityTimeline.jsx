@@ -43,7 +43,7 @@ function TimelineRow({ icon: Icon, color, title, subtitle, timestamp, last }) {
       <div className="flex flex-col gap-0.5">
         <p className="text-sm font-semibold text-text-primary">{title}</p>
         {subtitle && <p className="text-xs text-text-muted">{subtitle}</p>}
-        {timestamp && <p className="text-[12px] uppercase tracking-wider text-text-muted/70">{formatDate(timestamp)}</p>}
+        {timestamp && <p className="text-xs uppercase tracking-wider text-text-muted/70">{formatDate(timestamp)}</p>}
       </div>
     </div>
   )
@@ -66,7 +66,7 @@ export default function ActivityTimeline({ timeline = [], loading = false, empty
             <TimelineRow
               key={i}
               icon={Icon}
-              color="bg-cyan/10 text-cyan border-cyan/30"
+              color="bg-accent/10 text-accent border-accent/30"
               title={`State: ${entry.fromState} → ${entry.toState}`}
               subtitle={`${entry.actorName || 'System'}${entry.reason ? ` · ${entry.reason}` : ''}`}
               timestamp={entry.timestamp}
@@ -78,9 +78,9 @@ export default function ActivityTimeline({ timeline = [], loading = false, empty
           const Icon = entry.action === 'approved' ? CheckCircle2
                      : entry.action === 'rejected' ? XCircle
                      : ClipboardCheck
-          const color = entry.action === 'approved' ? 'bg-emerald/10 text-positive border-emerald/30'
+          const color = entry.action === 'approved' ? 'bg-positive/10 text-positive border-positive/30'
                       : entry.action === 'rejected' ? 'bg-negative/10 text-negative border-negative/30'
-                      : 'bg-amber/10 text-amber border-amber/30'
+                      : 'bg-highlight/10 text-highlight border-highlight/30'
           const titleByAction = {
             submitted: 'Submitted for approval',
             approved:  'Approved',

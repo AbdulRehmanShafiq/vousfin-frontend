@@ -84,10 +84,10 @@ export default function FinancialReportsPage() {
                   key={t.key}
                   onClick={() => handleTabChange(t.key)}
                   className={cn(
-                    'flex flex-shrink-0 items-center gap-1.5 px-3 py-1.5 rounded-lg text-[13px] font-semibold',
+                    'flex flex-shrink-0 items-center gap-1.5 px-3 py-1.5 rounded-lg text-small font-semibold',
                     'transition-all whitespace-nowrap',
                     isActive
-                      ? 'bg-cyan text-ink-on-accent shadow-sm'
+                      ? 'bg-accent text-ink-on-accent shadow-sm'
                       : 'text-text-secondary hover:text-text-primary hover:bg-glass-hover'
                   )}
                 >

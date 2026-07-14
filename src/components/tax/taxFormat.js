@@ -24,8 +24,8 @@ export function deadlineTone(days) {
   if (days == null)  return { text: 'text-text-muted', dot: 'bg-text-muted',  chip: 'bg-glass-panel border-glass' }
   if (days < 0)      return { text: 'text-negative',   dot: 'bg-negative',    chip: 'bg-negative-muted border-negative/30' }
   if (days <= 3)     return { text: 'text-negative',   dot: 'bg-negative',    chip: 'bg-negative-muted border-negative/30' }
-  if (days <= 7)     return { text: 'text-amber',      dot: 'bg-amber',       chip: 'bg-amber/15 border-amber/30' }
-  if (days <= 14)    return { text: 'text-cyan',       dot: 'bg-cyan',        chip: 'bg-cyan/10 border-cyan/25' }
+  if (days <= 7)     return { text: 'text-highlight',      dot: 'bg-highlight',       chip: 'bg-highlight/15 border-highlight/30' }
+  if (days <= 14)    return { text: 'text-accent',       dot: 'bg-accent',        chip: 'bg-accent/10 border-accent/25' }
   return { text: 'text-text-secondary', dot: 'bg-text-muted', chip: 'bg-glass-panel border-glass' }
 }
 

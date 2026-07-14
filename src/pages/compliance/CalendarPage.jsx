@@ -11,8 +11,8 @@ import { getErrorMessage } from '@/utils/errorHandler'
 import SelectField from '@/components/ui/SelectField'
 
 const STATUS_BADGE = {
-  pending:   'bg-amber-500/15 text-amber-400 border border-amber-500/20',
-  completed: 'bg-emerald-500/15 text-emerald-400 border border-emerald-500/20',
+  pending:   'bg-highlight/15 text-highlight border border-highlight/20',
+  completed: 'bg-positive/15 text-positive border border-positive/20',
   overdue:   'bg-red-500/15 text-red-400 border border-red-500/20',
   waived:    'bg-slate-500/15 text-slate-400 border border-slate-500/20',
 }
@@ -94,7 +94,7 @@ export default function CalendarPage() {
     <div className="animate-fade-in pb-10 space-y-5 max-w-5xl">
       {/* Header */}
       <div className="flex items-center gap-3">
-        <div className="p-2 rounded-xl bg-cyan/15"><CalendarDays className="h-5 w-5 text-cyan" /></div>
+        <div className="p-2 rounded-xl bg-accent/15"><CalendarDays className="h-5 w-5 text-accent" /></div>
         <div>
           <h1 className="text-2xl font-semibold text-text-primary tracking-tight">Compliance Calendar</h1>
           <p className="text-sm text-text-secondary mt-0.5">Your filing deadlines and regulatory obligations — Pakistan/FBR focused.</p>
@@ -122,11 +122,11 @@ export default function CalendarPage() {
         </div>
         <div className="flex gap-2 ml-auto">
           <button onClick={() => checkOverdue.mutate()} disabled={checkOverdue.isPending}
-            className="inline-flex items-center gap-1.5 px-3 py-2 rounded-lg border border-glass text-[12.5px] text-text-secondary hover:text-text-primary hover:bg-glass-hover disabled:opacity-50">
+            className="inline-flex items-center gap-1.5 px-3 py-2 rounded-lg border border-glass text-small text-text-secondary hover:text-text-primary hover:bg-glass-hover disabled:opacity-50">
             {checkOverdue.isPending ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <RefreshCw className="h-3.5 w-3.5" />} Check overdue
           </button>
           <button onClick={() => generate.mutate()} disabled={generate.isPending}
-            className="btn-gradient inline-flex items-center gap-1.5 px-4 py-2 rounded-lg text-[12.5px] font-semibold disabled:opacity-50">
+            className="btn-gradient inline-flex items-center gap-1.5 px-4 py-2 rounded-lg text-small font-semibold disabled:opacity-50">
             {generate.isPending ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <CalendarDays className="h-3.5 w-3.5" />} Generate {year}
           </button>
         </div>
@@ -139,15 +139,15 @@ export default function CalendarPage() {
             <h2 className="text-base font-semibold text-text-primary">Mark complete — {completeTarget.template?.name || completeTarget.code}</h2>
             <div className="space-y-3">
               <input value={refNumber} onChange={e => setRefNumber(e.target.value)} placeholder="Reference / filing number (optional)"
-                className="w-full px-3 py-2 rounded-lg border border-glass bg-glass-panel/40 text-[13px] text-text-primary focus:outline-none focus:border-cyan/40" />
+                className="w-full px-3 py-2 rounded-lg border border-glass bg-glass-panel/40 text-small text-text-primary focus:outline-none focus:border-accent/40" />
               <textarea value={refNotes} onChange={e => setRefNotes(e.target.value)} placeholder="Notes (optional)" rows={2}
-                className="w-full px-3 py-2 rounded-lg border border-glass bg-glass-panel/40 text-[13px] text-text-primary focus:outline-none focus:border-cyan/40 resize-none" />
+                className="w-full px-3 py-2 rounded-lg border border-glass bg-glass-panel/40 text-small text-text-primary focus:outline-none focus:border-accent/40 resize-none" />
             </div>
             <div className="flex gap-2 justify-end">
               <button onClick={() => { setCompleteTarget(null); setRefNumber(''); setRefNotes('') }}
-                className="px-4 py-2 rounded-lg text-[12.5px] text-text-muted hover:text-text-primary border border-glass hover:bg-glass-hover">Cancel</button>
+                className="px-4 py-2 rounded-lg text-small text-text-muted hover:text-text-primary border border-glass hover:bg-glass-hover">Cancel</button>
               <button onClick={() => complete.mutate({ id: completeTarget._id })} disabled={complete.isPending}
-                className="btn-gradient inline-flex items-center gap-1.5 px-4 py-2 rounded-lg text-[12.5px] font-semibold disabled:opacity-50">
+                className="btn-gradient inline-flex items-center gap-1.5 px-4 py-2 rounded-lg text-small font-semibold disabled:opacity-50">
                 {complete.isPending ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <CheckCircle2 className="h-3.5 w-3.5" />} Confirm complete
               </button>
             </div>
@@ -172,13 +172,13 @@ export default function CalendarPage() {
                 <div className="p-3.5 flex items-center gap-3 cursor-pointer" onClick={() => setExpandedId(isExpanded ? null : o._id)}>
                   <div className="min-w-0 flex-1">
                     <div className="flex items-center gap-2 flex-wrap">
-                      <span className="text-[13px] font-semibold text-text-primary">{tpl.name || o.code}</span>
-                      {tpl.category && <span className={`text-[10px] px-1.5 py-0.5 rounded font-medium uppercase tracking-wider ${CAT_BADGE[tpl.category] || ''}`}>{tpl.category}</span>}
-                      <span className={`text-[10.5px] px-2 py-0.5 rounded-full font-medium capitalize ${STATUS_BADGE[o.status] || ''}`}>{o.status}</span>
+                      <span className="text-small font-semibold text-text-primary">{tpl.name || o.code}</span>
+                      {tpl.category && <span className={`text-label px-1.5 py-0.5 rounded font-medium uppercase tracking-wider ${CAT_BADGE[tpl.category] || ''}`}>{tpl.category}</span>}
+                      <span className={`text-label px-2 py-0.5 rounded-full font-medium capitalize ${STATUS_BADGE[o.status] || ''}`}>{o.status}</span>
                     </div>
                     <div className="flex gap-3 mt-0.5">
-                      <span className="text-[11.5px] text-text-muted">Period: {o.period}</span>
-                      <span className={`text-[11.5px] ${o.status === 'overdue' ? 'text-red-400' : o.status === 'pending' ? 'text-amber-400' : 'text-text-muted'}`}>
+                      <span className="text-label text-text-muted">Period: {o.period}</span>
+                      <span className={`text-label ${o.status === 'overdue' ? 'text-red-400' : o.status === 'pending' ? 'text-highlight' : 'text-text-muted'}`}>
                         Due: {formatDate(o.dueDate)}
                       </span>
                     </div>
@@ -187,11 +187,11 @@ export default function CalendarPage() {
                     {o.status === 'pending' || o.status === 'overdue' ? (
                       <>
                         <button onClick={e => { e.stopPropagation(); setCompleteTarget(o) }}
-                          className="text-[11.5px] px-2.5 py-1 rounded-lg bg-emerald-500/10 text-emerald-400 hover:bg-emerald-500/20 border border-emerald-500/20">
+                          className="text-label px-2.5 py-1 rounded-lg bg-positive/10 text-positive hover:bg-positive/20 border border-positive/20">
                           Complete
                         </button>
                         <button onClick={e => { e.stopPropagation(); if (confirm('Waive this obligation?')) waive.mutate({ id: o._id, notes: '' }) }}
-                          className="text-[11.5px] px-2.5 py-1 rounded-lg bg-slate-500/10 text-slate-400 hover:bg-slate-500/20 border border-slate-500/20">
+                          className="text-label px-2.5 py-1 rounded-lg bg-slate-500/10 text-slate-400 hover:bg-slate-500/20 border border-slate-500/20">
                           Waive
                         </button>
                       </>
@@ -201,11 +201,11 @@ export default function CalendarPage() {
                 </div>
                 {isExpanded && (
                   <div className="px-4 pb-3.5 border-t border-glass/20 pt-2.5 space-y-1">
-                    {tpl.description && <p className="text-[12px] text-text-secondary">{tpl.description}</p>}
-                    {tpl.frequencyLabel && <p className="text-[11.5px] text-text-muted">Frequency: {tpl.frequencyLabel}</p>}
-                    {o.referenceNumber && <p className="text-[11.5px] text-text-muted">Reference: {o.referenceNumber}</p>}
-                    {o.notes && <p className="text-[11.5px] text-text-muted">Notes: {o.notes}</p>}
-                    {o.completedAt && <p className="text-[11.5px] text-text-muted">Completed: {formatDate(o.completedAt)}</p>}
+                    {tpl.description && <p className="text-xs text-text-secondary">{tpl.description}</p>}
+                    {tpl.frequencyLabel && <p className="text-label text-text-muted">Frequency: {tpl.frequencyLabel}</p>}
+                    {o.referenceNumber && <p className="text-label text-text-muted">Reference: {o.referenceNumber}</p>}
+                    {o.notes && <p className="text-label text-text-muted">Notes: {o.notes}</p>}
+                    {o.completedAt && <p className="text-label text-text-muted">Completed: {formatDate(o.completedAt)}</p>}
                   </div>
                 )}
               </div>
@@ -221,12 +221,12 @@ export default function CalendarPage() {
             <ShieldCheck className="h-4 w-4 text-text-muted" />
             <h2 className="text-base font-semibold text-text-primary">Document Retention Policies</h2>
           </div>
-          <p className="text-[12px] text-text-secondary">These policies are enforced automatically — documents cannot be deleted before their retention period expires.</p>
+          <p className="text-xs text-text-secondary">These policies are enforced automatically — documents cannot be deleted before their retention period expires.</p>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
             {policies.map(p => (
               <div key={p.docType} className="premium-card p-3">
-                <p className="text-[12.5px] font-semibold text-text-primary capitalize">{(p.docType || '').replace(/_/g, ' ')}</p>
-                <p className="text-[11.5px] text-text-muted mt-0.5">Retain {p.retentionYears}yr · Archive after {p.archiveAfterYears}yr</p>
+                <p className="text-small font-semibold text-text-primary capitalize">{(p.docType || '').replace(/_/g, ' ')}</p>
+                <p className="text-label text-text-muted mt-0.5">Retain {p.retentionYears}yr · Archive after {p.archiveAfterYears}yr</p>
               </div>
             ))}
           </div>

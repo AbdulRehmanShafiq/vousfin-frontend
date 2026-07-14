@@ -32,7 +32,7 @@ function CloseItem({ icon: Icon, label, desc, to, status, count }) {
       <span
         className={cn(
           'flex h-8 w-8 shrink-0 items-center justify-center rounded-full',
-          ok ? 'bg-positive-muted text-positive' : attention ? 'bg-amber/15 text-amber-2' : 'bg-glass-panel text-text-muted',
+          ok ? 'bg-positive-muted text-positive' : attention ? 'bg-highlight/15 text-highlight-2' : 'bg-glass-panel text-text-muted',
         )}
         aria-hidden="true"
       >
@@ -43,7 +43,7 @@ function CloseItem({ icon: Icon, label, desc, to, status, count }) {
         <span className="block text-xs text-text-muted mt-0.5">{desc}</span>
       </span>
       {count != null && count !== 0 && (
-        <span className="num shrink-0 rounded-full bg-amber/15 px-2 py-0.5 text-xs font-bold text-amber-2">{count}</span>
+        <span className="num shrink-0 rounded-full bg-highlight/15 px-2 py-0.5 text-xs font-bold text-highlight-2">{count}</span>
       )}
       <ChevronRight className="h-4 w-4 shrink-0 text-text-muted opacity-0 group-hover:opacity-100 transition-opacity" aria-hidden="true" />
     </Link>

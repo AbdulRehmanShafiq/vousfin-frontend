@@ -7,11 +7,11 @@ import { getErrorMessage } from '@/utils/errorHandler'
 function StatCard({ icon: Icon, label, value, hint }) {
   return (
     <div className="rounded-xl border border-glass bg-glass-panel p-4">
-      <div className="flex items-center gap-2 text-[12px] uppercase tracking-wide text-text-muted">
+      <div className="flex items-center gap-2 text-xs uppercase tracking-wide text-text-muted">
         <Icon className="h-3.5 w-3.5" aria-hidden="true" /> {label}
       </div>
       <div className="mt-1 text-2xl font-bold text-text-primary">{value}</div>
-      {hint ? <div className="text-[11px] text-text-muted">{hint}</div> : null}
+      {hint ? <div className="text-label text-text-muted">{hint}</div> : null}
     </div>
   )
 }
@@ -21,13 +21,13 @@ function QueryList({ title, rows, emptyText }) {
     <div className="rounded-xl border border-glass bg-glass-panel p-4">
       <h3 className="mb-2 text-sm font-semibold text-text-primary">{title}</h3>
       {rows.length === 0 ? (
-        <p className="text-[13px] text-text-muted">{emptyText}</p>
+        <p className="text-small text-text-muted">{emptyText}</p>
       ) : (
         <ul className="space-y-1">
           {rows.map((r) => (
-            <li key={r.query} className="flex items-center justify-between gap-3 text-[13px]">
+            <li key={r.query} className="flex items-center justify-between gap-3 text-small">
               <span className="truncate text-text-secondary">{r.query}</span>
-              <span className="shrink-0 rounded bg-glass px-1.5 py-0.5 text-[11px] text-text-muted">{r.count}</span>
+              <span className="shrink-0 rounded bg-glass px-1.5 py-0.5 text-label text-text-muted">{r.count}</span>
             </li>
           ))}
         </ul>
@@ -74,7 +74,7 @@ export default function SearchInsightsTab() {
     }
   }
 
-  if (loading) return <p className="text-[13px] text-text-muted">Loading insights…</p>
+  if (loading) return <p className="text-small text-text-muted">Loading insights…</p>
   if (!data) return null
 
   const { totals, topQueries, gaps } = data
@@ -82,12 +82,12 @@ export default function SearchInsightsTab() {
   return (
     <div className="space-y-5">
       <div className="flex items-center justify-between gap-3">
-        <p className="text-[13px] text-text-muted">Command-bar usage over the last 30 days.</p>
+        <p className="text-small text-text-muted">Command-bar usage over the last 30 days.</p>
         <button
           type="button"
           onClick={reindex}
           disabled={reindexing}
-          className="inline-flex items-center gap-2 rounded-lg border border-glass bg-glass px-3 py-1.5 text-[13px] text-text-primary hover:bg-glass-hover disabled:opacity-60"
+          className="inline-flex items-center gap-2 rounded-lg border border-glass bg-glass px-3 py-1.5 text-small text-text-primary hover:bg-glass-hover disabled:opacity-60"
         >
           <RefreshCw className={`h-3.5 w-3.5 ${reindexing ? 'animate-spin' : ''}`} aria-hidden="true" />
           {reindexing ? 'Reindexing…' : 'Reindex catalog + help'}

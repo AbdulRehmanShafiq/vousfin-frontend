@@ -50,7 +50,7 @@ function RateForm({ defaultValues, baseCurrency, onSave, onCancel, isPending }) 
   })
   return (
     <form onSubmit={handleSubmit(onSave)}
-      className="grid grid-cols-2 sm:grid-cols-6 gap-3 p-4 bg-glass-panel rounded-xl border border-cyan/20">
+      className="grid grid-cols-2 sm:grid-cols-6 gap-3 p-4 bg-glass-panel rounded-xl border border-accent/20">
       <Input label="From" placeholder="USD" {...register('fromCurrency')}
         error={errors.fromCurrency?.message} className="uppercase" />
       <Input label="To" placeholder="PKR" {...register('toCurrency')}
@@ -165,7 +165,7 @@ export default function CurrencyRatesPage() {
       <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-3">
         <div>
           <h1 className="flex items-center gap-2 text-xl font-black text-text-primary tracking-tight sm:text-2xl">
-            <DollarSign className="h-5 w-5 text-cyan sm:h-6 sm:w-6" />
+            <DollarSign className="h-5 w-5 text-accent sm:h-6 sm:w-6" />
             Exchange Rates
           </h1>
           <p className="text-text-secondary text-sm mt-0.5 flex items-center gap-1.5">
@@ -193,7 +193,7 @@ export default function CurrencyRatesPage() {
             icon={isSyncing ? Loader2 : RefreshCw}
             loading={isSyncing}
             onClick={handleManualSync}
-            className="bg-cyan text-ink-on-accent hover:bg-cyan/90"
+            className="bg-accent text-ink-on-accent hover:bg-accent/90"
           >
             {isSyncing ? 'Fetching…' : 'Sync Live Rates'}
           </Button>
@@ -203,15 +203,15 @@ export default function CurrencyRatesPage() {
       {/* ── Live sync status bar ─────────────────────────────────────────── */}
       <div className={`flex items-center gap-3 rounded-xl border px-4 py-3 text-sm transition-colors ${
         isSyncing
-          ? 'border-cyan/30 bg-cyan/5'
+          ? 'border-accent/30 bg-accent/5'
           : lastSynced
             ? 'border-positive/20 bg-positive/5'
             : 'border-glass bg-glass-panel'
       }`}>
         {isSyncing ? (
           <>
-            <RefreshCw className="h-4 w-4 text-cyan animate-spin shrink-0" />
-            <span className="text-cyan font-medium">Fetching live rates from open.er-api.com…</span>
+            <RefreshCw className="h-4 w-4 text-accent animate-spin shrink-0" />
+            <span className="text-accent font-medium">Fetching live rates from open.er-api.com…</span>
           </>
         ) : lastSynced ? (
           <>
@@ -220,7 +220,7 @@ export default function CurrencyRatesPage() {
               Last synced <strong className="text-text-primary">{timeAgo(lastSynced)}</strong>
               {syncSource && <span className="text-text-muted"> · {syncSource}</span>}
             </span>
-            <span className="ml-auto text-[12.5px] text-text-muted hidden sm:flex items-center gap-1">
+            <span className="ml-auto text-small text-text-muted hidden sm:flex items-center gap-1">
               <Clock className="h-3 w-3" /> Auto-syncs daily at 08:00
             </span>
           </>
@@ -235,7 +235,7 @@ export default function CurrencyRatesPage() {
       {/* ── Latest rates cards ────────────────────────────────────────────── */}
       {latestRates?.length > 0 && (
         <div>
-          <p className="text-[12.5px] font-semibold text-text-muted uppercase tracking-wider mb-2">
+          <p className="text-small font-semibold text-text-muted uppercase tracking-wider mb-2">
             Today's Rates · 1 Foreign = X {baseCurrency}
           </p>
           <div className="flex flex-wrap gap-2">
@@ -250,11 +250,11 @@ export default function CurrencyRatesPage() {
                 <span className="font-mono font-bold text-text-primary tabular-nums text-sm">
                   {r.rate.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 4 })}
                 </span>
-                <span className="text-[12px] text-text-muted">{baseCurrency}</span>
-                <span className={`ml-1 text-[12.5px] rounded px-1 py-px font-semibold ${
+                <span className="text-xs text-text-muted">{baseCurrency}</span>
+                <span className={`ml-1 text-small rounded px-1 py-px font-semibold ${
                   r.source === 'imported'
-                    ? 'bg-cyan/10 text-cyan border border-cyan/20'
-                    : 'bg-amber/10 text-amber border border-amber/20'
+                    ? 'bg-accent/10 text-accent border border-accent/20'
+                    : 'bg-highlight/10 text-highlight border border-highlight/20'
                 }`}>
                   {r.source === 'imported' ? 'LIVE' : 'MANUAL'}
                 </span>
@@ -289,14 +289,14 @@ export default function CurrencyRatesPage() {
             <X className="h-4 w-4" />
           </button>
         )}
-        <span className="ml-auto text-[12.5px] text-text-muted">{rates.length} records</span>
+        <span className="ml-auto text-small text-text-muted">{rates.length} records</span>
       </div>
 
       {/* ── Rates table ──────────────────────────────────────────────────── */}
       <div className="premium-card overflow-hidden">
         {(isLoading || (isSyncing && rates.length === 0)) ? (
           <div className="py-16 flex flex-col items-center gap-3">
-            <RefreshCw className="h-8 w-8 text-cyan animate-spin opacity-60" />
+            <RefreshCw className="h-8 w-8 text-accent animate-spin opacity-60" />
             <p className="text-sm text-text-muted">
               {isSyncing ? 'Fetching live rates…' : 'Loading…'}
             </p>
@@ -316,7 +316,7 @@ export default function CurrencyRatesPage() {
         ) : (
           <div className="overflow-x-auto">
             <table className="w-full text-left text-sm">
-              <thead className="bg-glass-panel text-[12px] uppercase text-text-muted tracking-wider">
+              <thead className="bg-glass-panel text-xs uppercase text-text-muted tracking-wider">
                 <tr>
                   <th className="px-4 py-2.5 font-semibold">From</th>
                   <th className="px-4 py-2.5 font-semibold">To</th>
@@ -360,21 +360,21 @@ export default function CurrencyRatesPage() {
                       </td>
                       <td className="px-4 py-3 text-xs">{formatDate(r.rateDate)}</td>
                       <td className="px-4 py-3">
-                        <span className={`text-[12px] rounded px-1.5 py-px font-semibold border ${
+                        <span className={`text-xs rounded px-1.5 py-px font-semibold border ${
                           r.source === 'imported'
-                            ? 'bg-cyan/10 text-cyan border-cyan/20'
-                            : 'bg-amber/10 text-amber border-amber/20'
+                            ? 'bg-accent/10 text-accent border-accent/20'
+                            : 'bg-highlight/10 text-highlight border-highlight/20'
                         }`}>
                           {r.source === 'imported' ? '⚡ LIVE' : '✎ MANUAL'}
                         </span>
                       </td>
-                      <td className="px-4 py-3 hidden lg:table-cell text-[12.5px] text-text-muted truncate max-w-[180px]">
+                      <td className="px-4 py-3 hidden lg:table-cell text-small text-text-muted truncate max-w-[180px]">
                         {r.notes ? r.notes.replace(/Auto-synced via [^ ]+ on .+/, 'Auto-synced') : '—'}
                       </td>
                       <td className="px-4 py-3">
                         <div className="flex items-center justify-end gap-0.5">
                           <button onClick={() => { setEditTarget(r); setShowAddForm(false) }}
-                            className="rounded p-1.5 text-text-muted hover:text-cyan hover:bg-glass-hover transition-colors"
+                            className="rounded p-1.5 text-text-muted hover:text-accent hover:bg-glass-hover transition-colors"
                             title="Override rate">
                             <Edit2 className="h-3.5 w-3.5" />
                           </button>
@@ -397,7 +397,7 @@ export default function CurrencyRatesPage() {
       {/* ── Info footer ──────────────────────────────────────────────────── */}
       <div className="rounded-xl border border-glass bg-glass-panel px-4 py-3 space-y-1">
         <p className="text-xs font-semibold text-text-secondary flex items-center gap-1.5">
-          <Wifi className="h-3.5 w-3.5 text-cyan" /> How automatic sync works
+          <Wifi className="h-3.5 w-3.5 text-accent" /> How automatic sync works
         </p>
         <p className="text-xs text-text-muted leading-relaxed">
           Rates are fetched from <strong className="text-text-secondary">open.er-api.com</strong> (free,

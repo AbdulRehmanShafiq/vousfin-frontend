@@ -18,8 +18,8 @@ import { cn } from '@/utils/cn'
 
 const ALERT_STYLE = {
   danger:  { wrap: 'border-negative/30 bg-negative/5 text-negative',       Icon: AlertCircle },
-  warning: { wrap: 'border-amber/30 bg-amber/5 text-amber', Icon: AlertTriangle },
-  info:    { wrap: 'border-cyan/25 bg-cyan/5 text-cyan',                Icon: Info },
+  warning: { wrap: 'border-highlight/30 bg-highlight/5 text-highlight', Icon: AlertTriangle },
+  info:    { wrap: 'border-accent/25 bg-accent/5 text-accent',                Icon: Info },
   success: { wrap: 'border-positive/30 bg-positive/5 text-positive', Icon: Info },
 }
 
@@ -31,15 +31,15 @@ export default function SmartContextPanel({ kind, entity, onAction, className = 
   return (
     <div className={cn('premium-card p-5 space-y-3', className)}>
       <div className="flex items-center gap-2">
-        <Sparkles className="h-4 w-4 text-cyan" />
+        <Sparkles className="h-4 w-4 text-accent" />
         <h3 className="text-sm font-bold text-text-primary">Smart Assistant</h3>
       </div>
 
       {/* Recommended next step */}
       {recommended && (
-        <div className="rounded-lg border border-cyan/25 bg-cyan/5 p-3">
+        <div className="rounded-lg border border-accent/25 bg-accent/5 p-3">
           <div className="flex items-start gap-2">
-            <Lightbulb className="h-4 w-4 text-cyan mt-0.5 shrink-0" />
+            <Lightbulb className="h-4 w-4 text-accent mt-0.5 shrink-0" />
             <div className="min-w-0 flex-1">
               <p className="text-sm font-semibold text-text-primary">
                 Recommended: {recommended.label}
@@ -50,7 +50,7 @@ export default function SmartContextPanel({ kind, entity, onAction, className = 
               <button
                 type="button"
                 onClick={() => onAction(recommended.actionId)}
-                className="shrink-0 inline-flex items-center gap-1 text-xs font-semibold text-cyan hover:underline"
+                className="shrink-0 inline-flex items-center gap-1 text-xs font-semibold text-accent hover:underline"
               >
                 {recommended.label} <ArrowRight className="h-3 w-3" />
               </button>
@@ -82,7 +82,7 @@ export default function SmartContextPanel({ kind, entity, onAction, className = 
             <Link
               key={i}
               to={l.to}
-              className="inline-flex items-center gap-1 rounded-lg border border-glass bg-glass-panel px-2.5 py-1.5 text-xs font-medium text-text-secondary hover:text-cyan hover:border-cyan/30 transition-colors"
+              className="inline-flex items-center gap-1 rounded-lg border border-glass bg-glass-panel px-2.5 py-1.5 text-xs font-medium text-text-secondary hover:text-accent hover:border-accent/30 transition-colors"
             >
               <ExternalLink className="h-3 w-3" /> {l.label}
             </Link>

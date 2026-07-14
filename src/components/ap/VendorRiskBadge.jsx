@@ -8,8 +8,8 @@ import { ShieldAlert, ShieldCheck, Shield } from 'lucide-react'
 
 const LEVEL_CONFIG = {
   low:      { label: 'Low Risk',      bg: 'bg-positive/15', text: 'text-positive', border: 'border-positive/30', Icon: ShieldCheck },
-  medium:   { label: 'Medium Risk',   bg: 'bg-cyan/15',     text: 'text-cyan',     border: 'border-cyan/30',     Icon: Shield      },
-  high:     { label: 'High Risk',     bg: 'bg-amber/15',   text: 'text-amber',   border: 'border-amber/30',   Icon: ShieldAlert },
+  medium:   { label: 'Medium Risk',   bg: 'bg-accent/15',     text: 'text-accent',     border: 'border-accent/30',     Icon: Shield      },
+  high:     { label: 'High Risk',     bg: 'bg-highlight/15',   text: 'text-highlight',   border: 'border-highlight/30',   Icon: ShieldAlert },
   critical: { label: 'Critical Risk', bg: 'bg-negative/15',     text: 'text-negative',     border: 'border-negative/30',     Icon: ShieldAlert },
 }
 
@@ -23,15 +23,15 @@ const FACTOR_LABELS = {
 
 function ScoreBar({ score, level }) {
   const color = level === 'low' ? 'bg-positive'
-              : level === 'medium' ? 'bg-cyan'
-              : level === 'high' ? 'bg-amber'
+              : level === 'medium' ? 'bg-accent'
+              : level === 'high' ? 'bg-highlight'
               : 'bg-negative'
   return (
     <div className="flex items-center gap-2 mt-1">
       <div className="flex-1 h-1.5 rounded-full bg-glass overflow-hidden">
         <div className={`h-full rounded-full ${color}`} style={{ width: `${score}%` }} />
       </div>
-      <span className="text-[12px] text-text-muted font-mono">{score}</span>
+      <span className="text-xs text-text-muted font-mono">{score}</span>
     </div>
   )
 }
@@ -39,7 +39,7 @@ function ScoreBar({ score, level }) {
 export default function VendorRiskBadge({ riskLevel, riskScore, riskFactors, showDetails = false }) {
   if (!riskLevel) {
     return (
-      <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[12.5px]
+      <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-small
                         bg-glass text-text-muted border border-glass">
         No data
       </span>
@@ -67,7 +67,7 @@ export default function VendorRiskBadge({ riskLevel, riskScore, riskFactors, sho
             .sort(([, a], [, b]) => b - a)
             .slice(0, 3)
             .map(([key, val]) => (
-              <div key={key} className="flex items-center justify-between text-[12px]">
+              <div key={key} className="flex items-center justify-between text-xs">
                 <span className="text-text-muted">{FACTOR_LABELS[key] || key}</span>
                 <span className={`font-mono ${cfg.text}`}>{Math.round(val)}%</span>
               </div>

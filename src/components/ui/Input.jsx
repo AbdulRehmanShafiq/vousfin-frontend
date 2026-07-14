@@ -36,7 +36,7 @@ export const Input = forwardRef(({
           name={name}
           type={inputType}
           className={cn(
-            'w-full rounded-lg border bg-glass-panel px-4 py-3 text-sm text-text-primary transition-premium placeholder:text-text-muted focus:border-cyan focus:outline-none focus:ring-2 focus:ring-cyan/20 focus:bg-glass-hover',
+            'w-full rounded-lg border bg-glass-panel px-4 py-3 text-sm text-text-primary transition-premium placeholder:text-text-muted focus:border-accent focus:outline-none focus:ring-2 focus:ring-accent/20 focus:bg-glass-hover',
             Icon && 'pl-10',
             isPassword && 'pr-10',
             error ? 'border-negative/50 focus:border-negative focus:ring-negative/20' : 'border-glass',
@@ -48,7 +48,7 @@ export const Input = forwardRef(({
           <button
             type="button"
             onClick={() => setShowPassword((v) => !v)}
-            className="absolute right-3 top-1/2 -translate-y-1/2 text-text-muted hover:text-cyan transition-colors"
+            className="absolute right-3 top-1/2 -translate-y-1/2 text-text-muted hover:text-accent transition-colors"
             tabIndex={-1}
           >
             {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}

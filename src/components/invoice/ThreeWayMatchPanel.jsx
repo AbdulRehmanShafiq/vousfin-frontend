@@ -17,11 +17,11 @@ import Button from '@/components/ui/Button'
 
 const STATUS_CONFIG = {
   matched:        { color: 'text-positive',  bg: 'bg-positive/10 border-positive/30', icon: CheckCircle2, label: 'Matched' },
-  partial_match:  { color: 'text-cyan',      bg: 'bg-cyan/10 border-cyan/30',         icon: Info,         label: 'Partial Match' },
-  over_billed:    { color: 'text-amber',    bg: 'bg-amber/10 border-amber/30',     icon: AlertTriangle,label: 'Over-Billed' },
-  under_received: { color: 'text-amber',    bg: 'bg-amber/10 border-amber/30',     icon: AlertTriangle,label: 'Under-Received' },
-  mismatch:       { color: 'text-amber',   bg: 'bg-amber/10 border-amber/30',   icon: AlertTriangle,label: 'Mismatch' },
-  discrepancy:    { color: 'text-amber',   bg: 'bg-amber/10 border-amber/30',   icon: AlertTriangle,label: 'Discrepancy' },
+  partial_match:  { color: 'text-accent',      bg: 'bg-accent/10 border-accent/30',         icon: Info,         label: 'Partial Match' },
+  over_billed:    { color: 'text-highlight',    bg: 'bg-highlight/10 border-highlight/30',     icon: AlertTriangle,label: 'Over-Billed' },
+  under_received: { color: 'text-highlight',    bg: 'bg-highlight/10 border-highlight/30',     icon: AlertTriangle,label: 'Under-Received' },
+  mismatch:       { color: 'text-highlight',   bg: 'bg-highlight/10 border-highlight/30',   icon: AlertTriangle,label: 'Mismatch' },
+  discrepancy:    { color: 'text-highlight',   bg: 'bg-highlight/10 border-highlight/30',   icon: AlertTriangle,label: 'Discrepancy' },
   blocked:        { color: 'text-negative',      bg: 'bg-negative/10 border-negative/30',         icon: XCircle,      label: 'Blocked' },
   pending:        { color: 'text-text-muted',   bg: 'bg-glass-panel border-glass',             icon: RefreshCw,    label: 'Pending' },
   none:           { color: 'text-text-muted',   bg: 'bg-glass-panel border-glass',             icon: Info,         label: 'Not Applicable' },
@@ -34,7 +34,7 @@ const pct = (n) => (typeof n === 'number' ? `${n.toFixed(1)}%` : '—')
 
 function VarianceRow({ label, value, level }) {
   const color = level === 'block' ? 'text-negative'
-              : level === 'warn'  ? 'text-amber'
+              : level === 'warn'  ? 'text-highlight'
               : 'text-text-secondary'
   return (
     <div className="flex items-center justify-between py-1 text-xs border-b border-glass last:border-0">
@@ -131,7 +131,7 @@ export default function ThreeWayMatchPanel({ bill, onRunMatch, isRunning = false
             {matchResult.poMatch.lineVariances.map((lv, i) => (
               <div key={i} className={`rounded-md px-2 py-1.5 text-xs border ${
                 lv.lineLevel === 'block' ? 'bg-negative/5 border-negative/20 text-negative'
-                : lv.lineLevel === 'warn' ? 'bg-amber/5 border-amber/20 text-amber'
+                : lv.lineLevel === 'warn' ? 'bg-highlight/5 border-highlight/20 text-highlight'
                 : 'bg-glass-panel border-glass text-text-secondary'
               }`}>
                 <span className="font-medium">{lv.billLineName || lv.poLineName || 'Line'}</span>
@@ -149,7 +149,7 @@ export default function ThreeWayMatchPanel({ bill, onRunMatch, isRunning = false
 
       {/* ── Ran at ── */}
       {matchResult?.ranAt && (
-        <p className="text-[12px] text-text-muted text-right">
+        <p className="text-xs text-text-muted text-right">
           Last checked {new Date(matchResult.ranAt).toLocaleString()}
         </p>
       )}

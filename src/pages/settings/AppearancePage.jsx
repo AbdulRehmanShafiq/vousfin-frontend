@@ -36,7 +36,7 @@ export default function AppearancePage() {
       <div className="premium-card p-5 sm:p-6 space-y-4">
         <div>
           <h3 className="font-display text-lg font-semibold text-text-primary">Language</h3>
-          <p className="mt-1 text-[13px] text-text-secondary">
+          <p className="mt-1 text-small text-text-secondary">
             Choose your display language. Applies to key labels across the app.
           </p>
         </div>

@@ -71,7 +71,7 @@ export default function LineItemRow({
     : null
   const overStock = mode === 'invoice' && selectedInv && item.quantity > selectedInv.currentStock
 
-  const inputCls = 'w-full rounded border border-glass bg-glass-panel px-2 py-1.5 text-sm text-text-primary transition-premium focus:border-cyan focus:outline-none focus:ring-1 focus:ring-cyan/20'
+  const inputCls = 'w-full rounded border border-glass bg-glass-panel px-2 py-1.5 text-sm text-text-primary transition-premium focus:border-accent focus:outline-none focus:ring-1 focus:ring-accent/20'
   const numCls = cn(inputCls, 'text-right tabular-nums')
 
   return (
@@ -90,7 +90,7 @@ export default function LineItemRow({
       <td className="min-w-[200px] px-1 py-2">
         {inventoryItems.length > 0 && (
           <select
-            className="w-full rounded border border-glass bg-glass-panel px-2 py-1 text-xs text-text-secondary mb-1.5 focus:border-cyan focus:outline-none"
+            className="w-full rounded border border-glass bg-glass-panel px-2 py-1 text-xs text-text-secondary mb-1.5 focus:border-accent focus:outline-none"
             value={item.inventoryItemId || ''}
             onChange={e => handleInventorySelect(e.target.value)}
           >
@@ -117,7 +117,7 @@ export default function LineItemRow({
           placeholder="Description (optional)"
         />
         {selectedInv && mode === 'invoice' && (
-          <p className={cn('text-[12.5px] mt-0.5', overStock ? 'text-negative' : 'text-text-muted')}>
+          <p className={cn('text-small mt-0.5', overStock ? 'text-negative' : 'text-text-muted')}>
             {overStock
               ? `⚠ Only ${selectedInv.currentStock} ${selectedInv.unit || 'units'} in stock`
               : `${selectedInv.currentStock} ${selectedInv.unit || 'units'} in stock`}

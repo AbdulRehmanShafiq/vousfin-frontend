@@ -33,7 +33,7 @@ function Tab({ icon: Icon, label, to, onClick, active }) {
     </>
   )
   const base =
-    'relative flex flex-1 flex-col items-center gap-0.5 py-2.5 text-[11px] font-semibold transition-colors min-h-[58px] justify-center'
+    'relative flex flex-1 flex-col items-center gap-0.5 py-2.5 text-label font-semibold transition-colors min-h-[58px] justify-center'
 
   if (to) {
     return (
@@ -73,7 +73,7 @@ export default function MobileNav() {
             >
               <Plus className="h-6 w-6" />
             </button>
-            <span className="text-[11px] font-semibold text-text-muted">Create</span>
+            <span className="text-label font-semibold text-text-muted">Create</span>
           </div>
         ) : (
           <div className="flex-1" aria-hidden="true" />

@@ -64,7 +64,7 @@ export default function MobileHome() {
         <button
           type="button"
           onClick={openTxModal}
-          className="tap-target flex w-full items-center justify-center gap-2 rounded-2xl btn-gradient text-[15px] font-semibold"
+          className="tap-target flex w-full items-center justify-center gap-2 rounded-2xl btn-gradient text-md font-semibold"
         >
           <Plus className="h-5 w-5" />
           Record something
@@ -75,7 +75,7 @@ export default function MobileHome() {
         <div className="space-y-5 pb-4">
           {/* Cash hero */}
           <div>
-            <p className="text-[12.5px] font-semibold uppercase tracking-wider text-text-muted">Cash on hand</p>
+            <p className="text-small font-semibold uppercase tracking-wider text-text-muted">Cash on hand</p>
             {loadDash ? (
               <div className="mt-2 h-9 w-40 animate-pulse rounded-lg bg-glass-panel" />
             ) : (
@@ -89,7 +89,7 @@ export default function MobileHome() {
           {needsYouCount > 0 && (
             <Link
               to="/command-center"
-              className="flex items-center gap-2 rounded-full bg-amber/12 px-4 py-2.5 text-[13.5px] font-semibold text-amber active:scale-[0.98] transition-transform"
+              className="flex items-center gap-2 rounded-full bg-highlight/12 px-4 py-2.5 text-sm font-semibold text-highlight active:scale-[0.98] transition-transform"
             >
               <Bell className="h-4 w-4 flex-shrink-0" />
               {needsYouCount} {needsYouCount === 1 ? 'thing needs' : 'things need'} you
@@ -100,14 +100,14 @@ export default function MobileHome() {
           {/* Money in / out */}
           <div className="grid grid-cols-2 gap-3">
             <div className="rounded-2xl bg-glass-panel p-3.5">
-              <p className="text-[12px] text-text-muted">Money in</p>
-              <p className="num mt-1 text-[17px] font-semibold text-positive">
+              <p className="text-xs text-text-muted">Money in</p>
+              <p className="num mt-1 text-lg font-semibold text-positive">
                 {formatCompactCurrency(kpis.revenue ?? 0, currency)}
               </p>
             </div>
             <div className="rounded-2xl bg-glass-panel p-3.5">
-              <p className="text-[12px] text-text-muted">Money out</p>
-              <p className="num mt-1 text-[17px] font-semibold text-text-primary">
+              <p className="text-xs text-text-muted">Money out</p>
+              <p className="num mt-1 text-lg font-semibold text-text-primary">
                 {formatCompactCurrency(kpis.expenses ?? 0, currency)}
               </p>
             </div>
@@ -116,8 +116,8 @@ export default function MobileHome() {
           {/* Recent */}
           <div>
             <div className="mb-1.5 flex items-center justify-between">
-              <p className="text-[12.5px] font-semibold uppercase tracking-wider text-text-muted">Recent</p>
-              <Link to="/transactions" className="text-[12.5px] font-semibold text-cyan">See all</Link>
+              <p className="text-small font-semibold uppercase tracking-wider text-text-muted">Recent</p>
+              <Link to="/transactions" className="text-small font-semibold text-accent">See all</Link>
             </div>
             {loadTx ? (
               <div className="space-y-2">

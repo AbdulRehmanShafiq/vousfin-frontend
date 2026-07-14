@@ -88,7 +88,7 @@ export default function BillEditorPage() {
       <button
         type="button"
         onClick={() => navigate('/purchases/bills')}
-        className="flex items-center gap-1.5 text-sm text-text-muted hover:text-cyan transition-colors"
+        className="flex items-center gap-1.5 text-sm text-text-muted hover:text-accent transition-colors"
       >
         <ArrowLeft className="h-4 w-4" />
         Back to Bills

@@ -10,7 +10,7 @@ import { cn } from '@/utils/cn'
 export default function DeadlineCountdown({ deadline, className, muted = false }) {
   if (!deadline || deadline.daysRemaining == null) {
     return (
-      <span className={cn('inline-flex items-center gap-1.5 text-[12.5px] text-text-muted', className)}>
+      <span className={cn('inline-flex items-center gap-1.5 text-small text-text-muted', className)}>
         <CalendarClock className="h-3.5 w-3.5" />
         No filing deadline
       </span>
@@ -25,7 +25,7 @@ export default function DeadlineCountdown({ deadline, className, muted = false }
   return (
     <span
       className={cn(
-        'inline-flex items-center gap-1.5 rounded-full border px-2.5 py-1 text-[12.5px] font-semibold',
+        'inline-flex items-center gap-1.5 rounded-full border px-2.5 py-1 text-small font-semibold',
         tone.chip, tone.text, className,
       )}
     >

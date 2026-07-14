@@ -33,7 +33,7 @@ export default function MobileTransactions({
         <button
           type="button"
           onClick={onCreate}
-          className="tap-target flex w-full items-center justify-center gap-2 rounded-2xl btn-gradient text-[15px] font-semibold"
+          className="tap-target flex w-full items-center justify-center gap-2 rounded-2xl btn-gradient text-md font-semibold"
         >
           <Plus className="h-5 w-5" />
           Record something
@@ -44,14 +44,14 @@ export default function MobileTransactions({
         <div className="space-y-4 pb-4">
           <div className="grid grid-cols-2 gap-3">
             <div className="rounded-2xl bg-glass-panel p-3.5">
-              <p className="text-[12px] text-text-muted">Money in</p>
-              <p className="num mt-1 text-[17px] font-semibold text-positive">
+              <p className="text-xs text-text-muted">Money in</p>
+              <p className="num mt-1 text-lg font-semibold text-positive">
                 {formatCompactCurrency(totals?.inflow ?? 0, currency)}
               </p>
             </div>
             <div className="rounded-2xl bg-glass-panel p-3.5">
-              <p className="text-[12px] text-text-muted">Money out</p>
-              <p className="num mt-1 text-[17px] font-semibold text-text-primary">
+              <p className="text-xs text-text-muted">Money out</p>
+              <p className="num mt-1 text-lg font-semibold text-text-primary">
                 {formatCompactCurrency(totals?.outflow ?? 0, currency)}
               </p>
             </div>
@@ -95,12 +95,12 @@ export default function MobileTransactions({
           )}
 
           {hasNextPage && (
-            <div ref={sentinelRef} className="py-3 text-center text-[12.5px] text-text-muted">
+            <div ref={sentinelRef} className="py-3 text-center text-small text-text-muted">
               Loading more…
             </div>
           )}
           {!hasNextPage && rows.length > 0 && (
-            <p className="py-2 text-center text-[12.5px] text-text-muted">All transactions loaded</p>
+            <p className="py-2 text-center text-small text-text-muted">All transactions loaded</p>
           )}
         </div>
       </PullToRefresh>

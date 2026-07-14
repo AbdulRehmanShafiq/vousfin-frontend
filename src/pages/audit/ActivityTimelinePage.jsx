@@ -27,8 +27,8 @@ function toneFor(action = '') {
   const a = action.toLowerCase()
   if (/(delete|cancel|revers|reject|fail)/.test(a)) return 'text-negative bg-negative/10 border-negative/20'
   if (/(paid|approve|match|received|created|recorded)/.test(a)) return 'text-positive bg-positive/10 border-positive/20'
-  if (/(balance_changed|valuation|low_stock|reduced|overdue)/.test(a)) return 'text-amber bg-amber/10 border-amber/20'
-  return 'text-cyan bg-cyan/10 border-cyan/20'
+  if (/(balance_changed|valuation|low_stock|reduced|overdue)/.test(a)) return 'text-highlight bg-highlight/10 border-highlight/20'
+  return 'text-accent bg-accent/10 border-accent/20'
 }
 
 function timeAgo(ts) {
@@ -56,7 +56,7 @@ export default function ActivityTimelinePage() {
       <div className="flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between">
         <div>
           <h1 className="flex items-center gap-2 text-2xl font-black text-text-primary tracking-tight">
-            <Activity className="h-6 w-6 text-cyan" />
+            <Activity className="h-6 w-6 text-accent" />
             Activity Timeline
           </h1>
           <p className="text-text-secondary mt-1 text-sm">
@@ -81,7 +81,7 @@ export default function ActivityTimelinePage() {
               onClick={() => setSource(f.value)}
               className={cn(
                 'px-3 py-1.5 text-xs font-semibold transition-colors',
-                source === f.value ? 'bg-cyan/15 text-cyan' : 'text-text-muted hover:text-text-primary'
+                source === f.value ? 'bg-accent/15 text-accent' : 'text-text-muted hover:text-text-primary'
               )}
             >
               {f.label}
@@ -101,10 +101,10 @@ export default function ActivityTimelinePage() {
       {data && (
         <div className="flex gap-3 text-xs">
           <span className="rounded-lg border border-glass bg-glass-panel px-3 py-1.5 text-text-secondary">
-            <UserCog className="inline h-3.5 w-3.5 mr-1 text-cyan" /> {data.auditCount} audit entries
+            <UserCog className="inline h-3.5 w-3.5 mr-1 text-accent" /> {data.auditCount} audit entries
           </span>
           <span className="rounded-lg border border-glass bg-glass-panel px-3 py-1.5 text-text-secondary">
-            <Zap className="inline h-3.5 w-3.5 mr-1 text-amber" /> {data.eventCount} system events
+            <Zap className="inline h-3.5 w-3.5 mr-1 text-highlight" /> {data.eventCount} system events
           </span>
         </div>
       )}
@@ -133,12 +133,12 @@ export default function ActivityTimelinePage() {
               <li key={i} className="ml-4">
                 <span className={cn(
                   'absolute -left-[7px] flex h-3.5 w-3.5 items-center justify-center rounded-full border',
-                  it.source === 'event' ? 'bg-amber/20 border-amber/40' : 'bg-cyan/20 border-cyan/40'
+                  it.source === 'event' ? 'bg-highlight/20 border-highlight/40' : 'bg-accent/20 border-accent/40'
                 )} />
                 <div className="flex items-start justify-between gap-3">
                   <div className="min-w-0">
                     <div className="flex items-center gap-2 flex-wrap">
-                      <span className={cn('inline-flex items-center gap-1 rounded px-1.5 py-0.5 text-[12px] font-bold border', toneFor(it.action))}>
+                      <span className={cn('inline-flex items-center gap-1 rounded px-1.5 py-0.5 text-xs font-bold border', toneFor(it.action))}>
                         {it.source === 'event'
                           ? <Zap className="h-2.5 w-2.5" />
                           : <UserCog className="h-2.5 w-2.5" />}
@@ -152,7 +152,7 @@ export default function ActivityTimelinePage() {
                       {it.actorName && it.actorName !== 'system' && <span> · by {it.actorName}</span>}
                     </p>
                   </div>
-                  <span className="shrink-0 text-[12.5px] text-text-muted whitespace-nowrap" title={it.timestamp ? new Date(it.timestamp).toLocaleString() : ''}>
+                  <span className="shrink-0 text-small text-text-muted whitespace-nowrap" title={it.timestamp ? new Date(it.timestamp).toLocaleString() : ''}>
                     {timeAgo(it.timestamp)}
                   </span>
                 </div>

@@ -23,7 +23,7 @@ function Card({ t }) {
   return (
     <figure className="vf-glass-pro rounded-2xl p-6">
       <div className="font-display mb-3 text-3xl leading-none text-[#C8A96E]/40">“</div>
-      <blockquote className="text-[14.5px] leading-relaxed text-[#E9E2D5]">{t.q}</blockquote>
+      <blockquote className="text-sm leading-relaxed text-[#E9E2D5]">{t.q}</blockquote>
       <figcaption className="mt-5 flex items-center gap-3">
         <span className="bg-gold-gradient flex h-9 w-9 items-center justify-center rounded-full text-xs font-bold text-[#12100E]">{t.initials}</span>
         <span>

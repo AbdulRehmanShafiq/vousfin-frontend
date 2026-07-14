@@ -37,31 +37,31 @@ export default function AcceptInvitePage() {
   return (
     <div className="min-h-[60vh] flex items-center justify-center px-4">
       <div className="premium-card p-7 max-w-md w-full text-center space-y-4">
-        <div className="mx-auto p-2.5 rounded-xl bg-cyan/15 w-fit"><UsersRound className="h-6 w-6 text-cyan" /></div>
+        <div className="mx-auto p-2.5 rounded-xl bg-accent/15 w-fit"><UsersRound className="h-6 w-6 text-accent" /></div>
         <h1 className="text-xl font-semibold text-text-primary">Join the team</h1>
 
         {!isAuthenticated ? (
           <>
-            <p className="text-[13px] text-text-secondary">Please log in with the email this invite was sent to, then open the invite link again to accept.</p>
-            <Link to="/login" className="btn-gradient inline-flex items-center justify-center px-4 py-2 rounded-lg text-[13px] font-semibold">Log in</Link>
+            <p className="text-small text-text-secondary">Please log in with the email this invite was sent to, then open the invite link again to accept.</p>
+            <Link to="/login" className="btn-gradient inline-flex items-center justify-center px-4 py-2 rounded-lg text-small font-semibold">Log in</Link>
           </>
         ) : state === 'done' ? (
           <>
             <div className="mx-auto p-2 rounded-full bg-positive/15 w-fit"><Check className="h-5 w-5 text-positive" /></div>
-            <p className="text-[13px] text-text-secondary">You've joined the team. Welcome aboard!</p>
-            <button onClick={() => navigate('/dashboard')} className="btn-gradient inline-flex items-center justify-center px-4 py-2 rounded-lg text-[13px] font-semibold">Go to dashboard</button>
+            <p className="text-small text-text-secondary">You've joined the team. Welcome aboard!</p>
+            <button onClick={() => navigate('/dashboard')} className="btn-gradient inline-flex items-center justify-center px-4 py-2 rounded-lg text-small font-semibold">Go to dashboard</button>
           </>
         ) : state === 'error' ? (
           <>
             <div className="mx-auto p-2 rounded-full bg-negative/15 w-fit"><AlertTriangle className="h-5 w-5 text-negative" /></div>
-            <p className="text-[13px] text-negative">{message}</p>
-            <button onClick={accept} className="text-[12.5px] text-text-muted hover:text-text-primary underline">Try again</button>
+            <p className="text-small text-negative">{message}</p>
+            <button onClick={accept} className="text-small text-text-muted hover:text-text-primary underline">Try again</button>
           </>
         ) : (
           <>
-            <p className="text-[13px] text-text-secondary">You've been invited to join a business on VousFin. Accept to get access.</p>
+            <p className="text-small text-text-secondary">You've been invited to join a business on VousFin. Accept to get access.</p>
             <button onClick={accept} disabled={state === 'loading'}
-              className="btn-gradient inline-flex items-center justify-center gap-1.5 px-4 py-2 rounded-lg text-[13px] font-semibold disabled:opacity-50">
+              className="btn-gradient inline-flex items-center justify-center gap-1.5 px-4 py-2 rounded-lg text-small font-semibold disabled:opacity-50">
               {state === 'loading' ? <Loader2 className="h-4 w-4 animate-spin" /> : <Check className="h-4 w-4" />} Accept invitation
             </button>
           </>

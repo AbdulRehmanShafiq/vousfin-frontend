@@ -47,7 +47,7 @@ export default function ProfitabilityPage() {
   return (
     <div className="animate-fade-in pb-10 space-y-5 max-w-5xl">
       <div className="flex items-center gap-3">
-        <div className="p-2 rounded-xl bg-gold/15"><TrendingUp className="h-5 w-5 text-gold" /></div>
+        <div className="p-2 rounded-xl bg-highlight/15"><TrendingUp className="h-5 w-5 text-highlight" /></div>
         <div>
           <h1 className="text-2xl font-semibold text-text-primary tracking-tight">Profitability</h1>
           <p className="text-sm text-text-secondary mt-0.5">Who and what actually makes you money.</p>
@@ -56,28 +56,28 @@ export default function ProfitabilityPage() {
 
       <div className="premium-card p-4 flex items-end gap-3 flex-wrap">
         <label className="flex flex-col gap-1">
-          <span className="text-[11.5px] text-text-muted">View by</span>
+          <span className="text-label text-text-muted">View by</span>
           <select value={dim} onChange={(e) => setDim(e.target.value)}
-            className="px-3 py-2 rounded-lg border border-glass bg-glass-panel/40 text-[13px] text-text-primary focus:outline-none">
+            className="px-3 py-2 rounded-lg border border-glass bg-glass-panel/40 text-small text-text-primary focus:outline-none">
             {DIMS.map((d) => <option key={d.value} value={d.value} className="bg-charcoal">{d.label}</option>)}
           </select>
         </label>
-        <label className="flex flex-col gap-1"><span className="text-[11.5px] text-text-muted">From</span>
-          <input type="date" value={from} onChange={(e) => setFrom(e.target.value)} className="px-3 py-2 rounded-lg border border-glass bg-glass-panel/40 text-[13px] text-text-primary focus:outline-none" /></label>
-        <label className="flex flex-col gap-1"><span className="text-[11.5px] text-text-muted">To</span>
-          <input type="date" value={to} onChange={(e) => setTo(e.target.value)} className="px-3 py-2 rounded-lg border border-glass bg-glass-panel/40 text-[13px] text-text-primary focus:outline-none" /></label>
+        <label className="flex flex-col gap-1"><span className="text-label text-text-muted">From</span>
+          <input type="date" value={from} onChange={(e) => setFrom(e.target.value)} className="px-3 py-2 rounded-lg border border-glass bg-glass-panel/40 text-small text-text-primary focus:outline-none" /></label>
+        <label className="flex flex-col gap-1"><span className="text-label text-text-muted">To</span>
+          <input type="date" value={to} onChange={(e) => setTo(e.target.value)} className="px-3 py-2 rounded-lg border border-glass bg-glass-panel/40 text-small text-text-primary focus:outline-none" /></label>
         <button onClick={exportCsv} disabled={segments.length === 0}
-          className="inline-flex items-center gap-1.5 px-3 py-2 rounded-lg text-[12.5px] text-cyan hover:bg-glass-hover disabled:opacity-40">
+          className="inline-flex items-center gap-1.5 px-3 py-2 rounded-lg text-small text-accent hover:bg-glass-hover disabled:opacity-40">
           <Download className="h-4 w-4" /> Export CSV
         </button>
       </div>
 
-      {isLoading && <div className="premium-card p-6 text-text-secondary text-[13px]"><Loader2 className="h-4 w-4 animate-spin inline mr-2" />Working out the numbers…</div>}
+      {isLoading && <div className="premium-card p-6 text-text-secondary text-small"><Loader2 className="h-4 w-4 animate-spin inline mr-2" />Working out the numbers…</div>}
 
       {!isLoading && segments.length > 0 && (
         <div className="premium-card p-4">
           <div className="overflow-x-auto">
-            <table className="w-full text-[12.5px]">
+            <table className="w-full text-small">
               <thead>
                 <tr className="text-text-muted text-left border-b border-glass">
                   <th className="py-2 pr-3 font-medium">Name</th>
@@ -94,9 +94,9 @@ export default function ProfitabilityPage() {
                     <td className="py-2 pr-3 text-text-primary">{s.name}</td>
                     <td className="py-2 px-3 text-right text-text-secondary">{money(s.revenue)}</td>
                     <td className="py-2 px-3 text-right text-text-secondary">{money(s.variableCost)}</td>
-                    <td className={`py-2 px-3 text-right ${s.lossMaker ? 'text-negative' : 'text-emerald'}`}>{money(s.grossMargin)}</td>
+                    <td className={`py-2 px-3 text-right ${s.lossMaker ? 'text-negative' : 'text-positive'}`}>{money(s.grossMargin)}</td>
                     <td className="py-2 px-3 text-right text-text-secondary">{pct(s.grossMarginPct)}</td>
-                    <td className="py-2 pl-3">{s.lossMaker && <span className="text-[10.5px] uppercase tracking-wider text-negative">Loss</span>}</td>
+                    <td className="py-2 pl-3">{s.lossMaker && <span className="text-label uppercase tracking-wider text-negative">Loss</span>}</td>
                   </tr>
                 ))}
               </tbody>
@@ -115,7 +115,7 @@ export default function ProfitabilityPage() {
       )}
 
       {!isLoading && segments.length === 0 && (
-        <div className="premium-card p-6 text-center text-[13px] text-text-secondary">No revenue or direct costs in this period yet.</div>
+        <div className="premium-card p-6 text-center text-small text-text-secondary">No revenue or direct costs in this period yet.</div>
       )}
     </div>
   )

@@ -31,7 +31,7 @@ const RevenueExpensesChart = memo(function RevenueExpensesChart({ data = [], loa
       <div className="flex items-center justify-between mb-5">
         <div>
           <h3 className="text-sm font-bold text-text-primary">Revenue vs Expenses</h3>
-          <p className="text-[12.5px] text-text-muted mt-0.5">Monthly comparison · YTD</p>
+          <p className="text-small text-text-muted mt-0.5">Monthly comparison · YTD</p>
         </div>
       </div>
       {data.length === 0 ? (

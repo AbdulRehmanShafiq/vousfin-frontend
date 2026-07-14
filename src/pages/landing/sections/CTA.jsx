@@ -45,7 +45,7 @@ export default function CTA() {
       id="cta"
       className="relative w-full overflow-hidden bg-[#12100E] py-32"
     >
-      {/* ---- generated liquid-gold visual (visible) + readability overlay ---- */}
+      {/* ---- generated liquid-highlight visual (visible) + readability overlay ---- */}
       <img
         src="/og-vousfin.png"
         alt=""

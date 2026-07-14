@@ -41,8 +41,8 @@ export default function AIAssistantChat() {
       {/* Header */}
       <div className="flex items-center justify-between border-b border-glass px-5 py-4 flex-shrink-0">
         <div className="flex items-center gap-3">
-          <div className="flex h-9 w-9 items-center justify-center rounded-full bg-cyan/20 border border-cyan/30">
-            <Bot className="h-5 w-5 text-cyan" />
+          <div className="flex h-9 w-9 items-center justify-center rounded-full bg-accent/20 border border-accent/30">
+            <Bot className="h-5 w-5 text-accent" />
           </div>
           <div>
             <h3 className="font-bold text-text-primary text-sm">vousFin AI Assistant</h3>
@@ -72,7 +72,7 @@ export default function AIAssistantChat() {
                   key={p}
                   type="button"
                   onClick={() => submit(p)}
-                  className="rounded-full border border-glass bg-glass-panel px-3 py-1.5 text-xs text-text-secondary hover:border-cyan/40 hover:text-text-primary hover:bg-glass-hover transition-colors"
+                  className="rounded-full border border-glass bg-glass-panel px-3 py-1.5 text-xs text-text-secondary hover:border-accent/40 hover:text-text-primary hover:bg-glass-hover transition-colors"
                 >
                   {p}
                 </button>
@@ -84,14 +84,14 @@ export default function AIAssistantChat() {
         {messages.map((m) => (
           <div key={m.id} className={`flex gap-3 ${m.role === 'user' ? 'justify-end' : 'justify-start'}`}>
             {m.role === 'assistant' && (
-              <div className="flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-full bg-cyan/20 border border-cyan/30">
-                <Bot className="h-4 w-4 text-cyan" />
+              <div className="flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-full bg-accent/20 border border-accent/30">
+                <Bot className="h-4 w-4 text-accent" />
               </div>
             )}
 
             <div className={`max-w-[80%] rounded-2xl px-4 py-2.5 text-sm leading-relaxed ${
               m.role === 'user'
-                ? 'bg-cyan text-ink-on-accent font-medium rounded-tr-sm'
+                ? 'bg-accent text-ink-on-accent font-medium rounded-tr-sm'
                 : 'bg-glass-panel border border-glass text-text-primary rounded-tl-sm'
             }`}>
               {m.role === 'assistant' ? (
@@ -100,7 +100,7 @@ export default function AIAssistantChat() {
                     <ReactMarkdown
                       components={{
                         p: ({ children }) => <p className="mb-1 last:mb-0">{children}</p>,
-                        strong: ({ children }) => <strong className="font-bold text-cyan">{children}</strong>,
+                        strong: ({ children }) => <strong className="font-bold text-accent">{children}</strong>,
                         ul: ({ children }) => <ul className="list-disc list-inside space-y-1 mt-1">{children}</ul>,
                         li: ({ children }) => <li className="text-text-secondary">{children}</li>,
                       }}
@@ -128,13 +128,13 @@ export default function AIAssistantChat() {
 
         {loading && (
           <div className="flex gap-3 justify-start">
-            <div className="flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-full bg-cyan/20 border border-cyan/30">
-              <Bot className="h-4 w-4 text-cyan animate-pulse" />
+            <div className="flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-full bg-accent/20 border border-accent/30">
+              <Bot className="h-4 w-4 text-accent animate-pulse" />
             </div>
             <div className="rounded-2xl rounded-tl-sm bg-glass-panel border border-glass px-4 py-3 flex items-center gap-1.5">
-              <div className="h-1.5 w-1.5 rounded-full bg-cyan/60 animate-bounce [animation-delay:-0.3s]" />
-              <div className="h-1.5 w-1.5 rounded-full bg-cyan/60 animate-bounce [animation-delay:-0.15s]" />
-              <div className="h-1.5 w-1.5 rounded-full bg-cyan/60 animate-bounce" />
+              <div className="h-1.5 w-1.5 rounded-full bg-accent/60 animate-bounce [animation-delay:-0.3s]" />
+              <div className="h-1.5 w-1.5 rounded-full bg-accent/60 animate-bounce [animation-delay:-0.15s]" />
+              <div className="h-1.5 w-1.5 rounded-full bg-accent/60 animate-bounce" />
             </div>
           </div>
         )}
@@ -142,8 +142,8 @@ export default function AIAssistantChat() {
       </div>
 
       <div className="border-t border-glass px-4 pt-3">
-        <div className="inline-flex items-center gap-1.5 rounded-full border border-glass bg-glass-panel px-2.5 py-1 text-[11px] text-text-muted">
-          <Database className="h-3 w-3 text-cyan" />
+        <div className="inline-flex items-center gap-1.5 rounded-full border border-glass bg-glass-panel px-2.5 py-1 text-label text-text-muted">
+          <Database className="h-3 w-3 text-accent" />
           <span>Financial data - All periods</span>
         </div>
       </div>
@@ -157,7 +157,7 @@ export default function AIAssistantChat() {
           onChange={(e) => setInput(e.target.value)}
           placeholder="Ask about your finances..."
           disabled={loading}
-          className="flex-1 rounded-xl border border-glass bg-glass-panel px-4 py-2.5 text-sm text-text-primary placeholder:text-text-muted focus:border-cyan/50 focus:outline-none focus:ring-1 focus:ring-cyan/20 disabled:opacity-50 transition-colors"
+          className="flex-1 rounded-xl border border-glass bg-glass-panel px-4 py-2.5 text-sm text-text-primary placeholder:text-text-muted focus:border-accent/50 focus:outline-none focus:ring-1 focus:ring-accent/20 disabled:opacity-50 transition-colors"
         />
         <Button type="submit" loading={loading} icon={Send} disabled={loading || !input.trim()}>
           Send

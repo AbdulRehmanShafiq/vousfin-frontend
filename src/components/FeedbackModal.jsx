@@ -61,14 +61,14 @@ export default function FeedbackModal() {
           <h2 className="mb-4 text-xl font-semibold text-text-primary">
             Send Feedback
           </h2>
-          <p className="mb-6 text-[13px] text-text-secondary">
+          <p className="mb-6 text-small text-text-secondary">
             Help us improve VousFin by sharing your thoughts
           </p>
 
           <form onSubmit={handleSubmit} className="space-y-4">
             {/* Type */}
             <div>
-              <label className="block mb-1 text-[13px] font-medium text-text-secondary">Type</label>
+              <label className="block mb-1 text-small font-medium text-text-secondary">Type</label>
               <SelectField
                 value={formData.type}
                 onChange={(e) => setFormData({ ...formData, type: e.target.value })}
@@ -82,30 +82,30 @@ export default function FeedbackModal() {
 
             {/* Subject */}
             <div>
-              <label className="block mb-1 text-[13px] font-medium text-text-secondary">Subject</label>
+              <label className="block mb-1 text-small font-medium text-text-secondary">Subject</label>
               <input
                 value={formData.subject}
                 onChange={(e) => setFormData({ ...formData, subject: e.target.value })}
                 placeholder="Brief summary of your feedback"
-                className="w-full px-3 py-2 rounded-lg border border-glass bg-glass-panel/40 text-[13px] text-text-primary placeholder:text-text-muted focus:outline-none focus:border-cyan/40"
+                className="w-full px-3 py-2 rounded-lg border border-glass bg-glass-panel/40 text-small text-text-primary placeholder:text-text-muted focus:outline-none focus:border-accent/40"
               />
             </div>
 
             {/* Message */}
             <div>
-              <label className="block mb-1 text-[13px] font-medium text-text-secondary">Message</label>
+              <label className="block mb-1 text-small font-medium text-text-secondary">Message</label>
               <textarea
                 value={formData.message}
                 onChange={(e) => setFormData({ ...formData, message: e.target.value })}
                 placeholder="Please provide details..."
-                className="w-full px-3 py-2 rounded-lg border border-glass bg-glass-panel/40 text-[13px] text-text-primary placeholder:text-text-muted resize-none focus:outline-none focus:border-cyan/40"
+                className="w-full px-3 py-2 rounded-lg border border-glass bg-glass-panel/40 text-small text-text-primary placeholder:text-text-muted resize-none focus:outline-none focus:border-accent/40"
                 rows={4}
               />
             </div>
 
             {/* Rating (optional) */}
             <div>
-              <label className="block mb-1 text-[13px] font-medium text-text-secondary">Rating (Optional)</label>
+              <label className="block mb-1 text-small font-medium text-text-secondary">Rating (Optional)</label>
               <div className="flex justify-center space-x-1">
                 {[1, 2, 3, 4, 5].map((star) => (
                   <button
@@ -120,7 +120,7 @@ export default function FeedbackModal() {
                   </button>
                 ))}
               </div>
-              <p className="mt-1 text-[11px] text-text-muted center">
+              <p className="mt-1 text-label text-text-muted center">
                 Click stars to rate (optional)
               </p>
             </div>
@@ -129,7 +129,7 @@ export default function FeedbackModal() {
           <div className="mt-4 flex justify-end space-x-3">
             <button
               onClick={() => setIsOpen(false)}
-              className="px-4 py-2 rounded-lg border border-glass text-[13px] text-text-secondary hover:bg-glass-hover transition-colors"
+              className="px-4 py-2 rounded-lg border border-glass text-small text-text-secondary hover:bg-glass-hover transition-colors"
             >
               Cancel
             </button>
@@ -137,10 +137,10 @@ export default function FeedbackModal() {
               type="submit"
               disabled={isSubmitting}
               className={cn(
-                'px-4 py-2 rounded-lg text-[13px] font-medium transition-colors',
+                'px-4 py-2 rounded-lg text-small font-medium transition-colors',
                 isSubmitting
                   ? 'bg-gray-500/50 text-gray-500 cursor-not-allowed'
-                  : 'bg-gradient-to-r from-cyan-500 to-blue-500 text-white hover:from-cyan-400 hover:to-blue-400'
+                  : 'bg-gradient-to-r from-accent to-blue-500 text-white hover:from-accent hover:to-blue-400'
               )}
             >
               {isSubmitting ? 'Submitting...' : 'Submit Feedback'}

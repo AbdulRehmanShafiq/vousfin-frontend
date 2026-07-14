@@ -41,7 +41,7 @@ function SummaryRows({ ret, currency }) {
     <dl className="mt-3 rounded-xl border border-glass divide-y divide-glass">
       {rows.map(([k, v]) => (
         <div key={k} className="flex items-center justify-between px-3.5 py-2.5">
-          <dt className="text-[12.5px] text-text-muted">{k}</dt>
+          <dt className="text-small text-text-muted">{k}</dt>
           <dd className="num text-sm font-semibold text-text-primary">
             {k === 'Suppliers' ? (v ?? 0) : compactMoney(v, currency)}
           </dd>
@@ -103,7 +103,7 @@ export default function ReturnFilingWizard({ isOpen, onClose, returnType, period
       <div className="flex items-center gap-2 mb-4">
         {STEPS.map((s, i) => (
           <div key={s} className="flex items-center gap-2 flex-1">
-            <span className={`h-1.5 flex-1 rounded-full ${STEPS.indexOf(step) >= i ? 'bg-cyan' : 'bg-glass-panel'}`} />
+            <span className={`h-1.5 flex-1 rounded-full ${STEPS.indexOf(step) >= i ? 'bg-accent' : 'bg-glass-panel'}`} />
           </div>
         ))}
       </div>
@@ -118,7 +118,7 @@ export default function ReturnFilingWizard({ isOpen, onClose, returnType, period
           ) : (
             <>
               <p className="text-sm text-text-primary font-medium">{headline(ret, currency)}</p>
-              <p className="text-[12.5px] text-text-muted mt-0.5">Compiled automatically from your books — no manual entry.</p>
+              <p className="text-small text-text-muted mt-0.5">Compiled automatically from your books — no manual entry.</p>
               <SummaryRows ret={ret} currency={currency} />
               <div className="flex justify-end gap-3 pt-5">
                 <Button variant="ghost" onClick={onClose}>Cancel</Button>
@@ -135,15 +135,15 @@ export default function ReturnFilingWizard({ isOpen, onClose, returnType, period
           {errors.length === 0 ? (
             <div className="flex items-start gap-2.5 rounded-xl border border-positive/25 bg-positive/8 p-3">
               <CheckCircle2 className="h-4 w-4 text-positive shrink-0 mt-0.5" />
-              <p className="text-[13px] text-text-primary">All FBR checks passed — this return is ready to file.</p>
+              <p className="text-small text-text-primary">All FBR checks passed — this return is ready to file.</p>
             </div>
           ) : (
             <div className="space-y-2">
-              <p className="text-[12.5px] font-bold uppercase tracking-wider text-negative">{errors.length} issue(s) to fix before filing</p>
+              <p className="text-small font-bold uppercase tracking-wider text-negative">{errors.length} issue(s) to fix before filing</p>
               {errors.map((e) => (
                 <div key={e.code} className="rounded-lg border border-negative/30 bg-negative-muted p-3">
-                  <p className="text-[13px] font-semibold text-negative flex items-center gap-1.5"><AlertTriangle className="h-3.5 w-3.5" /> {e.message}</p>
-                  <p className="text-[12.5px] text-text-secondary mt-1">{e.fix}</p>
+                  <p className="text-small font-semibold text-negative flex items-center gap-1.5"><AlertTriangle className="h-3.5 w-3.5" /> {e.message}</p>
+                  <p className="text-small text-text-secondary mt-1">{e.fix}</p>
                 </div>
               ))}
             </div>
@@ -151,9 +151,9 @@ export default function ReturnFilingWizard({ isOpen, onClose, returnType, period
           {warnings.length > 0 && (
             <div className="mt-2 space-y-2">
               {warnings.map((w) => (
-                <div key={w.code} className="rounded-lg border border-amber/25 bg-amber/8 p-2.5">
-                  <p className="text-[12.5px] text-amber font-medium">{w.message}</p>
-                  <p className="text-[12px] text-text-muted mt-0.5">{w.fix}</p>
+                <div key={w.code} className="rounded-lg border border-highlight/25 bg-highlight/8 p-2.5">
+                  <p className="text-small text-highlight font-medium">{w.message}</p>
+                  <p className="text-xs text-text-muted mt-0.5">{w.fix}</p>
                 </div>
               ))}
             </div>
@@ -173,13 +173,13 @@ export default function ReturnFilingWizard({ isOpen, onClose, returnType, period
             <div>
               {filed?.mode === 'iris' ? (
                 <>
-                  <p className="text-[13px] font-semibold text-text-primary">Filed with FBR</p>
-                  <p className="text-[12.5px] text-text-secondary mt-0.5">Acknowledgment <span className="num font-semibold">{filed.ackNumber}</span> — recorded in your audit trail.</p>
+                  <p className="text-small font-semibold text-text-primary">Filed with FBR</p>
+                  <p className="text-small text-text-secondary mt-0.5">Acknowledgment <span className="num font-semibold">{filed.ackNumber}</span> — recorded in your audit trail.</p>
                 </>
               ) : (
                 <>
-                  <p className="text-[13px] font-semibold text-text-primary">FBR-compatible XML downloaded</p>
-                  <p className="text-[12.5px] text-text-secondary mt-0.5">Upload it to FBR IRIS to complete filing. (Live IRIS submission activates once credentials are set.)</p>
+                  <p className="text-small font-semibold text-text-primary">FBR-compatible XML downloaded</p>
+                  <p className="text-small text-text-secondary mt-0.5">Upload it to FBR IRIS to complete filing. (Live IRIS submission activates once credentials are set.)</p>
                 </>
               )}
             </div>

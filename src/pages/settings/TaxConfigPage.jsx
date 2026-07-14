@@ -62,7 +62,7 @@ function SectionCard({ title, icon: Icon, children, className = '' }) {
   return (
     <div className={`premium-card p-5 space-y-4 ${className}`}>
       <h2 className="flex items-center gap-2 font-semibold text-text-primary text-sm">
-        <Icon className="h-4 w-4 text-cyan shrink-0" />
+        <Icon className="h-4 w-4 text-accent shrink-0" />
         {title}
       </h2>
       {children}
@@ -84,7 +84,7 @@ function ToggleRow({ label, description, checked, onChange }) {
         aria-checked={checked}
         onClick={() => onChange(!checked)}
         className={`relative inline-flex h-5 w-9 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 focus:outline-none ${
-          checked ? 'bg-cyan' : 'bg-glass'
+          checked ? 'bg-accent' : 'bg-glass'
         }`}
       >
         <span className={`inline-block h-4 w-4 transform rounded-full bg-navy-2 shadow-sm transition duration-200 ${checked ? 'translate-x-4' : 'translate-x-0'}`} />
@@ -157,7 +157,7 @@ export default function TaxConfigPage() {
       {/* Header */}
       <div>
         <h1 className="flex items-center gap-2 text-xl font-black text-text-primary tracking-tight sm:text-2xl">
-          <Receipt className="h-5 w-5 text-cyan sm:h-6 sm:w-6" />
+          <Receipt className="h-5 w-5 text-accent sm:h-6 sm:w-6" />
           Tax Engine
         </h1>
         <p className="text-text-secondary text-sm mt-0.5">
@@ -170,7 +170,7 @@ export default function TaxConfigPage() {
         <div className={`flex items-center gap-3 rounded-xl border px-4 py-3 text-sm ${
           anyEnabled
             ? 'border-positive/20 bg-positive/5'
-            : 'border-amber/20 bg-amber/5'
+            : 'border-highlight/20 bg-highlight/5'
         }`}>
           {anyEnabled
             ? <><CheckCircle2 className="h-4 w-4 text-positive shrink-0" />
@@ -179,9 +179,9 @@ export default function TaxConfigPage() {
                   {profile.countryName} · {taxCfg.filingFrequency} filing
                   {taxCfg.taxRegistrationNumber && <> · Reg: <strong>{taxCfg.taxRegistrationNumber}</strong></>}
                 </span></>
-            : <><AlertCircle className="h-4 w-4 text-amber shrink-0" />
+            : <><AlertCircle className="h-4 w-4 text-highlight shrink-0" />
                 <span className="text-text-muted">
-                  Tax engine is <strong className="text-amber">disabled</strong>.
+                  Tax engine is <strong className="text-highlight">disabled</strong>.
                   Select a country and click <strong>Enable Tax</strong> to get started.
                 </span>
                 <Button size="sm" icon={Zap} loading={enableMutation.isPending}
@@ -203,7 +203,7 @@ export default function TaxConfigPage() {
               </label>
               <select
                 {...register('country')}
-                className="w-full rounded-lg border border-glass bg-glass-panel px-3 py-2 text-sm text-text-primary focus:border-cyan focus:outline-none focus:ring-1 focus:ring-cyan/30"
+                className="w-full rounded-lg border border-glass bg-glass-panel px-3 py-2 text-sm text-text-primary focus:border-accent focus:outline-none focus:ring-1 focus:ring-accent/30"
               >
                 {COUNTRIES.map(c => (
                   <option key={c.value} value={c.value}>{c.label}</option>
@@ -260,7 +260,7 @@ export default function TaxConfigPage() {
               </label>
               <select
                 {...register('filingFrequency')}
-                className="w-full rounded-lg border border-glass bg-glass-panel px-3 py-2 text-sm text-text-primary focus:border-cyan focus:outline-none focus:ring-1 focus:ring-cyan/30"
+                className="w-full rounded-lg border border-glass bg-glass-panel px-3 py-2 text-sm text-text-primary focus:border-accent focus:outline-none focus:ring-1 focus:ring-accent/30"
               >
                 {FILING_OPTIONS.map(o => (
                   <option key={o.value} value={o.value}>{o.label}</option>
@@ -308,13 +308,13 @@ export default function TaxConfigPage() {
                 className="flex items-center gap-2 rounded-lg border border-glass bg-glass-panel px-3 py-2">
                 <span className="font-semibold text-xs text-text-primary">{t.type}</span>
                 <span className="text-text-muted text-xs">·</span>
-                <span className="font-mono text-xs text-cyan">{t.rate}%</span>
-                <span className={`text-[12.5px] rounded px-1 py-px font-semibold border ${
+                <span className="font-mono text-xs text-accent">{t.rate}%</span>
+                <span className={`text-small rounded px-1 py-px font-semibold border ${
                   t.side === 'output'
                     ? 'bg-positive/10 text-positive border-positive/20'
                     : t.side === 'input'
-                      ? 'bg-cyan/10 text-cyan border-cyan/20'
-                      : 'bg-amber/10 text-amber border-amber/20'
+                      ? 'bg-accent/10 text-accent border-accent/20'
+                      : 'bg-highlight/10 text-highlight border-highlight/20'
                 }`}>{t.side.toUpperCase()}</span>
               </div>
             ))}
@@ -322,7 +322,7 @@ export default function TaxConfigPage() {
           <div className="flex flex-wrap gap-3 text-xs text-text-muted">
             {profile.hasWht && (
               <span className="flex items-center gap-1">
-                <Shield className="h-3 w-3 text-amber" /> WHT available
+                <Shield className="h-3 w-3 text-highlight" /> WHT available
               </span>
             )}
             {profile.hasReverseCharge && (
@@ -331,7 +331,7 @@ export default function TaxConfigPage() {
               </span>
             )}
             {profile.eInvoicingRequired && (
-              <span className="flex items-center gap-1 text-amber">
+              <span className="flex items-center gap-1 text-highlight">
                 <AlertCircle className="h-3 w-3" /> e-Invoicing required ({profile.countryName})
               </span>
             )}
@@ -344,7 +344,7 @@ export default function TaxConfigPage() {
         <SectionCard title={`WHT Schedules · ${whtData.country}`} icon={Shield}>
           <div className="overflow-x-auto">
             <table className="w-full text-left text-xs">
-              <thead className="text-[12px] uppercase text-text-muted tracking-wider">
+              <thead className="text-xs uppercase text-text-muted tracking-wider">
                 <tr>
                   <th className="py-2 pr-4 font-semibold">Category</th>
                   <th className="py-2 pr-4 font-semibold text-right">Rate (Filer)</th>
@@ -378,15 +378,15 @@ export default function TaxConfigPage() {
                 className="flex items-center justify-between rounded-lg border border-glass bg-glass-panel px-3 py-2">
                 <span className="text-xs font-mono text-text-muted w-12 shrink-0">{a.accountCode}</span>
                 <span className="text-xs text-text-secondary flex-1 mx-2">{a.accountName}</span>
-                <span className={`text-[12.5px] rounded px-1.5 py-px font-semibold border ${
+                <span className={`text-small rounded px-1.5 py-px font-semibold border ${
                   a.accountType === 'Asset'
-                    ? 'bg-cyan/10 text-cyan border-cyan/20'
+                    ? 'bg-accent/10 text-accent border-accent/20'
                     : 'bg-accent-2/10 text-accent-2 border-accent-2/20'
                 }`}>{a.accountType}</span>
               </div>
             ))}
           </div>
-          <p className="text-[12.5px] text-text-muted flex items-center gap-1.5">
+          <p className="text-small text-text-muted flex items-center gap-1.5">
             <Info className="h-3 w-3" />
             Tax accounts are seeded automatically when you enable tax for a country.
             Click <strong>Re-seed Accounts</strong> to add any missing accounts.
@@ -416,7 +416,7 @@ function TaxReturnCard() {
   const recon = filing?.reconciliation
 
   const statusColor = {
-    payable:    'text-amber',
+    payable:    'text-highlight',
     refundable: 'text-positive',
     nil:        'text-text-muted',
   }[filing?.status] || 'text-text-primary'
@@ -445,15 +445,15 @@ function TaxReturnCard() {
           {/* Output / Input / Net tiles */}
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
             <div className="rounded-lg border border-glass bg-glass-panel px-3 py-2.5">
-              <p className="text-[12px] uppercase tracking-widest text-text-muted">Output Tax (sales)</p>
+              <p className="text-xs uppercase tracking-widest text-text-muted">Output Tax (sales)</p>
               <p className="text-lg font-black text-text-primary">{formatCurrency(filing.outputTax, currency)}</p>
             </div>
             <div className="rounded-lg border border-glass bg-glass-panel px-3 py-2.5">
-              <p className="text-[12px] uppercase tracking-widest text-text-muted">Input Tax (purchases)</p>
+              <p className="text-xs uppercase tracking-widest text-text-muted">Input Tax (purchases)</p>
               <p className="text-lg font-black text-text-primary">{formatCurrency(filing.inputTax, currency)}</p>
             </div>
             <div className="rounded-lg border border-glass bg-glass-panel px-3 py-2.5">
-              <p className="text-[12px] uppercase tracking-widest text-text-muted">
+              <p className="text-xs uppercase tracking-widest text-text-muted">
                 Net {filing.status === 'refundable' ? 'Refundable' : 'Payable'}
               </p>
               <p className={`text-lg font-black ${statusColor}`}>
@@ -478,7 +478,7 @@ function TaxReturnCard() {
                 ) : (
                   <p className="text-negative font-semibold">Does not match the general ledger</p>
                 )}
-                <p className="text-[12.5px] text-text-muted">
+                <p className="text-small text-text-muted">
                   Ledger net {formatCurrency(recon.glNetPayable, currency)} vs return net {formatCurrency(recon.reportNetPayable, currency)}
                   {!recon.reconciled && ' — a tax posting may be missing from the return. Check the tax accounts.'}
                 </p>
@@ -486,7 +486,7 @@ function TaxReturnCard() {
             </div>
           )}
 
-          <p className="text-[12.5px] text-text-muted flex items-center gap-1.5">
+          <p className="text-small text-text-muted flex items-center gap-1.5">
             <Info className="h-3 w-3" />
             The net figure is computed directly from your tax control accounts in the ledger, so the return always ties to your books.
           </p>

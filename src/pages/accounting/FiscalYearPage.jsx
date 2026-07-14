@@ -101,7 +101,7 @@ function CreateFiscalYearModal({ onClose }) {
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4">
       <Card className="w-full max-w-md space-y-5">
         <div className="flex items-center gap-3">
-          <Calendar className="h-5 w-5 text-cyan" />
+          <Calendar className="h-5 w-5 text-accent" />
           <h2 className="text-lg font-bold text-text-primary">Create Fiscal Year</h2>
         </div>
 
@@ -173,7 +173,7 @@ function AdjustingEntryModal({ fiscalYearId, periods, onClose }) {
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4">
       <Card className="w-full max-w-lg space-y-5 max-h-[90vh] overflow-y-auto">
         <div className="flex items-center gap-3">
-          <ArrowRightLeft className="h-5 w-5 text-cyan" />
+          <ArrowRightLeft className="h-5 w-5 text-accent" />
           <h2 className="text-lg font-bold text-text-primary">Post Adjusting Entry</h2>
         </div>
 
@@ -332,7 +332,7 @@ function PeriodsTable({ fiscalYearId, fyStatus }) {
                           </Button>
                           <Button
                             variant="ghost"
-                            className="!py-1.5 !px-3 !text-xs text-amber hover:text-amber"
+                            className="!py-1.5 !px-3 !text-xs text-highlight hover:text-highlight"
                             icon={RotateCcw}
                             loading={reopenPeriod.isPending}
                             onClick={() => reopenPeriod.mutate({ periodId: p._id })}
@@ -454,11 +454,11 @@ function FiscalYearRow({ fy }) {
 
       {/* Year-end close confirm */}
       {showCloseConfirm && (
-        <div className="mt-4 rounded-lg border border-amber/30 bg-amber/5 p-4 space-y-3">
+        <div className="mt-4 rounded-lg border border-highlight/30 bg-highlight/5 p-4 space-y-3">
           <div className="flex items-start gap-2">
-            <AlertTriangle className="h-4 w-4 text-amber mt-0.5 flex-shrink-0" />
+            <AlertTriangle className="h-4 w-4 text-highlight mt-0.5 flex-shrink-0" />
             <div>
-              <p className="text-sm font-semibold text-amber">Run Year-End Closing Entries?</p>
+              <p className="text-sm font-semibold text-highlight">Run Year-End Closing Entries?</p>
               <p className="text-xs text-text-muted mt-1">
                 This will transfer all Revenue and Expense balances to Retained Earnings.
                 All 12 monthly periods must be closed first. This action cannot be undone.
@@ -528,7 +528,7 @@ export default function FiscalYearPage() {
       {/* ── Header ────────────────────────────────────────────────────── */}
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div className="flex items-center gap-3">
-          <BookOpen className="h-7 w-7 text-cyan" />
+          <BookOpen className="h-7 w-7 text-accent" />
           <div>
             <h1 className="text-2xl font-black text-text-primary">Fiscal Year Management</h1>
             <p className="text-sm text-text-muted">
@@ -558,7 +558,7 @@ export default function FiscalYearPage() {
         </Card>
         <Card className="text-center">
           <p className="text-xs text-text-muted uppercase tracking-wider">Closed Years</p>
-          <p className="mt-1 text-3xl font-black text-amber">{closedCount}</p>
+          <p className="mt-1 text-3xl font-black text-highlight">{closedCount}</p>
         </Card>
         <Card className="text-center">
           <p className="text-xs text-text-muted uppercase tracking-wider">Locked Years</p>
@@ -567,11 +567,11 @@ export default function FiscalYearPage() {
       </div>
 
       {/* ── Explainer ─────────────────────────────────────────────────── */}
-      <Card className="border-cyan/20 bg-cyan/5">
+      <Card className="border-accent/20 bg-accent/5">
         <div className="flex items-start gap-3">
-          <LockOpen className="h-5 w-5 text-cyan mt-0.5 flex-shrink-0" />
+          <LockOpen className="h-5 w-5 text-accent mt-0.5 flex-shrink-0" />
           <div className="space-y-1">
-            <p className="text-sm font-semibold text-cyan">How Accounting Periods Work</p>
+            <p className="text-sm font-semibold text-accent">How Accounting Periods Work</p>
             <ul className="text-xs text-text-secondary space-y-1 list-disc list-inside">
               <li><strong className="text-text-primary">Open</strong> — transactions can be created and edited freely</li>
               <li><strong className="text-text-primary">Closed</strong> — transactions are blocked; admin can force-post or reopen</li>

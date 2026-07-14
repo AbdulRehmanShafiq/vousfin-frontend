@@ -59,7 +59,7 @@ export default function GeneralLedgerPage() {
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div>
           <h1 className="flex items-center gap-2 text-xl sm:text-2xl font-black text-text-primary tracking-tight">
-            <BookOpen className="h-6 w-6 text-cyan" />
+            <BookOpen className="h-6 w-6 text-accent" />
             General Ledger
           </h1>
           <p className="text-text-secondary mt-1 text-sm">Per-account transactions with running balance</p>
@@ -83,7 +83,7 @@ export default function GeneralLedgerPage() {
           <Input value={search} onChange={e => setSearch(e.target.value)}
             placeholder="Search accounts..." className="pl-9" />
         </div>
-        <button onClick={expandAll}   className="text-xs text-cyan hover:underline">Expand all</button>
+        <button onClick={expandAll}   className="text-xs text-accent hover:underline">Expand all</button>
         <button onClick={collapseAll} className="text-xs text-text-muted hover:underline">Collapse all</button>
         {data && (
           <span className="text-xs text-text-muted">{accounts.length} account{accounts.length !== 1 ? 's' : ''}</span>
@@ -123,7 +123,7 @@ function AccountLedger({ account, currency, open, onToggle }) {
         className="w-full flex items-center justify-between px-5 py-3.5 hover:bg-glass-hover transition-colors text-left"
       >
         <div className="flex items-center gap-3">
-          {open ? <ChevronDown className="h-4 w-4 text-cyan flex-shrink-0" /> : <ChevronRight className="h-4 w-4 text-text-muted flex-shrink-0" />}
+          {open ? <ChevronDown className="h-4 w-4 text-accent flex-shrink-0" /> : <ChevronRight className="h-4 w-4 text-text-muted flex-shrink-0" />}
           <div>
             <span className="font-bold text-text-primary">
               {account.accountCode && <span className="font-mono text-text-muted mr-2 text-xs">{account.accountCode}</span>}
@@ -139,7 +139,7 @@ function AccountLedger({ account, currency, open, onToggle }) {
           </div>
           <div className="text-right">
             <p className="text-xs text-text-muted">Closing</p>
-            <p className={`font-bold tabular-nums ${account.closingBalance >= 0 ? 'text-cyan' : 'text-negative'}`}>
+            <p className={`font-bold tabular-nums ${account.closingBalance >= 0 ? 'text-accent' : 'text-negative'}`}>
               {formatCurrency(account.closingBalance, currency)}
             </p>
           </div>
@@ -202,7 +202,7 @@ function AccountLedger({ account, currency, open, onToggle }) {
                 <td className="py-2.5 px-4 font-black text-text-primary text-xs uppercase" colSpan={3}>Closing Balance</td>
                 <td className="py-2.5 px-4 text-right tabular-nums font-bold text-text-primary">{formatCurrency(account.periodDebit, currency)}</td>
                 <td className="py-2.5 px-4 text-right tabular-nums font-bold text-text-primary">{formatCurrency(account.periodCredit, currency)}</td>
-                <td className={`py-2.5 px-4 text-right tabular-nums font-black ${account.closingBalance >= 0 ? 'text-cyan' : 'text-negative'}`}>
+                <td className={`py-2.5 px-4 text-right tabular-nums font-black ${account.closingBalance >= 0 ? 'text-accent' : 'text-negative'}`}>
                   {formatCurrency(account.closingBalance, currency)}
                 </td>
               </tr>
@@ -222,7 +222,7 @@ function AccountLedger({ account, currency, open, onToggle }) {
             <div key={idx} className="flex items-start justify-between gap-3 px-4 py-2.5">
               <div className="min-w-0">
                 <p className="truncate text-sm text-text-primary">{entry.description}</p>
-                <p className="text-[12px] text-text-muted">
+                <p className="text-xs text-text-muted">
                   {new Date(entry.date).toLocaleDateString('en-US', { month: 'short', day: '2-digit' })}
                   {entry.reference ? ` · ${entry.reference}` : ''}
                   {entry.debit > 0 ? ` · Dr ${formatCurrency(entry.debit, currency)}` : ''}
@@ -239,7 +239,7 @@ function AccountLedger({ account, currency, open, onToggle }) {
           )}
           <div className="flex items-center justify-between gap-3 bg-glass px-4 py-3">
             <span className="text-xs font-black uppercase text-text-primary">Closing balance</span>
-            <span className={`text-sm font-black tabular-nums ${account.closingBalance >= 0 ? 'text-cyan' : 'text-negative'}`}>
+            <span className={`text-sm font-black tabular-nums ${account.closingBalance >= 0 ? 'text-accent' : 'text-negative'}`}>
               {formatCurrency(account.closingBalance, currency)}
             </span>
           </div>

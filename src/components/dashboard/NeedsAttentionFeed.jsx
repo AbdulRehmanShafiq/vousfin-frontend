@@ -18,8 +18,8 @@ import { cn } from '@/utils/cn'
 
 const SEV = {
   critical: { Icon: AlertTriangle, color: 'text-negative',    border: 'border-negative/25',    bg: 'bg-negative/8',    badge: 'bg-negative/20 text-negative',     label: 'Needs action' },
-  warning:  { Icon: AlertCircle,  color: 'text-amber',  border: 'border-amber/25',  bg: 'bg-amber/8',  badge: 'bg-amber/20 text-amber', label: 'Worth a look' },
-  info:     { Icon: Info,         color: 'text-cyan',        border: 'border-cyan/25',        bg: 'bg-cyan/8',        badge: 'bg-cyan/20 text-cyan',           label: 'Heads up'     },
+  warning:  { Icon: AlertCircle,  color: 'text-highlight',  border: 'border-highlight/25',  bg: 'bg-highlight/8',  badge: 'bg-highlight/20 text-highlight', label: 'Worth a look' },
+  info:     { Icon: Info,         color: 'text-accent',        border: 'border-accent/25',        bg: 'bg-accent/8',        badge: 'bg-accent/20 text-accent',           label: 'Heads up'     },
 }
 
 function AttentionItem({ item }) {
@@ -31,12 +31,12 @@ function AttentionItem({ item }) {
       </div>
       <div className="flex-1 min-w-0">
         <div className="flex items-center gap-1.5 flex-wrap mb-0.5">
-          <span className={cn('text-[12.5px] font-bold uppercase tracking-wider px-1.5 py-0.5 rounded', cfg.badge)}>{cfg.label}</span>
+          <span className={cn('text-small font-bold uppercase tracking-wider px-1.5 py-0.5 rounded', cfg.badge)}>{cfg.label}</span>
         </div>
         <p className="text-xs font-semibold text-text-primary leading-snug">{item.title}</p>
-        {item.message && <p className="text-[12.5px] text-text-secondary leading-relaxed mt-0.5">{item.message}</p>}
+        {item.message && <p className="text-small text-text-secondary leading-relaxed mt-0.5">{item.message}</p>}
         {item.action && item.actionTo && (
-          <span className="inline-flex items-center gap-1 text-[12.5px] text-cyan font-medium mt-1.5 group-hover:gap-1.5 transition-all">
+          <span className="inline-flex items-center gap-1 text-small text-accent font-medium mt-1.5 group-hover:gap-1.5 transition-all">
             {item.action} <ArrowRight className="h-2.5 w-2.5" />
           </span>
         )}
@@ -72,25 +72,25 @@ export default function NeedsAttentionFeed() {
     : serverItems
 
   return (
-    <div className="premium-card p-5 bg-gradient-to-br from-glass-panel via-transparent to-cyan/5 border-cyan/20">
+    <div className="premium-card p-5 bg-gradient-to-br from-glass-panel via-transparent to-accent/5 border-accent/20">
 
       {/* Header */}
       <div className="flex items-center justify-between mb-4 flex-wrap gap-2">
         <div className="flex items-center gap-2.5">
-          <div className="p-1.5 rounded-lg bg-cyan/15">
-            <Brain className="h-4 w-4 text-cyan" />
+          <div className="p-1.5 rounded-lg bg-accent/15">
+            <Brain className="h-4 w-4 text-accent" />
           </div>
           <div>
             <h2 className="text-sm font-bold text-text-primary flex items-center gap-2 flex-wrap">
               Needs your attention
               {counts.critical > 0 && (
-                <span className="bg-negative/20 text-negative text-[12.5px] font-bold px-1.5 py-0.5 rounded-full">{counts.critical} need action</span>
+                <span className="bg-negative/20 text-negative text-small font-bold px-1.5 py-0.5 rounded-full">{counts.critical} need action</span>
               )}
               {counts.warning > 0 && (
-                <span className="bg-amber/20 text-amber text-[12.5px] font-bold px-1.5 py-0.5 rounded-full">{counts.warning} to review</span>
+                <span className="bg-highlight/20 text-highlight text-small font-bold px-1.5 py-0.5 rounded-full">{counts.warning} to review</span>
               )}
             </h2>
-            <p className="text-[12.5px] text-text-muted">Your AI accountant, watching the numbers for you</p>
+            <p className="text-small text-text-muted">Your AI accountant, watching the numbers for you</p>
           </div>
         </div>
         <button
@@ -109,10 +109,10 @@ export default function NeedsAttentionFeed() {
           {[1, 2].map(i => <div key={i} className="h-16 rounded-xl animate-pulse bg-glass-panel" />)}
         </div>
       ) : isError ? (
-        <div className="flex items-center gap-2.5 p-2.5 rounded-xl border border-amber/20 bg-amber/5">
-          <Zap className="h-3.5 w-3.5 text-amber flex-shrink-0" />
+        <div className="flex items-center gap-2.5 p-2.5 rounded-xl border border-highlight/20 bg-highlight/5">
+          <Zap className="h-3.5 w-3.5 text-highlight flex-shrink-0" />
           <p className="text-xs text-text-secondary flex-1">Couldn&apos;t check right now.</p>
-          <button onClick={() => refetch()} className="text-[12.5px] text-cyan hover:underline font-medium">Retry</button>
+          <button onClick={() => refetch()} className="text-small text-accent hover:underline font-medium">Retry</button>
         </div>
       ) : items.length === 0 ? (
         /* Honest all-clear — reflects the real merged check across spending,
@@ -121,7 +121,7 @@ export default function NeedsAttentionFeed() {
           <CheckCircle2 className="h-4 w-4 text-positive flex-shrink-0 mt-0.5" />
           <div>
             <p className="text-xs font-bold text-text-primary">All clear — nothing needs you right now</p>
-            <p className="text-[12.5px] text-text-secondary leading-relaxed mt-0.5">
+            <p className="text-small text-text-secondary leading-relaxed mt-0.5">
               We checked your spending, cash flow, receivables, tax and forecast — no risks or unusual activity.
             </p>
           </div>
@@ -135,14 +135,14 @@ export default function NeedsAttentionFeed() {
       {/* Recommended next steps */}
       {!recsLoading && recommendations.length > 0 && (
         <div className="mt-4">
-          <p className="text-[12px] font-bold uppercase tracking-widest text-text-muted mb-2">Recommended next steps</p>
+          <p className="text-xs font-bold uppercase tracking-widest text-text-muted mb-2">Recommended next steps</p>
           <div className="grid sm:grid-cols-2 gap-2">
             {recommendations.slice(0, 4).map((rec, i) => {
               const text = rec.recommendation || rec.message || rec.text || rec.suggestion || String(rec)
               return (
-                <div key={i} className="flex items-start gap-2.5 p-2.5 rounded-lg border border-cyan/20 bg-cyan/5">
-                  <Zap className="h-3 w-3 text-cyan flex-shrink-0 mt-0.5" />
-                  <p className="text-[12.5px] text-text-secondary leading-snug">{text}</p>
+                <div key={i} className="flex items-start gap-2.5 p-2.5 rounded-lg border border-accent/20 bg-accent/5">
+                  <Zap className="h-3 w-3 text-accent flex-shrink-0 mt-0.5" />
+                  <p className="text-small text-text-secondary leading-snug">{text}</p>
                 </div>
               )
             })}

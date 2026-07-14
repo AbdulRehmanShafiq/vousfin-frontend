@@ -7,8 +7,8 @@ import { cn } from '@/utils/cn'
 
 const VARIANTS = {
   not_required: { label: 'No approval needed', cls: 'bg-glass-panel text-text-muted border-glass', Icon: ShieldOff },
-  pending:      { label: 'Awaiting approval',  cls: 'bg-amber/15 text-amber border-amber/30', Icon: ShieldQuestion },
-  approved:     { label: 'Approved',           cls: 'bg-emerald/15 text-positive border-emerald/30',   Icon: ShieldCheck },
+  pending:      { label: 'Awaiting approval',  cls: 'bg-highlight/15 text-highlight border-highlight/30', Icon: ShieldQuestion },
+  approved:     { label: 'Approved',           cls: 'bg-positive/15 text-positive border-positive/30',   Icon: ShieldCheck },
   rejected:     { label: 'Rejected',           cls: 'bg-negative/15 text-negative border-negative/30',       Icon: ShieldAlert },
 }
 
@@ -19,7 +19,7 @@ export default function ApprovalChip({ status, compact = false, className }) {
   return (
     <span className={cn(
       'inline-flex items-center gap-1.5 rounded-full border font-semibold',
-      compact ? 'px-1.5 py-0.5 text-[12px]' : 'px-2 py-0.5 text-[12.5px]',
+      compact ? 'px-1.5 py-0.5 text-xs' : 'px-2 py-0.5 text-small',
       cfg.cls,
       className,
     )}>

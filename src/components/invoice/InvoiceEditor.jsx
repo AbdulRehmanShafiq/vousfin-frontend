@@ -249,7 +249,7 @@ export default function InvoiceEditor({
         <Card>
           <div className="flex items-center justify-between mb-4">
             <div className="flex items-center gap-3">
-              <Receipt className="h-5 w-5 text-cyan" />
+              <Receipt className="h-5 w-5 text-accent" />
               <h2 className="text-lg font-bold text-text-primary">
                 {isReadOnly ? 'View invoice' : isEdit ? 'Edit invoice' : 'New invoice'}
               </h2>
@@ -282,7 +282,7 @@ export default function InvoiceEditor({
               <label className="mb-1.5 block text-sm font-medium text-text-secondary">Currency</label>
               <div className="flex gap-2">
                 <select
-                  className="flex-1 rounded-lg border border-glass bg-glass-panel px-3 py-3 text-sm text-text-primary transition-premium focus:border-cyan focus:outline-none"
+                  className="flex-1 rounded-lg border border-glass bg-glass-panel px-3 py-3 text-sm text-text-primary transition-premium focus:border-accent focus:outline-none"
                   value={currencyCode}
                   onChange={e => setCurrencyCode(e.target.value)}
                 >
@@ -317,7 +317,7 @@ export default function InvoiceEditor({
                 <button
                   type="button"
                   onClick={onAddCustomer}
-                  className="text-xs text-cyan font-semibold hover:underline"
+                  className="text-xs text-accent font-semibold hover:underline"
                 >
                   + Add customer
                 </button>
@@ -325,7 +325,7 @@ export default function InvoiceEditor({
             </div>
             <select
               disabled={isReadOnly}
-              className="w-full rounded-lg border border-glass bg-glass-panel px-4 py-3 text-sm text-text-primary transition-premium focus:border-cyan focus:outline-none disabled:opacity-60"
+              className="w-full rounded-lg border border-glass bg-glass-panel px-4 py-3 text-sm text-text-primary transition-premium focus:border-accent focus:outline-none disabled:opacity-60"
               value={customerId}
               onChange={e => setCustomerId(e.target.value)}
             >
@@ -348,7 +348,7 @@ export default function InvoiceEditor({
             <button
               type="button"
               onClick={addLine}
-              className="flex items-center gap-1.5 rounded-lg bg-cyan/10 px-3 py-1.5 text-xs font-semibold text-cyan hover:bg-cyan/20 transition-colors"
+              className="flex items-center gap-1.5 rounded-lg bg-accent/10 px-3 py-1.5 text-xs font-semibold text-accent hover:bg-accent/20 transition-colors"
             >
               <Plus className="h-3.5 w-3.5" />
               Add item
@@ -359,7 +359,7 @@ export default function InvoiceEditor({
           <div className="hidden md:block overflow-x-auto px-3 pb-4">
             <table className="w-full text-sm">
               <thead>
-                <tr className="border-b border-glass text-[12px] uppercase tracking-wider text-text-muted">
+                <tr className="border-b border-glass text-xs uppercase tracking-wider text-text-muted">
                   <th className="w-8" />
                   <th className="w-8 px-1 py-2 text-center">#</th>
                   <th className="min-w-[180px] px-1 py-2 text-left">Item</th>
@@ -406,7 +406,7 @@ export default function InvoiceEditor({
                   </div>
                   {inventoryItems.length > 0 && (
                     <select
-                      className="w-full rounded border border-glass bg-glass-panel px-2 py-2.5 text-base text-text-secondary focus:border-cyan focus:outline-none"
+                      className="w-full rounded border border-glass bg-glass-panel px-2 py-2.5 text-base text-text-secondary focus:border-accent focus:outline-none"
                       value={item.inventoryItemId || ''}
                       onChange={e => {
                         const invId = e.target.value
@@ -430,21 +430,21 @@ export default function InvoiceEditor({
                     placeholder="Item name"
                   />
                   {selInv && (
-                    <p className={`text-[12.5px] ${overStk ? 'text-negative' : 'text-text-muted'}`}>
+                    <p className={`text-small ${overStk ? 'text-negative' : 'text-text-muted'}`}>
                       {overStk ? `⚠ Only ${selInv.currentStock} ${selInv.unit || 'units'} in stock` : `${selInv.currentStock} ${selInv.unit || 'units'} in stock`}
                     </p>
                   )}
                   <div className="grid grid-cols-3 gap-2">
                     <div>
-                      <label className="text-[12px] text-text-muted">Qty</label>
+                      <label className="text-xs text-text-muted">Qty</label>
                       <input type="number" className="w-full rounded border border-glass bg-glass-panel px-2 py-2.5 text-base text-right" value={item.quantity || ''} onChange={e => handleLineChange(i, { ...item, quantity: parseFloat(e.target.value) || 0 })} />
                     </div>
                     <div>
-                      <label className="text-[12px] text-text-muted">Price</label>
+                      <label className="text-xs text-text-muted">Price</label>
                       <input type="number" className="w-full rounded border border-glass bg-glass-panel px-2 py-2.5 text-base text-right" value={item.unitPrice || ''} onChange={e => handleLineChange(i, { ...item, unitPrice: parseFloat(e.target.value) || 0 })} />
                     </div>
                     <div>
-                      <label className="text-[12px] text-text-muted">Tax %</label>
+                      <label className="text-xs text-text-muted">Tax %</label>
                       <input type="number" className="w-full rounded border border-glass bg-glass-panel px-2 py-2.5 text-base text-right" value={item.taxRate || ''} onChange={e => handleLineChange(i, { ...item, taxRate: parseFloat(e.target.value) || 0 })} />
                     </div>
                   </div>
@@ -523,7 +523,7 @@ export default function InvoiceEditor({
               <div>
                 <label className="mb-1.5 block text-sm font-medium text-text-secondary">Payment Terms</label>
                 <textarea
-                  className="w-full rounded-lg border border-glass bg-glass-panel px-4 py-3 text-sm text-text-primary placeholder:text-text-muted transition-premium focus:border-cyan focus:outline-none focus:ring-2 focus:ring-cyan/20"
+                  className="w-full rounded-lg border border-glass bg-glass-panel px-4 py-3 text-sm text-text-primary placeholder:text-text-muted transition-premium focus:border-accent focus:outline-none focus:ring-2 focus:ring-accent/20"
                   rows={2}
                   value={paymentTermsText}
                   onChange={e => setPaymentTermsText(e.target.value)}
@@ -533,7 +533,7 @@ export default function InvoiceEditor({
               <div>
                 <label className="mb-1.5 block text-sm font-medium text-text-secondary">Notes (just for you)</label>
                 <textarea
-                  className="w-full rounded-lg border border-glass bg-glass-panel px-4 py-3 text-sm text-text-primary placeholder:text-text-muted transition-premium focus:border-cyan focus:outline-none focus:ring-2 focus:ring-cyan/20"
+                  className="w-full rounded-lg border border-glass bg-glass-panel px-4 py-3 text-sm text-text-primary placeholder:text-text-muted transition-premium focus:border-accent focus:outline-none focus:ring-2 focus:ring-accent/20"
                   rows={2}
                   value={notes}
                   onChange={e => setNotes(e.target.value)}
@@ -543,7 +543,7 @@ export default function InvoiceEditor({
               <div>
                 <label className="mb-1.5 block text-sm font-medium text-text-secondary">What's this invoice for?</label>
                 <textarea
-                  className="w-full rounded-lg border border-glass bg-glass-panel px-4 py-3 text-sm text-text-primary placeholder:text-text-muted transition-premium focus:border-cyan focus:outline-none focus:ring-2 focus:ring-cyan/20"
+                  className="w-full rounded-lg border border-glass bg-glass-panel px-4 py-3 text-sm text-text-primary placeholder:text-text-muted transition-premium focus:border-accent focus:outline-none focus:ring-2 focus:ring-accent/20"
                   rows={2}
                   value={description}
                   onChange={e => setDescription(e.target.value)}
@@ -589,8 +589,8 @@ export default function InvoiceEditor({
                   className={cn(
                     'rounded-lg border px-3 py-2 text-xs font-semibold capitalize transition-all',
                     templateId === t
-                      ? 'border-cyan bg-cyan/10 text-cyan'
-                      : 'border-glass text-text-muted hover:border-cyan/30 hover:text-text-secondary'
+                      ? 'border-accent bg-accent/10 text-accent'
+                      : 'border-glass text-text-muted hover:border-accent/30 hover:text-text-secondary'
                   )}
                 >
                   {t}
@@ -644,8 +644,8 @@ function NextStepsCard({ state, kind = 'invoice' }) {
         What happens next?
       </h3>
       <div className="space-y-2">
-        <div className="rounded-lg border border-cyan/30 bg-cyan/5 p-3">
-          <p className="text-[12px] uppercase tracking-wider text-cyan font-bold mb-1">
+        <div className="rounded-lg border border-accent/30 bg-accent/5 p-3">
+          <p className="text-xs uppercase tracking-wider text-accent font-bold mb-1">
             Current — {current.label}
           </p>
           <p className="text-xs text-text-secondary leading-relaxed">
@@ -662,7 +662,7 @@ function NextStepsCard({ state, kind = 'invoice' }) {
                 title={s.label}
                 className={cn(
                   'h-1 flex-1 rounded-full transition-colors',
-                  reached ? 'bg-cyan' : 'bg-glass'
+                  reached ? 'bg-accent' : 'bg-glass'
                 )}
               />
             )

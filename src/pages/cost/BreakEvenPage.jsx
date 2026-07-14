@@ -61,7 +61,7 @@ export default function BreakEvenPage() {
   return (
     <div className="animate-fade-in pb-10 space-y-5 max-w-4xl">
       <div className="flex items-center gap-3">
-        <div className="p-2 rounded-xl bg-gold/15"><Target className="h-5 w-5 text-gold" /></div>
+        <div className="p-2 rounded-xl bg-highlight/15"><Target className="h-5 w-5 text-highlight" /></div>
         <div>
           <h1 className="text-2xl font-semibold text-text-primary tracking-tight">Break-even & what-if</h1>
           <p className="text-sm text-text-secondary mt-0.5">How much must you sell to cover your costs?</p>
@@ -70,54 +70,54 @@ export default function BreakEvenPage() {
 
       <div className="premium-card p-4 space-y-3">
         <div className="flex items-end gap-3 flex-wrap">
-          <label className="flex flex-col gap-1"><span className="text-[11.5px] text-text-muted">Fixed costs</span>
-            <input type="number" value={f.fixedCosts} onChange={set('fixedCosts')} className="w-32 px-3 py-2 rounded-lg border border-glass bg-glass-panel/40 text-[13px] text-right text-text-primary focus:outline-none focus:border-cyan/40" /></label>
-          <label className="flex flex-col gap-1"><span className="text-[11.5px] text-text-muted">Price per unit</span>
-            <input type="number" value={f.pricePerUnit} onChange={set('pricePerUnit')} className="w-28 px-3 py-2 rounded-lg border border-glass bg-glass-panel/40 text-[13px] text-right text-text-primary focus:outline-none focus:border-cyan/40" /></label>
-          <label className="flex flex-col gap-1"><span className="text-[11.5px] text-text-muted">Variable cost / unit</span>
-            <input type="number" value={f.variableCostPerUnit} onChange={set('variableCostPerUnit')} className="w-28 px-3 py-2 rounded-lg border border-glass bg-glass-panel/40 text-[13px] text-right text-text-primary focus:outline-none focus:border-cyan/40" /></label>
+          <label className="flex flex-col gap-1"><span className="text-label text-text-muted">Fixed costs</span>
+            <input type="number" value={f.fixedCosts} onChange={set('fixedCosts')} className="w-32 px-3 py-2 rounded-lg border border-glass bg-glass-panel/40 text-small text-right text-text-primary focus:outline-none focus:border-accent/40" /></label>
+          <label className="flex flex-col gap-1"><span className="text-label text-text-muted">Price per unit</span>
+            <input type="number" value={f.pricePerUnit} onChange={set('pricePerUnit')} className="w-28 px-3 py-2 rounded-lg border border-glass bg-glass-panel/40 text-small text-right text-text-primary focus:outline-none focus:border-accent/40" /></label>
+          <label className="flex flex-col gap-1"><span className="text-label text-text-muted">Variable cost / unit</span>
+            <input type="number" value={f.variableCostPerUnit} onChange={set('variableCostPerUnit')} className="w-28 px-3 py-2 rounded-lg border border-glass bg-glass-panel/40 text-small text-right text-text-primary focus:outline-none focus:border-accent/40" /></label>
           <button onClick={fillFromActuals} disabled={estimating}
-            className="inline-flex items-center gap-1.5 px-3 py-2 rounded-lg text-[12.5px] text-cyan hover:bg-glass-hover disabled:opacity-40">
+            className="inline-flex items-center gap-1.5 px-3 py-2 rounded-lg text-small text-accent hover:bg-glass-hover disabled:opacity-40">
             {estimating ? <Loader2 className="h-4 w-4 animate-spin" /> : <Sparkles className="h-4 w-4" />} Fill from my numbers
           </button>
         </div>
 
-        {hasInputs && !res.feasible && <p className="text-[12.5px] text-negative">{res.reason}</p>}
+        {hasInputs && !res.feasible && <p className="text-small text-negative">{res.reason}</p>}
         {hasInputs && res.feasible && (
           <div className="flex gap-6 flex-wrap pt-1">
-            <div><p className="text-[11px] text-text-muted">Break-even units</p><p className="text-[18px] font-semibold text-text-primary">{money(res.breakEvenUnits)}</p></div>
-            <div><p className="text-[11px] text-text-muted">Break-even revenue</p><p className="text-[18px] font-semibold text-text-primary">{money(res.breakEvenRevenue)}</p></div>
-            <div><p className="text-[11px] text-text-muted">Margin per unit</p><p className="text-[18px] font-semibold text-emerald">{money(res.cmPerUnit)}</p></div>
+            <div><p className="text-label text-text-muted">Break-even units</p><p className="text-lg font-semibold text-text-primary">{money(res.breakEvenUnits)}</p></div>
+            <div><p className="text-label text-text-muted">Break-even revenue</p><p className="text-lg font-semibold text-text-primary">{money(res.breakEvenRevenue)}</p></div>
+            <div><p className="text-label text-text-muted">Margin per unit</p><p className="text-lg font-semibold text-positive">{money(res.cmPerUnit)}</p></div>
           </div>
         )}
       </div>
 
       {hasInputs && res.feasible && (
         <div className="premium-card p-4 space-y-3">
-          <p className="text-[12.5px] font-semibold text-text-secondary">What if…</p>
+          <p className="text-small font-semibold text-text-secondary">What if…</p>
           <div className="flex items-end gap-3 flex-wrap">
-            <label className="flex flex-col gap-1"><span className="text-[11.5px] text-text-muted">Expected units sold</span>
-              <input type="number" value={f.expectedUnits} onChange={set('expectedUnits')} className="w-32 px-3 py-2 rounded-lg border border-glass bg-glass-panel/40 text-[13px] text-right text-text-primary focus:outline-none focus:border-cyan/40" /></label>
-            <label className="flex flex-col gap-1"><span className="text-[11.5px] text-text-muted">Target profit</span>
-              <input type="number" value={f.targetProfit} onChange={set('targetProfit')} className="w-32 px-3 py-2 rounded-lg border border-glass bg-glass-panel/40 text-[13px] text-right text-text-primary focus:outline-none focus:border-cyan/40" /></label>
-            <button onClick={addScenario} className="inline-flex items-center gap-1.5 px-3 py-2 rounded-lg text-[12.5px] text-cyan hover:bg-glass-hover">
+            <label className="flex flex-col gap-1"><span className="text-label text-text-muted">Expected units sold</span>
+              <input type="number" value={f.expectedUnits} onChange={set('expectedUnits')} className="w-32 px-3 py-2 rounded-lg border border-glass bg-glass-panel/40 text-small text-right text-text-primary focus:outline-none focus:border-accent/40" /></label>
+            <label className="flex flex-col gap-1"><span className="text-label text-text-muted">Target profit</span>
+              <input type="number" value={f.targetProfit} onChange={set('targetProfit')} className="w-32 px-3 py-2 rounded-lg border border-glass bg-glass-panel/40 text-small text-right text-text-primary focus:outline-none focus:border-accent/40" /></label>
+            <button onClick={addScenario} className="inline-flex items-center gap-1.5 px-3 py-2 rounded-lg text-small text-accent hover:bg-glass-hover">
               <Plus className="h-4 w-4" /> Save scenario
             </button>
           </div>
           <div className="flex gap-6 flex-wrap">
-            <div><p className="text-[11px] text-text-muted">Profit at expected units</p>
-              <p className={`text-[18px] font-semibold ${res.projectedProfit >= 0 ? 'text-emerald' : 'text-negative'}`}>{money(res.projectedProfit)}</p></div>
-            <div><p className="text-[11px] text-text-muted">Units for target profit</p>
-              <p className="text-[18px] font-semibold text-text-primary">{money(res.unitsForTargetProfit)}</p></div>
+            <div><p className="text-label text-text-muted">Profit at expected units</p>
+              <p className={`text-lg font-semibold ${res.projectedProfit >= 0 ? 'text-positive' : 'text-negative'}`}>{money(res.projectedProfit)}</p></div>
+            <div><p className="text-label text-text-muted">Units for target profit</p>
+              <p className="text-lg font-semibold text-text-primary">{money(res.unitsForTargetProfit)}</p></div>
           </div>
         </div>
       )}
 
       {scenarios.length > 0 && (
         <div className="premium-card p-4">
-          <p className="text-[12.5px] font-semibold text-text-secondary mb-2">Saved scenarios</p>
+          <p className="text-small font-semibold text-text-secondary mb-2">Saved scenarios</p>
           <div className="overflow-x-auto">
-            <table className="w-full text-[12px]">
+            <table className="w-full text-xs">
               <thead>
                 <tr className="text-text-muted text-left border-b border-glass">
                   <th className="py-2 pr-3 font-medium">Price</th><th className="py-2 px-3 font-medium">Var/unit</th>
@@ -132,7 +132,7 @@ export default function BreakEvenPage() {
                     <td className="py-1.5 px-3 text-text-secondary">{money(s.variableCostPerUnit)}</td>
                     <td className="py-1.5 px-3 text-right text-text-secondary">{money(s.breakEvenUnits)}</td>
                     <td className="py-1.5 px-3 text-right text-text-secondary">{money(num(s.expectedUnits))}</td>
-                    <td className={`py-1.5 px-3 text-right ${s.projectedProfit >= 0 ? 'text-emerald' : 'text-negative'}`}>{money(s.projectedProfit)}</td>
+                    <td className={`py-1.5 px-3 text-right ${s.projectedProfit >= 0 ? 'text-positive' : 'text-negative'}`}>{money(s.projectedProfit)}</td>
                     <td className="py-1.5 pl-3 text-right">
                       <button onClick={() => setScenarios(scenarios.filter((x) => x.id !== s.id))} className="text-text-muted hover:text-negative"><X className="h-3.5 w-3.5" /></button>
                     </td>

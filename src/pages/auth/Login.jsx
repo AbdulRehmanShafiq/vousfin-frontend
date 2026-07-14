@@ -166,7 +166,7 @@ export default function Login() {
       </div>
 
       {isAuthenticated && (
-        <div className="mb-6 rounded-lg border border-cyan/30 bg-cyan/5 p-4 text-sm text-text-secondary">
+        <div className="mb-6 rounded-lg border border-accent/30 bg-accent/5 p-4 text-sm text-text-secondary">
           <p>{t('auth.login.alreadySignedIn', 'You are already signed in')}{user?.fullName ? ` as ${user.fullName}` : ''}.</p>
           <div className="mt-3 flex flex-wrap gap-2">
             <Button type="button" variant="outline" onClick={handleContinue}>
@@ -181,7 +181,7 @@ export default function Login() {
 
       {/* Email verification recovery panel */}
       {needsVerify && (
-        <div className="mb-6 rounded-lg border border-amber/30 bg-amber/5 p-4 text-sm" role="alert">
+        <div className="mb-6 rounded-lg border border-highlight/30 bg-highlight/5 p-4 text-sm" role="alert">
           <p className="text-text-primary font-medium mb-1">{t('auth.login.verifyEmail', 'Verify your email to continue')}</p>
           <p className="text-text-secondary mb-3">
             We sent a link to <span className="font-semibold text-text-primary">{needsVerify}</span>. Check your inbox and click the link to activate your account.
@@ -197,7 +197,7 @@ export default function Login() {
             </Button>
             <Link
               to="/verify-email"
-              className="inline-flex items-center px-4 py-2.5 text-sm font-semibold text-cyan hover:text-cyan-2 transition-colors"
+              className="inline-flex items-center px-4 py-2.5 text-sm font-semibold text-accent hover:text-accent-2 transition-colors"
             >
               Go to verify page
             </Link>
@@ -230,10 +230,10 @@ export default function Login() {
 
         <div className="flex items-center justify-between mt-2 mb-4">
           <label className="flex items-center gap-2 text-sm text-text-secondary">
-            <input type="checkbox" className="rounded border-glass bg-glass-panel text-cyan focus:ring-cyan/50" />
+            <input type="checkbox" className="rounded border-glass bg-glass-panel text-accent focus:ring-accent/50" />
             {t('action.rememberMe', 'Remember me')}
           </label>
-          <Link to="/forgot-password" className="text-sm font-medium text-cyan hover:text-cyan-2 transition-colors">
+          <Link to="/forgot-password" className="text-sm font-medium text-accent hover:text-accent-2 transition-colors">
             {t('action.forgotPassword', 'Forgot password?')}
           </Link>
         </div>
@@ -268,7 +268,7 @@ export default function Login() {
 
       <p className="mt-8 text-center text-sm text-text-muted">
         {t('auth.login.noAccount', "Don't have an account?")}{' '}
-        <Link to="/register" className="font-bold text-cyan hover:underline">
+        <Link to="/register" className="font-bold text-accent hover:underline">
           {t('auth.login.signUpFree', 'Sign up free')}
         </Link>
       </p>

@@ -58,18 +58,18 @@ export default function TaxPreviewPanel({
     n?.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 }) ?? '—'
 
   return (
-    <div className={`rounded-xl border border-amber/20 bg-amber/5 text-sm ${className}`}>
+    <div className={`rounded-xl border border-highlight/20 bg-highlight/5 text-sm ${className}`}>
       {/* Header */}
       <button
         type="button"
         onClick={() => setExpanded(v => !v)}
         className="flex w-full items-center justify-between px-4 py-2.5 text-left"
       >
-        <span className="flex items-center gap-2 font-semibold text-amber">
+        <span className="flex items-center gap-2 font-semibold text-highlight">
           <Receipt className="h-4 w-4 shrink-0" />
           Tax Breakdown
           {preview && (
-            <span className="ml-1 text-[12px] rounded px-1.5 py-px bg-amber/15 border border-amber/20 font-semibold uppercase tracking-wide">
+            <span className="ml-1 text-xs rounded px-1.5 py-px bg-highlight/15 border border-highlight/20 font-semibold uppercase tracking-wide">
               {preview.lines?.[0]?.taxType ?? ''} {preview.lines?.[0]?.rate ?? 0}%
             </span>
           )}
@@ -81,7 +81,7 @@ export default function TaxPreviewPanel({
       </button>
 
       {expanded && (
-        <div className="px-4 pb-3 space-y-1 border-t border-amber/10">
+        <div className="px-4 pb-3 space-y-1 border-t border-highlight/10">
           {isLoading ? (
             <p className="py-2 text-xs text-text-muted">Calculating…</p>
           ) : preview ? (
@@ -91,14 +91,14 @@ export default function TaxPreviewPanel({
                 const label = line.isWithholding ? 'withheld at source'
                             : line.isReverseCharge ? 'reverse charge'
                             : line.side === 'output' ? 'on sale' : 'on purchase'
-                const color = line.isWithholding ? 'text-amber'
+                const color = line.isWithholding ? 'text-highlight'
                             : line.isReverseCharge ? 'text-accent-2'
-                            : 'text-amber'
+                            : 'text-highlight'
                 return (
                   <div key={i} className="flex items-center justify-between text-xs">
                     <span className="text-text-muted">
                       {line.taxName}{' '}
-                      <span className="text-[12px] opacity-60">({label})</span>
+                      <span className="text-xs opacity-60">({label})</span>
                     </span>
                     <span className={`font-mono font-semibold tabular-nums ${color}`}>
                       {line.isWithholding ? '−' : ''}{fmt(line.taxAmount)}
@@ -108,7 +108,7 @@ export default function TaxPreviewPanel({
               })}
 
               {/* Totals divider */}
-              <div className="pt-1 border-t border-amber/10 space-y-1">
+              <div className="pt-1 border-t border-highlight/10 space-y-1">
                 <div className="flex items-center justify-between text-xs">
                   <span className="text-text-muted">
                     Net Amount <span className="opacity-60">(ex-tax)</span>
@@ -117,7 +117,7 @@ export default function TaxPreviewPanel({
                 </div>
                 <div className="flex items-center justify-between text-xs font-semibold">
                   <span className="text-text-secondary">Total Tax</span>
-                  <span className="font-mono tabular-nums text-amber">{fmt(preview.totalTax)}</span>
+                  <span className="font-mono tabular-nums text-highlight">{fmt(preview.totalTax)}</span>
                 </div>
                 <div className="flex items-center justify-between text-xs font-bold">
                   <span className="text-text-primary">Gross Amount</span>
@@ -125,23 +125,23 @@ export default function TaxPreviewPanel({
                 </div>
                 {/* WHT: amount actually paid to / received from the party */}
                 {preview.netPayable != null && (
-                  <div className="flex items-center justify-between text-xs font-bold pt-0.5 border-t border-amber/10">
-                    <span className="text-amber">Net Payable <span className="opacity-60">(after WHT)</span></span>
-                    <span className="font-mono tabular-nums text-amber">{fmt(preview.netPayable)}</span>
+                  <div className="flex items-center justify-between text-xs font-bold pt-0.5 border-t border-highlight/10">
+                    <span className="text-highlight">Net Payable <span className="opacity-60">(after WHT)</span></span>
+                    <span className="font-mono tabular-nums text-highlight">{fmt(preview.netPayable)}</span>
                   </div>
                 )}
               </div>
 
               {/* Reverse-charge note */}
               {preview.hasReverseCharge && (
-                <p className="text-[12px] text-accent-2 flex items-center gap-1">
+                <p className="text-xs text-accent-2 flex items-center gap-1">
                   <Info className="h-3 w-3 shrink-0" />
                   Reverse charge — you self-account for both the input and output tax (nil net cash).
                 </p>
               )}
 
               {/* Mode note */}
-              <p className="pt-0.5 text-[12px] text-text-muted flex items-center gap-1">
+              <p className="pt-0.5 text-xs text-text-muted flex items-center gap-1">
                 <Info className="h-3 w-3 shrink-0" />
                 Amount is {mode === 'inclusive' ? 'tax-inclusive' : 'tax-exclusive'} · {preview.countryCode}
               </p>

@@ -9,15 +9,15 @@ import SkeletonLoader from '@/components/ui/SkeletonLoader'
 const BUCKET_ORDER  = ['current', 'days_1_30', 'days_31_60', 'days_61_90', 'days_over_90']
 const BUCKET_COLORS = {
   current:      'text-positive bg-positive/10 border-positive/20',
-  days_1_30:    'text-amber  bg-amber/10  border-amber/20',
-  days_31_60:   'text-amber  bg-amber/10  border-amber/20',
+  days_1_30:    'text-highlight  bg-highlight/10  border-highlight/20',
+  days_31_60:   'text-highlight  bg-highlight/10  border-highlight/20',
   days_61_90:   'text-negative     bg-negative/10     border-negative/20',
   days_over_90: 'text-negative     bg-negative/10     border-negative/20',
 }
 const SEVERITY_ROW = {
   current:  '',
-  warning:  'bg-amber/5',
-  medium:   'bg-amber/5',
+  warning:  'bg-highlight/5',
+  medium:   'bg-highlight/5',
   critical: 'bg-negative/5',
 }
 
@@ -54,7 +54,7 @@ export default function AgingReportPage() {
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div>
           <h1 className="flex items-center gap-2 text-xl sm:text-2xl font-black text-text-primary tracking-tight">
-            <Clock className="h-6 w-6 text-cyan" />
+            <Clock className="h-6 w-6 text-accent" />
             Aging Report
           </h1>
           <p className="text-text-secondary mt-1 text-sm">Outstanding {label} — bucketed by days overdue</p>
@@ -69,7 +69,7 @@ export default function AgingReportPage() {
         {['receivable', 'payable'].map(t => (
           <button key={t} onClick={() => { setType(t); setBucket('all') }}
             className={`px-5 py-2 rounded-lg text-sm font-medium transition-all ${
-              type === t ? 'bg-cyan text-ink-on-accent font-bold' : 'text-text-secondary hover:text-text-primary'
+              type === t ? 'bg-accent text-ink-on-accent font-bold' : 'text-text-secondary hover:text-text-primary'
             }`}>
             {t === 'receivable' ? 'Receivables (AR)' : 'Payables (AP)'}
           </button>
@@ -90,7 +90,7 @@ export default function AgingReportPage() {
               const pct = data.grandTotal > 0 ? ((b.total / data.grandTotal) * 100).toFixed(1) : '0.0'
               return (
                 <button key={key} onClick={() => setBucket(bucket === key ? 'all' : key)}
-                  className={`premium-card p-4 text-left border transition-all ${BUCKET_COLORS[key]} ${bucket === key ? 'ring-2 ring-cyan' : ''}`}>
+                  className={`premium-card p-4 text-left border transition-all ${BUCKET_COLORS[key]} ${bucket === key ? 'ring-2 ring-accent' : ''}`}>
                   <p className="text-xs font-bold uppercase tracking-wider opacity-70">{b.label}</p>
                   <p className="text-base sm:text-lg font-black mt-1 tabular-nums break-words">{formatCurrency(b.total, currency)}</p>
                   <p className="text-xs opacity-60 mt-0.5">{b.items.length} items · {pct}%</p>
@@ -121,7 +121,7 @@ export default function AgingReportPage() {
                 <span className="ml-2 text-text-muted font-normal">({visibleItems.length})</span>
               </span>
               {bucket !== 'all' && (
-                <button onClick={() => setBucket('all')} className="text-xs text-cyan hover:underline">Clear filter</button>
+                <button onClick={() => setBucket('all')} className="text-xs text-accent hover:underline">Clear filter</button>
               )}
             </div>
             {/* Mobile cards */}
@@ -132,7 +132,7 @@ export default function AgingReportPage() {
                 <div key={item.transactionId || idx} className={`flex items-center justify-between gap-3 px-4 py-3 ${SEVERITY_ROW[item.severity] || ''}`}>
                   <div className="min-w-0">
                     <p className="truncate text-sm font-medium text-text-primary">{item.party}</p>
-                    <p className="text-[12px] text-text-muted">
+                    <p className="text-xs text-text-muted">
                       {item.invoiceNumber ? `${item.invoiceNumber} · ` : ''}
                       <span className={item.isOverdue ? 'text-negative font-semibold' : 'text-positive'}>
                         {item.isOverdue ? `+${item.daysOverdue}d overdue` : 'current'}
@@ -176,8 +176,8 @@ export default function AgingReportPage() {
                     <td className="py-2.5 px-4 text-right tabular-nums font-bold text-text-primary">{formatCurrency(item.remainingBalance, currency)}</td>
                     <td className="py-2.5 px-4 text-center">
                       {item.severity === 'current'  && <CheckCircle   className="h-4 w-4 text-positive mx-auto" />}
-                      {item.severity === 'warning'  && <Clock         className="h-4 w-4 text-amber  mx-auto" />}
-                      {item.severity === 'medium'   && <AlertTriangle className="h-4 w-4 text-amber  mx-auto" />}
+                      {item.severity === 'warning'  && <Clock         className="h-4 w-4 text-highlight  mx-auto" />}
+                      {item.severity === 'medium'   && <AlertTriangle className="h-4 w-4 text-highlight  mx-auto" />}
                       {item.severity === 'critical' && <AlertTriangle className="h-4 w-4 text-negative     mx-auto" />}
                     </td>
                   </tr>

@@ -150,7 +150,7 @@ export default function BusinessSetup() {
 
       <div className="premium-card relative z-10 w-full max-w-2xl p-8 sm:p-12">
         <div className="mb-8 text-center">
-          <p className="text-sm font-medium text-cyan">vousFin Setup</p>
+          <p className="text-sm font-medium text-accent">vousFin Setup</p>
           <h1 className="mt-2 text-3xl font-black tracking-tight text-text-primary">
             Set up your business
           </h1>
@@ -166,7 +166,7 @@ export default function BusinessSetup() {
                 <div
                   className={`flex h-12 w-12 items-center justify-center rounded-full border-2 transition-premium ${
                     step >= stepItem.id
-                      ? 'border-cyan bg-cyan/10 text-cyan shadow-glow-cyan'
+                      ? 'border-accent bg-accent/10 text-accent shadow-glow-accent'
                       : 'border-glass bg-glass-panel text-text-muted'
                   }`}
                 >
@@ -228,7 +228,7 @@ export default function BusinessSetup() {
                     onClick={() => setValue('type', value, { shouldValidate: true })}
                     className={`flex flex-col items-center justify-center gap-1.5 rounded-xl border p-3 text-center transition-premium ${
                       formValues.type === value
-                        ? 'border-cyan bg-cyan/10 text-cyan shadow-glow-cyan/20'
+                        ? 'border-accent bg-accent/10 text-accent shadow-glow-accent/20'
                         : 'border-glass bg-glass-panel text-text-secondary hover:bg-glass-hover hover:text-text-primary'
                     }`}
                   >
@@ -241,7 +241,7 @@ export default function BusinessSetup() {
               {/* Divider */}
               <div className="flex items-center gap-3">
                 <div className="flex-1 h-px bg-glass" />
-                <span className="text-[12.5px] font-medium text-text-muted uppercase tracking-wider">or choose from all types</span>
+                <span className="text-small font-medium text-text-muted uppercase tracking-wider">or choose from all types</span>
                 <div className="flex-1 h-px bg-glass" />
               </div>
 
@@ -257,9 +257,9 @@ export default function BusinessSetup() {
 
               {/* Selected type display */}
               {formValues.type && (
-                <div className="flex items-center gap-2 rounded-lg bg-cyan/5 border border-cyan/20 px-3 py-2">
-                  <CheckCircle2 className="h-4 w-4 text-cyan flex-shrink-0" />
-                  <span className="text-sm font-medium text-cyan">
+                <div className="flex items-center gap-2 rounded-lg bg-accent/5 border border-accent/20 px-3 py-2">
+                  <CheckCircle2 className="h-4 w-4 text-accent flex-shrink-0" />
+                  <span className="text-sm font-medium text-accent">
                     {formValues.type}
                   </span>
                 </div>

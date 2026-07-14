@@ -60,10 +60,10 @@ function Section({ label, to, children, collapsible = false, defaultOpen = true 
   return (
     <section>
       <div className="flex items-center gap-3 mb-3">
-        <span className="text-[12.5px] font-bold uppercase tracking-widest text-text-muted">{label}</span>
+        <span className="text-small font-bold uppercase tracking-widest text-text-muted">{label}</span>
         <div className="flex-1 h-px bg-glass" />
         {to && (
-          <Link to={to} className="flex items-center gap-1 text-[12.5px] text-cyan hover:underline font-medium shrink-0">
+          <Link to={to} className="flex items-center gap-1 text-small text-accent hover:underline font-medium shrink-0">
             View all <ExternalLink className="h-3 w-3" />
           </Link>
         )}
@@ -109,14 +109,14 @@ function TxRow({ tx, currency }) {
           {tx.description}
         </p>
         <div className="flex items-center gap-2 mt-0.5 flex-wrap">
-          <span className="text-[12.5px] text-text-muted">{formatDate(tx.transactionDate, 'MMM d')}</span>
+          <span className="text-small text-text-muted">{formatDate(tx.transactionDate, 'MMM d')}</span>
           {tx.transactionType && (
-            <span className="text-[12px] px-1.5 py-0.5 rounded-md bg-glass-panel text-text-muted capitalize">
+            <span className="text-xs px-1.5 py-0.5 rounded-md bg-glass-panel text-text-muted capitalize">
               {tx.transactionType}
             </span>
           )}
           {isUnpaid && (
-            <span className="text-[12px] px-1.5 py-0.5 rounded-md bg-amber/15 text-amber font-medium capitalize">
+            <span className="text-xs px-1.5 py-0.5 rounded-md bg-highlight/15 text-highlight font-medium capitalize">
               {tx.paymentStatus}
             </span>
           )}
@@ -143,33 +143,33 @@ const ACTION_DEFS = [
     label: 'Record something',
     Icon: Plus,
     action: 'modal',
-    iconClass:    'bg-cyan/15 text-cyan',
-    wrapperHover: 'hover:bg-cyan/10 hover:border-cyan/40',
-    labelHover:   'group-hover:text-cyan',
+    iconClass:    'bg-accent/15 text-accent',
+    wrapperHover: 'hover:bg-accent/10 hover:border-accent/40',
+    labelHover:   'group-hover:text-accent',
   },
   {
     label: 'Send an invoice',
     to: '/sales/invoices/new',
     Icon: FileText,
-    iconClass:    'bg-emerald-3/15 text-emerald-3',
-    wrapperHover: 'hover:bg-emerald-3/10 hover:border-emerald-3/40',
-    labelHover:   'group-hover:text-emerald-3',
+    iconClass:    'bg-accent/15 text-accent',
+    wrapperHover: 'hover:bg-accent/10 hover:border-accent/40',
+    labelHover:   'group-hover:text-accent',
   },
   {
     label: 'See who owes me',
     to: '/sales/receivables',
     Icon: Bell,
-    iconClass:    'bg-gold/15 text-gold',
-    wrapperHover: 'hover:bg-gold/10 hover:border-gold/40',
-    labelHover:   'group-hover:text-gold',
+    iconClass:    'bg-highlight/15 text-highlight',
+    wrapperHover: 'hover:bg-highlight/10 hover:border-highlight/40',
+    labelHover:   'group-hover:text-highlight',
   },
   {
     label: 'See what I owe',
     to: '/purchases/payables',
     Icon: CreditCard,
-    iconClass:    'bg-amber/15 text-amber',
-    wrapperHover: 'hover:bg-amber/10 hover:border-amber/40',
-    labelHover:   'group-hover:text-amber',
+    iconClass:    'bg-highlight/15 text-highlight',
+    wrapperHover: 'hover:bg-highlight/10 hover:border-highlight/40',
+    labelHover:   'group-hover:text-highlight',
   },
 ]
 
@@ -183,13 +183,13 @@ function ModuleShortcuts() {
   if (!shortcuts.length) return null
   return (
     <div className="mb-6">
-      <p className="text-[11px] font-bold uppercase tracking-widest text-text-muted mb-2">Jump back in</p>
+      <p className="text-label font-bold uppercase tracking-widest text-text-muted mb-2">Jump back in</p>
       <div className="flex items-center gap-2 flex-wrap">
         {shortcuts.map((s) => (
           <Link key={s.moduleKey} to={s.path}
-            className="group flex items-center gap-2 px-3.5 py-2 rounded-xl border border-glass hover:border-cyan/35 hover:bg-glass-hover transition-all duration-150 active:scale-95">
+            className="group flex items-center gap-2 px-3.5 py-2 rounded-xl border border-glass hover:border-accent/35 hover:bg-glass-hover transition-all duration-150 active:scale-95">
             <span className="text-sm font-semibold text-text-primary">{s.label}</span>
-            <ArrowUpRight className="h-3.5 w-3.5 text-text-muted group-hover:text-cyan transition-colors" />
+            <ArrowUpRight className="h-3.5 w-3.5 text-text-muted group-hover:text-accent transition-colors" />
           </Link>
         ))}
       </div>
@@ -242,10 +242,10 @@ function FinancialSnapshot({ ar, ap, currency, loading }) {
 
   return (
     <div className="premium-card p-5">
-      <h3 className="text-[12.5px] font-bold uppercase tracking-widest text-text-muted">
+      <h3 className="text-small font-bold uppercase tracking-widest text-text-muted">
         Who owes what
       </h3>
-      <p className="text-[12.5px] text-text-muted mb-4 mt-0.5">Money owed to you, and money you owe</p>
+      <p className="text-small text-text-muted mb-4 mt-0.5">Money owed to you, and money you owe</p>
 
       {loading ? (
         <div className="space-y-3">
@@ -255,30 +255,30 @@ function FinancialSnapshot({ ar, ap, currency, loading }) {
       ) : (
         <>
           {/* Receivable — money customers owe you */}
-          <Link to="/sales/receivables" className="flex items-center justify-between mb-3 p-3 rounded-xl bg-cyan/[0.06] border border-cyan/15 hover:border-cyan/35 transition-colors">
+          <Link to="/sales/receivables" className="flex items-center justify-between mb-3 p-3 rounded-xl bg-accent/[0.06] border border-accent/15 hover:border-accent/35 transition-colors">
             <div className="flex items-center gap-2.5">
-              <div className="p-1.5 rounded-lg bg-cyan/15">
-                <ArrowDownRight className="h-4 w-4 text-cyan" />
+              <div className="p-1.5 rounded-lg bg-accent/15">
+                <ArrowDownRight className="h-4 w-4 text-accent" />
               </div>
               <div>
-                <p className="text-[12px] font-semibold text-cyan uppercase tracking-wider">Money owed to you</p>
+                <p className="text-xs font-semibold text-accent uppercase tracking-wider">Money owed to you</p>
                 <p className="num text-base font-semibold text-text-primary leading-tight">{fmtAmt(Math.abs(ar), currency)}</p>
-                <p className="text-[12px] text-text-muted mt-0.5">Customers still owe you this <span className="opacity-60">· Accounts Receivable</span></p>
+                <p className="text-xs text-text-muted mt-0.5">Customers still owe you this <span className="opacity-60">· Accounts Receivable</span></p>
               </div>
             </div>
             <ExternalLink className="h-3.5 w-3.5 text-text-muted flex-shrink-0" />
           </Link>
 
           {/* Payable — money you owe vendors */}
-          <Link to="/purchases/payables" className="flex items-center justify-between mb-4 p-3 rounded-xl bg-amber/[0.06] border border-amber/15 hover:border-amber/35 transition-colors">
+          <Link to="/purchases/payables" className="flex items-center justify-between mb-4 p-3 rounded-xl bg-highlight/[0.06] border border-highlight/15 hover:border-highlight/35 transition-colors">
             <div className="flex items-center gap-2.5">
-              <div className="p-1.5 rounded-lg bg-amber/15">
-                <ArrowUpRight className="h-4 w-4 text-amber" />
+              <div className="p-1.5 rounded-lg bg-highlight/15">
+                <ArrowUpRight className="h-4 w-4 text-highlight" />
               </div>
               <div>
-                <p className="text-[12px] font-semibold text-amber uppercase tracking-wider">Money you owe</p>
+                <p className="text-xs font-semibold text-highlight uppercase tracking-wider">Money you owe</p>
                 <p className="num text-base font-semibold text-text-primary leading-tight">{fmtAmt(Math.abs(ap), currency)}</p>
-                <p className="text-[12px] text-text-muted mt-0.5">You still owe vendors this <span className="opacity-60">· Accounts Payable</span></p>
+                <p className="text-xs text-text-muted mt-0.5">You still owe vendors this <span className="opacity-60">· Accounts Payable</span></p>
               </div>
             </div>
             <ExternalLink className="h-3.5 w-3.5 text-text-muted flex-shrink-0" />
@@ -287,13 +287,13 @@ function FinancialSnapshot({ ar, ap, currency, loading }) {
           {/* Net exposure bar */}
           {total > 0 && (
             <div>
-              <div className="flex justify-between text-[12px] text-text-muted mb-1.5">
+              <div className="flex justify-between text-xs text-text-muted mb-1.5">
                 <span>Owed to you {arPct.toFixed(0)}%</span>
                 <span>{(100 - arPct).toFixed(0)}% you owe</span>
               </div>
               <div className="h-1.5 rounded-full bg-glass-panel overflow-hidden flex">
-                <div className="bg-cyan rounded-l-full transition-all duration-700" style={{ width: `${arPct}%` }} />
-                <div className="bg-amber rounded-r-full flex-1" />
+                <div className="bg-accent rounded-l-full transition-all duration-700" style={{ width: `${arPct}%` }} />
+                <div className="bg-highlight rounded-r-full flex-1" />
               </div>
             </div>
           )}
@@ -490,7 +490,7 @@ export default function Dashboard() {
                   </div>
                 </div>
                 <div className="flex justify-center gap-1.5 mt-1.5">
-                  <div className="h-1 w-5 bg-cyan rounded-full" />
+                  <div className="h-1 w-5 bg-accent rounded-full" />
                   <div className="h-1 w-2 bg-glass-panel rounded-full" />
                 </div>
               </div>
@@ -534,20 +534,20 @@ export default function Dashboard() {
               <div className="flex items-center justify-between px-4 sm:px-5 py-4 border-b border-glass">
                 <div>
                   <h3 className="text-sm font-bold text-text-primary">Recent Transactions</h3>
-                  <p className="text-[12.5px] text-text-muted mt-0.5">Last entries</p>
+                  <p className="text-small text-text-muted mt-0.5">Last entries</p>
                 </div>
                 <div className="flex items-center gap-3">
                   {/* Mobile: drawer button */}
                   {recentTxs.length > 0 && (
                     <button
                       onClick={() => setShowTxDrawer(true)}
-                      className="lg:hidden text-[12.5px] text-cyan font-semibold hover:underline"
+                      className="lg:hidden text-small text-accent font-semibold hover:underline"
                     >
                       See all
                     </button>
                   )}
                   <Link to="/transactions"
-                    className="hidden lg:flex items-center gap-1 text-[12.5px] text-cyan hover:underline font-medium">
+                    className="hidden lg:flex items-center gap-1 text-small text-accent hover:underline font-medium">
                     View all <ExternalLink className="h-3 w-3" />
                   </Link>
                 </div>
@@ -562,7 +562,7 @@ export default function Dashboard() {
                     <p className="text-sm text-text-muted mb-2">No transactions yet</p>
                     <button
                       onClick={openTxModal}
-                      className="inline-flex items-center gap-1.5 text-sm text-cyan font-semibold hover:underline"
+                      className="inline-flex items-center gap-1.5 text-sm text-accent font-semibold hover:underline"
                     >
                       <Plus className="h-3.5 w-3.5" />
                       Record your first transaction
@@ -584,7 +584,7 @@ export default function Dashboard() {
                     {recentTxs.length > 3 && (
                       <button
                         onClick={() => setShowTxDrawer(true)}
-                        className="lg:hidden w-full mt-1.5 text-xs text-text-muted hover:text-cyan font-medium py-2 hover:bg-glass-hover rounded-lg transition-colors"
+                        className="lg:hidden w-full mt-1.5 text-xs text-text-muted hover:text-accent font-medium py-2 hover:bg-glass-hover rounded-lg transition-colors"
                       >
                         + {recentTxs.length - 3} more transactions
                       </button>
@@ -619,7 +619,7 @@ export default function Dashboard() {
               <div className="flex items-center justify-between px-4 pb-3 border-b border-glass">
                 <div>
                   <h3 className="text-sm font-bold text-text-primary">All Transactions</h3>
-                  <p className="text-[12.5px] text-text-muted">{recentTxs.length} recent entries</p>
+                  <p className="text-small text-text-muted">{recentTxs.length} recent entries</p>
                 </div>
                 <button
                   onClick={() => setShowTxDrawer(false)}
@@ -644,7 +644,7 @@ export default function Dashboard() {
               <Link
                 to="/transactions"
                 onClick={() => setShowTxDrawer(false)}
-                className="flex items-center justify-center gap-2 w-full py-3 rounded-xl bg-cyan/10 border border-cyan/25 text-cyan text-sm font-semibold hover:bg-cyan/15 transition-colors active:scale-95"
+                className="flex items-center justify-center gap-2 w-full py-3 rounded-xl bg-accent/10 border border-accent/25 text-accent text-sm font-semibold hover:bg-accent/15 transition-colors active:scale-95"
               >
                 View all in Transactions <ExternalLink className="h-3.5 w-3.5" />
               </Link>

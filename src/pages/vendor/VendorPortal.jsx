@@ -29,10 +29,10 @@ const TABS = [
 
 const STATE_COLORS = {
   draft:             'bg-glass text-text-muted',
-  awaiting_approval: 'bg-amber/15 text-amber',
+  awaiting_approval: 'bg-highlight/15 text-highlight',
   approved:          'bg-positive/15 text-positive',
-  scheduled:         'bg-cyan/15 text-cyan',
-  partially_paid:    'bg-cyan/15 text-cyan',
+  scheduled:         'bg-accent/15 text-accent',
+  partially_paid:    'bg-accent/15 text-accent',
   paid:              'bg-positive/20 text-positive',
   overdue:           'bg-negative/15 text-negative',
   cancelled:         'bg-glass text-text-muted line-through',
@@ -46,7 +46,7 @@ const fmtDate = (d) => d ? new Date(d).toLocaleDateString() : '—'
 function BillRow({ bill }) {
   return (
     <tr className="border-b border-glass hover:bg-glass/40 transition-colors">
-      <td className="px-4 py-3 text-sm text-cyan font-mono">
+      <td className="px-4 py-3 text-sm text-accent font-mono">
         <Link to={`/purchases/bills/${bill._id}/edit`} className="hover:underline flex items-center gap-1">
           {bill.billNumber}
           <ExternalLink className="h-3 w-3 opacity-60" />
@@ -58,7 +58,7 @@ function BillRow({ bill }) {
         {fmt(bill.totalAmount, bill.currencyCode)}
       </td>
       <td className="px-4 py-3">
-        <span className={`inline-block px-2 py-0.5 rounded-full text-[12.5px] font-medium capitalize ${STATE_COLORS[bill.state] || 'bg-glass text-text-muted'}`}>
+        <span className={`inline-block px-2 py-0.5 rounded-full text-small font-medium capitalize ${STATE_COLORS[bill.state] || 'bg-glass text-text-muted'}`}>
           {bill.state?.replace(/_/g, ' ')}
         </span>
       </td>
@@ -104,7 +104,7 @@ export default function VendorPortal() {
           <button
             type="button"
             onClick={() => navigate('/vendors')}
-            className="text-text-muted hover:text-cyan transition-colors"
+            className="text-text-muted hover:text-accent transition-colors"
           >
             <ArrowLeft className="h-4 w-4" />
           </button>
@@ -120,7 +120,7 @@ export default function VendorPortal() {
             onClick={() => computeRisk.mutate({ vendorId })}
             disabled={computeRisk.isPending}
             className="flex items-center gap-1.5 px-3 py-1.5 bg-glass rounded text-xs
-                       text-text-secondary hover:text-cyan transition-colors"
+                       text-text-secondary hover:text-accent transition-colors"
           >
             <RefreshCw className={`h-3.5 w-3.5 ${computeRisk.isPending ? 'animate-spin' : ''}`} />
             Refresh Risk
@@ -133,14 +133,14 @@ export default function VendorPortal() {
         <div className="premium-card p-4">
           <p className="text-xs text-text-muted">Total Outstanding</p>
           <p className="text-xl font-bold text-text-primary mt-1">{fmt(totalPayable)}</p>
-          <p className="text-[12.5px] text-text-muted mt-0.5">{activeBills.length} open bills</p>
+          <p className="text-small text-text-muted mt-0.5">{activeBills.length} open bills</p>
         </div>
         <div className="premium-card p-4">
           <p className="text-xs text-text-muted">Overdue</p>
           <p className={`text-xl font-bold mt-1 ${overdueAmt > 0 ? 'text-negative' : 'text-text-primary'}`}>
             {fmt(overdueAmt)}
           </p>
-          <p className="text-[12.5px] text-text-muted mt-0.5">
+          <p className="text-small text-text-muted mt-0.5">
             {bills.filter(b => b.state === 'overdue').length} overdue bills
           </p>
         </div>
@@ -163,7 +163,7 @@ export default function VendorPortal() {
               onClick={() => setTab(key)}
               className={`flex items-center gap-1.5 px-4 py-3 text-sm font-medium transition-colors
                 ${tab === key
-                  ? 'text-cyan border-b-2 border-cyan'
+                  ? 'text-accent border-b-2 border-accent'
                   : 'text-text-muted hover:text-text-primary'}`}
             >
               <Icon className="h-3.5 w-3.5" />
@@ -183,8 +183,8 @@ export default function VendorPortal() {
                 <h3 className="text-sm font-semibold text-text-primary">Open Bills</h3>
                 <Link
                   to="/purchases/bills/new"
-                  className="flex items-center gap-1.5 px-3 py-1.5 bg-cyan text-ink-on-accent
-                             rounded text-xs font-medium hover:bg-cyan/80 transition-colors"
+                  className="flex items-center gap-1.5 px-3 py-1.5 bg-accent text-ink-on-accent
+                             rounded text-xs font-medium hover:bg-accent/80 transition-colors"
                 >
                   <Upload className="h-3.5 w-3.5" />
                   Upload Bill
@@ -196,7 +196,7 @@ export default function VendorPortal() {
                     <thead>
                       <tr className="border-b border-glass">
                         {['Bill #', 'Issued', 'Due', 'Amount', 'Status', 'Reminder'].map(h => (
-                          <th key={h} className="px-4 py-2 text-[12.5px] font-semibold text-text-muted uppercase tracking-wide">
+                          <th key={h} className="px-4 py-2 text-small font-semibold text-text-muted uppercase tracking-wide">
                             {h}
                           </th>
                         ))}
@@ -223,7 +223,7 @@ export default function VendorPortal() {
                   <thead>
                     <tr className="border-b border-glass">
                       {['Bill #', 'Due Date', 'Original', 'Remaining', 'State'].map(h => (
-                        <th key={h} className="px-4 py-2 text-[12.5px] font-semibold text-text-muted uppercase tracking-wide">{h}</th>
+                        <th key={h} className="px-4 py-2 text-small font-semibold text-text-muted uppercase tracking-wide">{h}</th>
                       ))}
                     </tr>
                   </thead>
@@ -232,12 +232,12 @@ export default function VendorPortal() {
                       ? <tr><td colSpan={5} className="px-4 py-8 text-center text-sm text-text-muted">No outstanding balances</td></tr>
                       : activeBills.map(b => (
                         <tr key={b._id} className="border-b border-glass hover:bg-glass/40">
-                          <td className="px-4 py-3 text-sm text-cyan font-mono">{b.billNumber}</td>
+                          <td className="px-4 py-3 text-sm text-accent font-mono">{b.billNumber}</td>
                           <td className="px-4 py-3 text-sm text-text-secondary">{fmtDate(b.dueDate)}</td>
                           <td className="px-4 py-3 text-sm text-right">{fmt(b.totalAmount, b.currencyCode)}</td>
-                          <td className="px-4 py-3 text-sm text-right font-semibold text-amber">{fmt(b.remainingBalance, b.currencyCode)}</td>
+                          <td className="px-4 py-3 text-sm text-right font-semibold text-highlight">{fmt(b.remainingBalance, b.currencyCode)}</td>
                           <td className="px-4 py-3">
-                            <span className={`px-2 py-0.5 rounded-full text-[12.5px] capitalize ${STATE_COLORS[b.state] || ''}`}>
+                            <span className={`px-2 py-0.5 rounded-full text-small capitalize ${STATE_COLORS[b.state] || ''}`}>
                               {b.state?.replace(/_/g, ' ')}
                             </span>
                           </td>
@@ -259,7 +259,7 @@ export default function VendorPortal() {
                   <thead>
                     <tr className="border-b border-glass">
                       {['Bill #', 'Issue Date', 'Amount', 'Paid'].map(h => (
-                        <th key={h} className="px-4 py-2 text-[12.5px] font-semibold text-text-muted uppercase tracking-wide">{h}</th>
+                        <th key={h} className="px-4 py-2 text-small font-semibold text-text-muted uppercase tracking-wide">{h}</th>
                       ))}
                     </tr>
                   </thead>
@@ -268,11 +268,11 @@ export default function VendorPortal() {
                       ? <tr><td colSpan={4} className="px-4 py-8 text-center text-sm text-text-muted">No payments yet</td></tr>
                       : paidBills.map(b => (
                         <tr key={b._id} className="border-b border-glass hover:bg-glass/40">
-                          <td className="px-4 py-3 text-sm text-cyan font-mono">{b.billNumber}</td>
+                          <td className="px-4 py-3 text-sm text-accent font-mono">{b.billNumber}</td>
                           <td className="px-4 py-3 text-sm text-text-secondary">{fmtDate(b.issueDate)}</td>
                           <td className="px-4 py-3 text-sm text-right">{fmt(b.totalAmount, b.currencyCode)}</td>
                           <td className="px-4 py-3">
-                            <span className="px-2 py-0.5 rounded-full text-[12.5px] bg-positive/15 text-positive">Paid</span>
+                            <span className="px-2 py-0.5 rounded-full text-small bg-positive/15 text-positive">Paid</span>
                           </td>
                         </tr>
                       ))

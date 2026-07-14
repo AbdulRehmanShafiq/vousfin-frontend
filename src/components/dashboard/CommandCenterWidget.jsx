@@ -13,8 +13,8 @@ import { cn } from '@/utils/cn'
 
 const INSIGHT_TONE = {
   critical: { Icon: AlertTriangle, text: 'text-negative' },
-  warning:  { Icon: AlertCircle,   text: 'text-amber' },
-  info:     { Icon: Info,          text: 'text-cyan' },
+  warning:  { Icon: AlertCircle,   text: 'text-highlight' },
+  info:     { Icon: Info,          text: 'text-accent' },
 }
 
 /* One compact row — an action awaiting approval, or an insight worth knowing. */
@@ -28,13 +28,13 @@ function MiniRow({ item }) {
         <Icon className={cn('h-3.5 w-3.5', isAction ? 'text-positive' : tone.text)} />
       </div>
       <div className="min-w-0 flex-1">
-        <p className="text-[13px] font-semibold text-text-primary leading-snug truncate">{item.title}</p>
+        <p className="text-small font-semibold text-text-primary leading-snug truncate">{item.title}</p>
         {item.summary && (
-          <p className="text-[12px] text-text-muted leading-snug truncate mt-0.5">{item.summary}</p>
+          <p className="text-xs text-text-muted leading-snug truncate mt-0.5">{item.summary}</p>
         )}
       </div>
       {isAction && item.confidence != null && (
-        <span className="text-[11px] font-bold text-cyan shrink-0 mt-0.5">{Math.round(item.confidence * 100)}%</span>
+        <span className="text-label font-bold text-accent shrink-0 mt-0.5">{Math.round(item.confidence * 100)}%</span>
       )}
     </div>
   )
@@ -56,16 +56,16 @@ export default function CommandCenterWidget() {
     <div className="premium-card overflow-hidden">
       <div className="flex items-center justify-between px-4 sm:px-5 py-4 border-b border-glass">
         <div className="flex items-center gap-2.5 min-w-0">
-          <div className="p-1.5 rounded-lg bg-cyan/15 shrink-0"><Inbox className="h-4 w-4 text-cyan" /></div>
+          <div className="p-1.5 rounded-lg bg-accent/15 shrink-0"><Inbox className="h-4 w-4 text-accent" /></div>
           <div className="min-w-0">
             <h3 className="text-sm font-bold text-text-primary leading-tight">Command Center</h3>
-            <p className="text-[12.5px] text-text-muted leading-tight mt-0.5">
+            <p className="text-small text-text-muted leading-tight mt-0.5">
               {waiting > 0 ? `${waiting} waiting for you` : 'Your one inbox'}
             </p>
           </div>
         </div>
         <Link to="/command-center"
-          className="flex items-center gap-1 text-[12.5px] text-cyan hover:underline font-medium shrink-0">
+          className="flex items-center gap-1 text-small text-accent hover:underline font-medium shrink-0">
           Open <ArrowUpRight className="h-3.5 w-3.5" />
         </Link>
       </div>
@@ -78,8 +78,8 @@ export default function CommandCenterWidget() {
         ) : preview.length === 0 ? (
           <div className="py-6 text-center">
             <CheckCircle2 className="h-6 w-6 text-positive mx-auto mb-2 opacity-70" />
-            <p className="text-[13px] text-text-secondary">Nothing needs you right now.</p>
-            <Link to="/command-center" className="inline-flex items-center gap-1 text-[12.5px] text-cyan font-semibold hover:underline mt-1.5">
+            <p className="text-small text-text-secondary">Nothing needs you right now.</p>
+            <Link to="/command-center" className="inline-flex items-center gap-1 text-small text-accent font-semibold hover:underline mt-1.5">
               Open Command Center <ArrowUpRight className="h-3 w-3" />
             </Link>
           </div>
@@ -88,7 +88,7 @@ export default function CommandCenterWidget() {
             {preview.map(item => <MiniRow key={item.id} item={item} />)}
             {extra > 0 && (
               <Link to="/command-center"
-                className="block w-full mt-1 text-center text-[12px] text-text-muted hover:text-cyan font-medium py-2 hover:bg-glass-hover rounded-lg transition-colors">
+                className="block w-full mt-1 text-center text-xs text-text-muted hover:text-accent font-medium py-2 hover:bg-glass-hover rounded-lg transition-colors">
                 + {extra} more in Command Center
               </Link>
             )}

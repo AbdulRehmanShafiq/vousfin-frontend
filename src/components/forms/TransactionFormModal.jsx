@@ -107,11 +107,11 @@ function NLConfBadge({ score }) {
   const pct = Math.round(score * 100)
   const cls =
     pct >= 75 ? 'bg-positive/15 text-positive border-positive/25' :
-    pct >= 50 ? 'bg-amber/15  text-amber  border-amber/25' :
+    pct >= 50 ? 'bg-highlight/15  text-highlight  border-highlight/25' :
                 'bg-negative/15    text-negative    border-negative/25'
   const label = pct >= 75 ? 'High' : pct >= 50 ? 'Medium' : 'Low'
   return (
-    <span className={`inline-flex items-center gap-1 rounded-full border px-2 py-0.5 text-[12px] font-semibold ${cls}`}>
+    <span className={`inline-flex items-center gap-1 rounded-full border px-2 py-0.5 text-xs font-semibold ${cls}`}>
       {label} · {pct}% confidence
     </span>
   )
@@ -121,10 +121,10 @@ function NLConfBadge({ score }) {
 function ConfBadge({ label, score }) {
   const cls =
     label === 'High'   ? 'bg-positive/10 text-positive border-positive/20' :
-    label === 'Medium' ? 'bg-amber/10 text-amber border-amber/20' :
+    label === 'Medium' ? 'bg-highlight/10 text-highlight border-highlight/20' :
                          'bg-negative/10 text-negative border-negative/20'
   return (
-    <span className={`inline-flex items-center gap-1 rounded-full border px-1.5 py-0.5 text-[12px] font-semibold leading-none ${cls}`}>
+    <span className={`inline-flex items-center gap-1 rounded-full border px-1.5 py-0.5 text-xs font-semibold leading-none ${cls}`}>
       {score}%
     </span>
   )
@@ -141,17 +141,17 @@ function LiveJournalPreview({ debitAccount, creditAccount, amount, currency }) {
   return (
     <div className="rounded-lg border border-glass bg-glass-panel px-4 py-3 animate-fade-in">
       <div className="flex items-center justify-between mb-2.5">
-        <span className="text-[12px] font-bold text-text-muted uppercase tracking-wider flex items-center gap-1.5">
-          <span className="h-1.5 w-1.5 rounded-full bg-cyan inline-block" />
+        <span className="text-xs font-bold text-text-muted uppercase tracking-wider flex items-center gap-1.5">
+          <span className="h-1.5 w-1.5 rounded-full bg-accent inline-block" />
           Journal Entry Preview
         </span>
-        <span className="text-[12px] font-semibold text-positive">✓ Balanced</span>
+        <span className="text-xs font-semibold text-positive">✓ Balanced</span>
       </div>
       <div className="space-y-1.5 font-mono text-xs">
         <div className="flex items-center gap-3">
-          <span className="text-cyan font-bold w-6 flex-shrink-0">DR</span>
+          <span className="text-accent font-bold w-6 flex-shrink-0">DR</span>
           <span className="flex-1 text-text-primary truncate font-sans">{debitAccount}</span>
-          <span className="text-cyan font-semibold flex-shrink-0">{formatCurrency(amount, currency)}</span>
+          <span className="text-accent font-semibold flex-shrink-0">{formatCurrency(amount, currency)}</span>
         </div>
         <div className="flex items-center gap-3 border-t border-glass/50 pt-1.5">
           <span className="text-text-muted font-bold w-6 flex-shrink-0">CR</span>
@@ -245,20 +245,20 @@ function InstallmentJournalPreview({
     : [...schedule.slice(0, 3), schedule[schedule.length - 1]]
 
   return (
-    <div className="rounded-lg border border-cyan/20 bg-navy/40 overflow-hidden">
-      <div className="flex items-center gap-2 px-3 py-2 border-b border-cyan/15 bg-cyan/5">
+    <div className="rounded-lg border border-accent/20 bg-navy/40 overflow-hidden">
+      <div className="flex items-center gap-2 px-3 py-2 border-b border-accent/15 bg-accent/5">
         <div>
-          <span className="text-[12px] font-bold text-cyan uppercase tracking-wider">GAAP / IFRS — Compound Journal Entry</span>
-          <span className="ml-1.5 text-[12.5px] text-cyan/50 normal-case tracking-normal">(accounting standards)</span>
+          <span className="text-xs font-bold text-accent uppercase tracking-wider">GAAP / IFRS — Compound Journal Entry</span>
+          <span className="ml-1.5 text-small text-accent/50 normal-case tracking-normal">(accounting standards)</span>
         </div>
-        <span className="ml-auto text-[12px] text-text-muted">at purchase date</span>
+        <span className="ml-auto text-xs text-text-muted">at purchase date</span>
       </div>
 
       <div className="px-3 py-2 space-y-1">
         <div className="flex items-center gap-2 text-xs">
-          <span className="font-mono font-bold text-cyan w-5 flex-shrink-0">DR</span>
+          <span className="font-mono font-bold text-accent w-5 flex-shrink-0">DR</span>
           <span className="flex-1 text-text-primary font-medium truncate">{assetName || 'Asset Account'}</span>
-          <span className="font-mono text-cyan font-semibold flex-shrink-0">{formatCurrency(amt, currency)}</span>
+          <span className="font-mono text-accent font-semibold flex-shrink-0">{formatCurrency(amt, currency)}</span>
         </div>
         {down > 0 && (
           <div className="flex items-center gap-2 text-xs pl-4">
@@ -268,11 +268,11 @@ function InstallmentJournalPreview({
           </div>
         )}
         <div className="flex items-center gap-2 text-xs pl-4">
-          <span className="font-mono font-bold text-amber w-5 flex-shrink-0">CR</span>
-          <span className="flex-1 text-amber truncate font-medium">Loan Payable <span className="text-[12.5px] text-amber/70">(liability created)</span></span>
-          <span className="font-mono text-amber font-semibold flex-shrink-0">{formatCurrency(financed, currency)}</span>
+          <span className="font-mono font-bold text-highlight w-5 flex-shrink-0">CR</span>
+          <span className="flex-1 text-highlight truncate font-medium">Loan Payable <span className="text-small text-highlight/70">(liability created)</span></span>
+          <span className="font-mono text-highlight font-semibold flex-shrink-0">{formatCurrency(financed, currency)}</span>
         </div>
-        <div className="border-t border-glass mt-1 pt-1 flex justify-between text-[12px] text-text-muted">
+        <div className="border-t border-glass mt-1 pt-1 flex justify-between text-xs text-text-muted">
           <span>Balance check</span>
           <span className={`font-medium ${balanced ? 'text-positive' : 'text-negative'}`}>
             {balanced ? '✓ Balanced' : '✗ Unbalanced'}
@@ -281,10 +281,10 @@ function InstallmentJournalPreview({
       </div>
 
       {financed > 0 && (
-        <div className="border-t border-cyan/15 bg-amber/5 px-3 py-2 flex flex-wrap items-center gap-x-4 gap-y-1 text-[12.5px]">
+        <div className="border-t border-accent/15 bg-highlight/5 px-3 py-2 flex flex-wrap items-center gap-x-4 gap-y-1 text-small">
           <div>
-            <span className="text-amber/80 block">Liability Created</span>
-            <span className="font-semibold text-amber">{formatCurrency(financed, currency)}</span>
+            <span className="text-highlight/80 block">Liability Created</span>
+            <span className="font-semibold text-highlight">{formatCurrency(financed, currency)}</span>
           </div>
           <div>
             <span className="text-text-muted block">EMI</span>
@@ -295,7 +295,7 @@ function InstallmentJournalPreview({
             <>
               <div>
                 <span className="text-text-muted block">Total Interest</span>
-                <span className="font-semibold text-amber">{formatCurrency(totalInterest, currency)}</span>
+                <span className="font-semibold text-highlight">{formatCurrency(totalInterest, currency)}</span>
               </div>
               <div>
                 <span className="text-text-muted block">Total Payable</span>
@@ -319,12 +319,12 @@ function InstallmentJournalPreview({
       )}
 
       {schedule.length > 0 && financed > 0 && (
-        <div className="border-t border-cyan/15">
-          <div className="px-3 py-1.5 bg-glass-panel text-[12px] font-bold text-text-secondary uppercase tracking-wider">
+        <div className="border-t border-accent/15">
+          <div className="px-3 py-1.5 bg-glass-panel text-xs font-bold text-text-secondary uppercase tracking-wider">
             Amortization {schedule.length > 4 ? `(first 3 + last of ${schedule.length})` : `(${schedule.length} payments)`}
           </div>
           <div className="overflow-x-auto">
-            <table className="w-full text-[12.5px]">
+            <table className="w-full text-small">
               <thead className="bg-glass-panel text-text-muted">
                 <tr>
                   <th className="px-2 py-1 text-left font-medium">#</th>
@@ -340,13 +340,13 @@ function InstallmentJournalPreview({
                     <>
                       {showEllipsis && (
                         <tr key={`ellipsis-${idx}`} className="text-text-muted">
-                          <td colSpan="4" className="px-2 py-0.5 text-center text-[12px]">⋯</td>
+                          <td colSpan="4" className="px-2 py-0.5 text-center text-xs">⋯</td>
                         </tr>
                       )}
                       <tr key={row.i} className="text-text-secondary">
                         <td className="px-2 py-1 font-mono text-text-muted">{row.i}</td>
-                        <td className="px-2 py-1 font-mono text-right text-cyan">{formatCurrency(row.principalDue, currency)}</td>
-                        <td className="px-2 py-1 font-mono text-right text-amber">{formatCurrency(row.interestDue, currency)}</td>
+                        <td className="px-2 py-1 font-mono text-right text-accent">{formatCurrency(row.principalDue, currency)}</td>
+                        <td className="px-2 py-1 font-mono text-right text-highlight">{formatCurrency(row.interestDue, currency)}</td>
                         <td className="px-2 py-1 font-mono text-right">{formatCurrency(row.closing, currency)}</td>
                       </tr>
                     </>
@@ -394,7 +394,7 @@ function PartyInput({ label, suggestions, value, onChange, placeholder, parties 
       <div className="flex items-center justify-between mb-1">
         <label className="block text-xs font-medium text-text-secondary">{label}</label>
         {aiSuggested && value && (
-          <span className="text-[12px] text-cyan font-medium flex items-center gap-1">
+          <span className="text-xs text-accent font-medium flex items-center gap-1">
             <Sparkles className="h-2.5 w-2.5" /> AI suggested
           </span>
         )}
@@ -402,7 +402,7 @@ function PartyInput({ label, suggestions, value, onChange, placeholder, parties 
       <input
         type="text"
         autoComplete="off"
-        className="w-full px-3 py-2 rounded-lg bg-glass-panel border border-glass text-text-primary text-sm placeholder:text-text-muted focus:border-cyan focus:outline-none transition-colors"
+        className="w-full px-3 py-2 rounded-lg bg-glass-panel border border-glass text-text-primary text-sm placeholder:text-text-muted focus:border-accent focus:outline-none transition-colors"
         placeholder={placeholder}
         value={value || ''}
         onChange={e => { onChange(e.target.value); setOpen(true); if (onSelectId) onSelectId(null) }}
@@ -410,12 +410,12 @@ function PartyInput({ label, suggestions, value, onChange, placeholder, parties 
       />
       {/* Outstanding balance badge when known party selected */}
       {value && selectedBalance != null && selectedBalance > 0 && (
-        <p className="mt-1 text-[12.5px] text-amber font-medium">
+        <p className="mt-1 text-small text-highlight font-medium">
           Outstanding balance: {selectedBalance.toLocaleString()}
         </p>
       )}
       {value && selectedBalance === 0 && (
-        <p className="mt-1 text-[12.5px] text-positive">No outstanding balance</p>
+        <p className="mt-1 text-small text-positive">No outstanding balance</p>
       )}
       {open && (filtered.length > 0 || showNew) && (
         <div className="absolute z-50 w-full mt-1 rounded-lg border border-glass bg-navy shadow-xl overflow-hidden">
@@ -426,19 +426,19 @@ function PartyInput({ label, suggestions, value, onChange, placeholder, parties 
                 className="px-3 py-2 text-sm text-text-primary hover:bg-glass-hover cursor-pointer flex items-center justify-between gap-2">
                 <span>{name}</span>
                 {bal != null && bal > 0 && (
-                  <span className="text-[12px] text-amber font-medium flex-shrink-0">
+                  <span className="text-xs text-highlight font-medium flex-shrink-0">
                     Due: {bal.toLocaleString()}
                   </span>
                 )}
                 {bal === 0 && (
-                  <span className="text-[12px] text-positive flex-shrink-0">Paid</span>
+                  <span className="text-xs text-positive flex-shrink-0">Paid</span>
                 )}
               </div>
             )
           })}
           {showNew && (
             <div onMouseDown={() => handleSelect(value.trim())}
-              className="px-3 py-2 text-sm text-cyan hover:bg-cyan/10 cursor-pointer border-t border-glass">
+              className="px-3 py-2 text-sm text-accent hover:bg-accent/10 cursor-pointer border-t border-glass">
               + Add &quot;{value.trim()}&quot; as new
             </div>
           )}
@@ -452,10 +452,10 @@ function PartyInput({ label, suggestions, value, onChange, placeholder, parties 
 function SectionLabel({ label, note }) {
   return (
     <div className="flex items-center gap-3 pt-1">
-      <span className="text-[12px] font-bold text-text-muted uppercase tracking-widest whitespace-nowrap">
+      <span className="text-xs font-bold text-text-muted uppercase tracking-widest whitespace-nowrap">
         {label}
       </span>
-      {note && <span className="text-[12px] text-text-muted/60">{note}</span>}
+      {note && <span className="text-xs text-text-muted/60">{note}</span>}
       <div className="flex-1 h-px bg-glass" />
     </div>
   )
@@ -593,7 +593,7 @@ export default function TransactionFormModal({ isOpen, onClose, onSuccess, trans
             type="button"
             onClick={() => setEngineMode('manual')}
             className={`flex-1 flex items-center justify-center gap-2 py-2 px-3 rounded-lg text-sm font-semibold transition-all ${
-              engineMode === 'manual' ? 'bg-cyan text-ink-on-accent shadow-glow-cyan' : 'text-text-secondary hover:text-text-primary hover:bg-glass-hover'
+              engineMode === 'manual' ? 'bg-accent text-ink-on-accent shadow-glow-accent' : 'text-text-secondary hover:text-text-primary hover:bg-glass-hover'
             }`}
           >
             <LayoutList className="h-4 w-4" /> Manual Entry
@@ -602,7 +602,7 @@ export default function TransactionFormModal({ isOpen, onClose, onSuccess, trans
             type="button"
             onClick={() => setEngineMode('ai')}
             className={`flex-1 flex items-center justify-center gap-2 py-2 px-3 rounded-lg text-sm font-semibold transition-all ${
-              engineMode === 'ai' ? 'bg-cyan text-ink-on-accent shadow-glow-cyan' : 'text-text-secondary hover:text-text-primary hover:bg-glass-hover'
+              engineMode === 'ai' ? 'bg-accent text-ink-on-accent shadow-glow-accent' : 'text-text-secondary hover:text-text-primary hover:bg-glass-hover'
             }`}
           >
             <Sparkles className="h-4 w-4" /> AI Auto-Classify
@@ -620,7 +620,7 @@ export default function TransactionFormModal({ isOpen, onClose, onSuccess, trans
               onClick={() => setActiveTab(id)}
               className={`flex-1 flex items-center justify-center gap-2 py-2 px-3 rounded-lg text-sm font-medium transition-all duration-200 ${
                 activeTab === id
-                  ? 'bg-cyan text-ink-on-accent shadow-glow-cyan'
+                  ? 'bg-accent text-ink-on-accent shadow-glow-accent'
                   : 'text-text-secondary hover:text-text-primary hover:bg-glass-hover'
               }`}
             >
@@ -756,7 +756,7 @@ function NLTab({ currency, onParsed, onAutoPosted }) {
         </div>
         <div>
           <p className="text-sm font-semibold text-text-primary">Recorded automatically</p>
-          <p className="text-[12.5px] text-text-muted mt-1">
+          <p className="text-small text-text-muted mt-1">
             VousFin was {pct}% sure and recorded this transaction with no review needed.
             You can undo it from the transaction list at any time.
           </p>
@@ -776,11 +776,11 @@ function NLTab({ currency, onParsed, onAutoPosted }) {
   if (clarification) {
     return (
       <div className="space-y-5 animate-fade-in">
-        <div className="rounded-xl border border-cyan/30 bg-cyan/5 p-4">
+        <div className="rounded-xl border border-accent/30 bg-accent/5 p-4">
           <div className="flex items-start gap-2">
-            <Sparkles className="h-4 w-4 text-cyan mt-0.5 shrink-0" />
+            <Sparkles className="h-4 w-4 text-accent mt-0.5 shrink-0" />
             <div className="space-y-1">
-              <p className="text-xs font-semibold text-cyan uppercase tracking-wide">One quick question</p>
+              <p className="text-xs font-semibold text-accent uppercase tracking-wide">One quick question</p>
               <p className="text-sm text-text-primary">{clarification.question}</p>
             </div>
           </div>
@@ -790,7 +790,7 @@ function NLTab({ currency, onParsed, onAutoPosted }) {
           <div className="flex flex-wrap gap-2">
             {clarification.options.map(opt => (
               <button key={opt} type="button" onClick={() => submitAnswer(opt)} disabled={nlPreview.isPending}
-                className="rounded-lg border border-glass bg-glass-panel px-3 py-2 text-sm text-text-primary hover:border-cyan hover:bg-cyan/5 transition-colors disabled:opacity-50">
+                className="rounded-lg border border-glass bg-glass-panel px-3 py-2 text-sm text-text-primary hover:border-accent hover:bg-accent/5 transition-colors disabled:opacity-50">
                 {opt}
               </button>
             ))}
@@ -799,7 +799,7 @@ function NLTab({ currency, onParsed, onAutoPosted }) {
           <div className="space-y-1">
             <input
               autoFocus
-              className="w-full px-4 py-3 rounded-xl bg-glass-panel border border-glass text-text-primary text-sm placeholder:text-text-muted focus:border-cyan focus:outline-none transition-colors"
+              className="w-full px-4 py-3 rounded-xl bg-glass-panel border border-glass text-text-primary text-sm placeholder:text-text-muted focus:border-accent focus:outline-none transition-colors"
               placeholder="Type your answer…"
               value={answerText}
               onChange={e => setAnswerText(e.target.value)}
@@ -841,7 +841,7 @@ function NLTab({ currency, onParsed, onAutoPosted }) {
         type="button"
         onClick={() => photoInputRef.current?.click()}
         disabled={photoBusy}
-        className="flex w-full items-center justify-center gap-2 rounded-xl border border-cyan/30 bg-cyan/5 py-3 text-sm font-semibold text-cyan hover:bg-cyan/10 transition-colors disabled:opacity-50"
+        className="flex w-full items-center justify-center gap-2 rounded-xl border border-accent/30 bg-accent/5 py-3 text-sm font-semibold text-accent hover:bg-accent/10 transition-colors disabled:opacity-50"
       >
         {photoBusy ? (
           <><Loader2 className="h-4 w-4 animate-spin" /> Reading photo…</>
@@ -852,7 +852,7 @@ function NLTab({ currency, onParsed, onAutoPosted }) {
 
       <div className="flex items-center gap-3">
         <div className="h-px flex-1 bg-glass" />
-        <span className="text-[12px] font-semibold uppercase tracking-wider text-text-muted">or type it</span>
+        <span className="text-xs font-semibold uppercase tracking-wider text-text-muted">or type it</span>
         <div className="h-px flex-1 bg-glass" />
       </div>
 
@@ -860,12 +860,12 @@ function NLTab({ currency, onParsed, onAutoPosted }) {
         <label className="block text-xs font-medium text-text-secondary">Transaction Description</label>
         <textarea
           rows={4}
-          className="w-full px-4 py-3 rounded-xl bg-glass-panel border border-glass text-text-primary text-sm placeholder:text-text-muted focus:border-cyan focus:outline-none resize-none transition-colors"
+          className="w-full px-4 py-3 rounded-xl bg-glass-panel border border-glass text-text-primary text-sm placeholder:text-text-muted focus:border-accent focus:outline-none resize-none transition-colors"
           placeholder={'Examples:\n• "Paid PKR 5000 for office supplies from bank"\n• "Received PKR 25000 from Ali for consulting"\n• "Bought office furniture on installments from ABC Furnitures"\n• "Sold goods for 11700 cash including 17% GST"'}
           value={text}
           onChange={e => setText(e.target.value)}
         />
-        <p className="text-[12.5px] text-text-muted">
+        <p className="text-small text-text-muted">
           AI detects amount, accounts, taxes, installments, and parties — and asks a quick question if anything is unclear, then opens the structured form for confirmation.
         </p>
       </div>
@@ -1466,10 +1466,10 @@ function StructuredFormTab({ currency, onSuccess, onCancel, initialValues, editT
         </div>
       )}
       {periodStatus === 'closed' && (
-        <div className="flex items-center gap-2 p-3 rounded-lg bg-amber/10 border border-amber/30 animate-fade-in">
-          <AlertTriangle className="h-4 w-4 text-amber flex-shrink-0" />
+        <div className="flex items-center gap-2 p-3 rounded-lg bg-highlight/10 border border-highlight/30 animate-fade-in">
+          <AlertTriangle className="h-4 w-4 text-highlight flex-shrink-0" />
           <div className="flex-1">
-            <p className="text-sm font-medium text-amber">Period Closed — {currentPeriod?.name}</p>
+            <p className="text-sm font-medium text-highlight">Period Closed — {currentPeriod?.name}</p>
             <p className="text-xs text-text-muted mt-0.5">
               This period is closed. Contact your administrator to reopen it before posting transactions.
             </p>
@@ -1479,8 +1479,8 @@ function StructuredFormTab({ currency, onSuccess, onCancel, initialValues, editT
 
       {/* AI Prefill Banner — shown when NL parser populated the form */}
       {nlAiBanner && (
-        <div className="flex items-start gap-2 p-3 rounded-lg bg-cyan/5 border border-cyan/20 animate-fade-in">
-          <Sparkles className="h-4 w-4 text-cyan flex-shrink-0 mt-0.5" />
+        <div className="flex items-start gap-2 p-3 rounded-lg bg-accent/5 border border-accent/20 animate-fade-in">
+          <Sparkles className="h-4 w-4 text-accent flex-shrink-0 mt-0.5" />
           <div className="flex-1 min-w-0 space-y-1">
             <div className="flex items-center gap-2 flex-wrap">
               <p className="text-sm font-medium text-text-primary">AI pre-filled from natural language</p>
@@ -1488,7 +1488,7 @@ function StructuredFormTab({ currency, onSuccess, onCancel, initialValues, editT
             </div>
             <p className="text-xs text-text-muted">Review all fields. Make changes before saving.</p>
             {initialValues?._rawText && (
-              <p className="text-[12.5px] text-text-muted italic truncate" title={initialValues._rawText}>
+              <p className="text-small text-text-muted italic truncate" title={initialValues._rawText}>
                 Original: &quot;{initialValues._rawText}&quot;
               </p>
             )}
@@ -1501,11 +1501,11 @@ function StructuredFormTab({ currency, onSuccess, onCancel, initialValues, editT
 
       {/* Inline review-reasons warning */}
       {nlAiBanner && aiReviewReasons.length > 0 && (
-        <div className="flex items-start gap-2 p-3 rounded-lg bg-amber/10 border border-amber/25 animate-fade-in">
-          <AlertTriangle className="h-4 w-4 text-amber flex-shrink-0 mt-0.5" />
+        <div className="flex items-start gap-2 p-3 rounded-lg bg-highlight/10 border border-highlight/25 animate-fade-in">
+          <AlertTriangle className="h-4 w-4 text-highlight flex-shrink-0 mt-0.5" />
           <div className="flex-1 min-w-0">
-            <p className="text-sm font-medium text-amber">AI flagged this for review</p>
-            <ul className="mt-1 text-xs text-amber/90 list-disc list-inside space-y-0.5">
+            <p className="text-sm font-medium text-highlight">AI flagged this for review</p>
+            <ul className="mt-1 text-xs text-highlight/90 list-disc list-inside space-y-0.5">
               {aiReviewReasons.slice(0, 4).map((r, i) => (
                 <li key={i} className="truncate" title={r}>{r}</li>
               ))}
@@ -1516,11 +1516,11 @@ function StructuredFormTab({ currency, onSuccess, onCancel, initialValues, editT
 
       {/* Low-confidence warning */}
       {nlAiBanner && initialValues?._confidence != null && initialValues._confidence < 0.7 && (
-        <div className="flex items-start gap-2 p-3 rounded-lg bg-amber/10 border border-amber/25 animate-fade-in">
-          <AlertTriangle className="h-4 w-4 text-amber flex-shrink-0 mt-0.5" />
+        <div className="flex items-start gap-2 p-3 rounded-lg bg-highlight/10 border border-highlight/25 animate-fade-in">
+          <AlertTriangle className="h-4 w-4 text-highlight flex-shrink-0 mt-0.5" />
           <div className="flex-1 min-w-0">
-            <p className="text-sm font-medium text-amber">Low confidence — verify accounts</p>
-            <p className="text-xs text-amber/80 mt-0.5">
+            <p className="text-sm font-medium text-highlight">Low confidence — verify accounts</p>
+            <p className="text-xs text-highlight/80 mt-0.5">
               Account names were fuzzy-matched (confidence {Math.round((initialValues._confidence ?? 0) * 100)}%).
               Please verify the Debit and Credit accounts before saving.
             </p>
@@ -1541,12 +1541,12 @@ function StructuredFormTab({ currency, onSuccess, onCancel, initialValues, editT
       )}
       {/* Manual-pick prompts — only shown when resolver could NOT pick automatically */}
       {nlAiBanner && initialValues?._aiDebitAccount && !debitAccountId && !autoResolved.debit && (
-        <p className="text-xs text-amber px-1 -mt-2">
+        <p className="text-xs text-highlight px-1 -mt-2">
           AI suggested debit account &quot;{initialValues._aiDebitAccount}&quot; but match was ambiguous — pick the closest below.
         </p>
       )}
       {nlAiBanner && initialValues?._aiCreditAccount && !creditAccountId && !autoResolved.credit && (
-        <p className="text-xs text-amber px-1 -mt-2">
+        <p className="text-xs text-highlight px-1 -mt-2">
           AI suggested credit account &quot;{initialValues._aiCreditAccount}&quot; but match was ambiguous — pick the closest below.
         </p>
       )}
@@ -1556,12 +1556,12 @@ function StructuredFormTab({ currency, onSuccess, onCancel, initialValues, editT
         <div className="flex gap-1 p-1 rounded-xl bg-glass-panel border border-glass">
           <button type="button" onClick={() => switchMode('simple')}
             className={cn('flex-1 py-2 px-3 rounded-lg text-sm font-semibold transition-all',
-              !advancedVisible ? 'bg-cyan text-ink-on-accent' : 'text-text-secondary hover:text-text-primary')}>
+              !advancedVisible ? 'bg-accent text-ink-on-accent' : 'text-text-secondary hover:text-text-primary')}>
             Simple
           </button>
           <button type="button" onClick={() => switchMode('advanced')}
             className={cn('flex-1 py-2 px-3 rounded-lg text-sm font-semibold transition-all',
-              advancedVisible ? 'bg-cyan text-ink-on-accent' : 'text-text-secondary hover:text-text-primary')}>
+              advancedVisible ? 'bg-accent text-ink-on-accent' : 'text-text-secondary hover:text-text-primary')}>
             Advanced
           </button>
         </div>
@@ -1588,7 +1588,7 @@ function StructuredFormTab({ currency, onSuccess, onCancel, initialValues, editT
         value={watch('transactionType') || ''}
         onChange={(v) => setValue('transactionType', v)} />
       {!txTypeWatch && (
-        <p className="text-[12.5px] text-text-muted px-1 -mt-3">
+        <p className="text-small text-text-muted px-1 -mt-3">
           💡 Select a type for smart account suggestions, or leave blank for auto-detection.
         </p>
       )}
@@ -1646,22 +1646,22 @@ function StructuredFormTab({ currency, onSuccess, onCancel, initialValues, editT
       )}
       {/* Compound (multi-line) journal preview — for GST sale, payroll w/ deductions, etc. */}
       {hasCompoundJournal && (
-        <div className="rounded-lg border border-cyan/25 bg-cyan/5 p-3 space-y-1.5 animate-fade-in">
+        <div className="rounded-lg border border-accent/25 bg-accent/5 p-3 space-y-1.5 animate-fade-in">
           <div className="flex items-center justify-between mb-1">
-            <p className="text-xs font-semibold text-cyan uppercase tracking-wide">
+            <p className="text-xs font-semibold text-accent uppercase tracking-wide">
               Compound Journal — {aiJournalLines.length} lines
             </p>
-            <span className="text-[12px] text-text-muted">AI-suggested · backend will validate</span>
+            <span className="text-xs text-text-muted">AI-suggested · backend will validate</span>
           </div>
           <div className="divide-y divide-glass">
             {aiJournalLines.map((line, i) => (
               <div key={i} className="flex items-center justify-between py-1 text-xs">
-                <span className={`font-mono font-semibold w-10 ${line.type === 'debit' || line.entryType === 'debit' ? 'text-cyan' : 'text-text-muted'}`}>
+                <span className={`font-mono font-semibold w-10 ${line.type === 'debit' || line.entryType === 'debit' ? 'text-accent' : 'text-text-muted'}`}>
                   {(line.type || line.entryType) === 'debit' ? 'DR' : 'CR'}
                 </span>
-                <span className={`flex-1 truncate ${line.resolved !== false ? 'text-text-primary' : 'text-amber'}`}>
+                <span className={`flex-1 truncate ${line.resolved !== false ? 'text-text-primary' : 'text-highlight'}`}>
                   {line.accountName || line.account}
-                  {line.resolved === false && <span className="ml-1 text-[12px]">(unresolved)</span>}
+                  {line.resolved === false && <span className="ml-1 text-xs">(unresolved)</span>}
                 </span>
                 <span className="text-text-secondary font-mono ml-2">
                   {formatCurrency(line.amount, currency)}
@@ -1683,8 +1683,8 @@ function StructuredFormTab({ currency, onSuccess, onCancel, initialValues, editT
 
       {/* Customer / Vendor + Invoice — shown when transaction type/accounts indicate AR or AP */}
       {advancedVisible && (requiresCustomer || requiresVendor) && (
-        <div className="animate-fade-in p-4 rounded-xl bg-cyan/5 border border-cyan/20 space-y-3 mt-1">
-          <p className="text-[12px] font-semibold text-cyan uppercase tracking-wider">
+        <div className="animate-fade-in p-4 rounded-xl bg-accent/5 border border-accent/20 space-y-3 mt-1">
+          <p className="text-xs font-semibold text-accent uppercase tracking-wider">
             {requiresCustomer ? 'Customer Details' : 'Vendor Details'}
           </p>
           {requiresCustomer && (
@@ -1720,7 +1720,7 @@ function StructuredFormTab({ currency, onSuccess, onCancel, initialValues, editT
                 {requiresCustomer ? 'Invoice Number' : 'Bill / PO Number'}
               </label>
               {invoiceAutoGenerated && watchedInvoiceNumber?.trim() && (
-                <span className="text-[12px] text-cyan/70 flex items-center gap-1">
+                <span className="text-xs text-accent/70 flex items-center gap-1">
                   <Sparkles className="h-2.5 w-2.5" />
                   Auto-generated — type to override
                 </span>
@@ -1728,7 +1728,7 @@ function StructuredFormTab({ currency, onSuccess, onCancel, initialValues, editT
             </div>
             <input
               type="text"
-              className="w-full px-3 py-2 rounded-lg bg-glass-panel border border-glass text-text-primary text-sm placeholder:text-text-muted focus:border-cyan focus:outline-none transition-colors"
+              className="w-full px-3 py-2 rounded-lg bg-glass-panel border border-glass text-text-primary text-sm placeholder:text-text-muted focus:border-accent focus:outline-none transition-colors"
               placeholder={requiresCustomer ? 'e.g., INV-202601-00042' : 'e.g., BILL-202601-00042'}
               {...register('invoiceNumber')}
               onChange={(e) => {
@@ -1751,9 +1751,9 @@ function StructuredFormTab({ currency, onSuccess, onCancel, initialValues, editT
 
           {/* Consented NEW item card — created atomically with the save */}
           {pendingNewItem && (
-            <div className="rounded-lg border border-cyan/25 bg-cyan/5 px-4 py-3 space-y-2">
+            <div className="rounded-lg border border-accent/25 bg-accent/5 px-4 py-3 space-y-2">
               <div className="flex items-center justify-between">
-                <span className="text-[12px] font-bold text-cyan uppercase tracking-wider">New item — will be added to your inventory</span>
+                <span className="text-xs font-bold text-accent uppercase tracking-wider">New item — will be added to your inventory</span>
                 <button type="button" className="text-text-muted hover:text-text-primary" aria-label="Remove new item"
                   onClick={() => setPendingNewItem(null)}>
                   <X className="h-4 w-4" />
@@ -1770,14 +1770,14 @@ function StructuredFormTab({ currency, onSuccess, onCancel, initialValues, editT
                   placeholder="auto from amount"
                   onChange={e => setPendingNewItem(p => ({ ...p, unitCostPrice: parseFloat(e.target.value) || null }))} />
               </div>
-              <p className="text-[12px] text-text-muted">
+              <p className="text-xs text-text-muted">
                 Saving this transaction also adds “{pendingNewItem.name || 'this item'}” to your inventory with the stock above.
               </p>
             </div>
           )}
 
           {!pendingNewItem && inventoryItems.length === 0 && (
-            <p className="text-[12.5px] text-text-muted">
+            <p className="text-small text-text-muted">
               No items in your inventory yet. Use the AI entry tab and it will offer to add one, or add items on the Inventory page.
             </p>
           )}
@@ -1805,7 +1805,7 @@ function StructuredFormTab({ currency, onSuccess, onCancel, initialValues, editT
                 type="number" min="1" step="1"
                 value={inventoryQty}
                 onChange={e => setInventoryQty(Math.max(1, parseInt(e.target.value, 10) || 1))}
-                className="w-full px-3 py-2 rounded-lg bg-glass-panel border border-glass text-text-primary text-sm focus:border-cyan focus:outline-none transition-colors"
+                className="w-full px-3 py-2 rounded-lg bg-glass-panel border border-glass text-text-primary text-sm focus:border-accent focus:outline-none transition-colors"
               />
             </div>
           </div>
@@ -1831,7 +1831,7 @@ function StructuredFormTab({ currency, onSuccess, onCancel, initialValues, editT
               const valuationAfter = Math.round(newStock * newAvgCost * 100) / 100
               return (
                 <div className="pt-2 border-t border-positive/15 space-y-2">
-                  <div className="grid grid-cols-3 gap-2 text-[12.5px]">
+                  <div className="grid grid-cols-3 gap-2 text-small">
                     <div>
                       <span className="block text-text-muted">Stock</span>
                       <span className="text-text-primary font-semibold tabular-nums">
@@ -1843,7 +1843,7 @@ function StructuredFormTab({ currency, onSuccess, onCancel, initialValues, editT
                       <span className="text-text-primary font-semibold tabular-nums">
                         {formatCurrency(item.unitCostPrice, currency)}
                         {newAvgCost !== item.unitCostPrice && (
-                          <> → <span className="text-cyan">{formatCurrency(newAvgCost, currency)}</span></>
+                          <> → <span className="text-accent">{formatCurrency(newAvgCost, currency)}</span></>
                         )}
                       </span>
                     </div>
@@ -1852,12 +1852,12 @@ function StructuredFormTab({ currency, onSuccess, onCancel, initialValues, editT
                       <span className="text-text-primary font-semibold tabular-nums">
                         {formatCurrency(valuationAfter, currency)}
                       </span>
-                      <span className="ml-1 text-positive text-[12px]">
+                      <span className="ml-1 text-positive text-xs">
                         +{formatCurrency(Math.round((valuationAfter - valuationBefore) * 100) / 100, currency)}
                       </span>
                     </div>
                   </div>
-                  <p className="text-[12.5px] text-text-muted">
+                  <p className="text-small text-text-muted">
                     Stock will be <span className="text-positive font-medium">incremented</span> at a
                     weighted-average cost (DR Inventory). No separate journal — this transaction funds it.
                   </p>
@@ -1873,16 +1873,16 @@ function StructuredFormTab({ currency, onSuccess, onCancel, initialValues, editT
             const crossesReorder = newStock >= 0 && newStock <= item.reorderLevel && item.currentStock > item.reorderLevel
             return (
               <div className="pt-2 border-t border-positive/15 space-y-2">
-                <div className="grid grid-cols-3 gap-2 text-[12.5px]">
+                <div className="grid grid-cols-3 gap-2 text-small">
                   <div>
                     <span className="block text-text-muted">Stock</span>
                     <span className="text-text-primary font-semibold tabular-nums">
-                      {item.currentStock} → <span className={cn(insufficient ? 'text-negative' : 'text-amber')}>{newStock}</span> {unit}
+                      {item.currentStock} → <span className={cn(insufficient ? 'text-negative' : 'text-highlight')}>{newStock}</span> {unit}
                     </span>
                   </div>
                   <div>
                     <span className="block text-text-muted">Est. COGS</span>
-                    <span className="text-amber font-semibold tabular-nums">{formatCurrency(cogsEst, currency)}</span>
+                    <span className="text-highlight font-semibold tabular-nums">{formatCurrency(cogsEst, currency)}</span>
                   </div>
                   <div>
                     <span className="block text-text-muted">Stock value</span>
@@ -1890,18 +1890,18 @@ function StructuredFormTab({ currency, onSuccess, onCancel, initialValues, editT
                   </div>
                 </div>
                 {insufficient ? (
-                  <p className="text-[12.5px] text-negative font-semibold">
+                  <p className="text-small text-negative font-semibold">
                     ⚠ Insufficient stock — only {item.currentStock} {unit} available. This sale will be rejected.
                   </p>
                 ) : crossesReorder ? (
-                  <p className="text-[12.5px] text-negative font-medium">
+                  <p className="text-small text-negative font-medium">
                     ⚠ This sale drops stock to the reorder level ({item.reorderLevel} {unit}) — a reorder alert will fire.
                   </p>
                 ) : item.currentStock <= item.reorderLevel ? (
-                  <p className="text-[12.5px] text-negative">⚠ Already below reorder level — {item.currentStock} {unit} remaining.</p>
+                  <p className="text-small text-negative">⚠ Already below reorder level — {item.currentStock} {unit} remaining.</p>
                 ) : null}
-                <p className="text-[12.5px] text-text-muted">
-                  Stock will be <span className="text-amber font-medium">decremented</span> and COGS auto-posted
+                <p className="text-small text-text-muted">
+                  Stock will be <span className="text-highlight font-medium">decremented</span> and COGS auto-posted
                   (DR Cost of Goods Sold · CR Inventory).
                 </p>
               </div>
@@ -1928,7 +1928,7 @@ function StructuredFormTab({ currency, onSuccess, onCancel, initialValues, editT
                 <div className="flex items-center justify-between mb-1">
                   <label className="block text-xs font-medium text-text-secondary">Invoice / Bill Reference</label>
                   {invoiceAutoGenerated && watchedInvoiceNumber?.trim() && (
-                    <span className="text-[12px] text-cyan/70 flex items-center gap-1">
+                    <span className="text-xs text-accent/70 flex items-center gap-1">
                       <Sparkles className="h-2.5 w-2.5" />
                       Auto-generated — type to override
                     </span>
@@ -1936,7 +1936,7 @@ function StructuredFormTab({ currency, onSuccess, onCancel, initialValues, editT
                 </div>
                 <input
                   type="text"
-                  className="w-full px-3 py-2 rounded-lg bg-glass-panel border border-glass text-text-primary text-sm placeholder:text-text-muted focus:border-cyan focus:outline-none transition-colors"
+                  className="w-full px-3 py-2 rounded-lg bg-glass-panel border border-glass text-text-primary text-sm placeholder:text-text-muted focus:border-accent focus:outline-none transition-colors"
                   placeholder="e.g., INV-202601-00042 or BILL-202601-00042"
                   {...register('invoiceNumber')}
                   onChange={(e) => {
@@ -1977,13 +1977,13 @@ function StructuredFormTab({ currency, onSuccess, onCancel, initialValues, editT
                 />
                 {/* Live conversion preview */}
                 {convPreview && (
-                  <div className="flex items-center gap-2 rounded-lg border border-cyan/20 bg-cyan/5 px-3 py-2 text-xs">
+                  <div className="flex items-center gap-2 rounded-lg border border-accent/20 bg-accent/5 px-3 py-2 text-xs">
                     <span className="text-text-muted">Preview:</span>
                     <span className="font-mono font-semibold text-text-primary">
                       {watchedAmount?.toLocaleString()} {watch('txnCurrency')}
                     </span>
                     <span className="text-text-muted">→</span>
-                    <span className="font-mono font-bold text-cyan">
+                    <span className="font-mono font-bold text-accent">
                       {convPreview.converted?.toLocaleString(undefined, { maximumFractionDigits: 2 })} {currency}
                     </span>
                     <span className="ml-auto text-text-muted">@ {convPreview.rate}</span>
@@ -2000,7 +2000,7 @@ function StructuredFormTab({ currency, onSuccess, onCancel, initialValues, editT
             <div>
               <label className="block text-xs font-medium text-text-secondary mb-1">Notes (internal)</label>
               <textarea rows={2} placeholder="Optional internal notes about this transaction…"
-                className="w-full px-3 py-2 rounded-lg bg-glass-panel border border-glass text-text-primary text-sm placeholder:text-text-muted focus:border-cyan focus:outline-none resize-none transition-colors"
+                className="w-full px-3 py-2 rounded-lg bg-glass-panel border border-glass text-text-primary text-sm placeholder:text-text-muted focus:border-accent focus:outline-none resize-none transition-colors"
                 {...register('notes')} />
             </div>
           </div>
@@ -2013,9 +2013,9 @@ function StructuredFormTab({ currency, onSuccess, onCancel, initialValues, editT
         <label className="flex items-center gap-3 cursor-pointer group">
           <div className="relative flex items-center">
             <input type="checkbox" className="peer sr-only" {...register('isInstallment')} />
-            <div className="h-6 w-11 rounded-full bg-charcoal border border-glass peer-checked:bg-cyan peer-checked:border-cyan transition-colors after:absolute after:left-[2px] after:top-[2px] after:h-5 after:w-5 after:rounded-full after:bg-navy-2 after:transition-all peer-checked:after:translate-x-full" />
+            <div className="h-6 w-11 rounded-full bg-charcoal border border-glass peer-checked:bg-accent peer-checked:border-accent transition-colors after:absolute after:left-[2px] after:top-[2px] after:h-5 after:w-5 after:rounded-full after:bg-navy-2 after:transition-all peer-checked:after:translate-x-full" />
           </div>
-          <span className="text-sm font-medium text-text-primary group-hover:text-cyan transition-colors">
+          <span className="text-sm font-medium text-text-primary group-hover:text-accent transition-colors">
             Set up as Installment / EMI Plan
           </span>
         </label>
@@ -2068,24 +2068,24 @@ function StructuredFormTab({ currency, onSuccess, onCancel, initialValues, editT
 
       {/* Pre-save warnings — advisory only, shown in create mode after first submit attempt */}
       {!isEditMode && preSaveWarnings.length > 0 && (
-        <div className="rounded-lg border border-amber/30 bg-amber/10 p-3 space-y-2 animate-fade-in">
+        <div className="rounded-lg border border-highlight/30 bg-highlight/10 p-3 space-y-2 animate-fade-in">
           <div className="flex items-center justify-between gap-2">
             <div className="flex items-center gap-2">
-              <AlertTriangle className="h-4 w-4 text-amber flex-shrink-0" />
-              <p className="text-sm font-semibold text-amber">Advisory warnings — review before saving</p>
+              <AlertTriangle className="h-4 w-4 text-highlight flex-shrink-0" />
+              <p className="text-sm font-semibold text-highlight">Advisory warnings — review before saving</p>
             </div>
             <button type="button" onClick={() => { setPreSaveWarnings([]); setPreSaveAcknowledged(false) }} className="text-text-muted hover:text-text-primary flex-shrink-0">
               <X className="h-3.5 w-3.5" />
             </button>
           </div>
-          <ul className="text-xs text-amber/90 list-disc list-inside space-y-1">
+          <ul className="text-xs text-highlight/90 list-disc list-inside space-y-1">
             {preSaveWarnings.map((w, i) => <li key={i}>{applyGAAPGloss(w)}</li>)}
           </ul>
           {/* FIX: was !preSaveAcknowledged — inverted. Now shows the hint exactly when warnings are present */}
           {preSaveAcknowledged && (
-            <p className="text-xs text-amber/70 font-medium">
+            <p className="text-xs text-highlight/70 font-medium">
               ⚠ These are advisory only — your transaction is valid. Click{' '}
-              <span className="font-bold text-amber">
+              <span className="font-bold text-highlight">
                 {watch('isInstallment') ? 'Create Instalment Plan' : 'Record Transaction'}
               </span>{' '}
               again to save anyway.
@@ -2184,13 +2184,13 @@ function ExcelTab({ onSuccess, onCancel }) {
           <p className="text-sm font-semibold text-text-primary">Import finished</p>
           <div className="mt-1 flex flex-wrap gap-3 text-xs">
             <span className="text-positive">✓ {posted} recorded</span>
-            {pending > 0 && <span className="text-amber">🕓 {pending} sent for approval</span>}
+            {pending > 0 && <span className="text-highlight">🕓 {pending} sent for approval</span>}
             {failed.length > 0 && <span className="text-negative">✕ {failed.length} could not be recorded</span>}
           </div>
         </div>
 
         {flagged > 0 && (
-          <div className="rounded-lg border border-amber/20 bg-amber/5 px-3 py-2 text-xs text-amber">
+          <div className="rounded-lg border border-highlight/20 bg-highlight/5 px-3 py-2 text-xs text-highlight">
             <AlertTriangle className="inline h-3 w-3 mr-1" />
             {flagged} row{flagged !== 1 ? 's were' : ' was'} imported at medium confidence — worth a quick spot-check in the transaction list.
           </div>
@@ -2204,7 +2204,7 @@ function ExcelTab({ onSuccess, onCancel }) {
               These rows were NOT recorded — fix them and import again:
             </span>
             <button type="button" onClick={handleDownloadFailed}
-              className="inline-flex items-center gap-1 rounded-md border border-negative/30 px-2 py-1 text-[11px] font-medium text-negative hover:bg-negative/10 transition-colors shrink-0">
+              className="inline-flex items-center gap-1 rounded-md border border-negative/30 px-2 py-1 text-label font-medium text-negative hover:bg-negative/10 transition-colors shrink-0">
               <Download className="h-3 w-3" /> Download these rows (CSV)
             </button>
           </div>
@@ -2241,15 +2241,15 @@ function ExcelTab({ onSuccess, onCancel }) {
             <p className="text-sm font-semibold text-text-primary">
               {rows.length} rows ready to import
               {preview.invalidCount > 0 && (
-                <span className="ml-2 text-xs text-amber">({preview.invalidCount} skipped)</span>
+                <span className="ml-2 text-xs text-highlight">({preview.invalidCount} skipped)</span>
               )}
             </p>
             <div className="flex flex-wrap gap-2 text-xs">
               {fi.format && <span className="text-text-muted font-mono uppercase">{fi.format}</span>}
               {stats.high   > 0 && <span className="text-positive">● {stats.high} High</span>}
-              {stats.medium > 0 && <span className="text-amber">● {stats.medium} Medium</span>}
+              {stats.medium > 0 && <span className="text-highlight">● {stats.medium} Medium</span>}
               {stats.low    > 0 && <span className="text-negative">● {stats.low} Low confidence</span>}
-              {dupes        > 0 && <span className="text-amber">⚠ {dupes} duplicate{dupes > 1 ? 's' : ''}</span>}
+              {dupes        > 0 && <span className="text-highlight">⚠ {dupes} duplicate{dupes > 1 ? 's' : ''}</span>}
             </div>
           </div>
           <Button variant="ghost" size="sm" onClick={() => { setStep('upload'); setPreview(null); setRows([]) }}
@@ -2270,7 +2270,7 @@ function ExcelTab({ onSuccess, onCancel }) {
                 {preview.errors.map((e, i) => (
                   <li key={i} className="px-3 py-1.5 text-xs text-negative">
                     <span className="font-semibold">Row {e.row}</span>
-                    {e.field && e.field !== 'general' && <span className="ml-1 rounded bg-negative/10 px-1 font-mono text-[12px]">{e.field}</span>}
+                    {e.field && e.field !== 'general' && <span className="ml-1 rounded bg-negative/10 px-1 font-mono text-xs">{e.field}</span>}
                     {' '}{e.message}
                   </li>
                 ))}
@@ -2298,12 +2298,12 @@ function ExcelTab({ onSuccess, onCancel }) {
 
                 return (
                   <tr key={idx}
-                    className={`transition-colors ${hasDupe ? 'bg-amber/5' : ''} ${isLowConf && !hasDupe ? 'bg-negative/5' : ''} ${isEditing ? 'bg-cyan/5' : 'hover:bg-glass-hover'}`}>
+                    className={`transition-colors ${hasDupe ? 'bg-highlight/5' : ''} ${isLowConf && !hasDupe ? 'bg-negative/5' : ''} ${isEditing ? 'bg-accent/5' : 'hover:bg-glass-hover'}`}>
                     <td className="px-2 py-1.5 text-text-muted w-8 text-center">{row.originalRow ?? idx + 2}</td>
                     <td className="px-2 py-1.5 whitespace-nowrap text-text-secondary">
                       {isEditing ? (
                         <input type="date"
-                          className="w-28 rounded bg-glass-panel border border-cyan/40 px-1.5 py-0.5 text-text-primary focus:outline-none"
+                          className="w-28 rounded bg-glass-panel border border-accent/40 px-1.5 py-0.5 text-text-primary focus:outline-none"
                           value={fmtDate(row.transactionDate)}
                           onChange={e => updateRow(idx, 'transactionDate', e.target.value)} />
                       ) : fmtDate(row.transactionDate)}
@@ -2311,25 +2311,25 @@ function ExcelTab({ onSuccess, onCancel }) {
                     <td className="px-2 py-1.5 max-w-[180px]">
                       {isEditing ? (
                         <input autoFocus
-                          className="w-full rounded bg-glass-panel border border-cyan/40 px-1.5 py-0.5 text-text-primary focus:outline-none"
+                          className="w-full rounded bg-glass-panel border border-accent/40 px-1.5 py-0.5 text-text-primary focus:outline-none"
                           value={row.description || ''}
                           onChange={e => updateRow(idx, 'description', e.target.value)}
                           onBlur={() => setEditingIdx(null)}
                           onKeyDown={e => e.key === 'Enter' && setEditingIdx(null)} />
                       ) : (
-                        <span className="block truncate text-text-primary cursor-text hover:text-cyan"
+                        <span className="block truncate text-text-primary cursor-text hover:text-accent"
                           title={`${row.description}${hasWarning ? '\n⚠ ' + row.warnings.join('\n⚠ ') : ''}`}
                           onClick={() => setEditingIdx(idx)}>
                           {row.description}
-                          {hasInferred && <span title={`AI inferred: ${row.inferredFields.join(', ')}`} className="ml-1 text-cyan">✦</span>}
-                          {hasDupe     && <span title="Possible duplicate" className="ml-1 text-amber">⚠</span>}
+                          {hasInferred && <span title={`AI inferred: ${row.inferredFields.join(', ')}`} className="ml-1 text-accent">✦</span>}
+                          {hasDupe     && <span title="Possible duplicate" className="ml-1 text-highlight">⚠</span>}
                         </span>
                       )}
                     </td>
                     <td className="px-2 py-1.5 font-medium text-text-primary whitespace-nowrap text-right">
                       {isEditing ? (
                         <input type="number"
-                          className="w-24 rounded bg-glass-panel border border-cyan/40 px-1.5 py-0.5 text-text-primary text-right focus:outline-none"
+                          className="w-24 rounded bg-glass-panel border border-accent/40 px-1.5 py-0.5 text-text-primary text-right focus:outline-none"
                           value={row.amount}
                           onChange={e => updateRow(idx, 'amount', parseFloat(e.target.value) || 0)} />
                       ) : fmtAmt(row.amount)}
@@ -2351,7 +2351,7 @@ function ExcelTab({ onSuccess, onCancel }) {
           </table>
         </div>
         {rows.length > 0 && (
-          <p className="text-center text-[12px] text-text-muted">
+          <p className="text-center text-xs text-text-muted">
             Click any description to edit inline · ✦ = AI-inferred · ⚠ = possible duplicate · <span className="text-negative">red row = fuzzy account match</span>
           </p>
         )}
@@ -2373,7 +2373,7 @@ function ExcelTab({ onSuccess, onCancel }) {
       </p>
       <div
         className={`relative flex flex-col items-center justify-center gap-3 rounded-2xl border-2 border-dashed p-10 transition-colors cursor-pointer ${
-          dragOver ? 'border-cyan bg-cyan/5' : 'border-glass hover:border-cyan/40 hover:bg-glass-hover'
+          dragOver ? 'border-accent bg-accent/5' : 'border-glass hover:border-accent/40 hover:bg-glass-hover'
         }`}
         onDragOver={(e) => { e.preventDefault(); setDragOver(true) }}
         onDragLeave={() => setDragOver(false)}
@@ -2381,7 +2381,7 @@ function ExcelTab({ onSuccess, onCancel }) {
         onClick={() => fileInputRef.current?.click()}
       >
         {excelPreview.isPending
-          ? <Loader2 className="h-10 w-10 text-cyan animate-spin" />
+          ? <Loader2 className="h-10 w-10 text-accent animate-spin" />
           : <Upload  className="h-10 w-10 text-text-muted" />
         }
         <div className="text-center">
@@ -2394,7 +2394,7 @@ function ExcelTab({ onSuccess, onCancel }) {
       <div className="rounded-lg border border-glass bg-glass-panel p-3 text-xs">
         <p className="font-medium text-text-secondary mb-1">Required columns (in any order, fuzzy-matched):</p>
         <p className="font-mono text-text-muted">date · description · amount · debit account · credit account</p>
-        <p className="font-mono text-text-muted mt-0.5 text-[12px]">Optional: type · mode · customer · vendor · reference · notes · tax · currency</p>
+        <p className="font-mono text-text-muted mt-0.5 text-xs">Optional: type · mode · customer · vendor · reference · notes · tax · currency</p>
       </div>
       <div className="flex justify-end pt-2 border-t border-glass">
         <Button variant="ghost" onClick={onCancel}>Cancel</Button>

@@ -38,10 +38,10 @@ import { cn } from '@/utils/cn'
 function SectionLabel({ label, note }) {
   return (
     <div className="flex items-center gap-3 pt-1">
-      <span className="text-[12px] font-bold text-text-muted uppercase tracking-widest whitespace-nowrap">
+      <span className="text-xs font-bold text-text-muted uppercase tracking-widest whitespace-nowrap">
         {label}
       </span>
-      {note && <span className="text-[12px] text-text-muted/60">{note}</span>}
+      {note && <span className="text-xs text-text-muted/60">{note}</span>}
       <div className="flex-1 h-px bg-glass" />
     </div>
   )
@@ -116,7 +116,7 @@ function ItemForm({ initial, onClose, currency }) {
     >
       <div className="space-y-5 pb-1">
         {/* Subtitle */}
-        <p className="text-[12.5px] text-text-muted -mt-4">
+        <p className="text-small text-text-muted -mt-4">
           {isEdit
             ? 'Update the name, price, or other details'
             : 'Just the basics to start — name and price. The rest is optional.'}
@@ -222,7 +222,7 @@ function ItemForm({ initial, onClose, currency }) {
                   <span className="ml-1 text-text-muted font-normal">(leave as-is if unsure)</span>
                 </label>
                 <select
-                  className="w-full px-3 py-2 rounded-lg bg-glass-panel border border-glass text-text-primary text-sm focus:border-cyan focus:outline-none transition-colors"
+                  className="w-full px-3 py-2 rounded-lg bg-glass-panel border border-glass text-text-primary text-sm focus:border-accent focus:outline-none transition-colors"
                   value={form.valuationMethod}
                   onChange={e => set('valuationMethod', e.target.value)}
                 >
@@ -237,7 +237,7 @@ function ItemForm({ initial, onClose, currency }) {
                   <span className="ml-1 text-text-muted font-normal">— emailed automatically when stock runs low</span>
                 </label>
                 <select
-                  className="w-full px-3 py-2 rounded-lg bg-glass-panel border border-glass text-text-primary text-sm focus:border-cyan focus:outline-none transition-colors"
+                  className="w-full px-3 py-2 rounded-lg bg-glass-panel border border-glass text-text-primary text-sm focus:border-accent focus:outline-none transition-colors"
                   value={form.preferredVendorId}
                   onChange={e => set('preferredVendorId', e.target.value)}
                 >
@@ -254,7 +254,7 @@ function ItemForm({ initial, onClose, currency }) {
 
               <textarea
                 rows={2}
-                className="w-full px-3 py-2 rounded-lg bg-glass-panel border border-glass text-text-primary text-sm placeholder:text-text-muted focus:border-cyan focus:outline-none resize-none transition-colors"
+                className="w-full px-3 py-2 rounded-lg bg-glass-panel border border-glass text-text-primary text-sm placeholder:text-text-muted focus:border-accent focus:outline-none resize-none transition-colors"
                 value={form.description}
                 onChange={e => set('description', e.target.value)}
                 placeholder="Any notes — supplier details, where it's stored, variants…"
@@ -420,7 +420,7 @@ function AddStockForm({ item, onClose, currency, hideHeader = false }) {
               </option>
             ))}
           </select>
-          <p className="text-[12px] text-text-muted mt-1">
+          <p className="text-xs text-text-muted mt-1">
             Posts: DR Inventory · CR Accounts Payable (vendor balance increases)
           </p>
         </div>
@@ -442,7 +442,7 @@ function AddStockForm({ item, onClose, currency, hideHeader = false }) {
               </option>
             ))}
           </select>
-          <p className="text-[12px] text-text-muted mt-1">
+          <p className="text-xs text-text-muted mt-1">
             Posts: DR Inventory · CR {paymentMode === 'bank' ? 'Bank' : 'Cash'}
           </p>
         </div>
@@ -481,8 +481,8 @@ function MovementBadge({ type }) {
   const isIn = /purchase/i.test(type)
   return (
     <span className={cn(
-      'inline-flex items-center gap-1 rounded px-1.5 py-px text-[12px] font-semibold',
-      isIn ? 'bg-positive/10 text-positive' : 'bg-amber/10 text-amber'
+      'inline-flex items-center gap-1 rounded px-1.5 py-px text-xs font-semibold',
+      isIn ? 'bg-positive/10 text-positive' : 'bg-highlight/10 text-highlight'
     )}>
       {isIn ? <ArrowDownLeft className="h-3 w-3" /> : <ArrowUpRight className="h-3 w-3" />}
       {type}
@@ -499,26 +499,26 @@ function StockLedgerModal({ item, onClose, currency }) {
   return (
     <Modal isOpen={true} onClose={onClose} title={`Stock history — ${item.name}`} className="sm:max-w-3xl">
       <div className="space-y-4 pb-1">
-        <p className="text-[12.5px] text-text-muted -mt-4">
+        <p className="text-small text-text-muted -mt-4">
           Every time you bought or sold this item, oldest first, with what's left after each.
         </p>
 
         {/* Summary chips */}
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
           <div className="rounded-lg border border-positive/20 bg-positive/5 p-3">
-            <span className="block text-[12px] text-text-muted uppercase tracking-wider">Total In</span>
+            <span className="block text-xs text-text-muted uppercase tracking-wider">Total In</span>
             <span className="text-lg font-black text-positive tabular-nums">+{summary.totalIn}</span>
           </div>
-          <div className="rounded-lg border border-amber/20 bg-amber/5 p-3">
-            <span className="block text-[12px] text-text-muted uppercase tracking-wider">Total Out</span>
-            <span className="text-lg font-black text-amber tabular-nums">−{summary.totalOut}</span>
+          <div className="rounded-lg border border-highlight/20 bg-highlight/5 p-3">
+            <span className="block text-xs text-text-muted uppercase tracking-wider">Total Out</span>
+            <span className="text-lg font-black text-highlight tabular-nums">−{summary.totalOut}</span>
           </div>
           <div className="rounded-lg border border-glass bg-glass-panel p-3">
-            <span className="block text-[12px] text-text-muted uppercase tracking-wider">Current Stock</span>
+            <span className="block text-xs text-text-muted uppercase tracking-wider">Current Stock</span>
             <span className="text-lg font-black text-text-primary tabular-nums">{summary.currentStock} {item.unit}</span>
           </div>
           <div className="rounded-lg border border-glass bg-glass-panel p-3">
-            <span className="block text-[12px] text-text-muted uppercase tracking-wider">Stock Value</span>
+            <span className="block text-xs text-text-muted uppercase tracking-wider">Stock Value</span>
             <span className="text-lg font-black text-text-primary tabular-nums">{formatCurrency(stockValue, currency)}</span>
           </div>
         </div>
@@ -527,7 +527,7 @@ function StockLedgerModal({ item, onClose, currency }) {
         <div className="max-h-[50vh] overflow-y-auto rounded-lg border border-glass">
           <table className="w-full text-xs">
             <thead className="sticky top-0 bg-navy/95 backdrop-blur">
-              <tr className="text-text-muted uppercase tracking-wider text-[12px]">
+              <tr className="text-text-muted uppercase tracking-wider text-xs">
                 <th className="text-left  font-semibold px-3 py-2">Date</th>
                 <th className="text-left  font-semibold px-3 py-2">Description</th>
                 <th className="text-left  font-semibold px-3 py-2">Type</th>
@@ -557,7 +557,7 @@ function StockLedgerModal({ item, onClose, currency }) {
                   <td className="px-3 py-2 text-text-primary max-w-[16rem] truncate" title={l.description}>{l.description || '—'}</td>
                   <td className="px-3 py-2"><MovementBadge type={l.type} /></td>
                   <td className="px-3 py-2 text-right tabular-nums text-positive">{l.qtyIn  ? `+${l.qtyIn}`  : '—'}</td>
-                  <td className="px-3 py-2 text-right tabular-nums text-amber">{l.qtyOut ? `−${l.qtyOut}` : '—'}</td>
+                  <td className="px-3 py-2 text-right tabular-nums text-highlight">{l.qtyOut ? `−${l.qtyOut}` : '—'}</td>
                   <td className="px-3 py-2 text-right tabular-nums font-semibold text-text-primary">{l.balance}</td>
                   <td className="px-3 py-2 text-right tabular-nums text-text-secondary">{formatCurrency(l.amount, currency)}</td>
                 </tr>
@@ -656,9 +656,9 @@ export default function InventoryPage() {
         <div className="min-w-0">
           <p className="font-semibold text-text-primary text-sm truncate">{r.name}</p>
           <div className="flex flex-wrap gap-1.5 mt-0.5">
-            {r.sku     && <span className="text-[12px] font-mono text-text-muted bg-glass-panel rounded px-1.5 py-px">{r.sku}</span>}
-            {r.barcode && <span className="text-[12px] font-mono text-text-muted bg-glass-panel rounded px-1.5 py-px">📦 {r.barcode}</span>}
-            {r.category && <span className="text-[12px] text-cyan bg-cyan/10 rounded px-1.5 py-px">{r.category}</span>}
+            {r.sku     && <span className="text-xs font-mono text-text-muted bg-glass-panel rounded px-1.5 py-px">{r.sku}</span>}
+            {r.barcode && <span className="text-xs font-mono text-text-muted bg-glass-panel rounded px-1.5 py-px">📦 {r.barcode}</span>}
+            {r.category && <span className="text-xs text-accent bg-accent/10 rounded px-1.5 py-px">{r.category}</span>}
           </div>
         </div>
       ),
@@ -703,7 +703,7 @@ export default function InventoryPage() {
       key: 'method',
       header: 'Valuation',
       render: (r) => (
-        <span className="text-[12px] text-text-muted uppercase tracking-wide">
+        <span className="text-xs text-text-muted uppercase tracking-wide">
           {r.valuationMethod === 'fifo' ? 'FIFO' : 'W.Avg'}
         </span>
       ),
@@ -712,7 +712,7 @@ export default function InventoryPage() {
       key: 'tax',
       header: 'Tax %',
       render: (r) => r.taxRate != null
-        ? <span className="text-xs text-amber font-mono">{r.taxRate}%</span>
+        ? <span className="text-xs text-highlight font-mono">{r.taxRate}%</span>
         : <span className="text-text-muted text-xs">—</span>,
     },
     {
@@ -728,19 +728,19 @@ export default function InventoryPage() {
       render: (r) => (
         <div className="flex items-center gap-2">
           <button type="button" onClick={e => { e.stopPropagation(); setAddStockId(r._id === addStockId ? null : r._id) }}
-            className="text-[12.5px] text-positive hover:underline font-semibold">
+            className="text-small text-positive hover:underline font-semibold">
             Add stock
           </button>
           <button type="button" onClick={e => { e.stopPropagation(); setLedgerId(r._id) }}
-            className="inline-flex items-center gap-1 text-[12.5px] text-text-secondary hover:text-text-primary hover:underline font-semibold">
+            className="inline-flex items-center gap-1 text-small text-text-secondary hover:text-text-primary hover:underline font-semibold">
             <History className="h-3 w-3" /> History
           </button>
           <button type="button" onClick={e => { e.stopPropagation(); setEditItem(r) }}
-            className="text-[12.5px] text-cyan hover:underline font-semibold">
+            className="text-small text-accent hover:underline font-semibold">
             Edit
           </button>
           <button type="button" onClick={e => { e.stopPropagation(); toggleActive.mutate(r._id) }}
-            className="text-[12.5px] text-text-muted hover:text-text-primary hover:underline">
+            className="text-small text-text-muted hover:text-text-primary hover:underline">
             {r.isActive !== false ? 'Deactivate' : 'Activate'}
           </button>
         </div>
@@ -770,19 +770,19 @@ export default function InventoryPage() {
       {valuation && (
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
           <div className="premium-card p-5 flex flex-col gap-1 border-positive/30 bg-positive/5">
-            <span className="text-[12.5px] text-text-muted font-semibold uppercase tracking-wider">Total Stock Value</span>
+            <span className="text-small text-text-muted font-semibold uppercase tracking-wider">Total Stock Value</span>
             <span className="text-2xl font-black text-text-primary">{formatCurrency(valuation.totalValue, currency)}</span>
             <span className="text-xs text-text-muted">{valuation.itemCount} active items</span>
           </div>
           <div className="premium-card p-5 flex flex-col gap-1">
-            <span className="text-[12.5px] text-text-muted font-semibold uppercase tracking-wider">Low Stock Alerts</span>
+            <span className="text-small text-text-muted font-semibold uppercase tracking-wider">Low Stock Alerts</span>
             <span className={cn('text-2xl font-black', valuation.lowStockCount > 0 ? 'text-negative' : 'text-text-primary')}>
               {valuation.lowStockCount}
             </span>
             <span className="text-xs text-text-muted">Items below reorder level</span>
           </div>
           <div className="premium-card p-5 flex flex-col gap-1">
-            <span className="text-[12.5px] text-text-muted font-semibold uppercase tracking-wider">Total Items</span>
+            <span className="text-small text-text-muted font-semibold uppercase tracking-wider">Total Items</span>
             <span className="text-2xl font-black text-text-primary">{filtered.length}</span>
             <span className="text-xs text-text-muted">{items.filter(i => i.isActive !== false).length} active</span>
           </div>

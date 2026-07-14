@@ -80,7 +80,7 @@ export default function HowItWorks() {
               </div>
               <div className="p-8 pt-6">
                 <h3 className="font-display mb-3 text-2xl font-semibold text-[#F5F0E8]">{s.title}</h3>
-                <p className="mb-6 text-[15px] leading-relaxed text-[#A89B8C]">{s.body}</p>
+                <p className="mb-6 text-md leading-relaxed text-[#A89B8C]">{s.body}</p>
                 <ul className="space-y-2.5">
                   {s.points.map((p) => (
                     <li key={p} className="flex items-center gap-2.5 text-sm text-[#C8A96E]">

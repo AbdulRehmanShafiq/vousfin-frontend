@@ -66,7 +66,7 @@ export default function EditorActionBar({
         <div className="flex items-center gap-3 min-w-0">
           <div className="min-w-0">
             <div className="flex items-center gap-2 flex-wrap">
-              <span className="text-[12px] uppercase tracking-widest text-text-muted font-bold">
+              <span className="text-xs uppercase tracking-widest text-text-muted font-bold">
                 {isBill ? 'Bill' : 'Invoice'}
               </span>
               {docNumber && (
@@ -75,7 +75,7 @@ export default function EditorActionBar({
               {state && <InvoiceStatusBadge state={state} kind={kind} />}
             </div>
             {isReadOnly && (
-              <p className="text-[12.5px] text-text-muted mt-0.5">
+              <p className="text-small text-text-muted mt-0.5">
                 Read-only — use the buttons here to change status.
               </p>
             )}

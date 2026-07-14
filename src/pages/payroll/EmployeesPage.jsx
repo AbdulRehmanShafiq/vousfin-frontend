@@ -34,12 +34,12 @@ const blank = {
 function field(label, child) {
   return (
     <label className="flex flex-col gap-1">
-      <span className="text-[11.5px] text-text-muted">{label}</span>
+      <span className="text-label text-text-muted">{label}</span>
       {child}
     </label>
   )
 }
-const inputCls = 'px-3 py-2 rounded-lg border border-glass bg-glass-panel/40 text-[13px] text-text-primary focus:outline-none focus:border-cyan/40'
+const inputCls = 'px-3 py-2 rounded-lg border border-glass bg-glass-panel/40 text-small text-text-primary focus:outline-none focus:border-accent/40'
 
 function Form({ initial, departments, onSave, onCancel, isPending }) {
   const [form, setForm] = useState(initial || blank)
@@ -93,7 +93,7 @@ function Form({ initial, departments, onSave, onCancel, isPending }) {
       </div>
 
       <div className="border-t border-glass pt-3">
-        <p className="text-[12.5px] font-semibold text-text-secondary mb-2">Monthly salary</p>
+        <p className="text-small font-semibold text-text-secondary mb-2">Monthly salary</p>
         <div className="grid sm:grid-cols-3 gap-3">
           {field('Effective from', <input type="date" value={s.effectiveFrom} onChange={setS('effectiveFrom')} className={inputCls} />)}
           {field('Basic pay', <input type="number" value={s.basic} onChange={setS('basic')} placeholder="0" className={inputCls} />)}
@@ -107,7 +107,7 @@ function Form({ initial, departments, onSave, onCancel, isPending }) {
 
       <div className="border-t border-glass pt-3 grid sm:grid-cols-2 gap-4">
         <div>
-          <label className="flex items-center gap-2 text-[12.5px] text-text-secondary mb-2">
+          <label className="flex items-center gap-2 text-small text-text-secondary mb-2">
             <input type="checkbox" checked={s.eobi.enabled} onChange={setS('eobi.enabled')} /> Pension (EOBI)
           </label>
           {s.eobi.enabled && (
@@ -118,7 +118,7 @@ function Form({ initial, departments, onSave, onCancel, isPending }) {
           )}
         </div>
         <div>
-          <label className="flex items-center gap-2 text-[12.5px] text-text-secondary mb-2">
+          <label className="flex items-center gap-2 text-small text-text-secondary mb-2">
             <input type="checkbox" checked={s.providentFund.enabled} onChange={setS('providentFund.enabled')} /> Provident fund
           </label>
           {s.providentFund.enabled && (
@@ -131,8 +131,8 @@ function Form({ initial, departments, onSave, onCancel, isPending }) {
       </div>
 
       <div className="flex items-center justify-end gap-2">
-        <button type="button" onClick={onCancel} className="px-3 py-1.5 rounded-lg text-[12.5px] text-text-muted hover:bg-glass-hover">Cancel</button>
-        <button type="submit" disabled={isPending} className="btn-gradient inline-flex items-center gap-1.5 px-4 py-1.5 rounded-lg text-[12.5px] font-semibold disabled:opacity-50">
+        <button type="button" onClick={onCancel} className="px-3 py-1.5 rounded-lg text-small text-text-muted hover:bg-glass-hover">Cancel</button>
+        <button type="submit" disabled={isPending} className="btn-gradient inline-flex items-center gap-1.5 px-4 py-1.5 rounded-lg text-small font-semibold disabled:opacity-50">
           {isPending ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <Check className="h-3.5 w-3.5" />} Save
         </button>
       </div>
@@ -167,14 +167,14 @@ export default function EmployeesPage() {
     <div className="animate-fade-in pb-10 space-y-5 max-w-4xl">
       <div className="flex items-start justify-between gap-4 flex-wrap">
         <div className="flex items-center gap-3">
-          <div className="p-2 rounded-xl bg-cyan/15"><Users className="h-5 w-5 text-cyan" /></div>
+          <div className="p-2 rounded-xl bg-accent/15"><Users className="h-5 w-5 text-accent" /></div>
           <div>
             <h1 className="text-2xl font-semibold text-text-primary tracking-tight">Employees</h1>
             <p className="text-sm text-text-secondary mt-0.5">The people you pay each month and their salary setup.</p>
           </div>
         </div>
         {editing === null && (
-          <button onClick={() => setEditing('new')} className="btn-gradient inline-flex items-center gap-1.5 px-4 py-2 rounded-lg text-[12.5px] font-semibold">
+          <button onClick={() => setEditing('new')} className="btn-gradient inline-flex items-center gap-1.5 px-4 py-2 rounded-lg text-small font-semibold">
             <Plus className="h-4 w-4" /> Add employee
           </button>
         )}
@@ -185,7 +185,7 @@ export default function EmployeesPage() {
       {isLoading ? (
         <div className="space-y-2">{[1,2,3].map(i => <div key={i} className="premium-card h-14 animate-pulse" />)}</div>
       ) : employees.length === 0 && editing === null ? (
-        <div className="premium-card p-6 text-center text-[13px] text-text-secondary">
+        <div className="premium-card p-6 text-center text-small text-text-secondary">
           No employees yet. Add your first one to start running payroll.
         </div>
       ) : (
@@ -198,12 +198,12 @@ export default function EmployeesPage() {
             <div key={emp._id} className="premium-card p-3.5 flex items-center gap-3">
               <div className="min-w-0 flex-1">
                 <div className="flex items-center gap-2 flex-wrap">
-                  <span className="text-[13px] font-semibold text-text-primary">{emp.code}</span>
-                  <span className="text-[13px] text-text-secondary">{emp.fullName}</span>
-                  {emp.designation && <span className="text-[11.5px] text-text-muted">{emp.designation}</span>}
-                  {emp.status !== 'active' && <span className="text-[10.5px] text-amber">inactive</span>}
+                  <span className="text-small font-semibold text-text-primary">{emp.code}</span>
+                  <span className="text-small text-text-secondary">{emp.fullName}</span>
+                  {emp.designation && <span className="text-label text-text-muted">{emp.designation}</span>}
+                  {emp.status !== 'active' && <span className="text-label text-highlight">inactive</span>}
                 </div>
-                {emp.department && <p className="text-[11.5px] text-text-muted mt-0.5">{deptName(emp.department) || '—'}</p>}
+                {emp.department && <p className="text-label text-text-muted mt-0.5">{deptName(emp.department) || '—'}</p>}
               </div>
               <button onClick={() => setEditing(emp)} className="p-2 rounded-lg text-text-muted hover:bg-glass-hover" title="Edit">
                 <Pencil className="h-4 w-4" />

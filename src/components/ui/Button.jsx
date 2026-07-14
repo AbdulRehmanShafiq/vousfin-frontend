@@ -17,7 +17,7 @@ const variants = {
   outline: 'btn-outline',
   secondary: 'btn-outline',
   ghost: 'bg-transparent text-text-secondary border border-transparent hover:bg-glass-hover hover:text-text-primary',
-  amber: 'bg-amber/10 text-amber-2 border border-amber/20 hover:bg-amber/20 hover:border-amber/40',
+  amber: 'bg-highlight/10 text-highlight-2 border border-highlight/20 hover:bg-highlight/20 hover:border-highlight/40',
   danger: 'bg-negative-muted text-negative border border-negative/20 hover:bg-negative/20 hover:border-negative/40',
 }
 

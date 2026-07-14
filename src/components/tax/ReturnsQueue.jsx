@@ -19,8 +19,8 @@ const RETURN_DEFS = [
 const STATUS_PILL = {
   'not started': 'bg-glass-panel border-glass text-text-muted',
   draft:         'bg-glass-panel border-glass text-text-secondary',
-  validated:     'bg-cyan/10 border-cyan/25 text-cyan',
-  submitted:     'bg-amber/15 border-amber/30 text-amber',
+  validated:     'bg-accent/10 border-accent/25 text-accent',
+  submitted:     'bg-highlight/15 border-highlight/30 text-highlight',
   filed:         'bg-positive/12 border-positive/30 text-positive',
   rejected:      'bg-negative-muted border-negative/30 text-negative',
 }
@@ -52,7 +52,7 @@ export default function ReturnsQueue({ taxes = [], currency = 'PKR' }) {
   return (
     <div>
       <div className="flex items-center gap-3 mb-3">
-        <span className="text-[12.5px] font-bold uppercase tracking-widest text-text-muted">File your returns</span>
+        <span className="text-small font-bold uppercase tracking-widest text-text-muted">File your returns</span>
         <div className="flex-1 h-px bg-glass" />
       </div>
 
@@ -63,20 +63,20 @@ export default function ReturnsQueue({ taxes = [], currency = 'PKR' }) {
             <div className="min-w-0 flex-1">
               <p className="text-sm font-semibold text-text-primary leading-tight truncate">{r.label}</p>
               <div className="flex items-center gap-2 mt-1 flex-wrap">
-                <span className="text-[12px] text-text-muted">{periodLabel(r.period)}</span>
-                <span className={cn('text-[11px] font-semibold uppercase tracking-wide rounded-full border px-2 py-0.5', STATUS_PILL[r.status])}>
+                <span className="text-xs text-text-muted">{periodLabel(r.period)}</span>
+                <span className={cn('text-label font-semibold uppercase tracking-wide rounded-full border px-2 py-0.5', STATUS_PILL[r.status])}>
                   {r.status}
                 </span>
               </div>
             </div>
             <DeadlineCountdown deadline={r.deadline} muted={r.status === 'filed'} className="hidden sm:inline-flex" />
             {r.status === 'filed' ? (
-              <span className="text-[12.5px] font-semibold text-positive shrink-0">Filed ✓</span>
+              <span className="text-small font-semibold text-positive shrink-0">Filed ✓</span>
             ) : (
               <button
                 type="button"
                 onClick={() => setWizard({ returnType: r.returnType, period: r.period })}
-                className="inline-flex items-center gap-1.5 text-[12.5px] font-semibold text-cyan hover:gap-2 transition-all shrink-0"
+                className="inline-flex items-center gap-1.5 text-small font-semibold text-accent hover:gap-2 transition-all shrink-0"
               >
                 {r.status === 'validated' ? 'Review & file' : 'Prepare & file'} <ArrowRight className="h-3.5 w-3.5" />
               </button>

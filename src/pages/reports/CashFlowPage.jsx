@@ -40,7 +40,7 @@ export default function CashFlowPage() {
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div>
           <h1 className="flex items-center gap-2 text-xl sm:text-2xl font-black text-text-primary tracking-tight">
-            <PieChart className="h-6 w-6 text-cyan" />
+            <PieChart className="h-6 w-6 text-accent" />
             Cash Flow Statement
           </h1>
           <p className="text-text-secondary mt-1 text-sm">Operating, investing and financing activities</p>
@@ -90,7 +90,7 @@ export default function CashFlowPage() {
             <ReportSection title="Investing Activities" section={data.investing} currency={currency} />
             <ReportSection title="Financing Activities" section={data.financing} currency={currency} />
 
-            <div className="flex items-center justify-between gap-3 py-2.5 px-3.5 sm:py-4 sm:px-4 border-t-2 border-cyan bg-cyan/5 rounded-lg">
+            <div className="flex items-center justify-between gap-3 py-2.5 px-3.5 sm:py-4 sm:px-4 border-t-2 border-accent bg-accent/5 rounded-lg">
               <span className="min-w-0 truncate text-sm sm:text-lg font-black text-text-primary">Net Increase (Decrease) in Cash</span>
               <span className={`whitespace-nowrap text-sm sm:text-lg font-black tabular-nums ${data.netCashFlow >= 0 ? 'text-positive' : 'text-negative'}`}>
                 {formatCurrency(data.netCashFlow, currency)}
@@ -113,18 +113,18 @@ function ReportSection({ title, section, currency }) {
 
   return (
     <div className="space-y-1.5 sm:space-y-2">
-      <h3 className="font-bold text-text-muted uppercase tracking-wider text-[11px] sm:text-xs px-1 sm:px-4">{title}</h3>
+      <h3 className="font-bold text-text-muted uppercase tracking-wider text-label sm:text-xs px-1 sm:px-4">{title}</h3>
       <div>
         {items.map((item, idx) => (
           <div key={idx} className="flex items-center justify-between gap-3 py-1 px-1 sm:py-2 sm:px-4">
-            <span className="min-w-0 truncate text-[13px] sm:text-base text-text-primary">{item.description}</span>
-            <span className="whitespace-nowrap text-[13px] sm:text-base text-text-primary font-medium tabular-nums">{formatCurrency(item.amount, currency)}</span>
+            <span className="min-w-0 truncate text-small sm:text-base text-text-primary">{item.description}</span>
+            <span className="whitespace-nowrap text-small sm:text-base text-text-primary font-medium tabular-nums">{formatCurrency(item.amount, currency)}</span>
           </div>
         ))}
       </div>
       <div className="flex items-center justify-between gap-3 py-1.5 px-1 sm:py-2 sm:px-4 border-t border-glass mt-1 sm:mt-2">
-        <span className="min-w-0 truncate text-[13px] sm:text-base font-medium text-text-secondary">Net Cash from {title}</span>
-        <span className="whitespace-nowrap text-[13px] sm:text-base font-bold text-text-primary tabular-nums">{formatCurrency(total, currency)}</span>
+        <span className="min-w-0 truncate text-small sm:text-base font-medium text-text-secondary">Net Cash from {title}</span>
+        <span className="whitespace-nowrap text-small sm:text-base font-bold text-text-primary tabular-nums">{formatCurrency(total, currency)}</span>
       </div>
     </div>
   )

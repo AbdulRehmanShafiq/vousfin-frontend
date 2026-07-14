@@ -65,6 +65,8 @@ export default function SmartTable({
   const keyOf = getRowKey || rowKey || ((r, i) => r._id || r.id || i)
   const containerRef = useRef(null)
   const [focusIdx, setFocusIdx] = useState(-1)
+  // Perf guard: big ledgers render incrementally instead of all at once.
+  const [visibleCap, setVisibleCap] = useState(150)
 
   /* selection (controlled) */
   const selected = useMemo(() => new Set(selectedKeys || []), [selectedKeys])
@@ -127,7 +129,7 @@ export default function SmartTable({
     const cellOf = (col, row, i) => (col ? (col.render ? col.render(row, i) : row[col.key]) : null)
     return (
       <div className={cn('space-y-2', className)}>
-        {list.map((row, i) => {
+        {list.slice(0, visibleCap).map((row, i) => {
           const actions = (rowActions?.(row) || []).map((a) => ({ ...a, onClick: () => a.onClick(row) }))
           const card = (
             <ListCard
@@ -220,7 +222,7 @@ export default function SmartTable({
               </td>
             </tr>
           ) : (
-            list.map((row, rowIndex) => {
+            list.slice(0, visibleCap).map((row, rowIndex) => {
               const k = keyOf(row, rowIndex)
               const interactive = !!onRowClick
               const actions = rowActions?.(row) || []
@@ -271,6 +273,18 @@ export default function SmartTable({
           )}
         </tbody>
       </table>
+
+      {!busy && list.length > visibleCap && (
+        <div className="flex justify-center border-t border-glass/60 py-2.5">
+          <button
+            type="button"
+            onClick={() => setVisibleCap((c) => c + 300)}
+            className="rounded-control px-3 py-1.5 text-sm font-medium text-text-secondary hover:bg-glass-hover hover:text-text-primary transition-colors"
+          >
+            Show more ({list.length - visibleCap} remaining)
+          </button>
+        </div>
+      )}
 
       {selectable && selected.size > 0 && bulkActions.length > 0 && (
         <div className="sticky bottom-3 z-20 mx-auto mt-3 flex w-fit items-center gap-2 rounded-overlay border border-glass-2 bg-charcoal px-4 py-2.5 shadow-elevated animate-fade-in">

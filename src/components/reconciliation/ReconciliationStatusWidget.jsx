@@ -95,7 +95,7 @@ export default function ReconciliationStatusWidget({ bankAccountId, accountName 
         )}
         <button
           onClick={() => navigate(`/reconciliation/exceptions?account=${bankAccountId}`)}
-          className="mt-2 text-xs text-cyan hover:underline"
+          className="mt-2 text-xs text-accent hover:underline"
         >
           Review {unmatched} exception{unmatched !== 1 ? 's' : ''} →
         </button>

@@ -24,8 +24,8 @@ function daysSince(dateStr) {
 }
 function ageLabel(days) {
   if (days <= 0) return { label: 'Current', cls: 'bg-positive-muted text-positive' }
-  if (days <= 30) return { label: '1–30 d', cls: 'bg-cyan/12 text-cyan' }
-  if (days <= 90) return { label: `${days} d`, cls: 'bg-amber/12 text-amber' }
+  if (days <= 30) return { label: '1–30 d', cls: 'bg-accent/12 text-accent' }
+  if (days <= 90) return { label: `${days} d`, cls: 'bg-highlight/12 text-highlight' }
   return { label: `${days} d`, cls: 'bg-negative-muted text-negative' }
 }
 
@@ -55,9 +55,9 @@ function PaymentSheet({ row, kind, currency, bankAccounts, onClose }) {
   return (
     <Sheet isOpen={!!row} onClose={onClose} title={kind === 'receivable' ? 'Record a payment in' : 'Record a payment out'}>
       <div className="space-y-3 pb-2">
-        <p className="text-[13px] text-text-muted">
+        <p className="text-small text-text-muted">
           Outstanding: <span className="font-semibold text-text-primary">{formatCurrency(max, currency)}</span>
-          {partyName && <> · <span className="text-cyan">{partyName}</span></>}
+          {partyName && <> · <span className="text-accent">{partyName}</span></>}
         </p>
         <div className="grid grid-cols-2 gap-2">
           <Input label="Amount" type="number" step="0.01" min="0.01" max={max} value={amount} onChange={(e) => setAmount(e.target.value)} />
@@ -89,13 +89,13 @@ export default function MobileOutstanding({
         <div className="space-y-4 pb-4">
           {/* Summary */}
           <div className="rounded-2xl bg-glass-panel p-4">
-            <p className="text-[12px] text-text-muted">{isReceivable ? 'Total owed to you' : 'Total you owe'}</p>
+            <p className="text-xs text-text-muted">{isReceivable ? 'Total owed to you' : 'Total you owe'}</p>
             <p className={`num mt-1 text-[28px] font-bold leading-none ${isReceivable ? 'text-positive' : 'text-text-primary'}`}>
               {formatCurrency(totalOutstanding, currency)}
             </p>
-            <div className="mt-3 flex gap-4 text-[12.5px]">
+            <div className="mt-3 flex gap-4 text-small">
               <span className="text-text-muted">{partyCount} {isReceivable ? 'customers' : 'vendors'}</span>
-              <span className={overdueCount > 0 ? 'font-semibold text-amber' : 'text-text-muted'}>
+              <span className={overdueCount > 0 ? 'font-semibold text-highlight' : 'text-text-muted'}>
                 {overdueCount > 0 ? `${overdueCount} overdue` : 'All on time'}
               </span>
             </div>
@@ -107,7 +107,7 @@ export default function MobileOutstanding({
               value={query}
               onChange={(e) => onQuery(e.target.value)}
               placeholder="Search…"
-              className="w-full rounded-xl bg-glass-panel border border-glass py-2.5 pl-9 pr-3 text-sm text-text-primary placeholder:text-text-muted focus:border-cyan focus:outline-none"
+              className="w-full rounded-xl bg-glass-panel border border-glass py-2.5 pl-9 pr-3 text-sm text-text-primary placeholder:text-text-muted focus:border-accent focus:outline-none"
             />
           </div>
 
@@ -131,14 +131,14 @@ export default function MobileOutstanding({
                     key={r._id}
                     onClick={() => setPayingRow(r)}
                     leading={
-                      <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-cyan/12 text-cyan">
+                      <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-accent/12 text-accent">
                         <Wallet className="h-4 w-4" />
                       </div>
                     }
                     title={party}
                     subtitle={
                       <span className="inline-flex items-center gap-1.5">
-                        <span className={`rounded-full px-1.5 py-0.5 text-[11px] font-semibold ${age.cls}`}>{age.label}</span>
+                        <span className={`rounded-full px-1.5 py-0.5 text-label font-semibold ${age.cls}`}>{age.label}</span>
                         {doc ? <span className="font-mono">{doc}</span> : formatDate(r._date)}
                       </span>
                     }

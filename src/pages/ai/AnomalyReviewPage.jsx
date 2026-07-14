@@ -132,7 +132,7 @@ export default function AnomalyReviewPage() {
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div>
           <h1 className="flex items-center gap-2 text-2xl font-black text-text-primary tracking-tight">
-            <ShieldAlert className="h-6 w-6 text-cyan" />
+            <ShieldAlert className="h-6 w-6 text-accent" />
             Anomaly Detection
           </h1>
           <p className="text-text-secondary mt-1 text-sm">
@@ -161,19 +161,19 @@ export default function AnomalyReviewPage() {
           icon={Database}
           label="Transactions Scanned"
           value={scanTotal}
-          colorClass="bg-cyan/10 text-cyan"
+          colorClass="bg-accent/10 text-accent"
         />
         <StatCard
           icon={AlertTriangle}
           label="Flagged in Last Scan"
           value={scanFound}
-          colorClass="bg-amber/10 text-amber"
+          colorClass="bg-highlight/10 text-highlight"
         />
         <StatCard
           icon={Activity}
           label="Pending Review"
           value={pending}
-          colorClass="bg-amber/10 text-amber"
+          colorClass="bg-highlight/10 text-highlight"
         />
         <StatCard
           icon={Flag}
@@ -220,17 +220,17 @@ export default function AnomalyReviewPage() {
               className={cn(
                 'px-3 py-2 rounded-lg text-xs font-medium transition-all flex items-center gap-1.5',
                 activeTab === tab.key
-                  ? 'bg-cyan text-ink-on-accent font-bold shadow-sm'
+                  ? 'bg-accent text-ink-on-accent font-bold shadow-sm'
                   : 'text-text-secondary hover:text-text-primary'
               )}
             >
               {tab.label}
               {tabCount != null && tabCount > 0 && (
                 <span className={cn(
-                  'px-1.5 py-0.5 rounded-full text-[12px] font-bold',
+                  'px-1.5 py-0.5 rounded-full text-xs font-bold',
                   activeTab === tab.key
                     ? 'bg-navy/20 text-ink-on-accent'
-                    : tab.key === 'pending' ? 'bg-amber/20 text-amber'
+                    : tab.key === 'pending' ? 'bg-highlight/20 text-highlight'
                     : tab.key === 'fraud'   ? 'bg-negative/20 text-negative'
                     : tab.key === 'legit'   ? 'bg-positive/20 text-positive'
                     :                          'bg-glass-panel text-text-muted'
@@ -247,7 +247,7 @@ export default function AnomalyReviewPage() {
       {loading ? (
         <div className="premium-card p-12 text-center">
           <div className="inline-flex flex-col items-center gap-4">
-            <div className="h-10 w-10 rounded-full border-2 border-cyan border-t-transparent animate-spin" />
+            <div className="h-10 w-10 rounded-full border-2 border-accent border-t-transparent animate-spin" />
             <p className="text-text-secondary text-sm">
               Running Isolation Forest analysis…
             </p>

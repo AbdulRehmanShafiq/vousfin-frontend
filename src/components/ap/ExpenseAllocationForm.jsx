@@ -88,7 +88,7 @@ export default function ExpenseAllocationForm({ bill, existing, onSave, onCancel
     onSave({ method, lines: parsedLines, notes })
   }
 
-  const inputCls = 'w-full bg-navy border border-glass rounded px-2.5 py-1.5 text-sm text-text-primary focus:outline-none focus:border-cyan'
+  const inputCls = 'w-full bg-navy border border-glass rounded px-2.5 py-1.5 text-sm text-text-primary focus:outline-none focus:border-accent'
 
   return (
     <form onSubmit={handleSubmit} className="space-y-4">
@@ -102,7 +102,7 @@ export default function ExpenseAllocationForm({ bill, existing, onSave, onCancel
             onClick={() => setMethod(m.value)}
             className={`px-3 py-1.5 rounded text-xs font-medium transition-colors
               ${method === m.value
-                ? 'bg-cyan text-ink-on-accent'
+                ? 'bg-accent text-ink-on-accent'
                 : 'bg-glass text-text-secondary hover:text-text-primary'}`}
           >
             {m.label}
@@ -200,7 +200,7 @@ export default function ExpenseAllocationForm({ bill, existing, onSave, onCancel
         <button
           type="button"
           onClick={addLine}
-          className="flex items-center gap-1 text-xs text-cyan hover:text-white transition-colors"
+          className="flex items-center gap-1 text-xs text-accent hover:text-white transition-colors"
         >
           <Plus className="h-3.5 w-3.5" /> Add line
         </button>
@@ -218,8 +218,8 @@ export default function ExpenseAllocationForm({ bill, existing, onSave, onCancel
         <button
           type="submit"
           disabled={isSaving || (!balanced && method !== 'equal')}
-          className="px-4 py-1.5 bg-cyan text-ink-on-accent rounded text-sm font-medium
-                     hover:bg-cyan/80 disabled:opacity-50 transition-colors"
+          className="px-4 py-1.5 bg-accent text-ink-on-accent rounded text-sm font-medium
+                     hover:bg-accent/80 disabled:opacity-50 transition-colors"
         >
           {isSaving ? 'Saving…' : 'Save Allocation'}
         </button>

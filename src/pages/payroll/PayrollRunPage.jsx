@@ -17,7 +17,7 @@ const money = (n) => 'PKR ' + Number(n || 0).toLocaleString('en-PK')
 const thisMonth = () => new Date().toISOString().slice(0, 7)
 
 const STATUS_STYLE = {
-  draft: 'text-text-muted', processed: 'text-cyan', posted: 'text-emerald', paid: 'text-emerald', reversed: 'text-amber',
+  draft: 'text-text-muted', processed: 'text-accent', posted: 'text-positive', paid: 'text-positive', reversed: 'text-highlight',
 }
 
 export default function PayrollRunPage() {
@@ -64,7 +64,7 @@ export default function PayrollRunPage() {
   return (
     <div className="animate-fade-in pb-10 space-y-5 max-w-5xl">
       <div className="flex items-center gap-3">
-        <div className="p-2 rounded-xl bg-cyan/15"><Wallet className="h-5 w-5 text-cyan" /></div>
+        <div className="p-2 rounded-xl bg-accent/15"><Wallet className="h-5 w-5 text-accent" /></div>
         <div>
           <h1 className="text-2xl font-semibold text-text-primary tracking-tight">Run payroll</h1>
           <p className="text-sm text-text-secondary mt-0.5">Calculate take-home pay, post it to your books, and pay your team.</p>
@@ -73,12 +73,12 @@ export default function PayrollRunPage() {
 
       <div className="premium-card p-4 flex items-end gap-3 flex-wrap">
         <label className="flex flex-col gap-1">
-          <span className="text-[11.5px] text-text-muted">Month</span>
+          <span className="text-label text-text-muted">Month</span>
           <input type="month" value={period} onChange={e => setPeriod(e.target.value)}
-            className="px-3 py-2 rounded-lg border border-glass bg-glass-panel/40 text-[13px] text-text-primary focus:outline-none focus:border-cyan/40" />
+            className="px-3 py-2 rounded-lg border border-glass bg-glass-panel/40 text-small text-text-primary focus:outline-none focus:border-accent/40" />
         </label>
         <button onClick={() => calc.mutate()} disabled={calc.isPending}
-          className="btn-gradient inline-flex items-center gap-1.5 px-4 py-2 rounded-lg text-[12.5px] font-semibold disabled:opacity-50">
+          className="btn-gradient inline-flex items-center gap-1.5 px-4 py-2 rounded-lg text-small font-semibold disabled:opacity-50">
           {calc.isPending ? <Loader2 className="h-4 w-4 animate-spin" /> : <Calculator className="h-4 w-4" />} Calculate
         </button>
       </div>
@@ -87,32 +87,32 @@ export default function PayrollRunPage() {
         <div className="premium-card p-4 space-y-3">
           <div className="flex items-center justify-between gap-3 flex-wrap">
             <div className="flex items-center gap-2">
-              <span className="text-[13px] font-semibold text-text-primary">{run.period}</span>
-              <span className={`text-[11px] uppercase tracking-wider ${STATUS_STYLE[run.status] || 'text-text-muted'}`}>{run.status}</span>
+              <span className="text-small font-semibold text-text-primary">{run.period}</span>
+              <span className={`text-label uppercase tracking-wider ${STATUS_STYLE[run.status] || 'text-text-muted'}`}>{run.status}</span>
             </div>
             <div className="flex items-center gap-2">
               {run.status === 'processed' && (
                 <button onClick={() => post.mutate()} disabled={post.isPending}
-                  className="btn-gradient inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-[12px] font-semibold disabled:opacity-50">
+                  className="btn-gradient inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold disabled:opacity-50">
                   {post.isPending ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <BookCheck className="h-3.5 w-3.5" />} Post to books
                 </button>
               )}
               {run.status === 'posted' && (
                 <>
                   <select value={bankAccountId} onChange={e => setBankAccountId(e.target.value)}
-                    className="px-2 py-1.5 rounded-lg border border-glass bg-glass-panel/40 text-[12px] text-text-primary focus:outline-none">
+                    className="px-2 py-1.5 rounded-lg border border-glass bg-glass-panel/40 text-xs text-text-primary focus:outline-none">
                     <option value="" className="bg-charcoal">Pay from…</option>
                     {bankAccounts.map(a => <option key={a._id} value={a._id} className="bg-charcoal">{a.accountName}</option>)}
                   </select>
                   <button onClick={() => pay.mutate()} disabled={!bankAccountId || pay.isPending}
-                    className="btn-gradient inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-[12px] font-semibold disabled:opacity-50">
+                    className="btn-gradient inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold disabled:opacity-50">
                     {pay.isPending ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <Banknote className="h-3.5 w-3.5" />} Mark paid
                   </button>
                 </>
               )}
               {(run.status === 'posted' || run.status === 'paid') && (
                 <button onClick={() => reverse.mutate(run._id)} disabled={reverse.isPending}
-                  className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-[12px] text-amber hover:bg-glass-hover disabled:opacity-50">
+                  className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs text-highlight hover:bg-glass-hover disabled:opacity-50">
                   <Undo2 className="h-3.5 w-3.5" /> Reverse
                 </button>
               )}
@@ -120,7 +120,7 @@ export default function PayrollRunPage() {
           </div>
 
           <div className="overflow-x-auto">
-            <table className="w-full text-[12.5px]">
+            <table className="w-full text-small">
               <thead>
                 <tr className="text-text-muted text-left border-b border-glass">
                   <th className="py-2 pr-3 font-medium">Employee</th>
@@ -163,14 +163,14 @@ export default function PayrollRunPage() {
 
       {runs.length > 0 && (
         <div className="space-y-2">
-          <p className="text-[12.5px] font-semibold text-text-secondary">Past runs</p>
+          <p className="text-small font-semibold text-text-secondary">Past runs</p>
           {runs.map(r => (
             <button key={r._id} onClick={() => openRun(r._id)}
               className="premium-card p-3 w-full flex items-center justify-between text-left hover:bg-glass-hover">
-              <span className="text-[13px] text-text-primary">{r.period}</span>
+              <span className="text-small text-text-primary">{r.period}</span>
               <span className="flex items-center gap-3">
-                <span className="text-[12px] text-text-secondary">{money(r.totals?.netPay)}</span>
-                <span className={`text-[10.5px] uppercase tracking-wider ${STATUS_STYLE[r.status] || 'text-text-muted'}`}>{r.status}</span>
+                <span className="text-xs text-text-secondary">{money(r.totals?.netPay)}</span>
+                <span className={`text-label uppercase tracking-wider ${STATUS_STYLE[r.status] || 'text-text-muted'}`}>{r.status}</span>
               </span>
             </button>
           ))}

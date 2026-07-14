@@ -8,7 +8,7 @@ import { cn } from '@/utils/cn'
 export default function SectionHeader({ label, trailing, className }) {
   return (
     <div className={cn('mb-3 flex items-center gap-3', className)}>
-      <span className="text-[11px] font-bold uppercase tracking-widest text-text-muted">{label}</span>
+      <span className="text-label font-bold uppercase tracking-widest text-text-muted">{label}</span>
       <div className="h-px flex-1 bg-glass" />
       {trailing}
     </div>

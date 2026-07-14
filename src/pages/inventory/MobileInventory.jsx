@@ -29,7 +29,7 @@ export default function MobileInventory({
         <button
           type="button"
           onClick={onNew}
-          className="tap-target flex w-full items-center justify-center gap-2 rounded-2xl btn-gradient text-[15px] font-semibold"
+          className="tap-target flex w-full items-center justify-center gap-2 rounded-2xl btn-gradient text-md font-semibold"
         >
           <Plus className="h-5 w-5" />
           Add item
@@ -41,14 +41,14 @@ export default function MobileInventory({
           {/* Summary */}
           <div className="grid grid-cols-2 gap-3">
             <div className="rounded-2xl bg-glass-panel p-3.5">
-              <p className="text-[12px] text-text-muted">Stock value</p>
-              <p className="num mt-1 text-[17px] font-semibold text-text-primary">
+              <p className="text-xs text-text-muted">Stock value</p>
+              <p className="num mt-1 text-lg font-semibold text-text-primary">
                 {formatCurrency(valuation?.totalValue ?? 0, currency)}
               </p>
             </div>
             <div className="rounded-2xl bg-glass-panel p-3.5">
-              <p className="text-[12px] text-text-muted">Running low</p>
-              <p className={cn('num mt-1 text-[17px] font-semibold', lowStockCount > 0 ? 'text-negative' : 'text-text-primary')}>
+              <p className="text-xs text-text-muted">Running low</p>
+              <p className={cn('num mt-1 text-lg font-semibold', lowStockCount > 0 ? 'text-negative' : 'text-text-primary')}>
                 {lowStockCount ?? 0}
               </p>
             </div>
@@ -60,11 +60,11 @@ export default function MobileInventory({
               value={query}
               onChange={(e) => onQuery(e.target.value)}
               placeholder="Search name, SKU, barcode…"
-              className="w-full rounded-xl bg-glass-panel border border-glass py-2.5 pl-9 pr-3 text-sm text-text-primary placeholder:text-text-muted focus:border-cyan focus:outline-none"
+              className="w-full rounded-xl bg-glass-panel border border-glass py-2.5 pl-9 pr-3 text-sm text-text-primary placeholder:text-text-muted focus:border-accent focus:outline-none"
             />
           </div>
 
-          <label className="flex items-center gap-2 text-[13px] text-text-secondary">
+          <label className="flex items-center gap-2 text-small text-text-secondary">
             <input type="checkbox" className="rounded" checked={showInactive} onChange={(e) => onShowInactive(e.target.checked)} />
             Show inactive items
           </label>
@@ -97,7 +97,7 @@ export default function MobileInventory({
                       <span className="inline-flex items-center gap-1.5">
                         <span className={isLow ? 'font-semibold text-negative' : ''}>{r.currentStock} {r.unit}</span>
                         {isLow && <AlertTriangle className="h-3 w-3 text-negative" />}
-                        {r.category && <span className="text-cyan">· {r.category}</span>}
+                        {r.category && <span className="text-accent">· {r.category}</span>}
                       </span>
                     }
                     trailing={formatCurrency(r.currentStock * r.unitCostPrice, currency)}
@@ -128,7 +128,7 @@ export default function MobileInventory({
 }
 
 function ActionRow({ icon: Icon, label, tone, onClick }) {
-  const toneCls = tone === 'positive' ? 'text-positive' : tone === 'cyan' ? 'text-cyan' : 'text-text-primary'
+  const toneCls = tone === 'positive' ? 'text-positive' : tone === 'cyan' ? 'text-accent' : 'text-text-primary'
   return (
     <button
       type="button"

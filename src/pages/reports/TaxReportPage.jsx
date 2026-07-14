@@ -36,7 +36,7 @@ export default function TaxReportPage() {
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div>
           <h1 className="flex items-center gap-2 text-xl sm:text-2xl font-black text-text-primary tracking-tight">
-            <Receipt className="h-6 w-6 text-cyan" />
+            <Receipt className="h-6 w-6 text-accent" />
             Tax Report
           </h1>
           <p className="text-text-secondary mt-1 text-sm">GST/VAT, WHT, Sales Tax — Output vs Input</p>

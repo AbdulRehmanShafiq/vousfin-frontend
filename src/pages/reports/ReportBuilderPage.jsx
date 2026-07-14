@@ -108,7 +108,7 @@ function ScheduleDialog({ onClose, onSave, existing }) {
             type="checkbox"
             checked={enabled}
             onChange={e => setEnabled(e.target.checked)}
-            className="accent-cyan h-4 w-4 rounded"
+            className="accent-accent h-4 w-4 rounded"
           />
           <span className="text-sm text-text-primary">Enable scheduled delivery</span>
         </label>
@@ -224,7 +224,7 @@ function PreviewTable({ result, currency }) {
               >
                 <td className={cn(
                   'px-4 py-2 text-text-primary',
-                  isSect && 'font-semibold text-cyan uppercase text-xs tracking-wider',
+                  isSect && 'font-semibold text-accent uppercase text-xs tracking-wider',
                   isSub  && 'font-bold',
                 )}>
                   {isSect ? '' : ''}{row.label}
@@ -279,11 +279,11 @@ function TemplateCard({ tpl, onEdit, onDelete }) {
       <div className="flex-1 min-w-0">
         <p className="font-semibold text-text-primary truncate">{name}</p>
         <div className="mt-1 flex flex-wrap gap-2">
-          <span className="rounded-full bg-cyan/10 px-2 py-0.5 text-xs text-cyan font-medium">
+          <span className="rounded-full bg-accent/10 px-2 py-0.5 text-xs text-accent font-medium">
             {BASE_LABELS[baseType] ?? baseType}
           </span>
           {schedule?.enabled && (
-            <span className="rounded-full bg-amber/10 px-2 py-0.5 text-xs text-amber-2 font-medium">
+            <span className="rounded-full bg-highlight/10 px-2 py-0.5 text-xs text-highlight-2 font-medium">
               Scheduled · {schedule.frequency}
             </span>
           )}
@@ -321,7 +321,7 @@ function BasePickerPanel({ onSelect }) {
           <button
             key={b.key}
             onClick={() => onSelect(b.key)}
-            className="flex flex-col gap-1 rounded-xl border border-glass p-4 text-left transition-all hover:border-cyan/50 hover:bg-glass-hover"
+            className="flex flex-col gap-1 rounded-xl border border-glass p-4 text-left transition-all hover:border-accent/50 hover:bg-glass-hover"
           >
             <span className="font-semibold text-text-primary">{b.label}</span>
             <span className="text-xs text-text-secondary">{b.desc}</span>
@@ -596,7 +596,7 @@ export default function ReportBuilderPage() {
         <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
           <div>
             <h1 className="flex items-center gap-2 text-2xl font-black text-text-primary tracking-tight">
-              <LayoutTemplate className="h-6 w-6 text-cyan" />
+              <LayoutTemplate className="h-6 w-6 text-accent" />
               Report Builder
             </h1>
             <p className="mt-1 text-sm text-text-secondary">
@@ -670,10 +670,10 @@ export default function ReportBuilderPage() {
             </button>
             <div>
               <h1 className="flex items-center gap-2 text-xl font-black text-text-primary tracking-tight">
-                <LayoutTemplate className="h-5 w-5 text-cyan" />
+                <LayoutTemplate className="h-5 w-5 text-accent" />
                 {templateId ? 'Edit report' : 'New report'}
               </h1>
-              <span className="ml-1 rounded-full bg-cyan/10 px-2 py-0.5 text-xs text-cyan font-medium">
+              <span className="ml-1 rounded-full bg-accent/10 px-2 py-0.5 text-xs text-accent font-medium">
                 {BASE_LABELS[baseType] ?? baseType}
               </span>
             </div>
@@ -823,7 +823,7 @@ export default function ReportBuilderPage() {
             <div className="flex items-center justify-between">
               <h2 className="text-sm font-semibold text-text-secondary uppercase tracking-wider">Preview</h2>
               {comparative.enabled && (
-                <span className="rounded-full bg-cyan/10 px-2 py-0.5 text-xs text-cyan">
+                <span className="rounded-full bg-accent/10 px-2 py-0.5 text-xs text-accent">
                   {comparativeModeLabel(comparative.mode)}
                 </span>
               )}

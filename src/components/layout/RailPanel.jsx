@@ -48,7 +48,7 @@ function RailIcon({ module, active, badge }) {
           style={active ? { color: `rgb(${accent})` } : undefined}
         />
         {badge > 0 && (
-          <span className="absolute -top-1 -right-1 min-w-[15px] h-[15px] px-1 rounded-full bg-amber text-[10px] font-bold text-ink-on-accent flex items-center justify-center">
+          <span className="absolute -top-1 -right-1 min-w-[15px] h-[15px] px-1 rounded-full bg-highlight text-label font-bold text-ink-on-accent flex items-center justify-center">
             {badge > 99 ? '99+' : badge}
           </span>
         )}
@@ -122,7 +122,7 @@ export default function RailPanel() {
         <item.icon className={cn('h-[16px] w-[16px] flex-shrink-0', active ? 'text-accent' : 'text-text-muted group-hover:text-text-secondary')} />
         <span className="flex-1 truncate">{t(`nav.item.${navKey(item.href)}`, item.name)}</span>
         {badge > 0 && (
-          <span className="ml-auto min-w-[18px] h-[18px] px-1.5 rounded-full bg-amber text-[11px] font-bold text-ink-on-accent flex items-center justify-center">
+          <span className="ml-auto min-w-[18px] h-[18px] px-1.5 rounded-full bg-highlight text-label font-bold text-ink-on-accent flex items-center justify-center">
             {badge > 99 ? '99+' : badge}
           </span>
         )}
@@ -188,7 +188,7 @@ export default function RailPanel() {
                       {t(`nav.item.${navKey(activeModule.href)}`, activeModule.name)}
                     </p>
                     {activeModule.subtitle && (
-                      <p className="truncate text-[11px] text-text-muted leading-tight">{activeModule.subtitle}</p>
+                      <p className="truncate text-label text-text-muted leading-tight">{activeModule.subtitle}</p>
                     )}
                   </div>
                 </div>

@@ -27,14 +27,14 @@ const TODAY = new Date().toISOString().slice(0, 10)
 function Pill({ label, value, tone = 'muted' }) {
   const tones = {
     ok:    'text-positive border-positive/30 bg-positive/10',
-    warn:  'text-amber border-amber/30 bg-amber/10',
+    warn:  'text-highlight border-highlight/30 bg-highlight/10',
     bad:   'text-negative border-negative/30 bg-negative/10',
     muted: 'text-text-secondary border-glass bg-glass-panel',
   }
   return (
     <div className={`rounded-xl border px-3 py-2 text-center ${tones[tone]}`}>
       <p className="text-lg font-bold leading-none">{value}</p>
-      <p className="text-[12.5px] mt-1">{label}</p>
+      <p className="text-small mt-1">{label}</p>
     </div>
   )
 }
@@ -146,7 +146,7 @@ export default function AIClassifyPanel({ onClose }) {
     } finally { setBusy(false) }
   }
 
-  const field = 'w-full mt-1 bg-glass-panel border border-glass rounded-lg px-3 py-2 text-sm text-text-primary placeholder:text-text-muted focus:border-cyan outline-none'
+  const field = 'w-full mt-1 bg-glass-panel border border-glass rounded-lg px-3 py-2 text-sm text-text-primary placeholder:text-text-muted focus:border-accent outline-none'
 
   return (
     <div className="space-y-5">
@@ -158,9 +158,9 @@ export default function AIClassifyPanel({ onClose }) {
       {/* ── Natural language (local, no AI call) ── */}
       <div>
         <div className="flex items-center gap-2 mb-2">
-          <MessageSquare className="w-4 h-4 text-cyan" />
+          <MessageSquare className="w-4 h-4 text-accent" />
           <h4 className="text-sm font-semibold text-text-primary">Type in plain English</h4>
-          <span className="text-[12px] text-text-muted">· runs locally, no API cost</span>
+          <span className="text-xs text-text-muted">· runs locally, no API cost</span>
         </div>
         <div className="flex gap-2">
           <input
@@ -168,10 +168,10 @@ export default function AIClassifyPanel({ onClose }) {
             onChange={(e) => { setNlText(e.target.value); setNlResult(null) }}
             onKeyDown={(e) => e.key === 'Enter' && handleNlParse()}
             placeholder="e.g. paid 8500 to K-Electric for the bill"
-            className="flex-1 bg-glass-panel border border-glass rounded-lg px-3 py-2 text-sm text-text-primary placeholder:text-text-muted focus:border-cyan outline-none"
+            className="flex-1 bg-glass-panel border border-glass rounded-lg px-3 py-2 text-sm text-text-primary placeholder:text-text-muted focus:border-accent outline-none"
           />
           <button onClick={handleNlParse} disabled={nlBusy}
-            className="px-4 bg-cyan text-ink-on-accent disabled:opacity-40 text-sm font-semibold rounded-lg shadow-glow-cyan">
+            className="px-4 bg-accent text-ink-on-accent disabled:opacity-40 text-sm font-semibold rounded-lg shadow-glow-accent">
             {nlBusy ? <Loader2 className="w-4 h-4 animate-spin" /> : 'Read'}
           </button>
         </div>
@@ -190,7 +190,7 @@ export default function AIClassifyPanel({ onClose }) {
               <span>Cr <strong className="text-text-primary">{nlResult.credit_account_name || '—'}</strong></span>
             </div>
             <button onClick={handleNlPost} disabled={nlBusy || !nlResult.debit_account_id}
-              className="w-full bg-cyan text-ink-on-accent disabled:opacity-40 text-sm font-semibold py-2 rounded-lg shadow-glow-cyan flex items-center justify-center gap-2">
+              className="w-full bg-accent text-ink-on-accent disabled:opacity-40 text-sm font-semibold py-2 rounded-lg shadow-glow-accent flex items-center justify-center gap-2">
               {nlBusy ? <Loader2 className="w-4 h-4 animate-spin" /> : <CheckCircle2 className="w-4 h-4" />}
               Post to ledger
             </button>
@@ -199,13 +199,13 @@ export default function AIClassifyPanel({ onClose }) {
       </div>
 
       <div className="flex items-center gap-3">
-        <div className="flex-1 h-px bg-glass" /><span className="text-[12.5px] text-text-muted">or import a file</span><div className="flex-1 h-px bg-glass" />
+        <div className="flex-1 h-px bg-glass" /><span className="text-small text-text-muted">or import a file</span><div className="flex-1 h-px bg-glass" />
       </div>
 
       {/* ── CSV upload ── */}
       <div>
         <div className="flex items-center gap-2 mb-2">
-          <FileSpreadsheet className="w-4 h-4 text-cyan" />
+          <FileSpreadsheet className="w-4 h-4 text-accent" />
           <h4 className="text-sm font-semibold text-text-primary">Upload a bank statement (CSV / Excel)</h4>
         </div>
 
@@ -217,9 +217,9 @@ export default function AIClassifyPanel({ onClose }) {
               onDrop={(e) => { e.preventDefault(); setDragOver(false); pick(e.dataTransfer.files?.[0]) }}
               onClick={() => inputRef.current?.click()}
               className={`cursor-pointer rounded-2xl border-2 border-dashed p-8 text-center transition-colors
-                ${dragOver ? 'border-cyan bg-cyan/5' : 'border-glass hover:border-cyan/60 hover:bg-glass-hover'}`}
+                ${dragOver ? 'border-accent bg-accent/5' : 'border-glass hover:border-accent/60 hover:bg-glass-hover'}`}
             >
-              <UploadCloud className={`w-9 h-9 mx-auto mb-2 ${dragOver ? 'text-cyan' : 'text-text-muted'}`} />
+              <UploadCloud className={`w-9 h-9 mx-auto mb-2 ${dragOver ? 'text-accent' : 'text-text-muted'}`} />
               {file
                 ? <p className="text-sm font-medium text-text-primary">{file.name}</p>
                 : <>
@@ -230,7 +230,7 @@ export default function AIClassifyPanel({ onClose }) {
                 onChange={(e) => pick(e.target.files?.[0])} />
             </div>
             <button onClick={upload} disabled={!file}
-              className="mt-3 w-full bg-cyan text-ink-on-accent disabled:opacity-40 text-sm font-semibold py-2.5 rounded-xl flex items-center justify-center gap-2 shadow-glow-cyan">
+              className="mt-3 w-full bg-accent text-ink-on-accent disabled:opacity-40 text-sm font-semibold py-2.5 rounded-xl flex items-center justify-center gap-2 shadow-glow-accent">
               <Sparkles className="w-4 h-4" /> Classify with AI
             </button>
           </>
@@ -238,14 +238,14 @@ export default function AIClassifyPanel({ onClose }) {
 
         {(phase === 'uploading' || phase === 'processing') && (
           <div className="py-8 text-center">
-            <Loader2 className="w-9 h-9 mx-auto mb-2 text-cyan animate-spin" />
+            <Loader2 className="w-9 h-9 mx-auto mb-2 text-accent animate-spin" />
             <p className="text-sm text-text-secondary">
               {phase === 'uploading' ? 'Uploading & mapping columns…' : 'AI is classifying…'}
             </p>
             {result?.column_mapping && (
               <div className="mt-3 flex flex-wrap gap-1 justify-center">
                 {Object.entries(result.column_mapping).filter(([, v]) => v).map(([c, f]) => (
-                  <span key={c} className="text-[12.5px] bg-glass-panel border border-glass text-text-secondary px-2 py-0.5 rounded">{c} → {f}</span>
+                  <span key={c} className="text-small bg-glass-panel border border-glass text-text-secondary px-2 py-0.5 rounded">{c} → {f}</span>
                 ))}
               </div>
             )}
@@ -266,7 +266,7 @@ export default function AIClassifyPanel({ onClose }) {
             </div>
             <div className="flex gap-2">
               <button onClick={goQueue}
-                className="flex-1 bg-cyan text-ink-on-accent text-sm font-semibold py-2.5 rounded-xl flex items-center justify-center gap-2 shadow-glow-cyan">
+                className="flex-1 bg-accent text-ink-on-accent text-sm font-semibold py-2.5 rounded-xl flex items-center justify-center gap-2 shadow-glow-accent">
                 View AI Review Queue <ArrowRight className="w-4 h-4" />
               </button>
               <button onClick={() => { setFile(null); setResult(null); setPhase('idle') }}
@@ -281,7 +281,7 @@ export default function AIClassifyPanel({ onClose }) {
       {/* divider */}
       <div className="flex items-center gap-3">
         <div className="flex-1 h-px bg-glass" />
-        <span className="text-[12.5px] text-text-muted">or add one transaction</span>
+        <span className="text-small text-text-muted">or add one transaction</span>
         <div className="flex-1 h-px bg-glass" />
       </div>
 
@@ -307,14 +307,14 @@ export default function AIClassifyPanel({ onClose }) {
             {[['DEBIT', 'Money out'], ['CREDIT', 'Money in']].map(([v, l]) => (
               <button type="button" key={v} onClick={() => setForm(f => ({ ...f, tx_type: v }))}
                 className={`flex-1 text-xs py-2 rounded-lg border transition-colors ${
-                  form.tx_type === v ? 'border-cyan bg-cyan/10 text-cyan' : 'border-glass text-text-secondary hover:bg-glass-hover'}`}>
+                  form.tx_type === v ? 'border-accent bg-accent/10 text-accent' : 'border-glass text-text-secondary hover:bg-glass-hover'}`}>
                 {l}
               </button>
             ))}
           </div>
         </div>
         <button type="submit" disabled={busy}
-          className="w-full bg-cyan text-ink-on-accent disabled:opacity-40 text-sm font-semibold py-2.5 rounded-xl flex items-center justify-center gap-2 shadow-glow-cyan">
+          className="w-full bg-accent text-ink-on-accent disabled:opacity-40 text-sm font-semibold py-2.5 rounded-xl flex items-center justify-center gap-2 shadow-glow-accent">
           {busy ? <Loader2 className="w-4 h-4 animate-spin" /> : <Sparkles className="w-4 h-4" />}
           Send to AI
         </button>

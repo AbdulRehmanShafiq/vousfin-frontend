@@ -51,7 +51,7 @@ export default function MobileMenuSheet({ open, onClose }) {
                 >
                   <item.icon className="h-[19px] w-[19px]" style={{ color: `rgb(${item.accent})` }} />
                 </span>
-                <span className={cn('text-[12px] font-medium text-center leading-tight', active ? 'text-text-primary' : 'text-text-secondary')}>
+                <span className={cn('text-xs font-medium text-center leading-tight', active ? 'text-text-primary' : 'text-text-secondary')}>
                   {item.name}
                 </span>
               </button>
@@ -63,7 +63,7 @@ export default function MobileMenuSheet({ open, onClose }) {
           <Link
             to="/admin"
             onClick={onClose}
-            className="mt-2.5 flex w-full items-center justify-center gap-2 rounded-2xl border border-accent/20 bg-accent/8 py-3 text-[13px] font-semibold text-accent transition-colors hover:bg-accent/15 active:scale-[0.99]"
+            className="mt-2.5 flex w-full items-center justify-center gap-2 rounded-2xl border border-accent/20 bg-accent/8 py-3 text-small font-semibold text-accent transition-colors hover:bg-accent/15 active:scale-[0.99]"
           >
             <Shield className="h-4 w-4" />
             Admin Panel
@@ -76,7 +76,7 @@ export default function MobileMenuSheet({ open, onClose }) {
               setFeedbackOpen(true);
               onClose();
             }}
-            className="mt-2.5 flex w-full items-center justify-center gap-2 rounded-2xl border border-accent/20 bg-accent/8 py-3 text-[13px] font-semibold text-accent transition-colors hover:bg-accent/15 active:scale-[0.99]"
+            className="mt-2.5 flex w-full items-center justify-center gap-2 rounded-2xl border border-accent/20 bg-accent/8 py-3 text-small font-semibold text-accent transition-colors hover:bg-accent/15 active:scale-[0.99]"
           >
             <MessageSquare className="h-4 w-4" />
             Send feedback
@@ -84,7 +84,7 @@ export default function MobileMenuSheet({ open, onClose }) {
           <Link
             to="/support"
             onClick={onClose}
-            className="mt-2.5 flex w-full items-center justify-center gap-2 rounded-2xl border border-accent/20 bg-accent/8 py-3 text-[13px] font-semibold text-accent transition-colors hover:bg-accent/15 active:scale-[0.99]"
+            className="mt-2.5 flex w-full items-center justify-center gap-2 rounded-2xl border border-accent/20 bg-accent/8 py-3 text-small font-semibold text-accent transition-colors hover:bg-accent/15 active:scale-[0.99]"
           >
             <MessageSquare className="h-4 w-4" />
             Support
@@ -92,7 +92,7 @@ export default function MobileMenuSheet({ open, onClose }) {
         </div>
         <button
           onClick={() => { onClose(); logout() }}
-          className="mt-2.5 flex w-full items-center justify-center gap-2 rounded-2xl border border-negative/20 bg-negative/8 py-3 text-[13px] font-semibold text-negative transition-colors hover:bg-negative/15 active:scale-[0.99]"
+          className="mt-2.5 flex w-full items-center justify-center gap-2 rounded-2xl border border-negative/20 bg-negative/8 py-3 text-small font-semibold text-negative transition-colors hover:bg-negative/15 active:scale-[0.99]"
         >
           <LogOut className="h-4 w-4" />
           Log out

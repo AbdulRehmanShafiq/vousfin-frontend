@@ -43,9 +43,9 @@ function fmt(value, unit) {
 }
 
 function DirectionBadge({ direction }) {
-  if (direction === 'above')   return <span className="flex items-center gap-0.5 text-emerald-400 text-xs font-semibold"><TrendingUp className="h-3.5 w-3.5" /> Above</span>
+  if (direction === 'above')   return <span className="flex items-center gap-0.5 text-positive text-xs font-semibold"><TrendingUp className="h-3.5 w-3.5" /> Above</span>
   if (direction === 'below')   return <span className="flex items-center gap-0.5 text-rose-400 text-xs font-semibold"><TrendingDown className="h-3.5 w-3.5" /> Below</span>
-  if (direction === 'at')      return <span className="flex items-center gap-0.5 text-amber-400 text-xs font-semibold"><Minus className="h-3.5 w-3.5" /> At median</span>
+  if (direction === 'at')      return <span className="flex items-center gap-0.5 text-highlight text-xs font-semibold"><Minus className="h-3.5 w-3.5" /> At median</span>
   return <span className="text-text-muted text-xs">No data</span>
 }
 
@@ -63,28 +63,28 @@ function RatioCard({ ratioKey, ratio }) {
   const bPct     = Math.min(100, (rawBench / maxVal) * 100)
 
   const borderColor = {
-    above:   'border-l-emerald-400',
+    above:   'border-l-positive',
     below:   'border-l-rose-400',
-    at:      'border-l-amber-400',
+    at:      'border-l-highlight',
     no_data: 'border-l-glass',
   }[ratio.direction] || 'border-l-glass'
 
   return (
     <div className={`premium-card p-4 border-l-4 ${borderColor} space-y-3`}>
       <div className="flex items-start justify-between gap-2">
-        <p className="text-[13px] font-medium text-text-primary leading-tight">{meta.label}</p>
+        <p className="text-small font-medium text-text-primary leading-tight">{meta.label}</p>
         <DirectionBadge direction={ratio.direction} />
       </div>
 
       {/* Values row */}
       <div className="flex items-center gap-4 text-sm">
         <div className="flex-1">
-          <p className="text-[11px] text-text-muted mb-0.5">Your value</p>
+          <p className="text-label text-text-muted mb-0.5">Your value</p>
           <p className="text-lg font-bold text-text-primary">{bizVal}</p>
         </div>
         <div className="w-px h-8 bg-glass" />
         <div className="flex-1">
-          <p className="text-[11px] text-text-muted mb-0.5">Industry median</p>
+          <p className="text-label text-text-muted mb-0.5">Industry median</p>
           <p className="text-lg font-semibold text-text-secondary">{benchVal}</p>
         </div>
       </div>
@@ -93,16 +93,16 @@ function RatioCard({ ratioKey, ratio }) {
       {hasData && (
         <div className="space-y-1">
           <div className="flex items-center gap-2">
-            <span className="text-[10px] text-text-muted w-16 shrink-0">Yours</span>
+            <span className="text-label text-text-muted w-16 shrink-0">Yours</span>
             <div className="flex-1 h-1.5 rounded-full bg-glass/40">
               <div
-                className="h-full rounded-full bg-cyan/70 transition-all duration-500"
+                className="h-full rounded-full bg-accent/70 transition-all duration-500"
                 style={{ width: `${bizPct.toFixed(1)}%` }}
               />
             </div>
           </div>
           <div className="flex items-center gap-2">
-            <span className="text-[10px] text-text-muted w-16 shrink-0">Industry</span>
+            <span className="text-label text-text-muted w-16 shrink-0">Industry</span>
             <div className="flex-1 h-1.5 rounded-full bg-glass/40">
               <div
                 className="h-full rounded-full bg-glass/70 transition-all duration-500"
@@ -136,8 +136,8 @@ export default function BenchmarkingPage() {
       {/* Header */}
       <div className="flex items-start justify-between gap-4 flex-wrap">
         <div className="flex items-center gap-3">
-          <div className="p-2 rounded-xl bg-amber-500/15">
-            <Target className="h-5 w-5 text-amber-400" />
+          <div className="p-2 rounded-xl bg-highlight/15">
+            <Target className="h-5 w-5 text-highlight" />
           </div>
           <div>
             <h1 className="text-2xl font-semibold text-text-primary tracking-tight">Industry benchmarking</h1>
@@ -149,7 +149,7 @@ export default function BenchmarkingPage() {
         <button
           onClick={() => refetch()}
           disabled={isFetching}
-          className="btn-gradient inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-[12.5px] font-semibold disabled:opacity-60"
+          className="btn-gradient inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-small font-semibold disabled:opacity-60"
         >
           {isFetching ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <RefreshCw className="h-3.5 w-3.5" />}
           Refresh
@@ -159,7 +159,7 @@ export default function BenchmarkingPage() {
       {/* Overall score card */}
       {!isLoading && !isError && (
         <div className="premium-card p-4 flex items-center gap-4">
-          <div className="text-3xl font-bold text-cyan">{score}</div>
+          <div className="text-3xl font-bold text-accent">{score}</div>
           <div>
             <p className="text-sm font-medium text-text-primary">of {measured} measured ratios above your industry median</p>
             <p className="text-xs text-text-muted mt-0.5">
@@ -184,7 +184,7 @@ export default function BenchmarkingPage() {
       {isError && (
         <div className="premium-card p-6 text-center">
           <p className="text-text-secondary text-sm">{getErrorMessage(error)}</p>
-          <button onClick={() => refetch()} className="mt-3 text-cyan text-sm hover:underline">Try again</button>
+          <button onClick={() => refetch()} className="mt-3 text-accent text-sm hover:underline">Try again</button>
         </div>
       )}
 
@@ -203,9 +203,9 @@ export default function BenchmarkingPage() {
 
       {/* Legend */}
       <div className="flex flex-wrap items-center gap-4 text-xs text-text-muted pt-2">
-        <span className="flex items-center gap-1"><TrendingUp className="h-3 w-3 text-emerald-400" /> Above your sector median — good</span>
+        <span className="flex items-center gap-1"><TrendingUp className="h-3 w-3 text-positive" /> Above your sector median — good</span>
         <span className="flex items-center gap-1"><TrendingDown className="h-3 w-3 text-rose-400" /> Below your sector median — worth reviewing</span>
-        <span className="flex items-center gap-1"><Minus className="h-3 w-3 text-amber-400" /> At the median (within 2%)</span>
+        <span className="flex items-center gap-1"><Minus className="h-3 w-3 text-highlight" /> At the median (within 2%)</span>
       </div>
     </div>
   )

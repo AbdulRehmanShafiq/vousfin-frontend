@@ -25,13 +25,13 @@ export default function ListCard({ leading, title, subtitle, trailing, trailingS
           renders here), and block elements inside <p> are invalid HTML. */}
       <div className="min-w-0 flex-1">
         <div className="truncate text-sm font-semibold text-text-primary leading-tight">{title}</div>
-        {subtitle && <div className="mt-0.5 truncate text-[12.5px] text-text-muted leading-tight">{subtitle}</div>}
+        {subtitle && <div className="mt-0.5 truncate text-small text-text-muted leading-tight">{subtitle}</div>}
       </div>
 
       {(trailing || trailingSub) && (
         <div className="flex-shrink-0 text-right">
           {trailing && <div className="text-sm font-semibold text-text-primary leading-tight">{trailing}</div>}
-          {trailingSub && <div className="mt-0.5 text-[12px] text-text-muted leading-tight">{trailingSub}</div>}
+          {trailingSub && <div className="mt-0.5 text-xs text-text-muted leading-tight">{trailingSub}</div>}
         </div>
       )}
     </Tag>

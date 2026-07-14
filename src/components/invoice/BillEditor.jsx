@@ -212,7 +212,7 @@ export default function BillEditor({
         <Card>
           <div className="flex items-center justify-between mb-4">
             <div className="flex items-center gap-3">
-              <FileText className="h-5 w-5 text-cyan" />
+              <FileText className="h-5 w-5 text-accent" />
               <h2 className="text-lg font-bold text-text-primary">
                 {isReadOnly ? 'View bill' : isEdit ? 'Edit bill' : 'New bill'}
               </h2>
@@ -257,7 +257,7 @@ export default function BillEditor({
                   <button
                     type="button"
                     onClick={onAddVendor}
-                    className="text-xs text-cyan font-semibold hover:underline"
+                    className="text-xs text-accent font-semibold hover:underline"
                   >
                     + Add supplier
                   </button>
@@ -265,7 +265,7 @@ export default function BillEditor({
               </div>
               <select
                 disabled={isReadOnly}
-                className="w-full rounded-lg border border-glass bg-glass-panel px-4 py-3 text-sm text-text-primary focus:border-cyan focus:outline-none disabled:opacity-60"
+                className="w-full rounded-lg border border-glass bg-glass-panel px-4 py-3 text-sm text-text-primary focus:border-accent focus:outline-none disabled:opacity-60"
                 value={vendorId}
                 onChange={e => setVendorId(e.target.value)}
               >
@@ -283,7 +283,7 @@ export default function BillEditor({
               <label className="mb-1.5 block text-sm font-medium text-text-secondary">Currency</label>
               <div className="flex gap-2">
                 <select
-                  className="flex-1 rounded-lg border border-glass bg-glass-panel px-3 py-3 text-sm text-text-primary focus:border-cyan focus:outline-none"
+                  className="flex-1 rounded-lg border border-glass bg-glass-panel px-3 py-3 text-sm text-text-primary focus:border-accent focus:outline-none"
                   value={currencyCode}
                   onChange={e => setCurrencyCode(e.target.value)}
                 >
@@ -318,7 +318,7 @@ export default function BillEditor({
             <button
               type="button"
               onClick={addLine}
-              className="flex items-center gap-1.5 rounded-lg bg-cyan/10 px-3 py-1.5 text-xs font-semibold text-cyan hover:bg-cyan/20 transition-colors"
+              className="flex items-center gap-1.5 rounded-lg bg-accent/10 px-3 py-1.5 text-xs font-semibold text-accent hover:bg-accent/20 transition-colors"
             >
               <Plus className="h-3.5 w-3.5" />
               Add item
@@ -328,7 +328,7 @@ export default function BillEditor({
           <div className="hidden md:block overflow-x-auto px-3 pb-4">
             <table className="w-full text-sm">
               <thead>
-                <tr className="border-b border-glass text-[12px] uppercase tracking-wider text-text-muted">
+                <tr className="border-b border-glass text-xs uppercase tracking-wider text-text-muted">
                   <th className="w-8" />
                   <th className="w-8 px-1 py-2 text-center">#</th>
                   <th className="min-w-[180px] px-1 py-2 text-left">Item</th>
@@ -373,7 +373,7 @@ export default function BillEditor({
                   </div>
                   {inventoryItems.length > 0 && (
                     <select
-                      className="w-full rounded border border-glass bg-glass-panel px-2 py-2.5 text-base text-text-secondary focus:border-cyan focus:outline-none"
+                      className="w-full rounded border border-glass bg-glass-panel px-2 py-2.5 text-base text-text-secondary focus:border-accent focus:outline-none"
                       value={item.inventoryItemId || ''}
                       onChange={e => {
                         const invId = e.target.value
@@ -398,15 +398,15 @@ export default function BillEditor({
                   />
                   <div className="grid grid-cols-3 gap-2">
                     <div>
-                      <label className="text-[12px] text-text-muted">Qty</label>
+                      <label className="text-xs text-text-muted">Qty</label>
                       <input type="number" className="w-full rounded border border-glass bg-glass-panel px-2 py-2.5 text-base text-right" value={item.quantity || ''} onChange={e => handleLineChange(i, { ...item, quantity: parseFloat(e.target.value) || 0 })} />
                     </div>
                     <div>
-                      <label className="text-[12px] text-text-muted">Price</label>
+                      <label className="text-xs text-text-muted">Price</label>
                       <input type="number" className="w-full rounded border border-glass bg-glass-panel px-2 py-2.5 text-base text-right" value={item.unitPrice || ''} onChange={e => handleLineChange(i, { ...item, unitPrice: parseFloat(e.target.value) || 0 })} />
                     </div>
                     <div>
-                      <label className="text-[12px] text-text-muted">Tax %</label>
+                      <label className="text-xs text-text-muted">Tax %</label>
                       <input type="number" className="w-full rounded border border-glass bg-glass-panel px-2 py-2.5 text-base text-right" value={item.taxRate || ''} onChange={e => handleLineChange(i, { ...item, taxRate: parseFloat(e.target.value) || 0 })} />
                     </div>
                   </div>
@@ -496,7 +496,7 @@ export default function BillEditor({
               currency={currencyCode}
             />
             {whtAmount > 0 && (
-              <div className="mt-3 pt-3 border-t border-glass/40 flex justify-between text-xs text-amber">
+              <div className="mt-3 pt-3 border-t border-glass/40 flex justify-between text-xs text-highlight">
                 <span>Tax withheld</span>
                 <span className="font-mono">- {whtAmount.toFixed(2)}</span>
               </div>
@@ -535,8 +535,8 @@ function NextStepsCard({ state }) {
         What happens next?
       </h3>
       <div className="space-y-2">
-        <div className="rounded-lg border border-cyan/30 bg-cyan/5 p-3">
-          <p className="text-[12px] uppercase tracking-wider text-cyan font-bold mb-1">
+        <div className="rounded-lg border border-accent/30 bg-accent/5 p-3">
+          <p className="text-xs uppercase tracking-wider text-accent font-bold mb-1">
             Current — {current.label}
           </p>
           <p className="text-xs text-text-secondary leading-relaxed">
@@ -552,7 +552,7 @@ function NextStepsCard({ state }) {
                 title={s.label}
                 className={cn(
                   'h-1 flex-1 rounded-full transition-colors',
-                  reached ? 'bg-cyan' : 'bg-glass'
+                  reached ? 'bg-accent' : 'bg-glass'
                 )}
               />
             )

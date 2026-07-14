@@ -45,8 +45,8 @@ export default function AuthLayout() {
         </div>
 
         <div className="relative max-w-md">
-          <p className="mb-5 flex items-center gap-2.5 text-[12.5px] font-semibold uppercase tracking-[0.22em] text-gold/90">
-            <span className="h-px w-7 bg-gold/50" aria-hidden="true" />
+          <p className="mb-5 flex items-center gap-2.5 text-small font-semibold uppercase tracking-[0.22em] text-highlight/90">
+            <span className="h-px w-7 bg-highlight/50" aria-hidden="true" />
             The midnight ledger
           </p>
           <h2 className="font-display text-[2.75rem] leading-[1.12] tracking-tight text-text-primary mb-5">
@@ -59,7 +59,7 @@ export default function AuthLayout() {
             journals, balances the accounts, and watches the numbers while you sleep.
           </p>
 
-          <ul className="mt-8 space-y-3 text-[15px] text-text-secondary">
+          <ul className="mt-8 space-y-3 text-md text-text-secondary">
             {['Double-entry, done for you', 'Live statements & forecasts', 'Anomalies caught before they cost you'].map((line) => (
               <li key={line} className="flex items-center gap-3">
                 <span className="h-1.5 w-1.5 rounded-full bg-accent shadow-[0_0_8px_rgb(var(--c-accent)/0.8)]" aria-hidden="true" />

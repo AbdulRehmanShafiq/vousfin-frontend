@@ -45,7 +45,7 @@ export default function IncomeStatementPage() {
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div>
           <h1 className="flex items-center gap-2 text-xl sm:text-2xl font-black text-text-primary tracking-tight">
-            <LineChart className="h-6 w-6 text-cyan" />
+            <LineChart className="h-6 w-6 text-accent" />
             Income Statement
           </h1>
           <p className="text-text-secondary mt-1 text-sm">Profit & Loss — Revenue, Gross Profit, EBITDA, Net Income</p>
@@ -75,12 +75,12 @@ export default function IncomeStatementPage() {
             { label: 'Net Profit',     val: data.netIncome ?? data.netProfit, positive: (data.netIncome ?? data.netProfit) >= 0 },
           ].map(({ label, val, positive }) => (
             <div key={label} className="premium-card px-3 py-2.5 sm:px-4 sm:py-3 flex flex-col gap-0.5 sm:gap-1">
-              <span className="text-[11px] sm:text-xs font-bold text-text-secondary uppercase tracking-wider">{label}</span>
+              <span className="text-label sm:text-xs font-bold text-text-secondary uppercase tracking-wider">{label}</span>
               <div className="flex items-center gap-1.5 min-w-0">
                 {positive
                   ? <TrendingUp className="hidden sm:block h-4 w-4 text-positive flex-shrink-0" />
                   : <TrendingDown className="hidden sm:block h-4 w-4 text-negative flex-shrink-0" />}
-                <span className={`font-black text-[15px] sm:text-lg tabular-nums truncate ${positive ? 'text-positive' : 'text-negative'}`}>
+                <span className={`font-black text-md sm:text-lg tabular-nums truncate ${positive ? 'text-positive' : 'text-negative'}`}>
                   {formatCurrency(val, currency)}
                 </span>
               </div>
@@ -182,8 +182,8 @@ export default function IncomeStatementPage() {
 
             {/* EBITDA callout */}
             <div className="flex items-center justify-between gap-3 px-3 py-2 rounded-lg bg-glass border border-glass">
-              <span className="min-w-0 truncate text-[13px] sm:text-sm text-text-secondary">EBITDA <span className="hidden sm:inline text-xs">(Operating Profit + D&A)</span></span>
-              <span className={`whitespace-nowrap font-bold text-[13px] sm:text-sm tabular-nums ${data.ebitda >= 0 ? 'text-cyan' : 'text-negative'}`}>
+              <span className="min-w-0 truncate text-small sm:text-sm text-text-secondary">EBITDA <span className="hidden sm:inline text-xs">(Operating Profit + D&A)</span></span>
+              <span className={`whitespace-nowrap font-bold text-small sm:text-sm tabular-nums ${data.ebitda >= 0 ? 'text-accent' : 'text-negative'}`}>
                 {formatCurrency(data.ebitda, currency)}
               </span>
             </div>
@@ -218,20 +218,20 @@ function PLSection({ title, section, currency, negate = false }) {
 
   return (
     <div className="space-y-0.5">
-      <h3 className="text-[11px] sm:text-xs font-bold text-text-muted uppercase tracking-wider px-1">{title}</h3>
+      <h3 className="text-label sm:text-xs font-bold text-text-muted uppercase tracking-wider px-1">{title}</h3>
       <div>
         {visibleAccounts.map((acc, i) => (
           <div key={acc.accountId || i} className="flex items-center justify-between gap-3 py-1 px-1 sm:py-1.5 sm:px-4">
-            <span className="min-w-0 truncate text-[13px] sm:text-sm text-text-primary">{acc.accountName}</span>
-            <span className="whitespace-nowrap text-[13px] sm:text-sm font-medium text-text-primary tabular-nums">
+            <span className="min-w-0 truncate text-small sm:text-sm text-text-primary">{acc.accountName}</span>
+            <span className="whitespace-nowrap text-small sm:text-sm font-medium text-text-primary tabular-nums">
               {negate ? `(${formatCurrency(acc.balance, currency)})` : formatCurrency(acc.balance, currency)}
             </span>
           </div>
         ))}
       </div>
       <div className="flex items-center justify-between gap-3 py-1 px-1 sm:py-1.5 sm:px-4 rule-subtotal mt-0.5">
-        <span className="min-w-0 truncate text-[13px] sm:text-sm font-semibold text-text-secondary">Total {title}</span>
-        <span className="whitespace-nowrap text-[13px] sm:text-sm font-bold text-text-primary tabular-nums">
+        <span className="min-w-0 truncate text-small sm:text-sm font-semibold text-text-secondary">Total {title}</span>
+        <span className="whitespace-nowrap text-small sm:text-sm font-bold text-text-primary tabular-nums">
           {negate ? `(${formatCurrency(total, currency)})` : formatCurrency(total, currency)}
         </span>
       </div>

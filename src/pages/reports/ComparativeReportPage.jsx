@@ -84,7 +84,7 @@ export default function ComparativeReportPage() {
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div>
           <h1 className="flex items-center gap-2 text-xl sm:text-2xl font-black text-text-primary tracking-tight">
-            <BarChart2 className="h-6 w-6 text-cyan" />
+            <BarChart2 className="h-6 w-6 text-accent" />
             Comparative Report
           </h1>
           <p className="text-text-secondary mt-1 text-sm">Period vs period — Income Statement comparison</p>
@@ -97,7 +97,7 @@ export default function ComparativeReportPage() {
         {PRESETS.map((p, idx) => (
           <button key={p.label} onClick={() => applyPreset(p, idx)}
             className={`px-4 py-2 rounded-lg text-sm font-medium border transition-all ${
-              preset === idx ? 'bg-cyan text-ink-on-accent border-cyan font-bold' : 'border-glass text-text-secondary hover:border-cyan/40 hover:text-text-primary'
+              preset === idx ? 'bg-accent text-ink-on-accent border-accent font-bold' : 'border-glass text-text-secondary hover:border-accent/40 hover:text-text-primary'
             }`}>
             {p.label}
           </button>

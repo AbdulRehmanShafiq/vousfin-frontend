@@ -81,9 +81,9 @@ export default function TransactionReversalModal({ isOpen, onClose, transaction,
       className="max-w-xl"
     >
       {/* Warning banner */}
-      <div className="mb-5 flex items-start gap-3 rounded-lg bg-amber/10 border border-amber/20 p-4">
-        <AlertTriangle className="mt-0.5 h-5 w-5 flex-shrink-0 text-amber-2" />
-        <p className="text-sm text-amber-2">
+      <div className="mb-5 flex items-start gap-3 rounded-lg bg-highlight/10 border border-highlight/20 p-4">
+        <AlertTriangle className="mt-0.5 h-5 w-5 flex-shrink-0 text-highlight-2" />
+        <p className="text-sm text-highlight-2">
           A reversing entry will be posted to neutralize the original transaction.
           The original remains in the ledger marked <strong>REVERSED</strong> — it cannot be undone.
         </p>
@@ -117,7 +117,7 @@ export default function TransactionReversalModal({ isOpen, onClose, transaction,
       {/* Planned reversal journal preview */}
       <section className="mb-5">
         <div className="flex items-center gap-2 mb-2">
-          <ArrowLeftRight className="h-4 w-4 text-cyan" />
+          <ArrowLeftRight className="h-4 w-4 text-accent" />
           <h3 className="text-xs font-semibold uppercase tracking-widest text-text-muted">
             Reversal Journal Preview
           </h3>
@@ -163,7 +163,7 @@ export default function TransactionReversalModal({ isOpen, onClose, transaction,
             type="date"
             value={reversalDate}
             onChange={(e) => setReversalDate(e.target.value)}
-            className="w-full rounded-lg border border-glass bg-glass-panel px-4 py-2.5 text-sm text-text-primary placeholder-text-muted focus:border-cyan focus:outline-none focus:ring-1 focus:ring-cyan"
+            className="w-full rounded-lg border border-glass bg-glass-panel px-4 py-2.5 text-sm text-text-primary placeholder-text-muted focus:border-accent focus:outline-none focus:ring-1 focus:ring-accent"
           />
         </div>
         <div>
@@ -176,7 +176,7 @@ export default function TransactionReversalModal({ isOpen, onClose, transaction,
             placeholder="e.g. Duplicate entry, Customer cancelled order, Incorrect amount…"
             rows={3}
             maxLength={500}
-            className="w-full resize-none rounded-lg border border-glass bg-glass-panel px-4 py-2.5 text-sm text-text-primary placeholder-text-muted focus:border-cyan focus:outline-none focus:ring-1 focus:ring-cyan"
+            className="w-full resize-none rounded-lg border border-glass bg-glass-panel px-4 py-2.5 text-sm text-text-primary placeholder-text-muted focus:border-accent focus:outline-none focus:ring-1 focus:ring-accent"
           />
           <p className="mt-1 text-xs text-text-muted">{reason.length}/500</p>
         </div>

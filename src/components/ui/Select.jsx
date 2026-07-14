@@ -172,7 +172,7 @@ export const Select = forwardRef(({
           />
           {query && (
             <button type="button" onClick={() => setQuery('')}>
-              <X className="h-4 w-4 text-text-muted hover:text-cyan transition-colors" />
+              <X className="h-4 w-4 text-text-muted hover:text-accent transition-colors" />
             </button>
           )}
         </div>
@@ -196,7 +196,7 @@ export const Select = forwardRef(({
                   nodes.push(
                     <div
                       key={`__grp_${groupLabel}`}
-                      className="sticky top-0 z-[1] px-4 py-1.5 text-[12px] font-bold uppercase tracking-wider text-text-muted bg-charcoal/95 border-b border-glass/40"
+                      className="sticky top-0 z-[1] px-4 py-1.5 text-xs font-bold uppercase tracking-wider text-text-muted bg-charcoal/95 border-b border-glass/40"
                     >
                       {groupLabel}
                     </div>
@@ -220,7 +220,7 @@ export const Select = forwardRef(({
                     'w-full px-4 text-left text-sm transition-colors',
                     opt.subtitle ? 'py-2' : 'py-2.5',
                     isSelected
-                      ? 'bg-glass-panel font-semibold text-cyan'
+                      ? 'bg-glass-panel font-semibold text-accent'
                       : 'text-text-secondary hover:bg-glass-hover hover:text-text-primary'
                   )}
                   onClick={() => handleSelect(optVal)}
@@ -230,8 +230,8 @@ export const Select = forwardRef(({
                   {/* Subtitle — account subtype shown as dim secondary line */}
                   {opt.subtitle && (
                     <span className={cn(
-                      'block text-[12px] leading-tight mt-0.5',
-                      isSelected ? 'text-cyan/60' : 'text-text-muted'
+                      'block text-xs leading-tight mt-0.5',
+                      isSelected ? 'text-accent/60' : 'text-text-muted'
                     )}>
                       {opt.subtitle}
                     </span>
@@ -266,19 +266,19 @@ export const Select = forwardRef(({
         className={cn(
           'flex w-full items-center justify-between rounded-lg border bg-glass-panel',
           'px-4 py-3 text-left text-sm transition-premium',
-          'focus:outline-none focus:ring-2 focus:ring-cyan/20',
+          'focus:outline-none focus:ring-2 focus:ring-accent/20',
           error
             ? 'border-negative/50'
             : open
-              ? 'border-cyan/50 bg-glass-hover'
-              : 'border-glass hover:border-cyan/30 hover:bg-glass-hover focus:border-cyan'
+              ? 'border-accent/50 bg-glass-hover'
+              : 'border-glass hover:border-accent/30 hover:bg-glass-hover focus:border-accent'
         )}
       >
         <span className={cn('truncate', selected ? 'text-text-primary' : 'text-text-muted')}>
           {selected ? (selected.label ?? selected.name) : placeholder}
         </span>
         {loading ? (
-          <div className="h-4 w-4 flex-shrink-0 animate-spin rounded-full border-2 border-text-muted border-t-cyan" />
+          <div className="h-4 w-4 flex-shrink-0 animate-spin rounded-full border-2 border-text-muted border-t-accent" />
         ) : (
           <ChevronDown className={cn(
             'h-4 w-4 flex-shrink-0 text-text-muted transition-transform duration-200',

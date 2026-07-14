@@ -31,7 +31,7 @@ export default function MobileBills({
         <button
           type="button"
           onClick={onNew}
-          className="tap-target flex w-full items-center justify-center gap-2 rounded-2xl btn-gradient text-[15px] font-semibold"
+          className="tap-target flex w-full items-center justify-center gap-2 rounded-2xl btn-gradient text-md font-semibold"
         >
           <Plus className="h-5 w-5" />
           New bill
@@ -46,7 +46,7 @@ export default function MobileBills({
               value={query}
               onChange={(e) => onQuery(e.target.value)}
               placeholder="Search bills…"
-              className="w-full rounded-xl bg-glass-panel border border-glass py-2.5 pl-9 pr-3 text-sm text-text-primary placeholder:text-text-muted focus:border-cyan focus:outline-none"
+              className="w-full rounded-xl bg-glass-panel border border-glass py-2.5 pl-9 pr-3 text-sm text-text-primary placeholder:text-text-muted focus:border-accent focus:outline-none"
             />
           </div>
 
@@ -56,8 +56,8 @@ export default function MobileBills({
                 key={f.value}
                 type="button"
                 onClick={() => onStateFilter(f.value)}
-                className={`flex-shrink-0 rounded-full px-3.5 py-1.5 text-[13px] font-semibold transition-colors ${
-                  stateFilter === f.value ? 'bg-cyan text-ink-on-accent' : 'bg-glass-panel text-text-secondary'
+                className={`flex-shrink-0 rounded-full px-3.5 py-1.5 text-small font-semibold transition-colors ${
+                  stateFilter === f.value ? 'bg-accent text-ink-on-accent' : 'bg-glass-panel text-text-secondary'
                 }`}
               >
                 {f.label}
@@ -86,7 +86,7 @@ export default function MobileBills({
                     <ListCard
                       onClick={() => onOpen(r._id)}
                       leading={
-                        <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-amber/12 text-amber">
+                        <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-highlight/12 text-highlight">
                           <FileText className="h-4 w-4" />
                         </div>
                       }

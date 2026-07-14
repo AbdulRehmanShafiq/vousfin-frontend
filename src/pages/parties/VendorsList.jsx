@@ -29,15 +29,15 @@ function KpiTile({ icon: Icon, label, value, sub, accent }) {
   return (
     <div className={cn(
       'premium-card p-4 flex items-center gap-3',
-      accent && 'border-amber/30 bg-amber/5'
+      accent && 'border-highlight/30 bg-highlight/5'
     )}>
       {Icon && (
-        <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-amber/15 text-amber-2">
+        <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-highlight/15 text-highlight-2">
           <Icon className="h-5 w-5" />
         </div>
       )}
       <div className="min-w-0">
-        <p className="text-[12.5px] text-text-muted font-semibold uppercase tracking-wider truncate">
+        <p className="text-small text-text-muted font-semibold uppercase tracking-wider truncate">
           {label}
         </p>
         <p className="text-lg font-black text-text-primary leading-tight">{value}</p>
@@ -122,7 +122,7 @@ export default function VendorsList() {
       render: (row) => {
         const bal = Number(row.currentPayableBalance || 0)
         return bal > 0 ? (
-          <span className="text-amber-2">{formatCurrency(bal, currency)}</span>
+          <span className="text-highlight-2">{formatCurrency(bal, currency)}</span>
         ) : (
           <span className="text-text-muted">—</span>
         )
@@ -177,7 +177,7 @@ export default function VendorsList() {
               className={cn(
                 'px-3 py-1.5 rounded-lg text-xs font-semibold transition-all',
                 filter === f.key
-                  ? 'bg-cyan text-ink-on-accent shadow-sm'
+                  ? 'bg-accent text-ink-on-accent shadow-sm'
                   : 'text-text-secondary hover:text-text-primary hover:bg-glass-hover'
               )}
             >

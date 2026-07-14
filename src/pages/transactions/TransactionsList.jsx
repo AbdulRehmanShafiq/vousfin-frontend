@@ -58,12 +58,12 @@ const FILTERS = ['All', 'Income', 'Expense', 'AR/AP', 'Transfer']
 // ─── memoized sub-components ──────────────────────────────────────────────────
 
 const StatusBadge = memo(function StatusBadge({ row }) {
-  if (row.status === 'reversed')        return <Badge variant="danger"  className="text-[12px] py-0.5 px-1.5">Reversed</Badge>
-  if (row.installmentPlanId)            return <Badge variant="info"    className="text-[12px] py-0.5 px-1.5">Instalment</Badge>
-  if (row.paymentStatus === 'unpaid')   return <Badge variant="warning" className="text-[12px] py-0.5 px-1.5">Unpaid</Badge>
-  if (row.paymentStatus === 'partial')  return <Badge variant="warning" className="text-[12px] py-0.5 px-1.5">Partial</Badge>
-  if (row.paymentStatus === 'paid')     return <Badge variant="success" className="text-[12px] py-0.5 px-1.5">Paid</Badge>
-  return <Badge variant="default" className="text-[12px] py-0.5 px-1.5">Posted</Badge>
+  if (row.status === 'reversed')        return <Badge variant="danger"  className="text-xs py-0.5 px-1.5">Reversed</Badge>
+  if (row.installmentPlanId)            return <Badge variant="info"    className="text-xs py-0.5 px-1.5">Instalment</Badge>
+  if (row.paymentStatus === 'unpaid')   return <Badge variant="warning" className="text-xs py-0.5 px-1.5">Unpaid</Badge>
+  if (row.paymentStatus === 'partial')  return <Badge variant="warning" className="text-xs py-0.5 px-1.5">Partial</Badge>
+  if (row.paymentStatus === 'paid')     return <Badge variant="success" className="text-xs py-0.5 px-1.5">Paid</Badge>
+  return <Badge variant="default" className="text-xs py-0.5 px-1.5">Posted</Badge>
 })
 
 // EditDateModal removed — date editing is now part of the full Edit Transaction modal
@@ -75,7 +75,7 @@ const HistoryPanel = memo(function HistoryPanel({ history }) {
   const { reversal, auditTrail } = history
   return (
     <div className="space-y-1.5">
-      <p className="text-[12px] font-bold uppercase tracking-widest text-text-muted flex items-center gap-1">
+      <p className="text-xs font-bold uppercase tracking-widest text-text-muted flex items-center gap-1">
         <History className="h-3 w-3" /> Audit Trail
       </p>
       {reversal && (
@@ -87,11 +87,11 @@ const HistoryPanel = memo(function HistoryPanel({ history }) {
       )}
       {auditTrail?.map((e, i) => (
         <div key={i} className="flex items-center gap-2 text-xs">
-          <span className="text-cyan font-mono shrink-0 text-[12px]">{formatDate(e.timestamp || e.createdAt)}</span>
-          <span className={`shrink-0 rounded-full px-1.5 py-px font-semibold text-[12px] ${
+          <span className="text-accent font-mono shrink-0 text-xs">{formatDate(e.timestamp || e.createdAt)}</span>
+          <span className={`shrink-0 rounded-full px-1.5 py-px font-semibold text-xs ${
             e.action === 'Reversed' ? 'bg-negative/15 text-negative' :
             e.action === 'Created'  ? 'bg-positive/15 text-positive' :
-            e.action === 'Edited'   ? 'bg-amber/15 text-amber-2' :
+            e.action === 'Edited'   ? 'bg-highlight/15 text-highlight-2' :
             'bg-glass-panel text-text-muted'
           }`}>{e.action}</span>
           <span className="text-text-muted">by {e.performedByName || 'System'}</span>
@@ -127,7 +127,7 @@ const MobileCard = memo(function MobileCard({
           </span>
           {row.currencyCode && row.currencyCode !== currency && (
             <div className="flex items-center gap-1">
-              <span className="text-[12px] text-text-muted tabular-nums">
+              <span className="text-xs text-text-muted tabular-nums">
                 {row.amount?.toLocaleString(undefined, { maximumFractionDigits: 2 })}
               </span>
               <CurrencyBadge code={row.currencyCode} baseCurrency={currency} />
@@ -137,15 +137,15 @@ const MobileCard = memo(function MobileCard({
       </div>
 
       {/* Row 2: accounts */}
-      <p className="text-[12.5px] text-text-muted mt-0.5 truncate">
+      <p className="text-small text-text-muted mt-0.5 truncate">
         {row.debitAccountId?.accountName} → {row.creditAccountId?.accountName}
       </p>
 
       {/* Row 3: meta + actions */}
       <div className="mt-1.5 flex items-center justify-between gap-1">
         <div className="flex items-center gap-1.5 flex-wrap min-w-0">
-          <span className="text-[12.5px] text-text-muted shrink-0">{formatDate(row.transactionDate)}</span>
-          <Badge variant={TYPE_VARIANT[type] || 'default'} className="text-[12px] py-0 px-1.5">
+          <span className="text-small text-text-muted shrink-0">{formatDate(row.transactionDate)}</span>
+          <Badge variant={TYPE_VARIANT[type] || 'default'} className="text-xs py-0 px-1.5">
             {row.transactionType || 'Unknown'}
           </Badge>
           <StatusBadge row={row} />
@@ -160,21 +160,21 @@ const MobileCard = memo(function MobileCard({
             </span>
           ) : (
             <button onClick={() => onEdit(row)} title="Edit transaction"
-              className="rounded p-1 text-text-muted hover:text-cyan hover:bg-glass-hover transition-colors">
+              className="rounded p-1 text-text-muted hover:text-accent hover:bg-glass-hover transition-colors">
               <Pencil className="h-3.5 w-3.5" />
             </button>
           )}
           <button onClick={() => onViewDetails?.(row)} title="View full details"
-            className="rounded p-1 text-text-muted hover:text-cyan hover:bg-glass-hover transition-colors">
+            className="rounded p-1 text-text-muted hover:text-accent hover:bg-glass-hover transition-colors">
             <Eye className="h-3.5 w-3.5" />
           </button>
           <button onClick={() => onToggleHistory(row)} title="History"
-            className="rounded p-1 text-text-muted hover:text-cyan hover:bg-glass-hover transition-colors">
+            className="rounded p-1 text-text-muted hover:text-accent hover:bg-glass-hover transition-colors">
             {isExpanded ? <ChevronUp className="h-3.5 w-3.5" /> : <History className="h-3.5 w-3.5" />}
           </button>
           {canReverse(row) && (
             <button onClick={() => onReverse(row)} title="Reverse this transaction"
-              className="rounded p-1 text-text-muted hover:text-amber hover:bg-amber/10 transition-colors">
+              className="rounded p-1 text-text-muted hover:text-highlight hover:bg-highlight/10 transition-colors">
               <RotateCcw className="h-3.5 w-3.5" />
             </button>
           )}
@@ -341,7 +341,7 @@ export default function TransactionsList() {
       <div className="flex items-center justify-between gap-3">
         <div>
           <h1 className="flex items-center gap-2 text-xl font-black text-text-primary tracking-tight sm:text-2xl">
-            <Receipt className="h-5 w-5 text-cyan sm:h-6 sm:w-6" />
+            <Receipt className="h-5 w-5 text-accent sm:h-6 sm:w-6" />
             {t('tx.ledger', 'Transactions Ledger')}
           </h1>
           <p className="hidden sm:block text-text-secondary text-sm mt-0.5">{t('tx.journal', 'Double-entry accounting journal')}</p>
@@ -374,7 +374,7 @@ export default function TransactionsList() {
               <button key={f} onClick={() => setActiveFilter(f)}
                 className={`shrink-0 rounded-full px-3 py-1 text-xs font-medium transition-colors ${
                   activeFilter === f
-                    ? 'bg-cyan text-ink-on-accent shadow-glow-cyan'
+                    ? 'bg-accent text-ink-on-accent shadow-glow-accent'
                     : 'bg-glass-panel text-text-secondary hover:bg-glass-hover border border-glass'
                 }`}
               >{f}</button>
@@ -384,10 +384,10 @@ export default function TransactionsList() {
 
         {/* Info bar */}
         <div className="flex items-center justify-between px-3 py-1.5 border-b border-glass">
-          <span className="text-[12.5px] text-text-muted">
+          <span className="text-small text-text-muted">
             {filtered.length}{activeFilter !== 'All' ? ` ${activeFilter}` : ''} / {total} total
           </span>
-          {isFetching && <Loader2 className="h-3 w-3 animate-spin text-cyan" />}
+          {isFetching && <Loader2 className="h-3 w-3 animate-spin text-accent" />}
         </div>
 
         {/* Content */}
@@ -400,7 +400,7 @@ export default function TransactionsList() {
             {/* ── Desktop table (hidden on mobile) ────────────────── */}
             <div className="hidden sm:block overflow-hidden">
               <table className="w-full text-left text-sm">
-                <thead className="bg-glass-panel text-[12px] uppercase text-text-muted tracking-wider">
+                <thead className="bg-glass-panel text-xs uppercase text-text-muted tracking-wider">
                   <tr>
                     <th className="px-4 py-2.5 font-semibold w-24">{t('tx.col.date', 'Date')}</th>
                     <th className="px-4 py-2.5 font-semibold">{t('tx.col.description', 'Description')}</th>
@@ -426,14 +426,14 @@ export default function TransactionsList() {
                             <p className={`text-sm font-semibold truncate ${isReversed ? 'line-through text-text-muted' : 'text-text-primary'}`}>
                               {row.description}
                             </p>
-                            <p className="text-[12.5px] text-text-muted truncate">
+                            <p className="text-small text-text-muted truncate">
                               {row.debitAccountId?.accountName} → {row.creditAccountId?.accountName}
                             </p>
                           </td>
 
                           {/* Type (large screens only) */}
                           <td className="px-4 py-2.5 hidden lg:table-cell">
-                            <Badge variant={TYPE_VARIANT[type] || 'default'} className="text-[12px] py-0.5">
+                            <Badge variant={TYPE_VARIANT[type] || 'default'} className="text-xs py-0.5">
                               {row.transactionType || 'Unknown'}
                             </Badge>
                           </td>
@@ -449,7 +449,7 @@ export default function TransactionsList() {
                               </span>
                               {row.currencyCode && row.currencyCode !== currency && (
                                 <div className="flex items-center gap-1">
-                                  <span className="text-[12px] text-text-muted tabular-nums">
+                                  <span className="text-xs text-text-muted tabular-nums">
                                     {row.amount?.toLocaleString(undefined, { maximumFractionDigits: 2 })}
                                   </span>
                                   <CurrencyBadge code={row.currencyCode} baseCurrency={currency} rate={row.exchangeRate} />
@@ -470,21 +470,21 @@ export default function TransactionsList() {
                                 </span>
                               ) : (
                                 <button onClick={() => setEditTarget(row)} title="Edit transaction"
-                                  className="rounded p-1.5 text-text-muted hover:text-cyan hover:bg-glass-hover transition-colors">
+                                  className="rounded p-1.5 text-text-muted hover:text-accent hover:bg-glass-hover transition-colors">
                                   <Pencil className="h-3.5 w-3.5" />
                                 </button>
                               )}
                               <button onClick={() => setDetailTarget(row._id)} title="View full details"
-                                className="rounded p-1.5 text-text-muted hover:text-cyan hover:bg-glass-hover transition-colors">
+                                className="rounded p-1.5 text-text-muted hover:text-accent hover:bg-glass-hover transition-colors">
                                 <Eye className="h-3.5 w-3.5" />
                               </button>
                               <button onClick={() => toggleHistory(row)} title="History"
-                                className="rounded p-1.5 text-text-muted hover:text-cyan hover:bg-glass-hover transition-colors">
+                                className="rounded p-1.5 text-text-muted hover:text-accent hover:bg-glass-hover transition-colors">
                                 {expandedRows[row._id] ? <ChevronUp className="h-3.5 w-3.5" /> : <History className="h-3.5 w-3.5" />}
                               </button>
                               {canReverse(row) && (
                                 <button onClick={() => setReversalTarget(row)} title="Reverse this transaction"
-                                  className="rounded p-1.5 text-text-muted hover:text-amber hover:bg-amber/10 transition-colors">
+                                  className="rounded p-1.5 text-text-muted hover:text-highlight hover:bg-highlight/10 transition-colors">
                                   <RotateCcw className="h-3.5 w-3.5" />
                                 </button>
                               )}
@@ -535,12 +535,12 @@ export default function TransactionsList() {
         <div ref={sentinelRef} className="border-t border-glass">
           {isFetchingNextPage && (
             <div className="flex items-center justify-center gap-2 py-4 text-xs text-text-muted">
-              <Loader2 className="h-3.5 w-3.5 animate-spin text-cyan" />
+              <Loader2 className="h-3.5 w-3.5 animate-spin text-accent" />
               Loading more transactions…
             </div>
           )}
           {!hasNextPage && !isLoading && docs.length > 0 && (
-            <p className="py-3 text-center text-[12.5px] text-text-muted">
+            <p className="py-3 text-center text-small text-text-muted">
               All {total} transactions loaded
             </p>
           )}

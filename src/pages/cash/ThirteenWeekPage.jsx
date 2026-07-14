@@ -25,17 +25,17 @@ const fmtDate = (d) => {
 
 function SummaryCard({ label, value, sub, accent }) {
   const accentClass = {
-    green:  'border-emerald-400/40 text-emerald-400',
+    green:  'border-positive/40 text-positive',
     red:    'border-rose-400/40 text-rose-400',
-    yellow: 'border-amber-400/40 text-amber-400',
-    cyan:   'border-cyan/40 text-cyan',
+    yellow: 'border-highlight/40 text-highlight',
+    cyan:   'border-accent/40 text-accent',
   }[accent] || 'border-glass text-text-primary'
 
   return (
     <div className={`premium-card p-4 border-l-4 ${accentClass}`}>
-      <p className="text-[11px] text-text-muted uppercase tracking-wide mb-1">{label}</p>
+      <p className="text-label text-text-muted uppercase tracking-wide mb-1">{label}</p>
       <p className={`text-xl font-bold ${accentClass.split(' ')[1]}`}>{value}</p>
-      {sub && <p className="text-[11px] text-text-muted mt-0.5">{sub}</p>}
+      {sub && <p className="text-label text-text-muted mt-0.5">{sub}</p>}
     </div>
   )
 }
@@ -53,13 +53,13 @@ function WeekRow({ week }) {
         </span>
         {fmtDate(week.weekStartDate)}
       </td>
-      <td className="px-3 py-2.5 text-right text-emerald-400">
+      <td className="px-3 py-2.5 text-right text-positive">
         {fmt(week.inflows)}
       </td>
       <td className="px-3 py-2.5 text-right text-rose-400">
         {fmt(week.outflows)}
       </td>
-      <td className={`px-3 py-2.5 text-right font-medium ${netPositive ? 'text-emerald-400' : 'text-rose-400'}`}>
+      <td className={`px-3 py-2.5 text-right font-medium ${netPositive ? 'text-positive' : 'text-rose-400'}`}>
         {netPositive ? '+' : ''}{fmt(week.netCashFlow)}
       </td>
       <td className={`px-3 py-2.5 text-right font-semibold ${isAlert ? 'text-rose-400' : 'text-text-primary'}`}>
@@ -67,7 +67,7 @@ function WeekRow({ week }) {
         {fmt(week.closingBalance)}
       </td>
       <td className="px-3 py-2.5 text-right">
-        <span className={`text-[11px] px-1.5 py-0.5 rounded font-medium ${isProbable ? 'bg-amber-500/15 text-amber-400' : 'bg-cyan/15 text-cyan'}`}>
+        <span className={`text-label px-1.5 py-0.5 rounded font-medium ${isProbable ? 'bg-highlight/15 text-highlight' : 'bg-accent/15 text-accent'}`}>
           {isProbable ? 'Estimate' : 'Committed'}
         </span>
       </td>
@@ -106,8 +106,8 @@ export default function ThirteenWeekPage() {
       {/* Header */}
       <div className="flex items-start justify-between gap-4 flex-wrap">
         <div className="flex items-center gap-3">
-          <div className="p-2 rounded-xl bg-cyan/15">
-            <TrendingUp className="h-5 w-5 text-cyan" />
+          <div className="p-2 rounded-xl bg-accent/15">
+            <TrendingUp className="h-5 w-5 text-accent" />
           </div>
           <div>
             <h1 className="text-2xl font-semibold text-text-primary tracking-tight">13-Week Cash Projection</h1>
@@ -119,20 +119,20 @@ export default function ThirteenWeekPage() {
       {/* Floor input + refresh */}
       <div className="premium-card p-4 flex flex-wrap items-end gap-3">
         <div>
-          <label className="block text-[11px] text-text-muted mb-1 uppercase tracking-wide">Alert me when cash drops below (PKR)</label>
+          <label className="block text-label text-text-muted mb-1 uppercase tracking-wide">Alert me when cash drops below (PKR)</label>
           <input
             type="number"
             min="0"
             value={floorInput}
             onChange={e => setFloorInput(e.target.value)}
             placeholder="0 — no floor"
-            className="px-3 py-2 rounded-lg border border-glass bg-glass-panel/40 text-[13px] text-text-primary focus:outline-none focus:border-cyan/40 w-48"
+            className="px-3 py-2 rounded-lg border border-glass bg-glass-panel/40 text-small text-text-primary focus:outline-none focus:border-accent/40 w-48"
           />
         </div>
         <button
           onClick={handleRefresh}
           disabled={isFetching}
-          className="btn-gradient inline-flex items-center gap-1.5 px-4 py-2 rounded-lg text-[12.5px] font-semibold disabled:opacity-60"
+          className="btn-gradient inline-flex items-center gap-1.5 px-4 py-2 rounded-lg text-small font-semibold disabled:opacity-60"
         >
           {isFetching ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <RefreshCw className="h-3.5 w-3.5" />}
           Refresh
@@ -173,7 +173,7 @@ export default function ThirteenWeekPage() {
       {isError && (
         <div className="premium-card p-6 text-center">
           <p className="text-text-secondary text-sm">{getErrorMessage(error)}</p>
-          <button onClick={handleRefresh} className="mt-3 text-cyan text-sm hover:underline">Try again</button>
+          <button onClick={handleRefresh} className="mt-3 text-accent text-sm hover:underline">Try again</button>
         </div>
       )}
 
@@ -194,7 +194,7 @@ export default function ThirteenWeekPage() {
           <div className="overflow-x-auto">
             <table className="w-full text-sm">
               <thead>
-                <tr className="border-b border-glass/30 text-[11px] text-text-muted uppercase tracking-wide">
+                <tr className="border-b border-glass/30 text-label text-text-muted uppercase tracking-wide">
                   <th className="px-3 py-3 text-left">Week / Start</th>
                   <th className="px-3 py-3 text-right">Inflows</th>
                   <th className="px-3 py-3 text-right">Outflows</th>
@@ -213,7 +213,7 @@ export default function ThirteenWeekPage() {
             <div className="px-4 py-3 border-t border-glass/20">
               <button
                 onClick={() => setShowAll(!showAll)}
-                className="text-cyan text-sm flex items-center gap-1 hover:underline"
+                className="text-accent text-sm flex items-center gap-1 hover:underline"
               >
                 {showAll ? <><ChevronUp className="h-3.5 w-3.5" /> Show less</> : <><ChevronDown className="h-3.5 w-3.5" /> Show all</>}
               </button>
@@ -225,10 +225,10 @@ export default function ThirteenWeekPage() {
       {/* Legend */}
       <div className="flex flex-wrap gap-4 text-xs text-text-muted">
         <span className="flex items-center gap-1.5">
-          <span className="w-2.5 h-2.5 rounded-sm bg-cyan/60 inline-block" /> Committed — based on your open invoices/bills
+          <span className="w-2.5 h-2.5 rounded-sm bg-accent/60 inline-block" /> Committed — based on your open invoices/bills
         </span>
         <span className="flex items-center gap-1.5">
-          <span className="w-2.5 h-2.5 rounded-sm bg-amber-500/60 inline-block" /> Estimated — based on your collection/payment history
+          <span className="w-2.5 h-2.5 rounded-sm bg-highlight/60 inline-block" /> Estimated — based on your collection/payment history
         </span>
         <span className="flex items-center gap-1.5">
           <AlertTriangle className="h-3 w-3 text-rose-400" /> Balance drops below floor

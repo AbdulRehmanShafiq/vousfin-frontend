@@ -106,7 +106,7 @@ export default function SupportPage() {
     return (
       <div className="min-h-[200px] flex flex-col items-center justify-center py-8">
         <div className="animate-pulse h-8 w-8 rounded bg-gray-300" />
-        <p className="mt-2 text-[13px] text-text-secondary">Loading your tickets...</p>
+        <p className="mt-2 text-small text-text-secondary">Loading your tickets...</p>
       </div>
     )
   }
@@ -116,7 +116,7 @@ export default function SupportPage() {
       {/* Page header */}
       <div className="flex flex-col items-center gap-2">
         <h1 className="text-2xl font-bold text-text-primary">Support Center</h1>
-        <p className="text-[13px] text-text-muted max-w-xl text-center">
+        <p className="text-small text-text-muted max-w-xl text-center">
           Get help with any questions or issues you encounter while using VousFin
         </p>
       </div>
@@ -129,20 +129,20 @@ export default function SupportPage() {
             <h2 className="mb-3 text-xl font-semibold text-text-primary">New Support Request</h2>
             <form onSubmit={handleSubmit} className="space-y-4">
               <div>
-                <label className="block mb-1 text-[13px] font-medium text-text-secondary">Subject</label>
+                <label className="block mb-1 text-small font-medium text-text-secondary">Subject</label>
                 <Input
                   type="text"
                   name="subject"
                   value={newTicket.subject}
                   onChange={handleChange}
                   placeholder="Briefly describe your issue or question"
-                  className="w-full px-3 py-2 rounded-lg border border-glass bg-glass-panel/40 text-[13px] text-text-primary placeholder:text-text-muted focus:outline-none focus:border-cyan/40"
+                  className="w-full px-3 py-2 rounded-lg border border-glass bg-glass-panel/40 text-small text-text-primary placeholder:text-text-muted focus:outline-none focus:border-accent/40"
                 />
               </div>
 
               <div className="grid gap-3 sm:grid-cols-2">
                 <div>
-                  <label className="block mb-1 text-[13px] font-medium text-text-secondary">Category</label>
+                  <label className="block mb-1 text-small font-medium text-text-secondary">Category</label>
                   <SelectField
                     name="category"
                     value={newTicket.category}
@@ -158,7 +158,7 @@ export default function SupportPage() {
                 </div>
 
                 <div>
-                  <label className="block mb-1 text-[13px] font-medium text-text-secondary">Priority</label>
+                  <label className="block mb-1 text-small font-medium text-text-secondary">Priority</label>
                   <SelectField
                     name="priority"
                     value={newTicket.priority}
@@ -174,13 +174,13 @@ export default function SupportPage() {
               </div>
 
               <div>
-                <label className="block mb-1 text-[13px] font-medium text-text-secondary">Message</label>
+                <label className="block mb-1 text-small font-medium text-text-secondary">Message</label>
                 <textarea
                   name="message"
                   value={newTicket.message}
                   onChange={handleChange}
                   placeholder="Please provide as much detail as possible..."
-                  className="w-full px-3 py-2 rounded-lg border border-glass bg-glass-panel/40 text-[13px] text-text-primary placeholder:text-text-muted focus:outline-none focus:border-cyan/40"
+                  className="w-full px-3 py-2 rounded-lg border border-glass bg-glass-panel/40 text-small text-text-primary placeholder:text-text-muted focus:outline-none focus:border-accent/40"
                   rows={4}
                 />
               </div>
@@ -209,18 +209,18 @@ export default function SupportPage() {
                 <div className="flex justify-between items-start mb-2">
                   <h3 className="text-lg font-semibold text-text-primary">{selectedTicket.subject}</h3>
                   <div className="flex items-center gap-2">
-                    <span className={`px-2 py-0.5 rounded text-[11px] font-semibold ${
+                    <span className={`px-2 py-0.5 rounded text-label font-semibold ${
                       selectedTicket.priority === 'low' ? 'bg-text-muted/20 text-text-muted' :
-                      selectedTicket.priority === 'medium' ? 'bg-amber/20 text-amber' :
+                      selectedTicket.priority === 'medium' ? 'bg-highlight/20 text-highlight' :
                       selectedTicket.priority === 'high' ? 'bg-negative/20 text-negative' :
                       selectedTicket.priority === 'urgent' ? 'bg-positive/20 text-positive' :
                       'bg-text-muted/20 text-text-muted'
                     }`}>
                       {selectedTicket.priority.charAt(0).toUpperCase() + selectedTicket.priority.slice(1)}
                     </span>
-                    <span className={`px-2 py-0.5 rounded text-[11px] font-semibold ${
-                      selectedTicket.status === 'open' ? 'bg-amber/20 text-amber' :
-                      selectedTicket.status === 'in_progress' ? 'bg-cyan/20 text-cyan' :
+                    <span className={`px-2 py-0.5 rounded text-label font-semibold ${
+                      selectedTicket.status === 'open' ? 'bg-highlight/20 text-highlight' :
+                      selectedTicket.status === 'in_progress' ? 'bg-accent/20 text-accent' :
                       selectedTicket.status === 'resolved' ? 'bg-positive/20 text-positive' :
                       selectedTicket.status === 'closed' ? 'bg-text-muted/20 text-text-muted' :
                       'bg-text-muted/20 text-text-muted'
@@ -231,7 +231,7 @@ export default function SupportPage() {
                 </div>
 
                 <div className="border-t border-glass pt-4">
-                  <h4 className="mb-2 text-[13px] font-medium text-text-secondary">Conversation</h4>
+                  <h4 className="mb-2 text-small font-medium text-text-secondary">Conversation</h4>
                   <div className="space-y-3 max-h-[400px] overflow-y-auto">
                     {(selectedTicket.messages || []).map((msg, index) => (
                       <div key={index} className={`flex flex-col gap-1 ${
@@ -240,8 +240,8 @@ export default function SupportPage() {
                         <div className={`max-w-[80%] ${
                           msg.fromUser ? 'bg-blue-500/10 text-blue-500 self-start' : 'bg-green-500/10 text-green-500 self-end'
                         } rounded-lg px-3 py-2`}>
-                          <p className="text-[13px] whitespace-pre-wrap">{msg.body}</p>
-                          <p className="text-[11px] opacity-70">
+                          <p className="text-small whitespace-pre-wrap">{msg.body}</p>
+                          <p className="text-label opacity-70">
                             {msg.fromUser ? 'You' : 'Support Team'} • {new Date(msg.createdAt).toLocaleString()}
                           </p>
                         </div>
@@ -253,12 +253,12 @@ export default function SupportPage() {
                 <div className="border-t border-glass pt-4">
                   <form onSubmit={handleReplySubmit} className="space-y-3">
                     <div>
-                      <label className="block mb-1 text-[13px] font-medium text-text-secondary">Your Reply</label>
+                      <label className="block mb-1 text-small font-medium text-text-secondary">Your Reply</label>
                       <textarea
                         value={replyText}
                         onChange={(e) => setReplyText(e.target.value)}
                         placeholder="Type your reply here..."
-                        className="w-full px-3 py-2 rounded-lg border border-glass bg-glass-panel/40 text-[13px] text-text-primary placeholder:text-text-muted focus:outline-none focus:border-cyan/40"
+                        className="w-full px-3 py-2 rounded-lg border border-glass bg-glass-panel/40 text-small text-text-primary placeholder:text-text-muted focus:outline-none focus:border-accent/40"
                         rows={3}
                       />
                     </div>
@@ -288,19 +288,19 @@ export default function SupportPage() {
                     >
                       <div className="flex justify-between items-start mb-1">
                         <h4 className="font-semibold text-text-primary">{ticket.subject}</h4>
-                        <div className="flex items-center gap-2 text-[11px]">
-                          <span className={`px-1.5 py-0.5 rounded text-[10px] ${
+                        <div className="flex items-center gap-2 text-label">
+                          <span className={`px-1.5 py-0.5 rounded text-label ${
                             ticket.priority === 'low' ? 'bg-text-muted/20 text-text-muted' :
-                            ticket.priority === 'medium' ? 'bg-amber/20 text-amber' :
+                            ticket.priority === 'medium' ? 'bg-highlight/20 text-highlight' :
                             ticket.priority === 'high' ? 'bg-negative/20 text-negative' :
                             ticket.priority === 'urgent' ? 'bg-positive/20 text-positive' :
                             'bg-text-muted/20 text-text-muted'
                           }`}>
                             {ticket.priority.charAt(0).toUpperCase() + ticket.priority.slice(1)}
                           </span>
-                          <span className={`px-1.5 py-0.5 rounded text-[10px] ${
-                            ticket.status === 'open' ? 'bg-amber/20 text-amber' :
-                            ticket.status === 'in_progress' ? 'bg-cyan/20 text-cyan' :
+                          <span className={`px-1.5 py-0.5 rounded text-label ${
+                            ticket.status === 'open' ? 'bg-highlight/20 text-highlight' :
+                            ticket.status === 'in_progress' ? 'bg-accent/20 text-accent' :
                             ticket.status === 'resolved' ? 'bg-positive/20 text-positive' :
                             ticket.status === 'closed' ? 'bg-text-muted/20 text-text-muted' :
                             'bg-text-muted/20 text-text-muted'
@@ -309,8 +309,8 @@ export default function SupportPage() {
                           </span>
                         </div>
                       </div>
-                      <p className="text-[13px] line-clamp-2 text-text-secondary">{ticket.message}</p>
-                      <p className="text-[11px] text-text-muted">
+                      <p className="text-small line-clamp-2 text-text-secondary">{ticket.message}</p>
+                      <p className="text-label text-text-muted">
                         {new Date(ticket.createdAt).toLocaleDateString()} •
                         {ticket.userId?.email || 'Anonymous'}
                       </p>
@@ -319,7 +319,7 @@ export default function SupportPage() {
                 </div>
               ) : (
                 <div className="text-center py-8">
-                  <p className="text-[13px] text-text-muted">You haven't submitted any support tickets yet.</p>
+                  <p className="text-small text-text-muted">You haven't submitted any support tickets yet.</p>
                   <Button
                     onClick={() => {
                       // Scroll to form

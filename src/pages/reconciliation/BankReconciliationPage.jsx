@@ -47,7 +47,7 @@ const cardVariant = {
 function ScoreBadge({ score }) {
   const isHigh = score >= 85
   return (
-    <span className={`inline-flex items-center gap-1 text-[10px] font-bold px-1.5 py-0.5 rounded-full tracking-wide ${
+    <span className={`inline-flex items-center gap-1 text-label font-bold px-1.5 py-0.5 rounded-full tracking-wide ${
       isHigh
         ? 'bg-[rgb(var(--c-positive)_/_0.15)] text-[rgb(var(--c-positive))]'
         : 'bg-[rgb(var(--c-highlight)_/_0.15)] text-[rgb(var(--c-highlight))]'
@@ -67,7 +67,7 @@ function Stat({ label, value, tone, icon: Icon }) {
     >
       {Icon && <Icon className={`w-4 h-4 mb-0.5 ${tone || 'text-[rgb(var(--c-text2))]'}`} />}
       <p className={`text-xl font-bold tabular-nums ${tone || 'text-[rgb(var(--c-text))]'}`}>{value}</p>
-      <p className="text-[11px] text-[rgb(var(--c-text3))] tracking-wide uppercase">{label}</p>
+      <p className="text-label text-[rgb(var(--c-text3))] tracking-wide uppercase">{label}</p>
     </motion.div>
   )
 }
@@ -204,7 +204,7 @@ function LineRow({ stmtId, line, accounts, onChange, selected, onToggleSelect, b
           {/* Description + date */}
           <div className="min-w-0 flex-1">
             <p className="text-sm font-semibold text-[rgb(var(--c-text))] truncate">{line.description || '—'}</p>
-            <p className="text-[11px] text-[rgb(var(--c-text3))] mt-0.5">
+            <p className="text-label text-[rgb(var(--c-text3))] mt-0.5">
               {fmtDate(line.date)}{line.reference ? ` · ${line.reference}` : ''}
             </p>
           </div>
@@ -280,7 +280,7 @@ function LineRow({ stmtId, line, accounts, onChange, selected, onToggleSelect, b
                 >
                   <div className="min-w-0 flex-1">
                     <p className="text-xs font-semibold text-[rgb(var(--c-text))] truncate">{topProposal.description || '—'}</p>
-                    <p className="text-[11px] text-[rgb(var(--c-text3))] mt-0.5">
+                    <p className="text-label text-[rgb(var(--c-text3))] mt-0.5">
                       {fmtDate(topProposal.date)} · {money(topProposal.amount)}
                     </p>
                   </div>
@@ -302,7 +302,7 @@ function LineRow({ stmtId, line, accounts, onChange, selected, onToggleSelect, b
                   <>
                     <button
                       onClick={() => setExpanded(!expanded)}
-                      className="flex items-center gap-1 text-[11px] text-[rgb(var(--c-text3))] hover:text-[rgb(var(--c-text2))] transition-colors"
+                      className="flex items-center gap-1 text-label text-[rgb(var(--c-text3))] hover:text-[rgb(var(--c-text2))] transition-colors"
                     >
                       {expanded ? <ChevronDown className="w-3 h-3" /> : <ChevronRight className="w-3 h-3" />}
                       {expanded ? 'Hide' : `${proposals.length - 1} more suggestion${proposals.length > 2 ? 's' : ''}`}
@@ -319,14 +319,14 @@ function LineRow({ stmtId, line, accounts, onChange, selected, onToggleSelect, b
                             <div key={String(c.journalEntryId)} className="flex items-center justify-between gap-2 bg-[var(--glass-panel)] border border-[var(--c-border)] rounded-lg px-3 py-2 opacity-80">
                               <div className="min-w-0 flex-1">
                                 <p className="text-xs text-[rgb(var(--c-text2))] truncate">{c.description || '—'}</p>
-                                <p className="text-[11px] text-[rgb(var(--c-text3))]">{fmtDate(c.date)} · {money(c.amount)}</p>
+                                <p className="text-label text-[rgb(var(--c-text3))]">{fmtDate(c.date)} · {money(c.amount)}</p>
                               </div>
                               <div className="shrink-0 flex items-center gap-2">
                                 <ScoreBadge score={c.score} />
                                 <button
                                   disabled={busy}
                                   onClick={() => act(() => reconApi.match(stmtId, line.lineRef, c.journalEntryId), 'Matched ✓')}
-                                  className="text-[11px] px-2 py-0.5 rounded-lg border border-[var(--c-border2)] text-[rgb(var(--c-text2))] hover:border-[rgb(var(--c-accent))] hover:text-[rgb(var(--c-accent))] transition-colors"
+                                  className="text-label px-2 py-0.5 rounded-lg border border-[var(--c-border2)] text-[rgb(var(--c-text2))] hover:border-[rgb(var(--c-accent))] hover:text-[rgb(var(--c-accent))] transition-colors"
                                 >
                                   Select
                                 </button>
@@ -340,7 +340,7 @@ function LineRow({ stmtId, line, accounts, onChange, selected, onToggleSelect, b
                 )}
               </div>
             ) : (
-              <p className="text-[11px] text-[rgb(var(--c-text3))] italic">No matching entry found in your books for this line.</p>
+              <p className="text-label text-[rgb(var(--c-text3))] italic">No matching entry found in your books for this line.</p>
             )}
 
             {/* Create / clear actions */}
@@ -612,7 +612,7 @@ function Workspace({ id, onBack }) {
           >
             {t.label}
             {t.count > 0 && (
-              <span className={`ml-1.5 text-[10px] px-1.5 py-0.5 rounded-full font-bold ${
+              <span className={`ml-1.5 text-label px-1.5 py-0.5 rounded-full font-bold ${
                 t.warn && tab !== t.key
                   ? 'bg-[rgb(var(--c-highlight)_/_0.2)] text-[rgb(var(--c-highlight))]'
                   : 'bg-[var(--glass-panel)] text-[rgb(var(--c-text3))]'
@@ -741,7 +741,7 @@ function SessionList({ onOpen }) {
               <p className="text-xs text-[rgb(var(--c-text3))] mt-0.5">{s.bankAccountName} · {fmtDate(s.periodEnd)}</p>
             </div>
             <div className="flex items-center gap-3 shrink-0 ml-3">
-              <span className={`text-[11px] font-bold px-2.5 py-1 rounded-full ${
+              <span className={`text-label font-bold px-2.5 py-1 rounded-full ${
                 s.status === 'completed'
                   ? 'bg-[rgb(var(--c-positive)_/_0.12)] text-[rgb(var(--c-positive))]'
                   : 'bg-[rgb(var(--c-highlight)_/_0.12)] text-[rgb(var(--c-highlight))]'
@@ -861,7 +861,7 @@ function StartReconciliation({ onStarted }) {
                 </div>
               ))}
               {parsed.lines.length > 5 && (
-                <p className="text-[11px] text-[rgb(var(--c-text3))]">…and {parsed.lines.length - 5} more</p>
+                <p className="text-label text-[rgb(var(--c-text3))]">…and {parsed.lines.length - 5} more</p>
               )}
             </div>
           </motion.div>

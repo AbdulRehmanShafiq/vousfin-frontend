@@ -28,10 +28,10 @@ const STATE_FILTERS = [
 
 const STATE_COLOR = {
   draft:              'text-text-muted',
-  pending_approval:   'text-amber',
-  approved:           'text-cyan',
+  pending_approval:   'text-highlight',
+  approved:           'text-accent',
   partially_received: 'text-accent-2',
-  fully_received:     'text-cyan',
+  fully_received:     'text-accent',
   billed:             'text-positive',
   closed:             'text-positive',
   cancelled:          'text-negative',
@@ -76,7 +76,7 @@ export default function PurchaseOrdersPage() {
         <button
           type="button"
           onClick={() => navigate(`/procurement/purchase-orders/${r._id}/edit`)}
-          className="font-mono text-sm text-cyan hover:underline font-semibold"
+          className="font-mono text-sm text-accent hover:underline font-semibold"
         >
           {r.poNumber}
         </button>
@@ -146,7 +146,7 @@ export default function PurchaseOrdersPage() {
             <button
               type="button"
               onClick={(e) => { e.stopPropagation(); navigate(`/procurement/purchase-orders/${r._id}/edit`) }}
-              className="text-text-muted hover:text-cyan transition-colors"
+              className="text-text-muted hover:text-accent transition-colors"
               title="Edit"
             >
               <Edit className="h-4 w-4" />
@@ -198,7 +198,7 @@ export default function PurchaseOrdersPage() {
       <div className="flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between">
         <div>
           <h1 className="flex items-center gap-2 text-2xl font-black text-text-primary tracking-tight">
-            <ShoppingBag className="h-6 w-6 text-cyan" />
+            <ShoppingBag className="h-6 w-6 text-accent" />
             Purchase Orders
           </h1>
           <p className="text-text-secondary mt-1 text-sm">

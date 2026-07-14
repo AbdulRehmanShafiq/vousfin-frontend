@@ -51,7 +51,7 @@ export default function TrialBalancePage() {
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div>
           <h1 className="flex items-center gap-2 text-xl sm:text-2xl font-black text-text-primary tracking-tight">
-            <Scale className="h-6 w-6 text-cyan" />
+            <Scale className="h-6 w-6 text-accent" />
             Trial Balance
           </h1>
           <p className="text-text-secondary mt-1 text-sm">Verify debits equal credits — with opening & closing balances</p>
@@ -110,7 +110,7 @@ export default function TrialBalancePage() {
               <div key={r.accountId || idx} className="flex items-center justify-between gap-3 px-4 py-3">
                 <div className="min-w-0">
                   <p className="truncate text-sm font-medium text-text-primary">{r.accountName}</p>
-                  <p className="text-[12px] text-text-muted">{r.accountCode ? `${r.accountCode} · ` : ''}{r.accountType}</p>
+                  <p className="text-xs text-text-muted">{r.accountCode ? `${r.accountCode} · ` : ''}{r.accountType}</p>
                 </div>
                 <div className="flex-shrink-0 text-right tabular-nums">
                   {dr > 0 && <p className="text-sm text-text-primary">Dr {formatCurrency(dr, currency)}</p>}
