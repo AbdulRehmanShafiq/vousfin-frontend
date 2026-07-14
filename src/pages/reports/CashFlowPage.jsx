@@ -40,7 +40,7 @@ export default function CashFlowPage() {
     <div className="space-y-8 animate-fade-in">
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div>
-          <h1 className="flex items-center gap-2 text-2xl font-black text-text-primary tracking-tight">
+          <h1 className="flex items-center gap-2 text-xl sm:text-2xl font-black text-text-primary tracking-tight">
             <PieChart className="h-6 w-6 text-cyan" />
             Cash Flow Statement
           </h1>
@@ -52,14 +52,14 @@ export default function CashFlowPage() {
             type="date"
             value={dateRange.startDate}
             onChange={e => setDateRange(prev => ({ ...prev, startDate: e.target.value }))}
-            containerClassName="w-36"
+            containerClassName="flex-1 sm:flex-none sm:w-36"
           />
           <span className="text-text-muted text-sm">to</span>
           <Input
             type="date"
             value={dateRange.endDate}
             onChange={e => setDateRange(prev => ({ ...prev, endDate: e.target.value }))}
-            containerClassName="w-36"
+            containerClassName="flex-1 sm:flex-none sm:w-36"
           />
           <ExportButton 
             data={exportData} 
@@ -73,7 +73,7 @@ export default function CashFlowPage() {
         </div>
       </div>
 
-      <div className="premium-card p-6 sm:p-10">
+      <div className="premium-card p-4 sm:p-10">
         {isLoading ? (
           <SkeletonLoader count={8} />
         ) : !data ? (
@@ -81,7 +81,7 @@ export default function CashFlowPage() {
         ) : (
           <div className="space-y-8">
             <div className="text-center border-b border-glass pb-6">
-              <h2 className="text-xl font-bold text-text-primary">Statement of Cash Flows</h2>
+              <h2 className="text-lg sm:text-xl font-bold text-text-primary">Statement of Cash Flows</h2>
               <p className="text-text-secondary">For the period {dateRange.startDate} to {dateRange.endDate}</p>
             </div>
 

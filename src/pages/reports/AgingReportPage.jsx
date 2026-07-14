@@ -49,11 +49,11 @@ export default function AgingReportPage() {
   const label = type === 'receivable' ? 'Accounts Receivable' : 'Accounts Payable'
 
   return (
-    <div className="space-y-6 animate-fade-in">
+    <div className="space-y-5 animate-fade-in">
       {/* Header */}
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div>
-          <h1 className="flex items-center gap-2 text-2xl font-black text-text-primary tracking-tight">
+          <h1 className="flex items-center gap-2 text-xl sm:text-2xl font-black text-text-primary tracking-tight">
             <Clock className="h-6 w-6 text-cyan" />
             Aging Report
           </h1>

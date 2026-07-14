@@ -70,11 +70,11 @@ export default function EquityStatementPage() {
   }
 
   return (
-    <div className="space-y-6 animate-fade-in">
+    <div className="space-y-5 animate-fade-in">
       {/* Header */}
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div>
-          <h1 className="flex items-center gap-2 text-2xl font-black text-text-primary tracking-tight">
+          <h1 className="flex items-center gap-2 text-xl sm:text-2xl font-black text-text-primary tracking-tight">
             <Layers className="h-6 w-6 text-cyan" />
             Equity Statement
           </h1>
@@ -83,11 +83,11 @@ export default function EquityStatementPage() {
         <div className="flex flex-wrap items-center gap-2">
           <Input type="date" value={dateRange.startDate}
             onChange={e => setDateRange(p => ({ ...p, startDate: e.target.value }))}
-            containerClassName="w-36" />
+            containerClassName="flex-1 sm:flex-none sm:w-36" />
           <span className="text-text-muted text-sm">to</span>
           <Input type="date" value={dateRange.endDate}
             onChange={e => setDateRange(p => ({ ...p, endDate: e.target.value }))}
-            containerClassName="w-36" />
+            containerClassName="flex-1 sm:flex-none sm:w-36" />
           <ExportButton
             data={exportData}
             filename={`equity-statement-${dateRange.endDate}.csv`}
@@ -130,7 +130,7 @@ export default function EquityStatementPage() {
       )}
 
       {/* Matrix table */}
-      <div className="premium-card p-6 sm:p-8 overflow-x-auto">
+      <div className="premium-card p-4 sm:p-8 overflow-x-auto">
         {isLoading ? (
           <SkeletonLoader count={8} />
         ) : !data || rows.length === 0 ? (
@@ -138,7 +138,7 @@ export default function EquityStatementPage() {
         ) : (
           <div className="space-y-6">
             <div className="text-center border-b border-glass pb-5">
-              <h2 className="text-xl font-bold text-text-primary">Statement of Changes in Equity</h2>
+              <h2 className="text-lg sm:text-xl font-bold text-text-primary">Statement of Changes in Equity</h2>
               <p className="text-text-secondary text-sm">{dateRange.startDate} — {dateRange.endDate}</p>
             </div>
 

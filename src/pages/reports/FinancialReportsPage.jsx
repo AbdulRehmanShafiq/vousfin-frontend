@@ -70,7 +70,9 @@ export default function FinancialReportsPage() {
           vf-no-print: the toolbar itself is excluded from the printed report. */}
       <div className="vf-no-print sticky top-0 z-20 -mx-1 px-1 pt-1 pb-2 bg-navy/85 backdrop-blur-md">
         <div className="flex items-center gap-2">
-          <div className="flex flex-1 flex-wrap gap-1 p-1 rounded-xl bg-glass-panel border border-glass overflow-x-auto">
+          {/* One horizontal-scrolling row (never wraps into a tall grid on
+              phones). scroll-px keeps the active chip from clipping at edges. */}
+          <div className="flex flex-1 flex-nowrap gap-1 p-1 rounded-xl bg-glass-panel border border-glass overflow-x-auto scrollbar-none scroll-px-1">
             {TABS.map(t => {
               const isActive = t.key === tab
               return (
@@ -78,10 +80,10 @@ export default function FinancialReportsPage() {
                   key={t.key}
                   onClick={() => handleTabChange(t.key)}
                   className={cn(
-                    'flex items-center gap-2 px-3 py-2 rounded-lg text-sm font-medium',
+                    'flex flex-shrink-0 items-center gap-1.5 px-3 py-1.5 rounded-lg text-[13px] font-semibold',
                     'transition-all whitespace-nowrap',
                     isActive
-                      ? 'bg-cyan text-ink-on-accent font-bold shadow-sm'
+                      ? 'bg-cyan text-ink-on-accent shadow-sm'
                       : 'text-text-secondary hover:text-text-primary hover:bg-glass-hover'
                   )}
                 >

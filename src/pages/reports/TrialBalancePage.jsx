@@ -43,11 +43,11 @@ export default function TrialBalancePage() {
   }, [rows, totalDebits, totalCredits])
 
   return (
-    <div className="space-y-6 animate-fade-in">
+    <div className="space-y-5 animate-fade-in">
       {/* Header */}
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div>
-          <h1 className="flex items-center gap-2 text-2xl font-black text-text-primary tracking-tight">
+          <h1 className="flex items-center gap-2 text-xl sm:text-2xl font-black text-text-primary tracking-tight">
             <Scale className="h-6 w-6 text-cyan" />
             Trial Balance
           </h1>
@@ -55,9 +55,9 @@ export default function TrialBalancePage() {
         </div>
         <div className="flex flex-wrap items-center gap-2">
           <span className="text-text-muted text-xs">From</span>
-          <Input type="date" value={fromDate} onChange={e => setFromDate(e.target.value)} containerClassName="w-32" />
+          <Input type="date" value={fromDate} onChange={e => setFromDate(e.target.value)} containerClassName="flex-1 sm:flex-none sm:w-32" />
           <span className="text-text-muted text-xs">As of</span>
-          <Input type="date" value={asOfDate} onChange={e => setAsOfDate(e.target.value)} containerClassName="w-32" />
+          <Input type="date" value={asOfDate} onChange={e => setAsOfDate(e.target.value)} containerClassName="flex-1 sm:flex-none sm:w-32" />
           <ExportButton data={exportData} filename={`trial-balance-${asOfDate}.csv`} />
         </div>
       </div>

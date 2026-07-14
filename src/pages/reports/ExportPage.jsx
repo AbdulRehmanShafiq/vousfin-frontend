@@ -69,7 +69,7 @@ export default function ExportPage() {
   return (
     <div className="space-y-8 animate-fade-in">
       <div>
-        <h1 className="flex items-center gap-2 text-2xl font-black text-text-primary tracking-tight">
+        <h1 className="flex items-center gap-2 text-xl sm:text-2xl font-black text-text-primary tracking-tight">
           <Download className="h-6 w-6 text-cyan" />
           Export Reports
         </h1>

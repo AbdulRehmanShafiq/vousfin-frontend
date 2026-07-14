@@ -79,11 +79,11 @@ export default function ComparativeReportPage() {
   }
 
   return (
-    <div className="space-y-6 animate-fade-in">
+    <div className="space-y-5 animate-fade-in">
       {/* Header */}
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div>
-          <h1 className="flex items-center gap-2 text-2xl font-black text-text-primary tracking-tight">
+          <h1 className="flex items-center gap-2 text-xl sm:text-2xl font-black text-text-primary tracking-tight">
             <BarChart2 className="h-6 w-6 text-cyan" />
             Comparative Report
           </h1>
