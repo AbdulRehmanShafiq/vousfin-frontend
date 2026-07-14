@@ -51,30 +51,36 @@ export default function IncomeStatementPage() {
           <p className="text-text-secondary mt-1 text-sm">Profit & Loss — Revenue, Gross Profit, EBITDA, Net Income</p>
         </div>
         <div className="flex flex-wrap items-center gap-2">
-          <Input type="date" value={dateRange.startDate}
-            onChange={e => setDateRange(p => ({ ...p, startDate: e.target.value }))} containerClassName="flex-1 sm:flex-none sm:w-36" />
-          <span className="text-text-muted text-sm">to</span>
-          <Input type="date" value={dateRange.endDate}
-            onChange={e => setDateRange(p => ({ ...p, endDate: e.target.value }))} containerClassName="flex-1 sm:flex-none sm:w-36" />
+          <div className="flex min-w-0 flex-1 items-center gap-2 sm:flex-none">
+            <Input type="date" value={dateRange.startDate}
+              onChange={e => setDateRange(p => ({ ...p, startDate: e.target.value }))} containerClassName="min-w-0 flex-1 sm:flex-none sm:w-36" />
+            <span className="text-text-muted text-xs">to</span>
+            <Input type="date" value={dateRange.endDate}
+              onChange={e => setDateRange(p => ({ ...p, endDate: e.target.value }))} containerClassName="min-w-0 flex-1 sm:flex-none sm:w-36" />
+          </div>
           <ExportButton data={exportData} filename={`income-statement-${dateRange.endDate}.csv`}
             headers={[{ key: 'Category', label: 'Category' }, { key: 'Amount', label: 'Amount' }]} />
         </div>
       </div>
 
-      {/* KPI strip */}
+      {/* KPI strip — hidden on mobile: it duplicates the Total Revenue / Gross
+          Profit / EBITDA / Net Profit rows in the statement just below, so on a
+          phone it's redundant clutter. Kept on desktop as an above-the-fold glance. */}
       {!isLoading && data && (
-        <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+        <div className="hidden sm:grid grid-cols-2 sm:grid-cols-4 gap-3">
           {[
             { label: 'Revenue',        val: data.totalRevenue,    positive: true },
             { label: 'Gross Profit',   val: data.grossProfit,     positive: data.grossProfit >= 0 },
             { label: 'EBITDA',         val: data.ebitda,          positive: data.ebitda >= 0 },
             { label: 'Net Profit',     val: data.netIncome ?? data.netProfit, positive: (data.netIncome ?? data.netProfit) >= 0 },
           ].map(({ label, val, positive }) => (
-            <div key={label} className="premium-card px-4 py-3 flex flex-col gap-1">
-              <span className="text-xs font-bold text-text-secondary uppercase tracking-wider">{label}</span>
-              <div className="flex items-center gap-2 min-w-0">
-                {positive ? <TrendingUp className="h-4 w-4 text-positive flex-shrink-0" /> : <TrendingDown className="h-4 w-4 text-negative flex-shrink-0" />}
-                <span className={`font-black text-base sm:text-lg tabular-nums truncate ${positive ? 'text-positive' : 'text-negative'}`}>
+            <div key={label} className="premium-card px-3 py-2.5 sm:px-4 sm:py-3 flex flex-col gap-0.5 sm:gap-1">
+              <span className="text-[11px] sm:text-xs font-bold text-text-secondary uppercase tracking-wider">{label}</span>
+              <div className="flex items-center gap-1.5 min-w-0">
+                {positive
+                  ? <TrendingUp className="hidden sm:block h-4 w-4 text-positive flex-shrink-0" />
+                  : <TrendingDown className="hidden sm:block h-4 w-4 text-negative flex-shrink-0" />}
+                <span className={`font-black text-[15px] sm:text-lg tabular-nums truncate ${positive ? 'text-positive' : 'text-negative'}`}>
                   {formatCurrency(val, currency)}
                 </span>
               </div>
@@ -146,16 +152,16 @@ export default function IncomeStatementPage() {
       </div>
 
       {/* Main report */}
-      <div className="premium-card p-4 sm:p-8">
+      <div className="premium-card p-3 sm:p-8">
         {isLoading ? (
           <SkeletonLoader count={10} />
         ) : !data ? (
           <p className="text-center py-10 text-text-muted">No data for this period.</p>
         ) : (
-          <div className="space-y-6">
-            <div className="text-center border-b border-glass pb-5">
-              <h2 className="text-lg sm:text-xl font-bold text-text-primary">Income Statement</h2>
-              <p className="text-text-secondary text-sm">{dateRange.startDate} — {dateRange.endDate}</p>
+          <div className="space-y-3.5 sm:space-y-6">
+            <div className="text-center border-b border-glass pb-3 sm:pb-5">
+              <h2 className="text-base sm:text-xl font-bold text-text-primary">Income Statement</h2>
+              <p className="text-text-secondary text-xs sm:text-sm">{dateRange.startDate} — {dateRange.endDate}</p>
             </div>
 
             <PLSection title="Revenue" section={data.revenue} currency={currency} />
@@ -172,12 +178,12 @@ export default function IncomeStatementPage() {
               <PLSection title="Depreciation & Amortization" section={data.depreciationAmortization} currency={currency} negate />
             )}
 
-            <SubtotalRow label="Operating Profit (EBIT)" value={data.operatingProfit} currency={currency} />
+            <SubtotalRow label="Operating Profit" hint="(EBIT)" value={data.operatingProfit} currency={currency} />
 
             {/* EBITDA callout */}
-            <div className="flex items-center justify-between px-4 py-2 rounded-lg bg-glass border border-glass">
-              <span className="text-sm text-text-secondary">EBITDA <span className="text-xs">(Operating Profit + D&A)</span></span>
-              <span className={`font-bold text-sm ${data.ebitda >= 0 ? 'text-cyan' : 'text-negative'}`}>
+            <div className="flex items-center justify-between gap-3 px-3 py-2 rounded-lg bg-glass border border-glass">
+              <span className="min-w-0 truncate text-[13px] sm:text-sm text-text-secondary">EBITDA <span className="hidden sm:inline text-xs">(Operating Profit + D&A)</span></span>
+              <span className={`whitespace-nowrap font-bold text-[13px] sm:text-sm tabular-nums ${data.ebitda >= 0 ? 'text-cyan' : 'text-negative'}`}>
                 {formatCurrency(data.ebitda, currency)}
               </span>
             </div>
@@ -187,13 +193,13 @@ export default function IncomeStatementPage() {
             )}
 
             {/* Net Profit */}
-            <div className={`flex justify-between items-center py-4 px-5 rounded-xl border-2 ${
+            <div className={`flex items-center justify-between gap-3 py-2.5 px-3.5 sm:py-4 sm:px-5 rounded-xl border sm:border-2 ${
               (data.netIncome ?? data.netProfit) >= 0
                 ? 'border-positive/40 bg-positive/5'
                 : 'border-negative/40 bg-negative/5'
             }`}>
-              <span className="text-lg font-black text-text-primary">Net Profit / (Loss)</span>
-              <span className={`text-xl font-black ${(data.netIncome ?? data.netProfit) >= 0 ? 'text-positive' : 'text-negative'}`}>
+              <span className="text-sm sm:text-lg font-black text-text-primary">Net Profit / (Loss)</span>
+              <span className={`whitespace-nowrap text-base sm:text-xl font-black tabular-nums ${(data.netIncome ?? data.netProfit) >= 0 ? 'text-positive' : 'text-negative'}`}>
                 {formatCurrency(data.netIncome ?? data.netProfit, currency)}
               </span>
             </div>
@@ -215,21 +221,21 @@ function PLSection({ title, section, currency, negate = false }) {
   const visibleAccounts = allAccounts.filter(a => (a.balance || 0) !== 0)
 
   return (
-    <div className="space-y-1">
-      <h3 className="text-xs font-bold text-text-secondary uppercase tracking-wider px-1">{title}</h3>
+    <div className="space-y-0.5">
+      <h3 className="text-[11px] sm:text-xs font-bold text-text-muted uppercase tracking-wider px-1">{title}</h3>
       <div>
         {visibleAccounts.map((acc, i) => (
-          <div key={acc.accountId || i} className="flex justify-between items-center py-1.5 px-4 hover:bg-glass-hover rounded-lg transition-colors">
-            <span className="text-sm text-text-primary">{acc.accountName}</span>
-            <span className="text-sm font-medium text-text-primary tabular-nums">
+          <div key={acc.accountId || i} className="flex items-center justify-between gap-3 py-1 px-1 sm:py-1.5 sm:px-4">
+            <span className="min-w-0 truncate text-[13px] sm:text-sm text-text-primary">{acc.accountName}</span>
+            <span className="whitespace-nowrap text-[13px] sm:text-sm font-medium text-text-primary tabular-nums">
               {negate ? `(${formatCurrency(acc.balance, currency)})` : formatCurrency(acc.balance, currency)}
             </span>
           </div>
         ))}
       </div>
-      <div className="flex justify-between items-center py-1.5 px-4 border-t border-glass mt-1">
-        <span className="text-sm font-semibold text-text-secondary">Total {title}</span>
-        <span className="text-sm font-bold text-text-primary tabular-nums">
+      <div className="flex items-center justify-between gap-3 py-1 px-1 sm:py-1.5 sm:px-4 border-t border-glass mt-0.5">
+        <span className="min-w-0 truncate text-[13px] sm:text-sm font-semibold text-text-secondary">Total {title}</span>
+        <span className="whitespace-nowrap text-[13px] sm:text-sm font-bold text-text-primary tabular-nums">
           {negate ? `(${formatCurrency(total, currency)})` : formatCurrency(total, currency)}
         </span>
       </div>
@@ -237,13 +243,15 @@ function PLSection({ title, section, currency, negate = false }) {
   )
 }
 
-function SubtotalRow({ label, value, currency }) {
+function SubtotalRow({ label, hint, value, currency }) {
   return (
-    <div className={`flex justify-between items-center px-4 py-3 rounded-lg border ${
+    <div className={`flex items-center justify-between gap-3 px-3 py-2 sm:px-4 sm:py-3 rounded-lg border ${
       value >= 0 ? 'border-cyan/20 bg-cyan/5' : 'border-negative/20 bg-negative/5'
     }`}>
-      <span className="font-bold text-text-primary">{label}</span>
-      <span className={`font-bold tabular-nums ${value >= 0 ? 'text-text-primary' : 'text-negative'}`}>
+      <span className="min-w-0 truncate text-sm sm:text-base font-bold text-text-primary">
+        {label}{hint && <span className="hidden font-normal text-text-muted sm:inline"> {hint}</span>}
+      </span>
+      <span className={`whitespace-nowrap text-sm sm:text-base font-bold tabular-nums ${value >= 0 ? 'text-text-primary' : 'text-negative'}`}>
         {formatCurrency(value, currency)}
       </span>
     </div>

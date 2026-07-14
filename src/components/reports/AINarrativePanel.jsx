@@ -10,15 +10,20 @@ import { useState } from 'react'
 import { useQuery } from '@tanstack/react-query'
 import { Link } from 'react-router-dom'
 import toast from 'react-hot-toast'
-import { Sparkles, Languages, Send } from 'lucide-react'
+import { Sparkles, Languages, Send, ChevronDown } from 'lucide-react'
 import api from '@/services/api'
 import { useAIStore } from '@/stores/useAIStore'
+import { useIsMobile } from '@/hooks/useIsMobile'
 import { cn } from '@/utils/cn'
 
 export default function AINarrativePanel() {
+  const isMobile = useIsMobile()
   const [lang, setLang] = useState('en')
   const [period, setPeriod] = useState('month')
   const [question, setQuestion] = useState('')
+  // On phones the briefing is long, so it's collapsed by default — the actual
+  // statement should be the first thing you see. Desktop keeps it open.
+  const [open, setOpen] = useState(!isMobile)
 
   const { data, isLoading } = useQuery({
     queryKey: ['report-narrative', period],
@@ -43,43 +48,51 @@ export default function AINarrativePanel() {
   }
 
   return (
-    <div className="premium-card p-5 mb-6">
-      <div className="flex items-center justify-between flex-wrap gap-3 mb-4">
-        <div className="flex items-center gap-2">
-          <Sparkles className="h-4 w-4 text-accent" />
+    <div className="premium-card p-4 sm:p-5 mb-4 sm:mb-6">
+      <div className="flex items-center justify-between gap-3">
+        <button
+          type="button"
+          onClick={() => setOpen(o => !o)}
+          className="flex min-w-0 flex-1 items-center gap-2 text-left"
+          aria-expanded={open}
+        >
+          <Sparkles className="h-4 w-4 flex-shrink-0 text-accent" />
           <h3 className="text-sm font-semibold text-text-primary">CFO Briefing</h3>
           {data && (
-            <span className="num text-[12.5px] text-text-muted">
+            <span className="num hidden sm:inline text-[12.5px] text-text-muted truncate">
               generated in {data.generatedInMs}ms · grounded in your ledger
             </span>
           )}
-        </div>
-        <div className="flex items-center gap-2">
-          <select
-            value={period} onChange={e => setPeriod(e.target.value)}
-            className="bg-transparent border border-glass rounded-md text-xs px-2 py-1.5 text-text-secondary focus-ring"
-          >
-            <option value="month">This month</option>
-            <option value="quarter">This quarter</option>
-          </select>
-          <button
-            onClick={() => setLang(l => (l === 'en' ? 'ur' : 'en'))}
-            className="flex items-center gap-1.5 text-xs border border-glass rounded-md px-2 py-1.5 text-text-secondary hover:text-text-primary hover:bg-glass-hover"
-          >
-            <Languages className="h-3.5 w-3.5" />
-            {lang === 'en' ? 'اردو' : 'English'}
-          </button>
-        </div>
+          <ChevronDown className={cn('ml-auto h-4 w-4 flex-shrink-0 text-text-muted transition-transform sm:hidden', open && 'rotate-180')} />
+        </button>
+        {open && (
+          <div className="flex flex-shrink-0 items-center gap-2">
+            <select
+              value={period} onChange={e => setPeriod(e.target.value)}
+              className="bg-transparent border border-glass rounded-md text-xs px-2 py-1.5 text-text-secondary focus-ring"
+            >
+              <option value="month">This month</option>
+              <option value="quarter">This quarter</option>
+            </select>
+            <button
+              onClick={() => setLang(l => (l === 'en' ? 'ur' : 'en'))}
+              className="flex items-center gap-1.5 text-xs border border-glass rounded-md px-2 py-1.5 text-text-secondary hover:text-text-primary hover:bg-glass-hover"
+            >
+              <Languages className="h-3.5 w-3.5" />
+              {lang === 'en' ? 'اردو' : 'English'}
+            </button>
+          </div>
+        )}
       </div>
 
-      {isLoading ? (
-        <div className="space-y-2">
+      {!open ? null : isLoading ? (
+        <div className="mt-4 space-y-2">
           {[...Array(4)].map((_, i) => <div key={i} className="h-4 skeleton-loader rounded w-full" />)}
         </div>
       ) : (
         <>
           <div
-            className={cn('space-y-2 text-sm leading-relaxed text-text-secondary', lang === 'ur' && 'text-right')}
+            className={cn('mt-4 space-y-2 text-sm leading-relaxed text-text-secondary', lang === 'ur' && 'text-right')}
             dir={lang === 'ur' ? 'rtl' : 'ltr'}
           >
             {(segments || []).map((s, i) => <p key={i}>{s}</p>)}

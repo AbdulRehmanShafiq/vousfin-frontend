@@ -37,7 +37,7 @@ export default function CashFlowPage() {
   }
 
   return (
-    <div className="space-y-8 animate-fade-in">
+    <div className="space-y-5 animate-fade-in">
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div>
           <h1 className="flex items-center gap-2 text-xl sm:text-2xl font-black text-text-primary tracking-tight">
@@ -48,20 +48,22 @@ export default function CashFlowPage() {
         </div>
 
         <div className="flex flex-wrap items-center gap-2">
-          <Input
-            type="date"
-            value={dateRange.startDate}
-            onChange={e => setDateRange(prev => ({ ...prev, startDate: e.target.value }))}
-            containerClassName="flex-1 sm:flex-none sm:w-36"
-          />
-          <span className="text-text-muted text-sm">to</span>
-          <Input
-            type="date"
-            value={dateRange.endDate}
-            onChange={e => setDateRange(prev => ({ ...prev, endDate: e.target.value }))}
-            containerClassName="flex-1 sm:flex-none sm:w-36"
-          />
-          <ExportButton 
+          <div className="flex min-w-0 flex-1 items-center gap-2 sm:flex-none">
+            <Input
+              type="date"
+              value={dateRange.startDate}
+              onChange={e => setDateRange(prev => ({ ...prev, startDate: e.target.value }))}
+              containerClassName="min-w-0 flex-1 sm:flex-none sm:w-36"
+            />
+            <span className="text-text-muted text-xs">to</span>
+            <Input
+              type="date"
+              value={dateRange.endDate}
+              onChange={e => setDateRange(prev => ({ ...prev, endDate: e.target.value }))}
+              containerClassName="min-w-0 flex-1 sm:flex-none sm:w-36"
+            />
+          </div>
+          <ExportButton
             data={exportData} 
             filename={`cash-flow-${dateRange.endDate}.csv`}
             headers={[
@@ -73,25 +75,25 @@ export default function CashFlowPage() {
         </div>
       </div>
 
-      <div className="premium-card p-4 sm:p-10">
+      <div className="premium-card p-3 sm:p-10">
         {isLoading ? (
           <SkeletonLoader count={8} />
         ) : !data ? (
           <div className="text-center py-10 text-text-muted">No data available for this period.</div>
         ) : (
-          <div className="space-y-8">
-            <div className="text-center border-b border-glass pb-6">
-              <h2 className="text-lg sm:text-xl font-bold text-text-primary">Statement of Cash Flows</h2>
-              <p className="text-text-secondary">For the period {dateRange.startDate} to {dateRange.endDate}</p>
+          <div className="space-y-4 sm:space-y-8">
+            <div className="text-center border-b border-glass pb-3 sm:pb-6">
+              <h2 className="text-base sm:text-xl font-bold text-text-primary">Statement of Cash Flows</h2>
+              <p className="text-text-secondary text-xs sm:text-sm">For the period {dateRange.startDate} to {dateRange.endDate}</p>
             </div>
 
             <ReportSection title="Operating Activities" section={data.operating} currency={currency} />
             <ReportSection title="Investing Activities" section={data.investing} currency={currency} />
             <ReportSection title="Financing Activities" section={data.financing} currency={currency} />
 
-            <div className="flex justify-between items-center py-4 border-t-2 border-cyan bg-cyan/5 px-4 rounded-lg shadow-glow-cyan/10">
-              <span className="text-lg font-black text-text-primary">Net Increase (Decrease) in Cash</span>
-              <span className={`text-lg font-black ${data.netCashFlow >= 0 ? 'text-positive' : 'text-negative'}`}>
+            <div className="flex items-center justify-between gap-3 py-2.5 px-3.5 sm:py-4 sm:px-4 border-t-2 border-cyan bg-cyan/5 rounded-lg">
+              <span className="min-w-0 truncate text-sm sm:text-lg font-black text-text-primary">Net Increase (Decrease) in Cash</span>
+              <span className={`whitespace-nowrap text-sm sm:text-lg font-black tabular-nums ${data.netCashFlow >= 0 ? 'text-positive' : 'text-negative'}`}>
                 {formatCurrency(data.netCashFlow, currency)}
               </span>
             </div>
@@ -111,19 +113,19 @@ function ReportSection({ title, section, currency }) {
   const total = getTotal(section)
 
   return (
-    <div className="space-y-2">
-      <h3 className="font-bold text-text-secondary uppercase tracking-wider text-xs px-4">{title}</h3>
-      <div className="space-y-1">
+    <div className="space-y-1.5 sm:space-y-2">
+      <h3 className="font-bold text-text-muted uppercase tracking-wider text-[11px] sm:text-xs px-1 sm:px-4">{title}</h3>
+      <div>
         {items.map((item, idx) => (
-          <div key={idx} className="flex justify-between items-center py-2 px-4 hover:bg-glass-hover rounded-lg transition-colors">
-            <span className="text-text-primary">{item.description}</span>
-            <span className="text-text-primary font-medium">{formatCurrency(item.amount, currency)}</span>
+          <div key={idx} className="flex items-center justify-between gap-3 py-1 px-1 sm:py-2 sm:px-4">
+            <span className="min-w-0 truncate text-[13px] sm:text-base text-text-primary">{item.description}</span>
+            <span className="whitespace-nowrap text-[13px] sm:text-base text-text-primary font-medium tabular-nums">{formatCurrency(item.amount, currency)}</span>
           </div>
         ))}
       </div>
-      <div className="flex justify-between items-center py-2 px-4 border-t border-glass mt-2">
-        <span className="font-medium text-text-secondary">Net Cash from {title}</span>
-        <span className="font-bold text-text-primary">{formatCurrency(total, currency)}</span>
+      <div className="flex items-center justify-between gap-3 py-1.5 px-1 sm:py-2 sm:px-4 border-t border-glass mt-1 sm:mt-2">
+        <span className="min-w-0 truncate text-[13px] sm:text-base font-medium text-text-secondary">Net Cash from {title}</span>
+        <span className="whitespace-nowrap text-[13px] sm:text-base font-bold text-text-primary tabular-nums">{formatCurrency(total, currency)}</span>
       </div>
     </div>
   )

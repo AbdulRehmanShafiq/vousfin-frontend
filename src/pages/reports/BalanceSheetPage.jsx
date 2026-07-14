@@ -81,9 +81,9 @@ export default function BalanceSheetPage() {
         </div>
       )}
 
-      {/* KPI strip */}
+      {/* KPI strip — hidden on mobile (duplicates the section totals below). */}
       {!isLoading && data && (
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+        <div className="hidden sm:grid grid-cols-1 sm:grid-cols-3 gap-3">
           {[
             { label: 'Total Assets',      val: data.totalAssets },
             { label: 'Total Liabilities', val: data.totalLiabilities },
@@ -91,33 +91,33 @@ export default function BalanceSheetPage() {
           ].map(({ label, val }) => (
             <div key={label} className="premium-card px-4 py-3">
               <p className="text-xs font-bold text-text-secondary uppercase tracking-wider">{label}</p>
-              <p className="text-lg font-black text-text-primary mt-1">{formatCurrency(val, currency)}</p>
+              <p className="text-lg font-black text-text-primary mt-1 tabular-nums">{formatCurrency(val, currency)}</p>
             </div>
           ))}
         </div>
       )}
 
       {/* Two-column layout */}
-      <div className="premium-card p-4 sm:p-8">
+      <div className="premium-card p-3 sm:p-8">
         {isLoading ? (
           <SkeletonLoader count={12} />
         ) : !data ? (
           <p className="text-center py-10 text-text-muted">No data for this date.</p>
         ) : (
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-10">
+          <div className="grid grid-cols-1 gap-6 lg:grid-cols-2 lg:gap-10">
             {/* Assets */}
-            <div className="space-y-6">
-              <div className="text-center border-b border-glass pb-4">
-                <h2 className="text-lg font-bold text-text-primary">Assets</h2>
+            <div className="space-y-3.5 sm:space-y-6">
+              <div className="text-center border-b border-glass pb-2.5 sm:pb-4">
+                <h2 className="text-base sm:text-lg font-bold text-text-primary">Assets</h2>
               </div>
               <BSSection section={data.assets} currency={currency} />
               <TotalRow label="Total Assets" value={data.totalAssets} currency={currency} />
             </div>
 
             {/* Liabilities & Equity */}
-            <div className="space-y-6">
-              <div className="text-center border-b border-glass pb-4">
-                <h2 className="text-lg font-bold text-text-primary">Liabilities &amp; Equity</h2>
+            <div className="space-y-3.5 sm:space-y-6">
+              <div className="text-center border-b border-glass pb-2.5 sm:pb-4">
+                <h2 className="text-base sm:text-lg font-bold text-text-primary">Liabilities &amp; Equity</h2>
               </div>
               <BSSection section={data.liabilities} currency={currency} title="Liabilities" />
 
@@ -125,11 +125,11 @@ export default function BalanceSheetPage() {
                   the section foots to totalEquity and the equation balances. */}
               <BSSection section={data.equity} currency={currency} title="Equity" />
 
-              <div className={`flex justify-between items-center py-4 px-5 rounded-xl border-2 ${
+              <div className={`flex items-center justify-between gap-3 py-2.5 px-3.5 sm:py-4 sm:px-5 rounded-xl border sm:border-2 ${
                 isBalanced ? 'border-cyan/40 bg-cyan/5' : 'border-negative/40 bg-negative/5'
               }`}>
-                <span className="text-lg font-black text-text-primary">Total Liabilities &amp; Equity</span>
-                <span className={`text-lg font-black tabular-nums ${isBalanced ? 'text-text-primary' : 'text-negative'}`}>
+                <span className="min-w-0 truncate text-sm sm:text-lg font-black text-text-primary">Total Liabilities &amp; Equity</span>
+                <span className={`whitespace-nowrap text-sm sm:text-lg font-black tabular-nums ${isBalanced ? 'text-text-primary' : 'text-negative'}`}>
                   {formatCurrency(totalLiabEquity, currency)}
                 </span>
               </div>
@@ -148,22 +148,22 @@ function BSSection({ section, currency, title }) {
   const total    = section.total ?? accounts.reduce((s, a) => s + (a.balance || 0), 0)
 
   return (
-    <div className="space-y-3">
+    <div className="space-y-2 sm:space-y-3">
       {title && (
-        <h3 className="text-xs font-bold text-text-secondary uppercase tracking-wider px-1">{title}</h3>
+        <h3 className="text-[11px] sm:text-xs font-bold text-text-muted uppercase tracking-wider px-1">{title}</h3>
       )}
       {groups && groups.length > 0
         ? groups.map(g => <SubtypeGroup key={g.label} group={g} currency={currency} />)
         : accounts.map((acc, i) => (
-          <div key={acc.accountId || i} className="flex justify-between items-center py-1.5 px-4 hover:bg-glass-hover rounded-lg transition-colors">
-            <span className="text-sm text-text-primary">{acc.accountName}</span>
-            <span className="text-sm font-medium text-text-primary tabular-nums">{formatCurrency(acc.balance, currency)}</span>
+          <div key={acc.accountId || i} className="flex items-center justify-between gap-3 py-1 px-1 sm:py-1.5 sm:px-4">
+            <span className="min-w-0 truncate text-[13px] sm:text-sm text-text-primary">{acc.accountName}</span>
+            <span className="whitespace-nowrap text-[13px] sm:text-sm font-medium text-text-primary tabular-nums">{formatCurrency(acc.balance, currency)}</span>
           </div>
         ))
       }
-      <div className="flex justify-between items-center py-2 px-4 border-t border-glass">
-        <span className="text-sm font-semibold text-text-secondary">Total {title || ''}</span>
-        <span className="font-bold text-text-primary tabular-nums">{formatCurrency(total, currency)}</span>
+      <div className="flex items-center justify-between gap-3 py-1.5 px-1 sm:py-2 sm:px-4 border-t border-glass">
+        <span className="min-w-0 truncate text-[13px] sm:text-sm font-semibold text-text-secondary">Total {title || ''}</span>
+        <span className="whitespace-nowrap text-[13px] sm:text-sm font-bold text-text-primary tabular-nums">{formatCurrency(total, currency)}</span>
       </div>
     </div>
   )
@@ -177,20 +177,20 @@ function SubtypeGroup({ group, currency }) {
     <div className="border border-glass rounded-lg overflow-hidden">
       <button
         onClick={() => setOpen(o => !o)}
-        className="w-full flex items-center justify-between px-4 py-2 bg-glass hover:bg-glass-hover transition-colors"
+        className="w-full flex items-center justify-between gap-2 px-3 py-2 sm:px-4 bg-glass hover:bg-glass-hover transition-colors"
       >
-        <span className="text-xs font-bold text-text-secondary uppercase tracking-wider">{group.label}</span>
-        <div className="flex items-center gap-2">
-          <span className="text-sm font-bold text-text-primary tabular-nums">{formatCurrency(group.total, currency)}</span>
+        <span className="min-w-0 truncate text-[11px] sm:text-xs font-bold text-text-secondary uppercase tracking-wider">{group.label}</span>
+        <div className="flex flex-shrink-0 items-center gap-2">
+          <span className="whitespace-nowrap text-[13px] sm:text-sm font-bold text-text-primary tabular-nums">{formatCurrency(group.total, currency)}</span>
           {open ? <ChevronDown className="h-4 w-4 text-text-muted" /> : <ChevronRight className="h-4 w-4 text-text-muted" />}
         </div>
       </button>
       {open && visibleAccounts.length > 0 && (
         <div className="divide-y divide-glass">
           {visibleAccounts.map((acc, i) => (
-            <div key={acc.accountId || i} className="flex justify-between items-center py-1.5 px-6 hover:bg-glass-hover transition-colors">
-              <span className="text-sm text-text-primary">{acc.accountName}</span>
-              <span className="text-sm font-medium text-text-primary tabular-nums">{formatCurrency(acc.balance, currency)}</span>
+            <div key={acc.accountId || i} className="flex items-center justify-between gap-3 py-1.5 px-3 sm:px-6 hover:bg-glass-hover transition-colors">
+              <span className="min-w-0 truncate text-[13px] sm:text-sm text-text-primary">{acc.accountName}</span>
+              <span className="whitespace-nowrap text-[13px] sm:text-sm font-medium text-text-primary tabular-nums">{formatCurrency(acc.balance, currency)}</span>
             </div>
           ))}
         </div>
@@ -201,9 +201,9 @@ function SubtypeGroup({ group, currency }) {
 
 function TotalRow({ label, value, currency }) {
   return (
-    <div className="flex justify-between items-center py-3 px-5 rounded-xl bg-cyan/5 border-2 border-cyan/40">
-      <span className="text-lg font-black text-text-primary">{label}</span>
-      <span className="text-lg font-black text-text-primary tabular-nums">{formatCurrency(value, currency)}</span>
+    <div className="flex items-center justify-between gap-3 py-2.5 px-3.5 sm:py-3 sm:px-5 rounded-xl bg-cyan/5 border sm:border-2 border-cyan/40">
+      <span className="min-w-0 truncate text-sm sm:text-lg font-black text-text-primary">{label}</span>
+      <span className="whitespace-nowrap text-sm sm:text-lg font-black text-text-primary tabular-nums">{formatCurrency(value, currency)}</span>
     </div>
   )
 }
