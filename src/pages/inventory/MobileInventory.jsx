@@ -5,7 +5,7 @@
  * per-item actions, that reads cleaner than a wide swipe reveal.
  */
 import { useState } from 'react'
-import { PackageOpen, Plus, Search, AlertTriangle, History, Edit, Power } from 'lucide-react'
+import { PackageOpen, Plus, Search, AlertTriangle, History, Edit, Power, ClipboardCheck } from 'lucide-react'
 import { formatCurrency } from '@/utils/formatters'
 import MobilePage from '@/components/mobile/MobilePage'
 import ListCard from '@/components/mobile/ListCard'
@@ -15,7 +15,7 @@ import { cn } from '@/utils/cn'
 
 export default function MobileInventory({
   rows, currency, isLoading, valuation, lowStockCount, query, onQuery,
-  showInactive, onShowInactive, onRefresh, onNew, onAddStock, onHistory, onEdit, onToggleActive,
+  showInactive, onShowInactive, onRefresh, onNew, onAddStock, onAdjust, onHistory, onEdit, onToggleActive,
 }) {
   const [actionItem, setActionItem] = useState(null)
 
@@ -114,6 +114,7 @@ export default function MobileInventory({
       <Sheet isOpen={!!actionItem} onClose={() => setActionItem(null)} title={actionItem?.name}>
         <div className="space-y-1 pb-2">
           <ActionRow icon={Plus} tone="positive" label="Add stock" onClick={() => act(() => onAddStock(actionItem._id))} />
+          <ActionRow icon={ClipboardCheck} label="Fix the count" onClick={() => act(() => onAdjust(actionItem._id))} />
           <ActionRow icon={History} label="Stock history" onClick={() => act(() => onHistory(actionItem._id))} />
           <ActionRow icon={Edit} tone="cyan" label="Edit item" onClick={() => act(() => onEdit(actionItem))} />
           <ActionRow

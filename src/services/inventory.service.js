@@ -10,7 +10,9 @@ const inventoryService = {
   getLowStockAlerts:   ()               => api.get('/inventory/low-stock'),
   getInventoryValuation: ()             => api.get('/inventory/valuation'),
   addStock:            (id, data)        => api.post(`/inventory/${id}/add-stock`, data),
+  adjustStock:         (id, data)        => api.post(`/inventory/${id}/adjust`, data),
   getStockLedger:      (id)              => api.get(`/inventory/${id}/ledger`),
+  getIntegrity:        ()                => api.get('/inventory/integrity'),
 };
 
 export default inventoryService;

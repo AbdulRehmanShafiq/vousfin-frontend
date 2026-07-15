@@ -8,7 +8,7 @@
  *   - Create / Edit item modal
  *   - Inventory valuation summary
  */
-import { useMemo, useState, useEffect } from 'react'
+import { useMemo, useState } from 'react'
 import {
   PackageOpen, Plus, AlertTriangle, Search, X,
   History, ArrowDownLeft, ArrowUpRight, ChevronDown,
@@ -31,21 +31,10 @@ import Badge from '@/components/ui/Badge'
 import DataTable from '@/design-system/data/SmartTable'
 import Modal from '@/components/modals/Modal'
 import Sheet from '@/components/mobile/Sheet'
+import AdjustStockForm from './AdjustStockForm'
 import MobileInventory from './MobileInventory'
 import { cn } from '@/utils/cn'
 
-/* ── Section label — matches TransactionFormModal style ─────────────── */
-function SectionLabel({ label, note }) {
-  return (
-    <div className="flex items-center gap-3 pt-1">
-      <span className="text-xs font-bold text-text-muted uppercase tracking-widest whitespace-nowrap">
-        {label}
-      </span>
-      {note && <span className="text-xs text-text-muted/60">{note}</span>}
-      <div className="flex-1 h-px bg-glass" />
-    </div>
-  )
-}
 
 /* ── Item Form (create / edit) ──────────────────────────────────────── */
 const EMPTY = {
@@ -322,17 +311,18 @@ function AddStockForm({ item, onClose, currency, hideHeader = false }) {
     return []
   }, [accounts, paymentMode])
 
-  // Auto-select first funding account when mode changes
-  useEffect(() => {
-    if (paymentMode === 'credit') return
-    if (fundingAccounts.length > 0 && !fundingAccounts.some(a => a._id === sourceAccountId)) {
-      setSourceAccountId(fundingAccounts[0]._id)
-    }
-  }, [paymentMode, fundingAccounts, sourceAccountId])
-
+  // Resolve the funding account at RENDER rather than syncing it in an effect:
+  // if the chosen account isn't valid for the current mode, fall back to the
+  // first one. (Effect-based sync fired a cascading re-render on every mode flip.)
   const isCredit = paymentMode === 'credit'
+  const effectiveSourceAccountId = isCredit
+    ? sourceAccountId
+    : (fundingAccounts.some(a => a._id === sourceAccountId)
+        ? sourceAccountId
+        : (fundingAccounts[0]?._id || ''))
+
   const valid = parseFloat(qty) > 0 && parseFloat(cost) >= 0 && (
-    isCredit ? !!vendorId : !!sourceAccountId
+    isCredit ? !!vendorId : !!effectiveSourceAccountId
   )
   const totalCost = (parseFloat(qty) || 0) * (parseFloat(cost) || 0)
 
@@ -342,7 +332,7 @@ function AddStockForm({ item, onClose, currency, hideHeader = false }) {
       qty:          parseFloat(qty),
       costPerUnit:  parseFloat(cost) || item.unitCostPrice,
       paymentMode,
-      sourceAccountId: isCredit ? undefined : sourceAccountId,
+      sourceAccountId: isCredit ? undefined : effectiveSourceAccountId,
       vendorId:        isCredit ? vendorId  : undefined,
       notes:           notes || undefined,
     })
@@ -432,7 +422,7 @@ function AddStockForm({ item, onClose, currency, hideHeader = false }) {
           </label>
           <select
             className="w-full px-3 py-2 rounded-lg bg-glass-panel border border-glass text-text-primary text-sm focus:border-positive focus:outline-none"
-            value={sourceAccountId}
+            value={effectiveSourceAccountId}
             onChange={e => setSourceAccountId(e.target.value)}
           >
             <option value="">Select account...</option>
@@ -587,6 +577,7 @@ export default function InventoryPage() {
   const [showForm,   setShowForm]   = useState(false)
   const [editItem,   setEditItem]   = useState(null)
   const [addStockId, setAddStockId] = useState(null)
+  const [adjustId,   setAdjustId]   = useState(null)
   const [ledgerId,   setLedgerId]   = useState(null)
   const [showInactive, setShowInactive] = useState(false)
 
@@ -610,6 +601,7 @@ export default function InventoryPage() {
   }, [items, query, showInactive])
 
   const addStockItem = addStockId ? items.find(i => i._id === addStockId) : null
+  const adjustItem   = adjustId   ? items.find(i => i._id === adjustId)   : null
   const ledgerItem   = ledgerId   ? items.find(i => i._id === ledgerId)   : null
 
   // Mobile-First Redesign, pass 2 — card list + per-item actions sheet. The
@@ -631,6 +623,7 @@ export default function InventoryPage() {
           onRefresh={async () => { await refetch() }}
           onNew={() => setShowForm(true)}
           onAddStock={setAddStockId}
+          onAdjust={setAdjustId}
           onHistory={setLedgerId}
           onEdit={setEditItem}
           onToggleActive={(id) => toggleActive.mutate(id)}
@@ -640,6 +633,9 @@ export default function InventoryPage() {
         )}
         <Sheet isOpen={!!addStockItem} onClose={() => setAddStockId(null)} title={addStockItem ? `Add stock — ${addStockItem.name}` : ''}>
           {addStockItem && <AddStockForm item={addStockItem} currency={currency} onClose={() => setAddStockId(null)} hideHeader />}
+        </Sheet>
+        <Sheet isOpen={!!adjustItem} onClose={() => setAdjustId(null)} title="Fix the stock count">
+          {adjustItem && <AdjustStockForm item={adjustItem} currency={currency} onClose={() => setAdjustId(null)} />}
         </Sheet>
         {ledgerItem && (
           <StockLedgerModal item={ledgerItem} currency={currency} onClose={() => setLedgerId(null)} />
@@ -730,6 +726,10 @@ export default function InventoryPage() {
           <button type="button" onClick={e => { e.stopPropagation(); setAddStockId(r._id === addStockId ? null : r._id) }}
             className="text-small text-positive hover:underline font-semibold">
             Add stock
+          </button>
+          <button type="button" onClick={e => { e.stopPropagation(); setAdjustId(r._id) }}
+            className="text-small text-text-secondary hover:text-text-primary hover:underline font-semibold">
+            Adjust
           </button>
           <button type="button" onClick={e => { e.stopPropagation(); setLedgerId(r._id) }}
             className="inline-flex items-center gap-1 text-small text-text-secondary hover:text-text-primary hover:underline font-semibold">
@@ -855,6 +855,18 @@ export default function InventoryPage() {
           onClose={() => { setShowForm(false); setEditItem(null) }}
         />
       )}
+
+      {/* ── Adjust stock (count / write-off / found / revalue) ────── */}
+      <Modal
+        isOpen={!!adjustItem}
+        onClose={() => setAdjustId(null)}
+        title="Fix the stock count"
+        className="sm:max-w-lg"
+      >
+        {adjustItem && (
+          <AdjustStockForm item={adjustItem} currency={currency} onClose={() => setAdjustId(null)} />
+        )}
+      </Modal>
 
       {/* ── Stock Ledger / Movement History Modal ─────────────────── */}
       {ledgerItem && (

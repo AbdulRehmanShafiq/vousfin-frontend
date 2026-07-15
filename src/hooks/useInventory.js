@@ -103,6 +103,29 @@ export function useAddStock() {
   })
 }
 
+/**
+ * Stock adjustment (inventory engine phase 2): count / write-off / found /
+ * revalue. Every adjustment posts a journal entry, so all ledger-derived views
+ * refresh alongside the stock lists.
+ */
+export function useAdjustStock() {
+  const queryClient = useQueryClient()
+  return useMutation({
+    mutationFn: async ({ id, ...body }) => {
+      const { data } = await inventoryService.adjustStock(id, body)
+      return data.data
+    },
+    onSuccess: (result) => {
+      queryClient.invalidateQueries({ queryKey: ['inventory-items'] })
+      queryClient.invalidateQueries({ queryKey: ['inventory-low-stock'] })
+      queryClient.invalidateQueries({ queryKey: ['inventory-ledger'] })
+      invalidateLedgerQueries(queryClient)
+      toast.success(result?.noChange ? 'Everything already matches — nothing to change' : 'Stock updated and recorded in your books')
+    },
+    onError: (error) => toast.error(getErrorMessage(error)),
+  })
+}
+
 export function useToggleInventoryActive() {
   const queryClient = useQueryClient()
   return useMutation({
