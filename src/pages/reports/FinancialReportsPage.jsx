@@ -17,6 +17,7 @@ import {
 import { cn } from '@/utils/cn'
 import SkeletonLoader from '@/components/ui/SkeletonLoader'
 import AINarrativePanel from '@/components/reports/AINarrativePanel'
+import BooksAssurance from '@/components/reports/BooksAssurance'
 import { usePeriodStore, PERIOD_PRESETS } from '@/stores/usePeriodStore'
 
 const IncomeStatementPage   = lazy(() => import('./IncomeStatementPage'))
@@ -143,6 +144,11 @@ export default function FinancialReportsPage() {
           </span>
         </div>
       </div>
+
+      {/* Does the ledger under these statements actually add up? Sits above every
+          tab because it vouches for all of them: a report is only worth reading
+          if the books behind it hold. Re-checked live, never cached. */}
+      <BooksAssurance className="vf-no-print" />
 
       {/* FR-02.2 — CFO briefing (English/Urdu), grounded in the live GL */}
       {(tab === 'income-statement' || tab === 'balance-sheet') && <AINarrativePanel />}

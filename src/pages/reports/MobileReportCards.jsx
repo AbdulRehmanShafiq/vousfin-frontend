@@ -5,6 +5,7 @@ import { usePeriodStore, PERIOD_PRESETS } from '@/stores/usePeriodStore'
 import { useBusinessStore } from '@/stores/useBusinessStore'
 import { formatCompactCurrency } from '@/utils/formatters'
 import MobilePage from '@/components/mobile/MobilePage'
+import BooksAssurance from '@/components/reports/BooksAssurance'
 import { cn } from '@/utils/cn'
 
 /**
@@ -76,6 +77,11 @@ export default function MobileReportCards() {
             </button>
           ))}
         </div>
+
+        {/* Whether the books add up belongs on the phone too — this is the
+            surface an owner actually looks at, and it is the reason to trust
+            every number below it. */}
+        <BooksAssurance />
 
         <AnswerCard title="How you did" loading={plLoading} to={full('/financial-reports/income-statement')} toLabel="See the full statement">
           <Row label="Money made" value={pl?.totalRevenue} currency={currency} />

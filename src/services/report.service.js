@@ -4,6 +4,9 @@ const reportService = {
   incomeStatement: (params) => api.get('/reports/income-statement', { params }),
   balanceSheet: (params) => api.get('/reports/balance-sheet', { params }),
   cashFlow: (params) => api.get('/reports/cash-flow', { params }),
+  // Do the books still add up? Re-derived from the records on every call —
+  // never a stored verdict, which would be the very thing it exists to disprove.
+  booksAssurance: (params) => api.get('/reports/books-assurance', { params }),
   kpi: (params) => api.get('/reports/kpi', { params }),
   exportReport: (params) =>
     api.get('/reports/export', { params, responseType: 'blob' }),

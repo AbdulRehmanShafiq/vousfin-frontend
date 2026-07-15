@@ -12,6 +12,26 @@ const buildParams = (obj) => {
   return p.toString()
 }
 
+/**
+ * Do the books add up, right now?
+ *
+ * staleTime 0: this is a live assurance, not a report. A cached "your books add
+ * up" from ten minutes ago is exactly the claim we must not make.
+ */
+export function useBooksAssurance() {
+  const businessId = useAuthStore(s => s.user?.businessId)
+  return useQuery({
+    queryKey: ['reports', 'books-assurance', businessId],
+    queryFn: async () => {
+      const { data } = await api.get('/reports/books-assurance')
+      return data.data
+    },
+    enabled: !!businessId,
+    staleTime: 0,
+    gcTime: GC,
+  })
+}
+
 export function useIncomeStatement(dateRange) {
   const businessId = useAuthStore(s => s.user?.businessId)
   return useQuery({
