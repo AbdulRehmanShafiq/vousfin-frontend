@@ -235,5 +235,33 @@
   "tx.filter.income": "آمدنی",
   "tx.filter.expense": "خرچ",
   "tx.filter.arap": "وصول/ادا",
-  "tx.filter.transfer": "منتقلی"
+  "tx.filter.transfer": "منتقلی",
+
+  "mobile.tab.home": "ہوم",
+  "mobile.tab.money": "پیسہ",
+  "mobile.tab.record": "درج کریں",
+  "mobile.tab.ai": "AI",
+  "mobile.tab.menu": "مینیو",
+
+  "capture.title": "کچھ درج کریں",
+  "capture.photo.title": "رسید کی تصویر لیں",
+  "capture.photo.desc": "تصویر لیں — AI رقم اور تفصیل خود پڑھ لے گا",
+  "capture.nl.title": "بول کر یا لکھ کر بتائیں",
+  "capture.nl.desc": "«3 فون 45,000 نقد بیچے» — کھاتہ ہم لکھ دیں گے",
+  "capture.simple.title": "آسان انتخاب کریں",
+  "capture.simple.desc": "پیسے ملے · ادا کیے · مال بیچا · مال خریدا…",
+  "capture.footnote": "تینوں راستے ایک ہی جگہ ختم ہوتے ہیں — آپ جانچتے ہیں، پھر کھاتے میں جاتا ہے۔",
+
+  "home.goodMorning": "صبح بخیر",
+  "home.goodAfternoon": "دوپہر بخیر",
+  "home.goodEvening": "شام بخیر",
+  "home.yourBusiness": "آپ کا کاروبار",
+  "home.cashOnHand": "دستیاب نقدی",
+  "home.cashPlusBank": "نقدی + بینک بیلنس",
+  "home.cashNote": "آپ کے کھاتوں میں ہر نقدی اور بینک اکاؤنٹ کا موجودہ بیلنس۔",
+  "home.seeAccounts": "اکاؤنٹس دیکھیں",
+  "home.recent": "حالیہ",
+  "home.seeAll": "سب دیکھیں",
+  "home.needsYou_one": "{{count}} چیز آپ کی منتظر ہے",
+  "home.needsYou_other": "{{count}} چیزیں آپ کی منتظر ہیں"
 }

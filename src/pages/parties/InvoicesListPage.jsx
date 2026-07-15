@@ -19,6 +19,8 @@ import { useIsMobile } from '@/hooks/useIsMobile'
 import Button from '@/components/ui/Button'
 import Input from '@/components/ui/Input'
 import DataTable from '@/design-system/data/SmartTable'
+import { wideEnoughForInspector } from '@/design-system/workflow/splitView'
+import DocumentInspector from '@/components/invoice/DocumentInspector'
 import InvoiceStatusBadge from '@/components/invoice/InvoiceStatusBadge'
 import ApprovalChip from '@/components/invoice/ApprovalChip'
 import MobileInvoices from './MobileInvoices'
@@ -33,6 +35,8 @@ export default function InvoicesListPage() {
   const setQuery = (q) => setView({ query: q })
   const setStateFilter = (s) => setView({ state: s })
   const [selectedKeys, setSelectedKeys] = useState([])
+  // Inspector split view (spec §7.2) — peek at a row without leaving the list
+  const [peek, setPeek] = useState(null)
 
   const { data, isLoading, refetch } = useInvoices({
     search: query || undefined,
@@ -212,6 +216,11 @@ export default function InvoicesListPage() {
           columns={columns}
           data={invoices}
           isLoading={isLoading}
+          onRowClick={(r) => {
+            // ≥xl: peek in the Inspector (list context kept); smaller: route push
+            if (wideEnoughForInspector()) setPeek(r)
+            else navigate(`/sales/invoices/${r._id}/edit`)
+          }}
           rowActions={rowActions}
           selectable
           selectedKeys={selectedKeys}
@@ -226,6 +235,17 @@ export default function InvoicesListPage() {
           emptyMessage={query ? 'No invoices match your search.' : 'No invoices yet. Tap "New invoice" to send your first one.'}
         />
       </div>
+
+      {peek && (
+        <DocumentInspector
+          doc={peek}
+          kind="invoice"
+          currency={currency}
+          onClose={() => setPeek(null)}
+          onOpenFull={(d) => navigate(`/sales/invoices/${d._id}/edit`)}
+          onDownloadPdf={(d) => downloadPdf.mutate(d._id)}
+        />
+      )}
     </div>
   )
 }

@@ -1,4 +1,7 @@
 import '@testing-library/jest-dom/vitest'
+// Initialize i18n (English) so components using useTranslation render real
+// copy in tests instead of raw keys.
+import '@/i18n'
 
 // jsdom lacks these browser APIs that framer-motion / reduced-motion hooks use.
 if (!globalThis.IntersectionObserver) {

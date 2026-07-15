@@ -1,7 +1,7 @@
 /**
  * BillsListPage — Phase 2 — Landing page for the Bill (AP) domain.
  */
-import { useMemo } from 'react'
+import { useMemo, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { Plus, Search, FileText, Edit, Trash2 } from 'lucide-react'
 import { useBills, useArchiveBill } from '@/hooks/useInvoices'
@@ -12,6 +12,8 @@ import { useIsMobile } from '@/hooks/useIsMobile'
 import Button from '@/components/ui/Button'
 import Input from '@/components/ui/Input'
 import DataTable from '@/design-system/data/SmartTable'
+import { wideEnoughForInspector } from '@/design-system/workflow/splitView'
+import DocumentInspector from '@/components/invoice/DocumentInspector'
 import InvoiceStatusBadge from '@/components/invoice/InvoiceStatusBadge'
 import ApprovalChip from '@/components/invoice/ApprovalChip'
 import MobileBills from './MobileBills'
@@ -32,6 +34,8 @@ export default function BillsListPage() {
     limit:  100,
   })
   const archiveBill = useArchiveBill()
+  // Inspector split view (spec §7.2) — peek at a row without leaving the list
+  const [peek, setPeek] = useState(null)
 
   const bills = useMemo(() => {
     const arr = Array.isArray(data?.data) ? data.data
@@ -201,10 +205,25 @@ export default function BillsListPage() {
           columns={columns}
           data={bills}
           isLoading={isLoading}
+          onRowClick={(r) => {
+            // ≥xl: peek in the Inspector (list context kept); smaller: route push
+            if (wideEnoughForInspector()) setPeek(r)
+            else navigate(`/purchases/bills/${r._id}/edit`)
+          }}
           rowActions={rowActions}
           emptyMessage={query ? 'No bills match your search.' : 'No bills yet. Tap "New bill" to record your first one.'}
         />
       </div>
+
+      {peek && (
+        <DocumentInspector
+          doc={peek}
+          kind="bill"
+          currency={currency}
+          onClose={() => setPeek(null)}
+          onOpenFull={(d) => navigate(`/purchases/bills/${d._id}/edit`)}
+        />
+      )}
     </div>
   )
 }

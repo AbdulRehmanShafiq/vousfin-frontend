@@ -6,6 +6,7 @@
  */
 import { useMemo } from 'react'
 import { Link } from 'react-router-dom'
+import { useTranslation } from 'react-i18next'
 import { useQueryClient } from '@tanstack/react-query'
 import { Bell, ArrowDownLeft, ArrowUpRight, Plus, ChevronRight } from 'lucide-react'
 import { useAuthStore } from '@/stores/useAuthStore'
@@ -25,6 +26,7 @@ import { isInflow as isInflowType } from '@/utils/transactionFlow'
 const isInflow = (tx) => isInflowType(tx.transactionType)
 
 export default function MobileHome() {
+  const { t } = useTranslation()
   const queryClient = useQueryClient()
   const { user } = useAuthStore()
   const { currency, activeBusiness } = useBusinessStore()
@@ -50,7 +52,7 @@ export default function MobileHome() {
   const workFirst = rolesLoaded && roles.length > 0 && !roles.includes('owner')
 
   const hour = new Date().getHours()
-  const greeting = hour < 12 ? 'Good morning' : hour < 17 ? 'Good afternoon' : 'Good evening'
+  const greeting = hour < 12 ? t('home.goodMorning') : hour < 17 ? t('home.goodAfternoon') : t('home.goodEvening')
   const firstName = (user?.fullName || user?.name || 'there').split(' ')[0]
 
   const handleRefresh = async () => {
@@ -64,7 +66,7 @@ export default function MobileHome() {
   return (
     <MobilePage
       title={`${greeting}, ${firstName}`}
-      subtitle={activeBusiness?.businessName || 'Your business'}
+      subtitle={activeBusiness?.businessName || t('home.yourBusiness')}
       cta={
         <button
           type="button"
@@ -72,7 +74,7 @@ export default function MobileHome() {
           className="tap-target flex w-full items-center justify-center gap-2 rounded-2xl btn-gradient text-md font-semibold"
         >
           <Plus className="h-5 w-5" />
-          Record something
+          {t('capture.title')}
         </button>
       }
     >
@@ -83,13 +85,13 @@ export default function MobileHome() {
             const hero = (
               <div key="hero">
                 <p className="text-small font-semibold uppercase tracking-wider text-text-muted inline-flex items-center gap-0.5">
-                  Cash on hand
+                  {t('home.cashOnHand')}
                   <Explain
-                    title="Cash on hand"
-                    rows={[{ label: 'Cash + bank balances', value: formatCompactCurrency(kpis.cashBalance ?? 0, currency) }]}
-                    note="The current balance of every cash and bank account in your books."
+                    title={t('home.cashOnHand')}
+                    rows={[{ label: t('home.cashPlusBank'), value: formatCompactCurrency(kpis.cashBalance ?? 0, currency) }]}
+                    note={t('home.cashNote')}
                     to="/accounts"
-                    toLabel="See the accounts"
+                    toLabel={t('home.seeAccounts')}
                   />
                 </p>
                 {loadDash ? (
@@ -108,7 +110,7 @@ export default function MobileHome() {
                 className="flex items-center gap-2 rounded-full bg-highlight/12 px-4 py-2.5 text-sm font-semibold text-highlight active:scale-[0.98] transition-transform"
               >
                 <Bell className="h-4 w-4 flex-shrink-0" />
-                {needsYouCount} {needsYouCount === 1 ? 'thing needs' : 'things need'} you
+                {t('home.needsYou', { count: needsYouCount })}
                 <ChevronRight className="ml-auto h-4 w-4 flex-shrink-0" />
               </Link>
             )
@@ -118,13 +120,13 @@ export default function MobileHome() {
           {/* Money in / out */}
           <div className="grid grid-cols-2 gap-3">
             <div className="rounded-2xl bg-glass-panel p-3.5">
-              <p className="text-xs text-text-muted">Money in</p>
+              <p className="text-xs text-text-muted">{t('label.inflows')}</p>
               <p className="num mt-1 text-lg font-semibold text-positive">
                 {formatCompactCurrency(kpis.revenue ?? 0, currency)}
               </p>
             </div>
             <div className="rounded-2xl bg-glass-panel p-3.5">
-              <p className="text-xs text-text-muted">Money out</p>
+              <p className="text-xs text-text-muted">{t('label.outflows')}</p>
               <p className="num mt-1 text-lg font-semibold text-text-primary">
                 {formatCompactCurrency(kpis.expenses ?? 0, currency)}
               </p>
@@ -134,8 +136,8 @@ export default function MobileHome() {
           {/* Recent */}
           <div>
             <div className="mb-1.5 flex items-center justify-between">
-              <p className="text-small font-semibold uppercase tracking-wider text-text-muted">Recent</p>
-              <Link to="/transactions" className="text-small font-semibold text-accent">See all</Link>
+              <p className="text-small font-semibold uppercase tracking-wider text-text-muted">{t('home.recent')}</p>
+              <Link to="/transactions" className="text-small font-semibold text-accent">{t('home.seeAll')}</Link>
             </div>
             {loadTx ? (
               <div className="space-y-2">
@@ -143,7 +145,7 @@ export default function MobileHome() {
               </div>
             ) : recentTxs.length === 0 ? (
               <p className="rounded-xl bg-glass-panel p-4 text-center text-sm text-text-muted">
-                Nothing recorded yet.
+                {t('msg.noTransactions')}
               </p>
             ) : (
               <div className="space-y-1">

@@ -354,6 +354,14 @@
   .rule-subtotal { border-top: 1px solid var(--c-border2); }
   .rule-total { border-top: 3px double rgb(var(--c-text) / 0.55); }
 
+  /* Native row virtualization: off-screen rows skip layout + paint entirely.
+     intrinsic-block-size reserves ~1 row height so the scrollbar stays stable
+     before a row is first rendered; `auto` remembers the real size after. */
+  .virtual-rows > * {
+    content-visibility: auto;
+    contain-intrinsic-block-size: auto 44px;
+  }
+
   /* Highlight hairline along a card's top edge */
   .gold-hairline::before {
     content: '';

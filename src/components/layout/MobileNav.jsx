@@ -10,6 +10,7 @@
  */
 import { useState } from 'react'
 import { NavLink } from 'react-router-dom'
+import { useTranslation } from 'react-i18next'
 import { LayoutDashboard, Wallet, Plus, Sparkles, Menu } from 'lucide-react'
 import { cn } from '@/utils/cn'
 import { useUIStore } from '@/stores/useUIStore'
@@ -50,6 +51,7 @@ function Tab({ icon: Icon, label, to, onClick, active }) {
 }
 
 export default function MobileNav() {
+  const { t } = useTranslation()
   const [menuOpen, setMenuOpen] = useState(false)
   const openCapture = useUIStore((s) => s.openCapture)
   const openAssistant = useCommandBar((s) => s.openAssistant)
@@ -59,10 +61,10 @@ export default function MobileNav() {
   return (
     <>
       <nav className="fixed bottom-0 left-0 right-0 z-40 flex items-stretch border-t border-glass bg-charcoal/96 backdrop-blur-md lg:hidden">
-        <Tab icon={LayoutDashboard} label="Home" to="/dashboard" />
+        <Tab icon={LayoutDashboard} label={t('mobile.tab.home')} to="/dashboard" />
         {/* Mobile Easy M2: the second phone job is money, not statements —
             Owed to me · I owe · Activity (Reports live inside Money + Menu). */}
-        <Tab icon={Wallet} label="Money" to="/money" />
+        <Tab icon={Wallet} label={t('mobile.tab.money')} to="/money" />
 
         {/* Center raised ⊕ — opens the Capture sheet (photo / sentence / chips) */}
         {canCreate ? (
@@ -70,19 +72,19 @@ export default function MobileNav() {
             <button
               type="button"
               onClick={openCapture}
-              aria-label="Record something"
+              aria-label={t('capture.title')}
               className="-mt-6 flex h-14 w-14 items-center justify-center rounded-full btn-gradient border-[3px] border-charcoal active:scale-95 transition-transform"
             >
               <Plus className="h-6 w-6" />
             </button>
-            <span className="text-label font-semibold text-text-muted">Record</span>
+            <span className="text-label font-semibold text-text-muted">{t('mobile.tab.record')}</span>
           </div>
         ) : (
           <div className="flex-1" aria-hidden="true" />
         )}
 
-        <Tab icon={Sparkles} label="AI" onClick={openAssistant} />
-        <Tab icon={Menu} label="Menu" onClick={() => setMenuOpen(true)} active={menuOpen} />
+        <Tab icon={Sparkles} label={t('mobile.tab.ai')} onClick={openAssistant} />
+        <Tab icon={Menu} label={t('mobile.tab.menu')} onClick={() => setMenuOpen(true)} active={menuOpen} />
       </nav>
 
       <MobileMenuSheet open={menuOpen} onClose={() => setMenuOpen(false)} />

@@ -65,8 +65,10 @@ export default function SmartTable({
   const keyOf = getRowKey || rowKey || ((r, i) => r._id || r.id || i)
   const containerRef = useRef(null)
   const [focusIdx, setFocusIdx] = useState(-1)
-  // Perf guard: big ledgers render incrementally instead of all at once.
-  const [visibleCap, setVisibleCap] = useState(150)
+  // Rows are natively virtualized (.virtual-rows → content-visibility: auto),
+  // so off-screen rows cost no layout/paint. The incremental cap only bounds
+  // DOM-node count on truly huge ledgers.
+  const [visibleCap, setVisibleCap] = useState(400)
 
   /* selection (controlled) */
   const selected = useMemo(() => new Set(selectedKeys || []), [selectedKeys])
@@ -128,7 +130,7 @@ export default function SmartTable({
     const trailSubCol = columns.find((c) => c.mobile === 'trailingSub')
     const cellOf = (col, row, i) => (col ? (col.render ? col.render(row, i) : row[col.key]) : null)
     return (
-      <div className={cn('space-y-2', className)}>
+      <div className={cn('space-y-2 virtual-rows', className)}>
         {list.slice(0, visibleCap).map((row, i) => {
           const actions = (rowActions?.(row) || []).map((a) => ({ ...a, onClick: () => a.onClick(row) }))
           const card = (
@@ -191,7 +193,7 @@ export default function SmartTable({
           </tr>
         </thead>
 
-        <tbody>
+        <tbody className="virtual-rows">
           {busy ? (
             Array.from({ length: loadingRowCount }).map((_, r) => (
               <tr key={`sk-${r}`} className="border-b border-glass/60">

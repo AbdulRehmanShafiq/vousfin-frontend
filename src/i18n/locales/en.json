@@ -235,5 +235,33 @@
   "tx.filter.income": "Income",
   "tx.filter.expense": "Expense",
   "tx.filter.arap": "AR/AP",
-  "tx.filter.transfer": "Transfer"
+  "tx.filter.transfer": "Transfer",
+
+  "mobile.tab.home": "Home",
+  "mobile.tab.money": "Money",
+  "mobile.tab.record": "Record",
+  "mobile.tab.ai": "AI",
+  "mobile.tab.menu": "Menu",
+
+  "capture.title": "Record something",
+  "capture.photo.title": "Snap a receipt",
+  "capture.photo.desc": "Take a photo — the AI reads the amount and what it was",
+  "capture.nl.title": "Say it or type it",
+  "capture.nl.desc": "“sold 3 phones 45,000 cash” — we fill in the books",
+  "capture.simple.title": "Pick a simple choice",
+  "capture.simple.desc": "I got paid · I paid · I sold stock · I bought stock…",
+  "capture.footnote": "All three end in the same place — you check it, then it goes in your books.",
+
+  "home.goodMorning": "Good morning",
+  "home.goodAfternoon": "Good afternoon",
+  "home.goodEvening": "Good evening",
+  "home.yourBusiness": "Your business",
+  "home.cashOnHand": "Cash on hand",
+  "home.cashPlusBank": "Cash + bank balances",
+  "home.cashNote": "The current balance of every cash and bank account in your books.",
+  "home.seeAccounts": "See the accounts",
+  "home.recent": "Recent",
+  "home.seeAll": "See all",
+  "home.needsYou_one": "{{count}} thing needs you",
+  "home.needsYou_other": "{{count}} things need you"
 }

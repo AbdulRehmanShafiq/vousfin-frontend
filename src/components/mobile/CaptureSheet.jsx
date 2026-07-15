@@ -1,4 +1,5 @@
 import { Camera, MessageSquareText, LayoutList, ChevronRight } from 'lucide-react'
+import { useTranslation } from 'react-i18next'
 import Sheet from '@/components/mobile/Sheet'
 import { useUIStore } from '@/stores/useUIStore'
 import { vibrate } from '@/design-system/haptics'
@@ -13,27 +14,13 @@ import { vibrate } from '@/design-system/haptics'
  *   Pick a simple choice → structured form (simple chips are its default)
  */
 const LANES = [
-  {
-    lane: 'photo',
-    icon: Camera,
-    title: 'Snap a receipt',
-    desc: 'Take a photo — the AI reads the amount and what it was',
-  },
-  {
-    lane: 'nl',
-    icon: MessageSquareText,
-    title: 'Say it or type it',
-    desc: '“sold 3 phones 45,000 cash” — we fill in the books',
-  },
-  {
-    lane: 'simple',
-    icon: LayoutList,
-    title: 'Pick a simple choice',
-    desc: 'I got paid · I paid · I sold stock · I bought stock…',
-  },
+  { lane: 'photo',  icon: Camera,            titleKey: 'capture.photo.title',  descKey: 'capture.photo.desc' },
+  { lane: 'nl',     icon: MessageSquareText, titleKey: 'capture.nl.title',     descKey: 'capture.nl.desc' },
+  { lane: 'simple', icon: LayoutList,        titleKey: 'capture.simple.title', descKey: 'capture.simple.desc' },
 ]
 
 export default function CaptureSheet() {
+  const { t } = useTranslation()
   const isOpen = useUIStore((s) => s.captureOpen)
   const closeCapture = useUIStore((s) => s.closeCapture)
   const openTxModal = useUIStore((s) => s.openTxModal)
@@ -45,9 +32,9 @@ export default function CaptureSheet() {
   }
 
   return (
-    <Sheet isOpen={isOpen} onClose={closeCapture} title="Record something">
+    <Sheet isOpen={isOpen} onClose={closeCapture} title={t('capture.title')}>
       <div className="space-y-2.5 pb-2">
-        {LANES.map(({ lane, icon: Icon, title, desc }) => (
+        {LANES.map(({ lane, icon: Icon, titleKey, descKey }) => (
           <button
             key={lane}
             type="button"
@@ -58,14 +45,14 @@ export default function CaptureSheet() {
               <Icon className="h-5 w-5" />
             </span>
             <span className="min-w-0 flex-1">
-              <span className="block text-base font-semibold text-text-primary">{title}</span>
-              <span className="mt-0.5 block text-small text-text-muted">{desc}</span>
+              <span className="block text-base font-semibold text-text-primary">{t(titleKey)}</span>
+              <span className="mt-0.5 block text-small text-text-muted">{t(descKey)}</span>
             </span>
             <ChevronRight className="h-4 w-4 shrink-0 text-text-muted" aria-hidden="true" />
           </button>
         ))}
         <p className="px-1 pt-1 text-xs text-text-muted">
-          All three end in the same place — you check it, then it goes in your books.
+          {t('capture.footnote')}
         </p>
       </div>
     </Sheet>
