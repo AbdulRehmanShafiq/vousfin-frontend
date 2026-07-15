@@ -17,6 +17,7 @@ import { formatCurrency } from '@/utils/formatters'
 import Button from '@/components/ui/Button'
 import Input from '@/components/ui/Input'
 import Select from '@/components/ui/Select'
+import { REASON_LABELS } from './movementLabels'
 import { cn } from '@/utils/cn'
 
 const JOBS = [
@@ -26,13 +27,9 @@ const JOBS = [
   { key: 'revalue',  icon: TrendingDown,   label: 'It’s worth less now', hint: 'Lower the value you carry it at' },
 ]
 
-const WRITE_OFF_REASONS = [
-  { value: 'damaged', label: 'Damaged' },
-  { value: 'expired', label: 'Expired' },
-  { value: 'lost',    label: 'Lost' },
-  { value: 'theft',   label: 'Stolen' },
-  { value: 'other',   label: 'Something else' },
-]
+// Labels live in movementLabels so the ledger and this form always agree.
+const WRITE_OFF_REASONS = ['damaged', 'expired', 'lost', 'theft', 'other']
+  .map((value) => ({ value, label: REASON_LABELS[value] }))
 
 export default function AdjustStockForm({ item, currency, onClose }) {
   const [job, setJob] = useState('count')

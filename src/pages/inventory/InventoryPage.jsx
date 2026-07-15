@@ -11,8 +11,9 @@
 import { useMemo, useState } from 'react'
 import {
   PackageOpen, Plus, AlertTriangle, Search, X,
-  History, ArrowDownLeft, ArrowUpRight, ChevronDown,
+  History, ArrowDownLeft, ArrowUpRight, ChevronDown, Coins,
 } from 'lucide-react'
+import { movementLabel, movementDescription } from './movementLabels'
 
 import {
   useInventoryItems, useInventoryValuation, useLowStockAlerts,
@@ -41,7 +42,7 @@ const EMPTY = {
   name: '', sku: '', barcode: '', category: '', description: '',
   unitCostPrice: '', unitSalePrice: '', unit: 'units',
   reorderLevel: 0, reorderQty: 0, taxRate: '', valuationMethod: 'weighted_average',
-  preferredVendorId: '',
+  preferredVendorId: '', standardCost: '', trackLots: false,
 }
 
 function ItemForm({ initial, onClose, currency }) {
@@ -70,6 +71,8 @@ function ItemForm({ initial, onClose, currency }) {
     taxRate:           initial.taxRate           ?? '',
     valuationMethod:   initial.valuationMethod   || 'weighted_average',
     preferredVendorId: initial.preferredVendorId || '',
+    standardCost:      initial.standardCost      ?? '',
+    trackLots:         !!initial.trackLots,
   } : { ...EMPTY })
 
   const set = (k, v) => setForm(prev => ({ ...prev, [k]: v }))
@@ -87,6 +90,10 @@ function ItemForm({ initial, onClose, currency }) {
       reorderLevel:  parseInt(form.reorderLevel, 10) || 0,
       reorderQty:    parseInt(form.reorderQty, 10)   || 0,
       preferredVendorId: form.preferredVendorId || null,
+      // Only a standard-costed item carries a set price; otherwise leave it unset
+      // rather than parking a stale number the engine would silently ignore.
+      standardCost: form.valuationMethod === 'standard' && form.standardCost !== ''
+        ? parseFloat(form.standardCost) : null,
     }
     if (isEdit) {
       await updateItem.mutateAsync({ id: initial._id, ...payload })
@@ -217,8 +224,36 @@ function ItemForm({ initial, onClose, currency }) {
                 >
                   <option value="weighted_average">Average price of all stock you bought</option>
                   <option value="fifo">Oldest stock is sold first (FIFO)</option>
+                  <option value="standard">A set price you decide (differences show as a variance)</option>
                 </select>
               </div>
+
+              {/* Standard costing needs the planned price; anything paid above or
+                  below it is recognised straight away rather than hidden in stock. */}
+              {form.valuationMethod === 'standard' && (
+                <Input
+                  label={`Your set price per ${form.unit || 'unit'} (${currency})`}
+                  type="number" min="0" step="any"
+                  value={form.standardCost}
+                  onChange={e => set('standardCost', e.target.value)}
+                  placeholder="What you plan for it to cost"
+                />
+              )}
+
+              <label className="flex cursor-pointer items-start gap-2.5 rounded-lg border border-glass bg-glass-panel p-3">
+                <input
+                  type="checkbox"
+                  className="mt-0.5 rounded"
+                  checked={form.trackLots}
+                  onChange={e => set('trackLots', e.target.checked)}
+                />
+                <span>
+                  <span className="block text-sm font-medium text-text-primary">Track this by batch</span>
+                  <span className="block text-xs text-text-muted">
+                    For things with an expiry date or a batch number. You’ll be asked which batch every time stock comes in.
+                  </span>
+                </span>
+              </label>
 
               <div>
                 <label className="block text-xs font-medium text-text-secondary mb-1.5">
@@ -467,15 +502,25 @@ function AddStockForm({ item, onClose, currency, hideHeader = false }) {
  * this item, with a running balance. ERP refactor Step 3: completes the
  * "movement history" requirement by exposing the audited stock trail.
  */
-function MovementBadge({ type }) {
-  const isIn = /purchase/i.test(type)
+/**
+ * Direction comes from the movement itself — never from pattern-matching the
+ * type. (Regexing /purchase/ shipped a bug where every other inflow — opening
+ * balances, returns, transfers in — rendered as an outflow.) Movements that
+ * change value but not quantity (revaluations, landed costs) are neither.
+ */
+function MovementBadge({ line }) {
+  const valueOnly = line.valueOnly ?? (!line.qtyIn && !line.qtyOut)
+  const isIn = line.direction ? line.direction === 'in' : line.qtyIn > 0
+  const Icon = valueOnly ? Coins : isIn ? ArrowDownLeft : ArrowUpRight
   return (
     <span className={cn(
-      'inline-flex items-center gap-1 rounded px-1.5 py-px text-xs font-semibold',
-      isIn ? 'bg-positive/10 text-positive' : 'bg-highlight/10 text-highlight'
+      'inline-flex items-center gap-1 rounded px-1.5 py-px text-xs font-semibold whitespace-nowrap',
+      valueOnly ? 'bg-glass-panel text-text-secondary'
+        : isIn ? 'bg-positive/10 text-positive'
+          : 'bg-highlight/10 text-highlight',
     )}>
-      {isIn ? <ArrowDownLeft className="h-3 w-3" /> : <ArrowUpRight className="h-3 w-3" />}
-      {type}
+      <Icon className="h-3 w-3 flex-shrink-0" aria-hidden="true" />
+      {movementLabel(line.type)}
     </span>
   )
 }
@@ -544,8 +589,11 @@ function StockLedgerModal({ item, onClose, currency }) {
                   <td className="px-3 py-2 text-text-secondary whitespace-nowrap">
                     {l.date ? new Date(l.date).toLocaleDateString() : '—'}
                   </td>
-                  <td className="px-3 py-2 text-text-primary max-w-[16rem] truncate" title={l.description}>{l.description || '—'}</td>
-                  <td className="px-3 py-2"><MovementBadge type={l.type} /></td>
+                  <td className="px-3 py-2 text-text-primary max-w-[16rem] truncate" title={movementDescription(l)}>
+                    {movementDescription(l)}
+                    {l.lot && <span className="ml-1.5 rounded bg-glass-panel px-1 font-mono text-xs text-text-muted">{l.lot}</span>}
+                  </td>
+                  <td className="px-3 py-2"><MovementBadge line={l} /></td>
                   <td className="px-3 py-2 text-right tabular-nums text-positive">{l.qtyIn  ? `+${l.qtyIn}`  : '—'}</td>
                   <td className="px-3 py-2 text-right tabular-nums text-highlight">{l.qtyOut ? `−${l.qtyOut}` : '—'}</td>
                   <td className="px-3 py-2 text-right tabular-nums font-semibold text-text-primary">{l.balance}</td>
@@ -700,7 +748,8 @@ export default function InventoryPage() {
       header: 'Valuation',
       render: (r) => (
         <span className="text-xs text-text-muted uppercase tracking-wide">
-          {r.valuationMethod === 'fifo' ? 'FIFO' : 'W.Avg'}
+          {r.valuationMethod === 'fifo' ? 'FIFO' : r.valuationMethod === 'standard' ? 'Set price' : 'W.Avg'}
+          {r.trackLots && <span className="ml-1 text-accent" title="Tracked by batch">·&nbsp;batch</span>}
         </span>
       ),
     },

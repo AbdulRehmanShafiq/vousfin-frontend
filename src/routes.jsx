@@ -87,6 +87,8 @@ const JobCostingPage        = lazy(() => import('@/pages/cost/JobCostingPage')) 
 const ProfitabilityPage     = lazy(() => import('@/pages/cost/ProfitabilityPage'))       // SRS FR-07.3
 const BreakEvenPage         = lazy(() => import('@/pages/cost/BreakEvenPage'))           // SRS FR-07.4
 const InventoryPage        = lazy(() => import('@/pages/inventory/InventoryPage'))    // Phase 5.5 Step 4
+const InventoryReportsPage = lazy(() => import('@/pages/inventory/InventoryReportsPage')) // inventory engine phase 10
+const StockOpsPage         = lazy(() => import('@/pages/inventory/StockOpsPage'))         // inventory engine phases 5 + 9
 /* Phase 3.1 — Procurement */
 const PurchaseOrdersPage     = lazy(() => import('@/pages/procurement/PurchaseOrdersPage'))
 const PurchaseOrderEditorPage = lazy(() => import('@/pages/procurement/PurchaseOrderEditorPage'))
@@ -295,6 +297,8 @@ export const routes = [
           { path: 'cost/profitability',         element: withSuspense(ProfitabilityPage)  }, // SRS FR-07.3
           { path: 'cost/break-even',            element: withSuspense(BreakEvenPage)      }, // SRS FR-07.4
           { path: 'inventory',                  element: withSuspense(InventoryPage)      }, // Phase 5.5 Step 4
+          { path: 'inventory/reports',          element: withSuspense(InventoryReportsPage) },
+          { path: 'inventory/stock-jobs',       element: withSuspense(StockOpsPage)       },
           { path: 'activity',                   element: withSuspense(ActivityTimelinePage) }, // ERP Step 9
           { path: 'audit/internal',             element: withSuspense(InternalAuditPage)    }, // Phase 6C
           { path: 'assets',                     element: withSuspense(FixedAssetsPage)      }, // Fixed Asset Register
