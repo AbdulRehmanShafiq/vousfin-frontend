@@ -243,6 +243,16 @@
   "mobile.tab.ai": "AI",
   "mobile.tab.menu": "مینیو",
 
+  "create.invoice": "نیا انوائس",
+  "create.bill": "نیا بل",
+  "create.po": "نیا آرڈر",
+  "create.item": "نیا آئٹم",
+  "create.customer": "نیا کسٹمر",
+  "create.vendor": "نیا سپلائر",
+  "action.stockReports": "اسٹاک رپورٹس",
+  "fab.actions": "کارروائیاں",
+  "fab.quickActions": "فوری کارروائیاں",
+
   "capture.title": "کچھ درج کریں",
   "capture.photo.title": "رسید کی تصویر لیں",
   "capture.photo.desc": "تصویر لیں — AI رقم اور تفصیل خود پڑھ لے گا",
@@ -263,5 +273,15 @@
   "home.recent": "حالیہ",
   "home.seeAll": "سب دیکھیں",
   "home.needsYou_one": "{{count}} چیز آپ کی منتظر ہے",
-  "home.needsYou_other": "{{count}} چیزیں آپ کی منتظر ہیں"
+  "home.needsYou_other": "{{count}} چیزیں آپ کی منتظر ہیں",
+
+  "home.owedToYou": "آپ کو ملنے ہیں",
+  "home.youOwe": "آپ نے دینے ہیں",
+  "home.netSplit": "{{in}}% ملنے ہیں · {{out}}% دینے ہیں",
+  "home.whatsComing": "آگے کیا ہے",
+  "home.comingIn": "آنے والے",
+  "home.goingOut": "جانے والے",
+  "home.late": "تاخیر سے",
+  "home.notDueYet": "ابھی واجب نہیں",
+  "home.nothingLate": "کوئی تاخیر نہیں"
 }

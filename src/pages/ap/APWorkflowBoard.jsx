@@ -15,7 +15,7 @@
 import { useState, useMemo } from 'react'
 import { Link } from 'react-router-dom'
 import {
-  RefreshCw, Calendar, ExternalLink,
+  RefreshCw, Calendar,
   ChevronDown, Clock, Repeat,
 } from 'lucide-react'
 import { useBills }          from '@/hooks/useInvoices'
@@ -23,7 +23,6 @@ import { useBillSchedules, useBillReminderSummary, useDeactivateBillSchedule } f
 import { useAgingReport }    from '@/hooks/useExpenseAllocation'
 import { useVendorRiskSummary, useRefreshAllRisk } from '@/hooks/useVendorRisk'
 import BillAgingHeatmap      from '@/components/ap/BillAgingHeatmap'
-import VendorRiskBadge       from '@/components/ap/VendorRiskBadge'
 import ReminderStateBadge    from '@/components/ap/ReminderStateBadge'
 
 const COLUMNS = [
@@ -111,7 +110,7 @@ function Column({ col, bills }) {
   )
 }
 
-function ScheduleRow({ schedule, onDeactivate }) {
+function ScheduleRow({ schedule }) {
   const deactivate = useDeactivateBillSchedule()
   return (
     <div className="flex items-center justify-between py-2 border-b border-glass last:border-0">
@@ -169,7 +168,7 @@ export default function APWorkflowBoard() {
   return (
     <div className="space-y-4 animate-fade-in">
       {/* Page header */}
-      <div className="flex items-center justify-between">
+      <div className="flex flex-wrap items-center justify-between gap-2">
         <div>
           <h1 className="text-xl font-bold text-text-primary">AP Workflow</h1>
           <p className="text-xs text-text-muted">All payables across the pipeline</p>
@@ -196,15 +195,15 @@ export default function APWorkflowBoard() {
         </div>
       </div>
 
-      {/* Top summary row */}
-      <div className="grid grid-cols-12 gap-3">
+      {/* Top summary row — stacks on phones, 7/5 split from lg up */}
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-3">
         {/* Aging heatmap */}
-        <div className="col-span-7">
+        <div className="lg:col-span-7">
           <BillAgingHeatmap data={agingData} isLoading={agingLoading} />
         </div>
 
         {/* Reminder + Risk summary */}
-        <div className="col-span-5 space-y-3">
+        <div className="lg:col-span-5 space-y-3">
           {/* Reminder summary */}
           {reminderData && (
             <div className="premium-card p-4 space-y-2">

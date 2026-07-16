@@ -171,6 +171,8 @@ export default function AnomalyAlerts({ anomalies = [], onClassify }) {
                   type="button"
                   onClick={() => setExpandedId(expanded ? null : (a.alertId || a.id || i))}
                   className="text-text-muted hover:text-text-primary p-1 rounded transition-colors flex-shrink-0"
+                  aria-label={expanded ? 'Hide details' : 'Show details'}
+                  aria-expanded={expanded}
                   title={expanded ? 'Hide details' : 'Show details'}
                 >
                   {expanded ? <ChevronUp className="h-4 w-4" /> : <ChevronDown className="h-4 w-4" />}

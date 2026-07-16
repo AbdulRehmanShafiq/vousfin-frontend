@@ -155,10 +155,11 @@ export default function FinancialReportsPage() {
         </div>
       </div>
 
-      {/* FR-02.2 — CFO briefing (English/Urdu), grounded in the live GL */}
-      {(tab === 'income-statement' || tab === 'balance-sheet') && <AINarrativePanel />}
-
-      {/* Tab panels — mount-once, hide non-active */}
+      {/* Tab panels — mount-once, hide non-active.
+          The statement comes FIRST: it is what you opened this page to read.
+          The CFO briefing explains it, so it now sits below it (see the
+          AINarrativePanel render further down) rather than pushing the
+          numbers off the first screen. */}
       {TABS.map(t => (
         <div key={t.key} className={t.key === tab ? '' : 'hidden'}>
           {mountedTabs[t.key] && (
@@ -168,6 +169,10 @@ export default function FinancialReportsPage() {
           )}
         </div>
       ))}
+
+      {/* FR-02.2 — CFO briefing (English/Urdu), grounded in the live GL.
+          Below the statement it explains: read the numbers, then the story. */}
+      {(tab === 'income-statement' || tab === 'balance-sheet') && <AINarrativePanel />}
     </div>
   )
 }

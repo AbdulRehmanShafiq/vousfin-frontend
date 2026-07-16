@@ -48,7 +48,10 @@ export default function AINarrativePanel() {
   }
 
   return (
-    <div className="premium-card p-4 sm:p-5 mb-4 sm:mb-6">
+    /* Sits BELOW the statement (FinancialReportsPage) and is deliberately
+       dense: it is a briefing to skim, not a document to read. Margin moved
+       from bottom to top now that nothing follows it. */
+    <div className="premium-card p-3.5 sm:p-4 mt-4 sm:mt-6">
       <div className="flex items-center justify-between gap-3">
         <button
           type="button"
@@ -63,7 +66,10 @@ export default function AINarrativePanel() {
               generated in {data.generatedInMs}ms · grounded in your ledger
             </span>
           )}
-          <ChevronDown className={cn('ml-auto h-4 w-4 flex-shrink-0 text-text-muted transition-transform sm:hidden', open && 'rotate-180')} />
+          {/* Must track `isMobile` (now < lg), not `sm`: below lg the panel
+              starts collapsed, so the affordance to open it has to be visible
+              at every width where that's true. */}
+          <ChevronDown className={cn('ml-auto h-4 w-4 flex-shrink-0 text-text-muted transition-transform lg:hidden', open && 'rotate-180')} />
         </button>
         {open && (
           <div className="flex flex-shrink-0 items-center gap-2">
@@ -86,25 +92,30 @@ export default function AINarrativePanel() {
       </div>
 
       {!open ? null : isLoading ? (
-        <div className="mt-4 space-y-2">
-          {[...Array(4)].map((_, i) => <div key={i} className="h-4 skeleton-loader rounded w-full" />)}
+        <div className="mt-2.5 space-y-1.5">
+          {[...Array(3)].map((_, i) => <div key={i} className="h-3.5 skeleton-loader rounded w-full" />)}
         </div>
       ) : (
         <>
           <div
-            className={cn('mt-4 space-y-2 text-sm leading-relaxed text-text-secondary', lang === 'ur' && 'text-right')}
+            className={cn(
+              'mt-2.5 space-y-1.5 text-small leading-snug text-text-secondary',
+              lang === 'ur' && 'text-right',
+            )}
             dir={lang === 'ur' ? 'rtl' : 'ltr'}
           >
             {(segments || []).map((s, i) => <p key={i}>{s}</p>)}
           </div>
 
-          {/* Cited figures — every number traceable to the GL (FR-02.2 AC) */}
+          {/* Cited figures — every number traceable to the GL (FR-02.2 AC).
+              Inline chips rather than a bordered block of their own: they are
+              part of the sentence above, not a separate section. */}
           {(data?.figures || []).length > 0 && (
-            <div className="flex flex-wrap gap-2 mt-4 pt-3 border-t border-glass">
+            <div className="flex flex-wrap gap-1.5 mt-2.5">
               {data.figures.map((f, i) => (
                 <Link
                   key={i} to={f.link}
-                  className="num text-small px-2 py-1 rounded-md bg-glass-panel border border-glass text-text-muted hover:text-accent hover:border-glass-2"
+                  className="num text-label px-1.5 py-0.5 rounded bg-glass-panel border border-glass text-text-muted hover:text-accent hover:border-glass-2"
                   title={`Drill into ${f.label}`}
                 >
                   {f.label}: Rs {Number(f.value).toLocaleString()}
@@ -114,23 +125,21 @@ export default function AINarrativePanel() {
           )}
 
           {/* Follow-up — same interface (FR-02.2 AC) */}
-          {(
-            <div className="flex gap-2 mt-4">
-              <input
-                value={question}
-                onChange={e => setQuestion(e.target.value)}
-                onKeyDown={e => e.key === 'Enter' && askFollowUp()}
-                placeholder="Ask a follow-up about any figure…"
-                className="flex-1 bg-transparent border border-glass rounded-md text-sm px-3 py-2 text-text-primary placeholder:text-text-muted focus-ring"
-              />
-              <button
-                onClick={askFollowUp}
-                className="btn-gradient rounded-md px-3 py-2 text-sm font-semibold flex items-center gap-1.5"
-              >
-                <Send className="h-3.5 w-3.5" /> Ask
-              </button>
-            </div>
-          )}
+          <div className="flex gap-1.5 mt-2.5">
+            <input
+              value={question}
+              onChange={e => setQuestion(e.target.value)}
+              onKeyDown={e => e.key === 'Enter' && askFollowUp()}
+              placeholder="Ask a follow-up about any figure…"
+              className="flex-1 bg-transparent border border-glass rounded-md text-small px-2.5 py-1.5 text-text-primary placeholder:text-text-muted focus-ring"
+            />
+            <button
+              onClick={askFollowUp}
+              className="btn-gradient rounded-md px-2.5 py-1.5 text-small font-semibold flex items-center gap-1.5"
+            >
+              <Send className="h-3.5 w-3.5" /> Ask
+            </button>
+          </div>
         </>
       )}
     </div>

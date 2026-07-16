@@ -36,8 +36,9 @@ export default function AIAssistantChat() {
     }
   }
 
+  // h-[70vh] on phones keeps the composer above the bottom nav; full height from lg.
   return (
-    <div className="flex h-[calc(100vh-12rem)] flex-col premium-card overflow-hidden">
+    <div className="flex h-[70vh] lg:h-[calc(100vh-12rem)] flex-col premium-card overflow-hidden">
       {/* Header */}
       <div className="flex items-center justify-between border-b border-glass px-5 py-4 flex-shrink-0">
         <div className="flex items-center gap-3">

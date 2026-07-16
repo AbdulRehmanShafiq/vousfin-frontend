@@ -57,7 +57,7 @@ export default function Header() {
             onClick={openTxModal}
             aria-keyshortcuts="c"
             aria-label="Record something new"
-            className="hidden sm:inline-flex items-center gap-1.5 rounded-lg btn-gradient px-3 py-1.5 text-sm font-semibold"
+            className="hidden lg:inline-flex items-center gap-1.5 rounded-lg btn-gradient px-3 py-1.5 text-sm font-semibold"
           >
             <Plus className="h-4 w-4" aria-hidden="true" />
             New

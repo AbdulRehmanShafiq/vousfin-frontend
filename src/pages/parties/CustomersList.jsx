@@ -16,6 +16,7 @@ import PageHeader from '@/components/ui/PageHeader'
 import QuietTable from '@/design-system/data/SmartTable'
 import PartyFormModal from '@/components/forms/PartyFormModal'
 import Badge from '@/components/ui/Badge'
+import { useRegisterFabActions } from '@/hooks/useRegisterFabActions'
 import { cn } from '@/utils/cn'
 
 const FILTERS = [
@@ -52,6 +53,9 @@ export default function CustomersList() {
   const [isModalOpen, setIsModalOpen] = useState(false)
   const [query, setQuery]     = useState('')
   const [filter, setFilter]   = useState('all')
+
+  // The mobile ⊕ on this page = New customer (same modal as the header button).
+  useRegisterFabActions([{ id: 'new-customer', labelKey: 'create.customer', icon: Plus, run: () => setIsModalOpen(true) }])
 
   const { data, isLoading } = useCustomers()
   const currency = useBusinessStore((s) => s.currency)

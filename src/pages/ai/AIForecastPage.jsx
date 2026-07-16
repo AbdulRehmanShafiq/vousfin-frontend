@@ -813,6 +813,7 @@ function ScenarioTab() {
                   min="0.5" max="2.0" step="0.05"
                   value={revenueMulti}
                   onChange={e => setRevenueMulti(+e.target.value)}
+                  aria-label="Revenue factor"
                   className="w-full h-1.5 bg-glass rounded-full appearance-none cursor-pointer accent-accent"
                 />
                 <div className="flex justify-between text-xs text-text-muted mt-0.5">
@@ -833,6 +834,7 @@ function ScenarioTab() {
                   min="0.5" max="2.0" step="0.05"
                   value={expenseMulti}
                   onChange={e => setExpenseMulti(+e.target.value)}
+                  aria-label="Expense factor"
                   className="w-full h-1.5 bg-glass rounded-full appearance-none cursor-pointer accent-accent"
                 />
                 <div className="flex justify-between text-xs text-text-muted mt-0.5">
@@ -899,7 +901,7 @@ function ScenarioTab() {
                 <>
                   {/* Scenario KPIs */}
                   {result.kpiSummary && (
-                    <div className="grid grid-cols-3 gap-3 mb-5">
+                    <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 mb-5">
                       <KpiCard
                         label="Next Month (Scenario)"
                         value={result.kpiSummary.nextMonthValue}
@@ -1025,8 +1027,8 @@ export default function AIForecastPage() {
         <ForecastCard target="Net Cash Flow" horizon={6} />
       </div>
 
-      {/* ── Tabs ── */}
-      <div className="flex gap-1 bg-glass border border-glass rounded-xl p-1 w-fit flex-wrap">
+      {/* ── Tabs — one scrolling strip on phones, never a wrapped grid ── */}
+      <div className="flex flex-nowrap gap-1 bg-glass border border-glass rounded-xl p-1 overflow-x-auto scrollbar-none sm:w-fit">
         {TABS.map(tab => {
           const Icon   = tab.icon
           const active = activeTab === tab.id
@@ -1035,7 +1037,7 @@ export default function AIForecastPage() {
               key={tab.id}
               onClick={() => setActiveTab(tab.id)}
               className={cn(
-                'flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-semibold transition-all duration-150',
+                'flex shrink-0 items-center gap-2 px-4 py-2 rounded-lg text-sm font-semibold whitespace-nowrap transition-all duration-150',
                 active
                   ? tab.id === 'scenario'
                     ? 'bg-accent-2 text-white shadow-md'

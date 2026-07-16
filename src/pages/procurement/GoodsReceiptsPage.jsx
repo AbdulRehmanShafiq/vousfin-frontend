@@ -62,10 +62,14 @@ export default function GoodsReceiptsPage() {
     return arr
   }, [data])
 
+  // Column model doubles as the phone card model (SmartTable renders ListCards
+  // below lg). The PO link, received date, discrepancy and stock columns hide
+  // on the card; PO jump moves to a row action so it stays reachable.
   const columns = [
     {
       key: 'grnNumber',
       header: 'GRN #',
+      mobile: 'title',
       render: (r) => (
         <span className="font-mono text-sm text-accent font-semibold">{r.grnNumber}</span>
       ),
@@ -73,10 +77,11 @@ export default function GoodsReceiptsPage() {
     {
       key: 'po',
       header: 'PO',
+      mobile: 'hide',
       render: (r) => (
         <button
           type="button"
-          onClick={() => r.purchaseOrderId?._id && navigate(`/procurement/purchase-orders/${r.purchaseOrderId._id}/edit`)}
+          onClick={(e) => { e.stopPropagation(); r.purchaseOrderId?._id && navigate(`/procurement/purchase-orders/${r.purchaseOrderId._id}/edit`) }}
           className="font-mono text-xs text-text-secondary hover:text-accent"
         >
           {r.purchaseOrderId?.poNumber || '—'}
@@ -86,6 +91,7 @@ export default function GoodsReceiptsPage() {
     {
       key: 'vendor',
       header: 'Vendor',
+      mobile: 'subtitle',
       render: (r) => (
         <span className="text-sm text-text-primary truncate max-w-[150px]">
           {r.vendorId?.vendorName || '—'}
@@ -95,11 +101,13 @@ export default function GoodsReceiptsPage() {
     {
       key: 'receivedDate',
       header: 'Received',
+      mobile: 'hide',
       render: (r) => <span className="text-xs text-text-secondary">{formatDate(r.receivedDate)}</span>,
     },
     {
       key: 'discrepancies',
       header: 'Issues',
+      mobile: 'hide',
       render: (r) => r.hasDiscrepancies ? (
         <span className="flex items-center gap-1 text-xs text-highlight">
           <AlertTriangle className="h-3.5 w-3.5" />
@@ -110,8 +118,8 @@ export default function GoodsReceiptsPage() {
     {
       key: 'total',
       header: 'Value',
-      className: 'text-right',
-      cellClassName: 'text-right',
+      type: 'money',
+      mobile: 'trailing',
       render: (r) => (
         <span className="font-mono text-sm font-semibold text-text-primary">
           {formatCurrency(r.totalReceivedValue || 0, currency)}
@@ -121,11 +129,13 @@ export default function GoodsReceiptsPage() {
     {
       key: 'state',
       header: 'Status',
+      mobile: 'trailingSub',
       render: (r) => <GRNStateBadge state={r.state} />,
     },
     {
       key: 'inventory',
       header: 'In Stock',
+      mobile: 'hide',
       render: (r) => r.inventoryApplied ? (
         <span className="flex items-center gap-1 text-xs text-positive" title="Items added to inventory at landed cost">
           <PackageCheck className="h-3.5 w-3.5" /> Added
@@ -136,41 +146,31 @@ export default function GoodsReceiptsPage() {
         </span>
       ) : <span className="text-xs text-text-muted">—</span>,
     },
-    {
-      key: 'actions',
-      header: '',
-      render: (r) => (
-        <div className="flex items-center gap-2">
-          {r.state === 'draft' && (
-            <button
-              type="button"
-              onClick={(e) => {
-                e.stopPropagation()
-                if (confirm(`Confirm receipt of ${r.grnNumber}?\n\nReceived items will be added to inventory at their landed cost and the purchase order's received quantities updated.`)) {
-                  confirmGRN.mutate({ id: r._id })
-                }
-              }}
-              className="text-text-muted hover:text-positive transition-colors"
-              title="Confirm receipt → adds items to inventory stock"
-            >
-              <CheckCircle className="h-4 w-4" />
-            </button>
-          )}
-          <button
-            type="button"
-            onClick={(e) => {
-              e.stopPropagation()
-              if (confirm(`Archive GRN ${r.grnNumber}?`)) archiveGRN.mutate({ id: r._id })
-            }}
-            className="text-text-muted hover:text-negative transition-colors"
-            title="Archive"
-          >
-            <Trash2 className="h-4 w-4" />
-          </button>
-        </div>
-      ),
-    },
   ]
+
+  // Hover actions on desktop, swipe / overflow sheet on mobile; labels are the
+  // accessible names.
+  const rowActions = (r) => {
+    const acts = []
+    if (r.state === 'draft') {
+      acts.push({
+        label: 'Confirm receipt', icon: CheckCircle,
+        onClick: (row) => {
+          if (confirm(`Confirm receipt of ${row.grnNumber}?\n\nReceived items will be added to inventory at their landed cost and the purchase order's received quantities updated.`)) {
+            confirmGRN.mutate({ id: row._id })
+          }
+        },
+      })
+    }
+    if (r.purchaseOrderId?._id) {
+      acts.push({ label: 'View PO', icon: Package, onClick: (row) => navigate(`/procurement/purchase-orders/${row.purchaseOrderId._id}/edit`) })
+    }
+    acts.push({
+      label: 'Archive', icon: Trash2, tone: 'danger',
+      onClick: (row) => { if (confirm(`Archive GRN ${row.grnNumber}?`)) archiveGRN.mutate({ id: row._id }) },
+    })
+    return acts
+  }
 
   return (
     <div className="space-y-5 animate-fade-in">
@@ -188,17 +188,19 @@ export default function GoodsReceiptsPage() {
       </div>
 
       <div className="flex flex-col sm:flex-row gap-3">
-        <div className="relative flex-1 max-w-sm">
+        <div className="relative flex-1 sm:max-w-sm">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-text-muted pointer-events-none" />
           <Input
             placeholder="Search by GRN number..."
+            aria-label="Search goods receipts by number"
             value={query}
             onChange={e => setQuery(e.target.value)}
             className="pl-9"
           />
         </div>
         <select
-          className="rounded-lg border border-glass bg-glass-panel px-3 py-2 text-sm text-text-secondary"
+          aria-label="Filter by status"
+          className="rounded-lg border border-glass bg-glass-panel px-3 py-2.5 text-sm text-text-secondary"
           value={stateFilter}
           onChange={e => setStateFilter(e.target.value)}
         >
@@ -207,7 +209,8 @@ export default function GoodsReceiptsPage() {
           ))}
         </select>
         <select
-          className="rounded-lg border border-glass bg-glass-panel px-3 py-2 text-sm text-text-secondary"
+          aria-label="Filter by discrepancies"
+          className="rounded-lg border border-glass bg-glass-panel px-3 py-2.5 text-sm text-text-secondary"
           value={discrepancyFilter}
           onChange={e => setDiscrepancyFilter(e.target.value)}
         >
@@ -217,11 +220,13 @@ export default function GoodsReceiptsPage() {
         </select>
       </div>
 
-      <div className="premium-card overflow-x-auto">
+      {/* Table on desktop, ListCards on phones — one column model (SmartTable) */}
+      <div className="premium-card sm:overflow-x-auto">
         <DataTable
           columns={columns}
           data={receipts}
           isLoading={isLoading}
+          rowActions={rowActions}
           emptyMessage="No goods receipts yet. GRNs are created when you receive goods against a PO."
         />
       </div>

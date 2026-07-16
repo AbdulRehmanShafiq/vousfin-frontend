@@ -203,8 +203,8 @@ export default function AnomalyReviewPage() {
         </div>
       )}
 
-      {/* ── Tab bar ──────────────────────────────────────────────────────── */}
-      <div className="flex flex-wrap gap-1 p-1 rounded-xl bg-glass-panel border border-glass w-fit">
+      {/* ── Tab bar — one scrolling strip on phones, never a wrapped grid ──── */}
+      <div className="flex flex-nowrap gap-1 p-1 rounded-xl bg-glass-panel border border-glass overflow-x-auto scrollbar-none sm:w-fit">
         {TABS.map((tab) => {
           const tabCount =
             tab.key === 'pending'  ? pending   :
@@ -218,7 +218,7 @@ export default function AnomalyReviewPage() {
               key={tab.key}
               onClick={() => handleTabChange(tab.key)}
               className={cn(
-                'px-3 py-2 rounded-lg text-xs font-medium transition-all flex items-center gap-1.5',
+                'px-3 py-2 rounded-lg text-xs font-medium transition-all flex shrink-0 items-center gap-1.5 whitespace-nowrap',
                 activeTab === tab.key
                   ? 'bg-accent text-ink-on-accent font-bold shadow-sm'
                   : 'text-text-secondary hover:text-text-primary'

@@ -11,7 +11,6 @@ import { formatCurrency, formatDate } from '@/utils/formatters'
 import Button from '@/components/ui/Button'
 import Input from '@/components/ui/Input'
 import DataTable from '@/design-system/data/SmartTable'
-import InvoiceStatusBadge from '@/components/invoice/InvoiceStatusBadge'
 import ApprovalChip from '@/components/invoice/ApprovalChip'
 
 const STATE_FILTERS = [
@@ -68,23 +67,19 @@ export default function PurchaseOrdersPage() {
     return arr
   }, [data])
 
+  // Column model doubles as the phone card model: SmartTable renders these as
+  // ListCards below lg (mobile:'title'|'subtitle'|'trailing'|'trailingSub'|'hide').
   const columns = [
     {
       key: 'poNumber',
       header: 'PO #',
-      render: (r) => (
-        <button
-          type="button"
-          onClick={() => navigate(`/procurement/purchase-orders/${r._id}/edit`)}
-          className="font-mono text-sm text-accent hover:underline font-semibold"
-        >
-          {r.poNumber}
-        </button>
-      ),
+      mobile: 'title',
+      render: (r) => <span className="font-mono text-sm text-accent font-semibold">{r.poNumber}</span>,
     },
     {
       key: 'vendor',
       header: 'Vendor',
+      mobile: 'subtitle',
       render: (r) => (
         <div className="text-sm text-text-primary truncate max-w-[180px]">
           {r.vendorSnapshot?.vendorName || r.vendorId?.vendorName || '—'}
@@ -94,11 +89,13 @@ export default function PurchaseOrdersPage() {
     {
       key: 'issueDate',
       header: 'Issued',
+      mobile: 'hide',
       render: (r) => <span className="text-xs text-text-secondary">{formatDate(r.issueDate)}</span>,
     },
     {
       key: 'expectedDelivery',
       header: 'Expected',
+      mobile: 'hide',
       render: (r) => (
         <span className="text-xs text-text-secondary">
           {r.expectedDeliveryDate ? formatDate(r.expectedDeliveryDate) : '—'}
@@ -108,6 +105,7 @@ export default function PurchaseOrdersPage() {
     {
       key: 'items',
       header: 'Lines',
+      mobile: 'hide',
       render: (r) => (
         <span className="text-xs text-text-secondary text-center">
           {(r.lineItems || []).length}
@@ -117,8 +115,8 @@ export default function PurchaseOrdersPage() {
     {
       key: 'total',
       header: 'Total',
-      className: 'text-right',
-      cellClassName: 'text-right',
+      type: 'money',
+      mobile: 'trailing',
       render: (r) => (
         <span className="font-mono font-semibold text-sm text-text-primary">
           {formatCurrency(r.totalAmount || 0, r.currencyCode || currency)}
@@ -128,6 +126,7 @@ export default function PurchaseOrdersPage() {
     {
       key: 'state',
       header: 'Status',
+      mobile: 'trailingSub',
       render: (r) => (
         <div className="flex flex-wrap gap-1 items-center">
           <POStateBadge state={r.state} />
@@ -137,60 +136,33 @@ export default function PurchaseOrdersPage() {
         </div>
       ),
     },
-    {
-      key: 'actions',
-      header: '',
-      render: (r) => (
-        <div className="flex items-center gap-2">
-          {r.state === 'draft' && (
-            <button
-              type="button"
-              onClick={(e) => { e.stopPropagation(); navigate(`/procurement/purchase-orders/${r._id}/edit`) }}
-              className="text-text-muted hover:text-accent transition-colors"
-              title="Edit"
-            >
-              <Edit className="h-4 w-4" />
-            </button>
-          )}
-          {r.state === 'pending_approval' && (
-            <button
-              type="button"
-              onClick={(e) => { e.stopPropagation(); approvePO.mutate({ id: r._id }) }}
-              className="text-text-muted hover:text-positive transition-colors"
-              title="Approve"
-            >
-              <CheckCircle className="h-4 w-4" />
-            </button>
-          )}
-          {!['closed', 'cancelled', 'fully_received', 'billed'].includes(r.state) && (
-            <button
-              type="button"
-              onClick={(e) => {
-                e.stopPropagation()
-                const reason = window.prompt('Reason for cancellation (optional):')
-                if (reason !== null) cancelPO.mutate({ id: r._id, reason })
-              }}
-              className="text-text-muted hover:text-negative transition-colors"
-              title="Cancel"
-            >
-              <XCircle className="h-4 w-4" />
-            </button>
-          )}
-          <button
-            type="button"
-            onClick={(e) => {
-              e.stopPropagation()
-              if (confirm(`Archive PO ${r.poNumber}?`)) archivePO.mutate({ id: r._id })
-            }}
-            className="text-text-muted hover:text-negative transition-colors"
-            title="Archive"
-          >
-            <Trash2 className="h-4 w-4" />
-          </button>
-        </div>
-      ),
-    },
   ]
+
+  // Row actions — hover-revealed on desktop, swipe / overflow sheet on mobile.
+  // Their labels are the accessible names, replacing the old title-only icons.
+  const rowActions = (r) => {
+    const acts = []
+    if (r.state === 'draft') {
+      acts.push({ label: 'Edit', icon: Edit, onClick: (row) => navigate(`/procurement/purchase-orders/${row._id}/edit`) })
+    }
+    if (r.state === 'pending_approval') {
+      acts.push({ label: 'Approve', icon: CheckCircle, onClick: (row) => approvePO.mutate({ id: row._id }) })
+    }
+    if (!['closed', 'cancelled', 'fully_received', 'billed'].includes(r.state)) {
+      acts.push({
+        label: 'Cancel', icon: XCircle, tone: 'danger',
+        onClick: (row) => {
+          const reason = window.prompt('Reason for cancellation (optional):')
+          if (reason !== null) cancelPO.mutate({ id: row._id, reason })
+        },
+      })
+    }
+    acts.push({
+      label: 'Archive', icon: Trash2, tone: 'danger',
+      onClick: (row) => { if (confirm(`Archive PO ${row.poNumber}?`)) archivePO.mutate({ id: row._id }) },
+    })
+    return acts
+  }
 
   return (
     <div className="space-y-5 animate-fade-in">
@@ -212,17 +184,19 @@ export default function PurchaseOrdersPage() {
 
       {/* Filters */}
       <div className="flex flex-col sm:flex-row gap-3">
-        <div className="relative flex-1 max-w-sm">
+        <div className="relative flex-1 sm:max-w-sm">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-text-muted pointer-events-none" />
           <Input
             placeholder="Search by PO number..."
+            aria-label="Search purchase orders by number"
             value={query}
             onChange={e => setQuery(e.target.value)}
             className="pl-9"
           />
         </div>
         <select
-          className="rounded-lg border border-glass bg-glass-panel px-3 py-2 text-sm text-text-secondary"
+          aria-label="Filter purchase orders by status"
+          className="rounded-lg border border-glass bg-glass-panel px-3 py-2.5 text-sm text-text-secondary"
           value={stateFilter}
           onChange={e => setStateFilter(e.target.value)}
         >
@@ -232,12 +206,14 @@ export default function PurchaseOrdersPage() {
         </select>
       </div>
 
-      {/* Table */}
-      <div className="premium-card overflow-x-auto">
+      {/* Table on desktop, ListCards on phones — one column model (SmartTable) */}
+      <div className="premium-card sm:overflow-x-auto">
         <DataTable
           columns={columns}
           data={orders}
           isLoading={isLoading}
+          rowActions={rowActions}
+          onRowClick={(r) => navigate(`/procurement/purchase-orders/${r._id}/edit`)}
           emptyMessage={
             query
               ? 'No purchase orders match your search.'

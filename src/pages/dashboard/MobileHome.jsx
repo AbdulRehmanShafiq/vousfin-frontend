@@ -1,17 +1,25 @@
 /**
  * MobileHome — the phone-native Home screen (Mobile-First Redesign, pass 1).
  * NOT a responsive collapse of the desktop Dashboard: a purpose-built screen
- * with one hero number, what needs you, money in/out, recent activity, and
- * a thumb-zone Record button. See docs/superpowers/specs/2026-07-12-mobile-first-redesign-design.md
+ * with one hero number, what needs you, money in/out, recent activity.
+ * See docs/superpowers/specs/2026-07-12-mobile-first-redesign-design.md
+ *
+ * 2026-07-16 — the screen answers more, and asks for less:
+ *  - The sticky "Record something" CTA is GONE. It duplicated the bottom bar's
+ *    ⊕ sitting ~50px below it, and worse, the two disagreed: the CTA jumped
+ *    straight to the transaction modal while the ⊕ opens the Capture sheet.
+ *    One create surface, one destination — the ⊕ owns it.
+ *  - Cash on hand now carries its own shape (sparkline), who owes what, and
+ *    when it lands. Everything but WhatsComing rides the `useDashboardAll`
+ *    query this page already made, so the additions cost one request total.
  */
 import { useMemo } from 'react'
 import { Link } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
 import { useQueryClient } from '@tanstack/react-query'
-import { Bell, ArrowDownLeft, ArrowUpRight, Plus, ChevronRight } from 'lucide-react'
+import { Bell, ArrowDownLeft, ArrowUpRight, ChevronRight } from 'lucide-react'
 import { useAuthStore } from '@/stores/useAuthStore'
 import { useBusinessStore } from '@/stores/useBusinessStore'
-import { useUIStore } from '@/stores/useUIStore'
 import { useDashboardAll } from '@/hooks/useReports'
 import { useTransactions } from '@/hooks/useTransactions'
 import { useAutonomyInbox } from '@/hooks/useAutonomy'
@@ -20,6 +28,9 @@ import { usePermissions } from '@/hooks/usePermissions'
 import MobilePage from '@/components/mobile/MobilePage'
 import ListCard from '@/components/mobile/ListCard'
 import PullToRefresh from '@/components/mobile/PullToRefresh'
+import CashSparkline from '@/components/mobile/home/CashSparkline'
+import OwedSnapshot from '@/components/mobile/home/OwedSnapshot'
+import WhatsComing from '@/components/mobile/home/WhatsComing'
 import Explain from '@/design-system/workflow/Explain'
 import { isInflow as isInflowType } from '@/utils/transactionFlow'
 
@@ -30,7 +41,6 @@ export default function MobileHome() {
   const queryClient = useQueryClient()
   const { user } = useAuthStore()
   const { currency, activeBusiness } = useBusinessStore()
-  const openTxModal = useUIStore((s) => s.openTxModal)
 
   const dateRange = useMemo(() => ({
     startDate: new Date(new Date().getFullYear(), 0, 1).toISOString().split('T')[0],
@@ -46,6 +56,7 @@ export default function MobileHome() {
     : Array.isArray(txData)                             ? txData : []
 
   const kpis = dashData?.kpis || {}
+  const cashTrend = dashData?.cashFlowTrend ?? []
   const needsYouCount = inbox?.counts?.actions ?? 0
   // Role-aware Home (Mobile Easy §4.1): staff see the work chip above the money
   const { roles, loaded: rolesLoaded } = usePermissions()
@@ -56,8 +67,9 @@ export default function MobileHome() {
   const firstName = (user?.fullName || user?.name || 'there').split(' ')[0]
 
   const handleRefresh = async () => {
+    // 'reports' covers the aging queries WhatsComing reads.
     await Promise.all(
-      ['dashboard', 'transactions', 'autonomy'].map((key) =>
+      ['dashboard', 'transactions', 'autonomy', 'reports'].map((key) =>
         queryClient.invalidateQueries({ queryKey: [key] }),
       ),
     )
@@ -67,16 +79,6 @@ export default function MobileHome() {
     <MobilePage
       title={`${greeting}, ${firstName}`}
       subtitle={activeBusiness?.businessName || t('home.yourBusiness')}
-      cta={
-        <button
-          type="button"
-          onClick={openTxModal}
-          className="tap-target flex w-full items-center justify-center gap-2 rounded-2xl btn-gradient text-md font-semibold"
-        >
-          <Plus className="h-5 w-5" />
-          {t('capture.title')}
-        </button>
-      }
     >
       <PullToRefresh onRefresh={handleRefresh} className="h-full">
         <div className="space-y-5 pb-4">
@@ -97,9 +99,18 @@ export default function MobileHome() {
                 {loadDash ? (
                   <div className="mt-2 h-9 w-40 animate-pulse rounded-lg bg-glass-panel" />
                 ) : (
-                  <p className="num mt-1 text-[34px] font-bold leading-none tracking-tight text-text-primary">
-                    {formatCompactCurrency(kpis.cashBalance ?? 0, currency)}
-                  </p>
+                  <>
+                    <p className="num mt-1 text-[34px] font-bold leading-none tracking-tight text-text-primary">
+                      {formatCompactCurrency(kpis.cashBalance ?? 0, currency)}
+                    </p>
+                    {/* The shape behind the number — closing balance per month,
+                        derived so it agrees with the figure above it. */}
+                    <CashSparkline
+                      className="mt-2"
+                      trend={cashTrend}
+                      currentBalance={kpis.cashBalance ?? 0}
+                    />
+                  </>
                 )}
               </div>
             )
@@ -116,6 +127,18 @@ export default function MobileHome() {
             )
             return workFirst ? <>{chip}{hero}</> : <>{hero}{chip}</>
           })()}
+
+          {/* Who owes what — the question owners actually open the app to ask.
+              Free: reads the same `kpis` the hero above already used. */}
+          <OwedSnapshot
+            ar={kpis.accountsReceivable ?? 0}
+            ap={kpis.accountsPayable ?? 0}
+            currency={currency}
+            loading={loadDash}
+          />
+
+          {/* When it lands — the time dimension the totals above don't carry. */}
+          <WhatsComing currency={currency} />
 
           {/* Money in / out */}
           <div className="grid grid-cols-2 gap-3">

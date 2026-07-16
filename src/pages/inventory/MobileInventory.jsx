@@ -5,12 +5,14 @@
  * per-item actions, that reads cleaner than a wide swipe reveal.
  */
 import { useState } from 'react'
-import { PackageOpen, Plus, Search, AlertTriangle, History, Edit, Power, ClipboardCheck } from 'lucide-react'
+import { useNavigate } from 'react-router-dom'
+import { PackageOpen, Plus, Search, AlertTriangle, History, Edit, Power, ClipboardCheck, PackageSearch } from 'lucide-react'
 import { formatCurrency } from '@/utils/formatters'
 import MobilePage from '@/components/mobile/MobilePage'
 import ListCard from '@/components/mobile/ListCard'
 import PullToRefresh from '@/components/mobile/PullToRefresh'
 import Sheet from '@/components/mobile/Sheet'
+import { useRegisterFabActions } from '@/hooks/useRegisterFabActions'
 import { cn } from '@/utils/cn'
 
 export default function MobileInventory({
@@ -18,6 +20,15 @@ export default function MobileInventory({
   showInactive, onShowInactive, onRefresh, onNew, onAddStock, onAdjust, onHistory, onEdit, onToggleActive,
 }) {
   const [actionItem, setActionItem] = useState(null)
+  const navigate = useNavigate()
+
+  // The ⊕ on Inventory: create an item, or jump to the stock reports. Two
+  // actions → it opens the Quick-actions sheet. `onNew` is the same create the
+  // page's own header button uses, so the two never diverge.
+  useRegisterFabActions([
+    { id: 'new-item',      labelKey: 'create.item',        icon: Plus,          run: onNew },
+    { id: 'stock-reports', labelKey: 'action.stockReports', icon: PackageSearch, run: () => navigate('/inventory/reports') },
+  ])
 
   const act = (fn) => { setActionItem(null); fn() }
 

@@ -40,6 +40,49 @@ function SummaryCard({ label, value, sub, accent }) {
   )
 }
 
+/* Phone-native equivalent of a WeekRow — the 6-column table stacks into a card
+   below md, where those columns can't fit. Closing balance is the headline
+   (it's the number that triggers the alert); the rest is a small breakdown. */
+function WeekCard({ week }) {
+  const isAlert    = week.isAlert
+  const isProbable = week.source === 'probabilistic'
+  const netPositive = week.netCashFlow >= 0
+
+  return (
+    <div className={`premium-card p-3.5 ${isAlert ? 'border-rose-400/40 bg-rose-500/5' : ''}`}>
+      <div className="flex items-center justify-between gap-2">
+        <div className="flex items-center gap-2 min-w-0">
+          <span className={`inline-flex h-6 w-6 shrink-0 items-center justify-center rounded-full text-xs font-bold ${isAlert ? 'bg-rose-500/20 text-rose-400' : 'bg-glass/20 text-text-muted'}`}>
+            {week.weekNumber}
+          </span>
+          <span className="text-sm font-medium text-text-primary truncate">{fmtDate(week.weekStartDate)}</span>
+        </div>
+        <span className={`text-label px-1.5 py-0.5 rounded font-medium shrink-0 ${isProbable ? 'bg-highlight/15 text-highlight' : 'bg-accent/15 text-accent'}`}>
+          {isProbable ? 'Estimate' : 'Committed'}
+        </span>
+      </div>
+
+      <div className="mt-3 flex items-end justify-between gap-2">
+        <div>
+          <p className="text-label text-text-muted uppercase tracking-wide">Closing balance</p>
+          <p className={`num text-lg font-bold ${isAlert ? 'text-rose-400' : 'text-text-primary'}`}>
+            {isAlert && <AlertTriangle className="inline h-4 w-4 mr-1 align-text-bottom" />}
+            {fmt(week.closingBalance)}
+          </p>
+        </div>
+        <p className={`num text-sm font-semibold ${netPositive ? 'text-positive' : 'text-rose-400'}`}>
+          {netPositive ? '+' : ''}{fmt(week.netCashFlow)}
+        </p>
+      </div>
+
+      <div className="mt-2 flex items-center gap-4 border-t border-glass/20 pt-2 text-xs">
+        <span className="text-text-muted">In <span className="num text-positive">{fmt(week.inflows)}</span></span>
+        <span className="text-text-muted">Out <span className="num text-rose-400">{fmt(week.outflows)}</span></span>
+      </div>
+    </div>
+  )
+}
+
 function WeekRow({ week }) {
   const isAlert     = week.isAlert
   const isProbable  = week.source === 'probabilistic'
@@ -118,15 +161,16 @@ export default function ThirteenWeekPage() {
 
       {/* Floor input + refresh */}
       <div className="premium-card p-4 flex flex-wrap items-end gap-3">
-        <div>
-          <label className="block text-label text-text-muted mb-1 uppercase tracking-wide">Alert me when cash drops below (PKR)</label>
+        <div className="w-full sm:w-auto">
+          <label htmlFor="cash-floor" className="block text-label text-text-muted mb-1 uppercase tracking-wide">Alert me when cash drops below (PKR)</label>
           <input
+            id="cash-floor"
             type="number"
             min="0"
             value={floorInput}
             onChange={e => setFloorInput(e.target.value)}
             placeholder="0 — no floor"
-            className="px-3 py-2 rounded-lg border border-glass bg-glass-panel/40 text-small text-text-primary focus:outline-none focus:border-accent/40 w-48"
+            className="px-3 py-2 rounded-lg border border-glass bg-glass-panel/40 text-small text-text-primary focus:outline-none focus:border-accent/40 w-full sm:w-48"
           />
         </div>
         <button
@@ -188,36 +232,40 @@ export default function ThirteenWeekPage() {
         </div>
       )}
 
-      {/* Table */}
+      {/* Weeks — cards on phones (the 6 columns can't fit), table from md up */}
       {!isLoading && !isError && weeks.length > 0 && (
-        <div className="premium-card overflow-hidden">
-          <div className="overflow-x-auto">
-            <table className="w-full text-sm">
-              <thead>
-                <tr className="border-b border-glass/30 text-label text-text-muted uppercase tracking-wide">
-                  <th className="px-3 py-3 text-left">Week / Start</th>
-                  <th className="px-3 py-3 text-right">Inflows</th>
-                  <th className="px-3 py-3 text-right">Outflows</th>
-                  <th className="px-3 py-3 text-right">Net</th>
-                  <th className="px-3 py-3 text-right">Closing balance</th>
-                  <th className="px-3 py-3 text-right">Source</th>
-                </tr>
-              </thead>
-              <tbody>
-                {displayWeeks.map(w => <WeekRow key={w.weekNumber} week={w} />)}
-              </tbody>
-            </table>
+        <div>
+          <div className="space-y-2 md:hidden">
+            {displayWeeks.map(w => <WeekCard key={w.weekNumber} week={w} />)}
+          </div>
+
+          <div className="premium-card overflow-hidden hidden md:block">
+            <div className="overflow-x-auto">
+              <table className="w-full text-sm">
+                <thead>
+                  <tr className="border-b border-glass/30 text-label text-text-muted uppercase tracking-wide">
+                    <th className="px-3 py-3 text-left">Week / Start</th>
+                    <th className="px-3 py-3 text-right">Inflows</th>
+                    <th className="px-3 py-3 text-right">Outflows</th>
+                    <th className="px-3 py-3 text-right">Net</th>
+                    <th className="px-3 py-3 text-right">Closing balance</th>
+                    <th className="px-3 py-3 text-right">Source</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {displayWeeks.map(w => <WeekRow key={w.weekNumber} week={w} />)}
+                </tbody>
+              </table>
+            </div>
           </div>
 
           {weeks.length > 13 && (
-            <div className="px-4 py-3 border-t border-glass/20">
-              <button
-                onClick={() => setShowAll(!showAll)}
-                className="text-accent text-sm flex items-center gap-1 hover:underline"
-              >
-                {showAll ? <><ChevronUp className="h-3.5 w-3.5" /> Show less</> : <><ChevronDown className="h-3.5 w-3.5" /> Show all</>}
-              </button>
-            </div>
+            <button
+              onClick={() => setShowAll(!showAll)}
+              className="mt-3 text-accent text-sm flex items-center gap-1 hover:underline"
+            >
+              {showAll ? <><ChevronUp className="h-3.5 w-3.5" /> Show less</> : <><ChevronDown className="h-3.5 w-3.5" /> Show all</>}
+            </button>
           )}
         </div>
       )}

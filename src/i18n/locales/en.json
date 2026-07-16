@@ -243,6 +243,16 @@
   "mobile.tab.ai": "AI",
   "mobile.tab.menu": "Menu",
 
+  "create.invoice": "New invoice",
+  "create.bill": "New bill",
+  "create.po": "New order",
+  "create.item": "New item",
+  "create.customer": "New customer",
+  "create.vendor": "New supplier",
+  "action.stockReports": "Stock reports",
+  "fab.actions": "Actions",
+  "fab.quickActions": "Quick actions",
+
   "capture.title": "Record something",
   "capture.photo.title": "Snap a receipt",
   "capture.photo.desc": "Take a photo — the AI reads the amount and what it was",
@@ -263,5 +273,15 @@
   "home.recent": "Recent",
   "home.seeAll": "See all",
   "home.needsYou_one": "{{count}} thing needs you",
-  "home.needsYou_other": "{{count}} things need you"
+  "home.needsYou_other": "{{count}} things need you",
+
+  "home.owedToYou": "Owed to you",
+  "home.youOwe": "You owe",
+  "home.netSplit": "{{in}}% owed to you · {{out}}% you owe",
+  "home.whatsComing": "What's coming",
+  "home.comingIn": "Coming in",
+  "home.goingOut": "Going out",
+  "home.late": "late",
+  "home.notDueYet": "not due yet",
+  "home.nothingLate": "Nothing late"
 }

@@ -18,7 +18,7 @@ import {
   TrendingUp, TrendingDown,
   ArrowDownRight, ArrowUpRight,
   FileText, CreditCard, Bell,
-  ExternalLink, ChevronDown, X,
+  ExternalLink, ChevronDown,
 } from 'lucide-react'
 
 import { useBusinessStore } from '@/stores/useBusinessStore'
@@ -351,9 +351,6 @@ export default function Dashboard() {
   const openTxModal                  = useUIStore((s) => s.openTxModal)
   const isMobile                     = useIsMobile()
 
-  /* Mobile transaction bottom drawer */
-  const [showTxDrawer, setShowTxDrawer] = useState(false)
-
   const dateRange = useMemo(() => ({
     startDate: new Date(new Date().getFullYear(), 0, 1).toISOString().split('T')[0],
     endDate:   new Date().toISOString().split('T')[0],
@@ -477,29 +474,17 @@ export default function Dashboard() {
               </div>
             </Section>
 
-            {/* Charts */}
+            {/* Charts. This component returns <MobileHome /> below the `lg`
+                breakpoint, so everything here is desktop by definition — there
+                was a `md:hidden` swipe carousel of these same two charts that
+                could never render at any width, and it is gone. Phones get the
+                Home sparkline instead. */}
             <Section label={t('dashboard.businessAnalytics', 'Charts')}>
-              {/* Mobile: horizontal swipe carousel — one chart at a time */}
-              <div className="md:hidden -mx-4 px-4">
-                <div className="flex overflow-x-auto snap-x snap-mandatory scrollbar-none gap-4 pb-2">
-                  <div className="snap-start flex-shrink-0 w-[calc(100vw-2.5rem)]">
-                    <RevenueExpensesChart data={revenueVsExpenses} loading={loadDash} currency={currency} />
-                  </div>
-                  <div className="snap-start flex-shrink-0 w-[calc(100vw-2.5rem)]">
-                    <CashFlowTrendChart   data={cashFlowTrend}     loading={loadDash} currency={currency} />
-                  </div>
-                </div>
-                <div className="flex justify-center gap-1.5 mt-1.5">
-                  <div className="h-1 w-5 bg-accent rounded-full" />
-                  <div className="h-1 w-2 bg-glass-panel rounded-full" />
-                </div>
-              </div>
-              {/* Desktop: side-by-side grid */}
-              <div className="hidden md:grid md:grid-cols-5 gap-4">
-                <div className="md:col-span-3">
+              <div className="grid grid-cols-5 gap-4">
+                <div className="col-span-3">
                   <RevenueExpensesChart data={revenueVsExpenses} loading={loadDash} currency={currency} />
                 </div>
-                <div className="md:col-span-2">
+                <div className="col-span-2">
                   <CashFlowTrendChart   data={cashFlowTrend}     loading={loadDash} currency={currency} />
                 </div>
               </div>
@@ -537,17 +522,8 @@ export default function Dashboard() {
                   <p className="text-small text-text-muted mt-0.5">Last entries</p>
                 </div>
                 <div className="flex items-center gap-3">
-                  {/* Mobile: drawer button */}
-                  {recentTxs.length > 0 && (
-                    <button
-                      onClick={() => setShowTxDrawer(true)}
-                      className="lg:hidden text-small text-accent font-semibold hover:underline"
-                    >
-                      See all
-                    </button>
-                  )}
                   <Link to="/transactions"
-                    className="hidden lg:flex items-center gap-1 text-small text-accent hover:underline font-medium">
+                    className="flex items-center gap-1 text-small text-accent hover:underline font-medium">
                     View all <ExternalLink className="h-3 w-3" />
                   </Link>
                 </div>
@@ -570,25 +546,9 @@ export default function Dashboard() {
                   </div>
                 ) : (
                   <div className="space-y-0.5">
-                    {/* CSS-driven (resize/rotation safe): 3 rows on mobile, 6 on desktop */}
-                    <div className="lg:hidden space-y-0.5">
-                      {recentTxs.slice(0, 3).map(tx => (
-                        <TxRow key={tx._id} tx={tx} currency={currency} />
-                      ))}
-                    </div>
-                    <div className="hidden lg:block space-y-0.5">
-                      {recentTxs.slice(0, 6).map(tx => (
-                        <TxRow key={tx._id} tx={tx} currency={currency} />
-                      ))}
-                    </div>
-                    {recentTxs.length > 3 && (
-                      <button
-                        onClick={() => setShowTxDrawer(true)}
-                        className="lg:hidden w-full mt-1.5 text-xs text-text-muted hover:text-accent font-medium py-2 hover:bg-glass-hover rounded-lg transition-colors"
-                      >
-                        + {recentTxs.length - 3} more transactions
-                      </button>
-                    )}
+                    {recentTxs.slice(0, 6).map(tx => (
+                      <TxRow key={tx._id} tx={tx} currency={currency} />
+                    ))}
                   </div>
                 )}
               </div>
@@ -599,60 +559,11 @@ export default function Dashboard() {
 
       </div>{/* end space-y-7 */}
 
-      {/* ── Mobile Transaction Bottom Drawer ─────────────────────── */}
-      {showTxDrawer && (
-        <div
-          className="fixed inset-0 z-[55] lg:hidden"
-          onClick={() => setShowTxDrawer(false)}
-        >
-          {/* Backdrop */}
-          <div className="absolute inset-0 bg-navy/75 backdrop-blur-sm" />
-
-          {/* Sheet */}
-          <div
-            className="absolute inset-x-0 bottom-0 bg-charcoal rounded-t-2xl border border-glass border-b-0 shadow-2xl animate-slide-up-sheet max-h-[80vh] flex flex-col"
-            onClick={e => e.stopPropagation()}
-          >
-            {/* Handle + header */}
-            <div className="flex-shrink-0 pt-3 pb-0">
-              <div className="mx-auto h-1 w-10 rounded-full bg-glass-panel mb-3" />
-              <div className="flex items-center justify-between px-4 pb-3 border-b border-glass">
-                <div>
-                  <h3 className="text-sm font-bold text-text-primary">All Transactions</h3>
-                  <p className="text-small text-text-muted">{recentTxs.length} recent entries</p>
-                </div>
-                <button
-                  onClick={() => setShowTxDrawer(false)}
-                  className="p-1.5 rounded-lg hover:bg-glass-hover transition-colors"
-                >
-                  <X className="h-4 w-4 text-text-muted" />
-                </button>
-              </div>
-            </div>
-
-            {/* Scrollable transaction list */}
-            <div className="flex-1 overflow-y-auto scrollbar-thin p-3 pb-4">
-              <div className="space-y-0.5">
-                {recentTxs.map(tx => (
-                  <TxRow key={tx._id} tx={tx} currency={currency} />
-                ))}
-              </div>
-            </div>
-
-            {/* Footer */}
-            <div className="flex-shrink-0 p-4 pb-6 border-t border-glass">
-              <Link
-                to="/transactions"
-                onClick={() => setShowTxDrawer(false)}
-                className="flex items-center justify-center gap-2 w-full py-3 rounded-xl bg-accent/10 border border-accent/25 text-accent text-sm font-semibold hover:bg-accent/15 transition-colors active:scale-95"
-              >
-                View all in Transactions <ExternalLink className="h-3.5 w-3.5" />
-              </Link>
-            </div>
-          </div>
-        </div>
-      )}
-
+      {/* The mobile transaction bottom drawer that used to live here is gone:
+          it was `lg:hidden`, and this component returns <MobileHome /> below
+          `lg`, so it could only ever have appeared in the 768–1023 band where
+          the desktop page rendered under the mobile bar. That band is fixed;
+          phones get MobileTransactions. */}
     </div>
   )
 }

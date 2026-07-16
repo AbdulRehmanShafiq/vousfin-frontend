@@ -292,3 +292,50 @@ export function shortcutForPath(pathname) {
 /* Legacy aliases (RAIL_ITEMS / HUB_SECTIONS / hubByKey / activeSectionKey /
    NAV_SECTIONS) removed 2026-07-14 with their only consumers
    (SectionRail.jsx, SectionHubPage.jsx). MODULES is the one model. */
+
+/* ── The ⊕ button's actions, per route ────────────────────────────────────
+ * The mobile ⊕ means "what you can do here". It resolves to a list of actions
+ * for the current page: one action → the ⊕ does it directly; several → the ⊕
+ * opens a labelled Quick-actions sheet. Every action is labelled, so there is
+ * never an invisible create-vs-navigate mode switch.
+ *
+ * This file holds the STATIC actions — the ones reachable by pure navigation
+ * with zero page cooperation (the "New …" create forms that have their own
+ * route). Pages with richer, page-owned flows (Inventory's add-item, a list's
+ * create modal, a report's export) publish those at runtime through
+ * `useRegisterFabActions`, which takes precedence over this map.
+ *
+ * Action shape here: `{ id, labelKey, icon, kind:'nav', to }`.
+ * Longest prefix wins, so '/sales/invoices' beats '/sales'.
+ */
+const STATIC_FAB_ACTIONS = [
+  { prefix: '/sales/invoices',              id: 'new-invoice', labelKey: 'create.invoice', icon: Plus, kind: 'nav', to: '/sales/invoices/new' },
+  { prefix: '/sales/receivables',           id: 'new-invoice', labelKey: 'create.invoice', icon: Plus, kind: 'nav', to: '/sales/invoices/new' },
+  { prefix: '/purchases/bills',             id: 'new-bill',    labelKey: 'create.bill',    icon: Plus, kind: 'nav', to: '/purchases/bills/new' },
+  { prefix: '/purchases/payables',          id: 'new-bill',    labelKey: 'create.bill',    icon: Plus, kind: 'nav', to: '/purchases/bills/new' },
+  { prefix: '/procurement/purchase-orders', id: 'new-po',      labelKey: 'create.po',      icon: Plus, kind: 'nav', to: '/procurement/purchase-orders/new' },
+]
+/* Only routes that exist in routes.jsx belong here. Customers, Vendors and
+ * Inventory have no create ROUTE (their create is an in-page modal) — they
+ * register their action at runtime instead, never a static entry pointing at
+ * a 404. */
+
+/** The default ⊕ — the universal Capture sheet, when a page offers nothing else. */
+export const CAPTURE_FAB_ACTION = { id: 'capture', labelKey: 'mobile.tab.record', icon: Plus, kind: 'capture' }
+
+/**
+ * Resolve the STATIC ⊕ actions for a pathname (may be empty — the caller then
+ * falls back to any page-registered actions, then to Capture). Longest prefix
+ * wins; matching is segment-aware so '/sales/invoices-archive' never matches
+ * '/sales/invoices'.
+ * @returns {Array<{id:string,labelKey:string,icon:Function,kind:'nav',to:string}>}
+ */
+export function staticFabActionsFor(pathname = '') {
+  let best = null
+  for (const a of STATIC_FAB_ACTIONS) {
+    if (pathname === a.prefix || pathname.startsWith(a.prefix + '/')) {
+      if (!best || a.prefix.length > best.prefix.length) best = a
+    }
+  }
+  return best ? [best] : []
+}

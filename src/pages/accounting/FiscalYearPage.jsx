@@ -48,7 +48,6 @@ import {
 } from '@/hooks/useFiscalYear'
 
 import { useAccounts } from '@/hooks/useAccounts'
-import { formatCurrency } from '@/utils/formatters'
 import { useBusinessStore } from '@/stores/useBusinessStore'
 
 /* ── Helpers ─────────────────────────────────────────────────────────────── */
@@ -145,7 +144,7 @@ function CreateFiscalYearModal({ onClose }) {
 
 /* ── Adjusting Entry Modal ───────────────────────────────────────────────── */
 
-function AdjustingEntryModal({ fiscalYearId, periods, onClose }) {
+function AdjustingEntryModal({ periods, onClose }) {
   const { register, handleSubmit, formState: { errors } } = useForm({
     defaultValues: { adjustingType: 'accrual', amount: '' },
   })
@@ -270,9 +269,69 @@ function PeriodsTable({ fiscalYearId, fyStatus }) {
   if (isLoading) return <div className="py-4"><SkeletonLoader count={3} /></div>
   if (!periods?.length) return <p className="py-4 text-sm text-text-muted">No periods found.</p>
 
+  // Actions shared by the desktop table row and the phone card, so the
+  // open/closed/locked logic lives in exactly one place.
+  const renderActions = (p) => {
+    const isLocked = p.status === 'locked'
+    const isClosed = p.status === 'closed'
+    const isOpen   = p.status === 'open'
+    return (
+      <div className="flex flex-wrap justify-end gap-2">
+        {isOpen && fyStatus !== 'locked' && (
+          <Button variant="ghost" className="!py-1.5 !px-3 !text-xs" icon={CheckCircle2}
+            loading={closePeriod.isPending} onClick={() => closePeriod.mutate({ periodId: p._id })}>
+            Close
+          </Button>
+        )}
+        {isClosed && fyStatus !== 'locked' && (
+          <>
+            <Button variant="ghost" className="!py-1.5 !px-3 !text-xs" icon={Lock}
+              loading={lockPeriod.isPending} onClick={() => lockPeriod.mutate({ periodId: p._id })}>
+              Lock
+            </Button>
+            <Button variant="ghost" className="!py-1.5 !px-3 !text-xs text-highlight hover:text-highlight" icon={RotateCcw}
+              loading={reopenPeriod.isPending} onClick={() => reopenPeriod.mutate({ periodId: p._id })}>
+              Reopen
+            </Button>
+          </>
+        )}
+        {isLocked && (
+          <span className="flex items-center gap-1 text-xs text-text-muted">
+            <Lock className="h-3 w-3" /> Locked
+          </span>
+        )}
+      </div>
+    )
+  }
+
   return (
     <div className="space-y-3">
-      <div className="overflow-x-auto rounded-lg border border-glass">
+      {/* Phone cards — the 5-column table can't fit at 375px */}
+      <div className="space-y-2 md:hidden">
+        {periods.map((p) => {
+          const cfg = PERIOD_BADGE[p.status] ?? PERIOD_BADGE.open
+          const Icon = cfg.icon
+          return (
+            <div key={p._id} className="rounded-lg border border-glass p-3">
+              <div className="flex items-center justify-between gap-2">
+                <span className="font-medium text-text-primary">{p.name}</span>
+                <Badge variant={cfg.variant} className="flex w-fit items-center gap-1">
+                  <Icon className="h-3 w-3" />
+                  {cfg.label}
+                </Badge>
+              </div>
+              <p className="mt-1 text-xs text-text-secondary">{fmt(p.startDate)} — {fmt(p.endDate)}</p>
+              <p className="mt-0.5 text-xs text-text-muted">
+                Transactions: {p.closingSummary?.transactionCount ?? '—'}
+              </p>
+              <div className="mt-2">{renderActions(p)}</div>
+            </div>
+          )
+        })}
+      </div>
+
+      {/* Desktop table */}
+      <div className="overflow-x-auto rounded-lg border border-glass hidden md:block">
         <table className="w-full text-sm">
           <thead>
             <tr className="border-b border-glass text-text-muted text-xs uppercase tracking-wider">
@@ -287,10 +346,6 @@ function PeriodsTable({ fiscalYearId, fyStatus }) {
             {periods.map((p) => {
               const cfg = PERIOD_BADGE[p.status] ?? PERIOD_BADGE.open
               const Icon = cfg.icon
-              const isLocked = p.status === 'locked'
-              const isClosed = p.status === 'closed'
-              const isOpen   = p.status === 'open'
-
               return (
                 <tr key={p._id} className="hover:bg-glass-hover/30 transition-colors">
                   <td className="px-4 py-3 font-medium text-text-primary">{p.name}</td>
@@ -306,48 +361,7 @@ function PeriodsTable({ fiscalYearId, fyStatus }) {
                   <td className="px-4 py-3 text-right text-text-secondary">
                     {p.closingSummary?.transactionCount ?? '—'}
                   </td>
-                  <td className="px-4 py-3">
-                    <div className="flex justify-end gap-2">
-                      {isOpen && fyStatus !== 'locked' && (
-                        <Button
-                          variant="ghost"
-                          className="!py-1.5 !px-3 !text-xs"
-                          icon={CheckCircle2}
-                          loading={closePeriod.isPending}
-                          onClick={() => closePeriod.mutate({ periodId: p._id })}
-                        >
-                          Close
-                        </Button>
-                      )}
-                      {isClosed && fyStatus !== 'locked' && (
-                        <>
-                          <Button
-                            variant="ghost"
-                            className="!py-1.5 !px-3 !text-xs"
-                            icon={Lock}
-                            loading={lockPeriod.isPending}
-                            onClick={() => lockPeriod.mutate({ periodId: p._id })}
-                          >
-                            Lock
-                          </Button>
-                          <Button
-                            variant="ghost"
-                            className="!py-1.5 !px-3 !text-xs text-highlight hover:text-highlight"
-                            icon={RotateCcw}
-                            loading={reopenPeriod.isPending}
-                            onClick={() => reopenPeriod.mutate({ periodId: p._id })}
-                          >
-                            Reopen
-                          </Button>
-                        </>
-                      )}
-                      {isLocked && (
-                        <span className="flex items-center gap-1 text-xs text-text-muted">
-                          <Lock className="h-3 w-3" /> Locked
-                        </span>
-                      )}
-                    </div>
-                  </td>
+                  <td className="px-4 py-3">{renderActions(p)}</td>
                 </tr>
               )
             })}
@@ -396,12 +410,13 @@ function FiscalYearRow({ fy }) {
 
   return (
     <Card className="overflow-hidden">
-      {/* Header row */}
-      <div className="flex items-center justify-between">
+      {/* Header row — stacks on phones so name/date/badge/action don't collide */}
+      <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <button
           type="button"
           onClick={() => setExpanded((v) => !v)}
-          className="flex flex-1 items-center gap-3 text-left"
+          aria-expanded={expanded}
+          className="flex flex-1 flex-wrap items-center gap-x-3 gap-y-1 text-left"
         >
           <span className="flex items-center gap-2">
             {expanded
@@ -416,7 +431,7 @@ function FiscalYearRow({ fy }) {
           <Badge variant={badge.variant}>{badge.label}</Badge>
         </button>
 
-        <div className="flex items-center gap-2 ml-4 flex-shrink-0">
+        <div className="flex items-center gap-2 sm:ml-4 flex-shrink-0">
           {isOpen && (
             <Button
               variant="amber"
@@ -541,6 +556,7 @@ export default function FiscalYearPage() {
             variant="ghost"
             icon={RefreshCw}
             loading={isFetching}
+            aria-label="Refresh fiscal years"
             className="!py-2 !px-3 !text-xs"
             onClick={() => refetch()}
           />
