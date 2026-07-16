@@ -5,6 +5,7 @@ import { usePeriodStore, PERIOD_PRESETS } from '@/stores/usePeriodStore'
 import { useBusinessStore } from '@/stores/useBusinessStore'
 import { formatCompactCurrency } from '@/utils/formatters'
 import MobilePage from '@/components/mobile/MobilePage'
+import ReportPicker from './ReportPicker'
 import BooksAssurance from '@/components/reports/BooksAssurance'
 import { cn } from '@/utils/cn'
 
@@ -99,13 +100,11 @@ export default function MobileReportCards() {
           <Row label="Change in cash" value={cashChange} currency={currency} strong />
         </AnswerCard>
 
-        <Link
-          to={full('/financial-reports/trial-balance')}
-          className="tap-target flex items-center gap-2.5 rounded-card border border-glass px-4 py-3 text-sm font-semibold text-text-secondary hover:bg-glass-hover"
-        >
-          <span className="flex-1">All statements & exports</span>
-          <ChevronRight className="h-4 w-4 text-text-muted" aria-hidden="true" />
-        </Link>
+        {/* Every other report — trial balance, ledger, aging, tax, exports.
+            This was a link that dumped you into the trial balance's full hub,
+            so nine of the ten were effectively unreachable from a phone unless
+            you already knew which one you wanted. */}
+        <ReportPicker label="All reports" />
       </div>
     </MobilePage>
   )

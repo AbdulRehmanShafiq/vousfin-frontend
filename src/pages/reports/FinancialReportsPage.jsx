@@ -10,10 +10,9 @@ import { lazy, Suspense, useState, useCallback } from 'react'
 import { useParams, useNavigate, Navigate, useSearchParams } from 'react-router-dom'
 import { useIsMobile } from '@/hooks/useIsMobile'
 import MobileReportCards from './MobileReportCards'
-import {
-  LineChart, Scale, PieChart, BookOpen, Download,
-  Clock, Receipt, BarChart2, Building2, Layers, Printer,
-} from 'lucide-react'
+import { Printer } from 'lucide-react'
+import { REPORT_TABS } from './reportTabs'
+import ReportPicker from './ReportPicker'
 import { cn } from '@/utils/cn'
 import SkeletonLoader from '@/components/ui/SkeletonLoader'
 import AINarrativePanel from '@/components/reports/AINarrativePanel'
@@ -31,18 +30,21 @@ const ComparativeReportPage = lazy(() => import('./ComparativeReportPage'))
 const ExportPage            = lazy(() => import('./ExportPage'))
 const EquityStatementPage   = lazy(() => import('./EquityStatementPage'))
 
-const TABS = [
-  { key: 'income-statement',  label: 'Income Statement',  short: 'P&L',        icon: LineChart,  Component: IncomeStatementPage   },
-  { key: 'balance-sheet',     label: 'Balance Sheet',     short: 'Balance',    icon: Scale,      Component: BalanceSheetPage      },
-  { key: 'cash-flow',         label: 'Cash Flow',         short: 'Cash',       icon: PieChart,   Component: CashFlowPage          },
-  { key: 'trial-balance',     label: 'Trial Balance',     short: 'Trial',      icon: BookOpen,   Component: TrialBalancePage      },
-  { key: 'general-ledger',    label: 'General Ledger',    short: 'Ledger',     icon: Building2,  Component: GeneralLedgerPage     },
-  { key: 'aging',             label: 'Aging',             short: 'Aging',      icon: Clock,      Component: AgingReportPage       },
-  { key: 'tax',               label: 'Tax Report',        short: 'Tax',        icon: Receipt,    Component: TaxReportPage         },
-  { key: 'comparative',       label: 'Comparative',       short: 'Compare',    icon: BarChart2,  Component: ComparativeReportPage },
-  { key: 'equity',            label: 'Equity Statement',  short: 'Equity',     icon: Layers,     Component: EquityStatementPage   },
-  { key: 'export',            label: 'Export',            short: 'Export',     icon: Download,   Component: ExportPage            },
-]
+// The list itself lives in reportTabs.js so the phone can read it too; this file
+// only adds the page each one renders.
+const COMPONENTS = {
+  'income-statement': IncomeStatementPage,
+  'balance-sheet':    BalanceSheetPage,
+  'cash-flow':        CashFlowPage,
+  'trial-balance':    TrialBalancePage,
+  'general-ledger':   GeneralLedgerPage,
+  'aging':            AgingReportPage,
+  'tax':              TaxReportPage,
+  'comparative':      ComparativeReportPage,
+  'equity':           EquityStatementPage,
+  'export':           ExportPage,
+}
+const TABS = REPORT_TABS.map((t) => ({ ...t, Component: COMPONENTS[t.key] }))
 
 const TabFallback = () => (
   <div className="w-full space-y-4 pt-2">
@@ -86,9 +88,12 @@ export default function FinancialReportsPage() {
           vf-no-print: the toolbar itself is excluded from the printed report. */}
       <div className="vf-no-print sticky top-0 z-20 -mx-1 px-1 pt-1 pb-2 bg-navy/85 backdrop-blur-md">
         <div className="flex items-center gap-2">
-          {/* One horizontal-scrolling row (never wraps into a tall grid on
-              phones). scroll-px keeps the active chip from clipping at edges. */}
-          <div className="flex flex-1 flex-nowrap gap-1 p-1 rounded-xl bg-glass-panel border border-glass overflow-x-auto scrollbar-none scroll-px-1">
+          {/* Phones get ONE control naming the current report; the ten-chip row
+              is a desktop affordance and was a smear at 375px. Same list either
+              way — see reportTabs.js. */}
+          <ReportPicker current={tab} className="flex-1 sm:hidden" />
+
+          <div className="hidden sm:flex flex-1 flex-nowrap gap-1 p-1 rounded-xl bg-glass-panel border border-glass overflow-x-auto scrollbar-none scroll-px-1">
             {TABS.map(t => {
               const isActive = t.key === tab
               return (
@@ -142,13 +147,13 @@ export default function FinancialReportsPage() {
           <span className={cn('text-xs num ml-1', preset === 'custom' ? 'text-accent' : 'text-text-muted')}>
             {range.startDate} → {range.endDate}
           </span>
+
+          {/* Whether the ledger under these statements adds up. A trust signal,
+              not a report — so it rides in the toolbar as one line and opens on
+              demand, instead of taking the space of the thing you came to read. */}
+          <BooksAssurance className="vf-no-print ml-auto" />
         </div>
       </div>
-
-      {/* Does the ledger under these statements actually add up? Sits above every
-          tab because it vouches for all of them: a report is only worth reading
-          if the books behind it hold. Re-checked live, never cached. */}
-      <BooksAssurance className="vf-no-print" />
 
       {/* FR-02.2 — CFO briefing (English/Urdu), grounded in the live GL */}
       {(tab === 'income-statement' || tab === 'balance-sheet') && <AINarrativePanel />}
